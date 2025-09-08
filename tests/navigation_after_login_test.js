@@ -18,5 +18,5 @@ Scenario('ログイン後にAPIを実行しトークンを抽出する', async (
   I.say(`保存されたトークン: ${secret(tcnToken)}`);
 
   I.say('Step 4: 実行結果のスクリーンショットを保存します');
-  I.saveScreenshot('API_GET.png');
+  I.saveScreenshotWithTimestamp('API_GET.png');
 });

@@ -54,5 +54,5 @@ Scenario('取得したトークンを後続の操作で利用する', async ({ I
     console.log(responseText);
   }
 
-  I.saveScreenshot('API_GET_TEACHER_INFO.png');
+  I.saveScreenshotWithTimestamp('API_GET_TEACHER_INFO.png');
 });

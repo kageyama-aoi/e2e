@@ -1,16 +1,13 @@
 require('dotenv').config();
 
-const { setHeadlessWhen, setCommonPlugins } = require('@codeceptjs/configure');
-// turn on headless mode when running with HEADLESS=true environment variable
-// export HEADLESS=true && npx codeceptjs run
-setHeadlessWhen(process.env.HEADLESS);
+const { setCommonPlugins } = require('@codeceptjs/configure');
 
 // enable all common plugins https://github.com/codeceptjs/configure#setcommonplugins
 setCommonPlugins();
 
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
-  tests: './tests/token_usage_test.js',
+  tests: './tests/**/*_test.js',
   exclude: [
     'tests/login_test.js',
     'tests/navigation_after_login_test.js'
@@ -19,7 +16,7 @@ exports.config = {
   helpers: {
     Playwright: {
       url: process.env.BASE_URL || 'http://localhost',
-      show: true,
+      show: process.env.HEADLESS !== 'true',
       browser: 'chromium'
     }
   },
@@ -27,7 +24,8 @@ exports.config = {
     I: './steps_file.js',
     loginPage: './pages/LoginPage_Tframe.js',
     apiTestPage: './pages/ApiTestPage.js',
-    personalInfoPage: './pages/PersonalInfoPage.js' // 個人情報ページを追加
+    personalInfoPage: './pages/PersonalInfoPage.js',
+    loginMyPage: './pages/LoginMyPage.js'
   },
   name: 'e2e'
 }
