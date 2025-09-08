@@ -26,7 +26,8 @@ exports.config = {
   include: {
     I: './steps_file.js',
     loginPage: './pages/LoginPage_Tframe.js',
-    apiTestPage: './pages/ApiTestPage.js' // 新しく追加
+    apiTestPage: './pages/ApiTestPage.js',
+    personalInfoPage: './pages/PersonalInfoPage.js' // 個人情報ページを追加
   },
   name: 'e2e'
 }
