@@ -2,12 +2,11 @@ const { I } = inject();
 
 module.exports = {
   // ログインページの要素（セレクタ）を定義します
-  fields: {
-    username: 'input[name="user_name"]',
-    password: 'input[name="user_password"]',
-  },
-  buttons: {
-    login: 'ログイン',
+  locators: {
+    usernameField: 'input[name="user_name"]',
+    passwordField: 'input[name="user_password"]',
+    loginButton: 'ログイン',
+    logoutText: 'ログアウト',
   },
 
   /**
@@ -17,15 +16,15 @@ module.exports = {
    */
   login(username, password) {
     I.amOnPage(process.env.LOGIN_URL);
-    I.waitForElement(this.fields.username, 5);
-    I.fillField(this.fields.username, username);
-    I.fillField(this.fields.password, password);
-    I.click(this.buttons.login);
+    I.waitForElement(this.locators.usernameField, 5);
+    I.fillField(this.locators.usernameField, username);
+    I.fillField(this.locators.passwordField, password);
+    I.click(this.locators.loginButton);
   },
 
   // ログイン成功後の状態（ログアウトボタンの表示）を確認します
   seeLogout() {
-    I.waitForText('ログアウト', 10);
-    I.see('ログアウト');
+    I.waitForText(this.locators.logoutText, 10);
+    I.see(this.locators.logoutText);
   }
 };

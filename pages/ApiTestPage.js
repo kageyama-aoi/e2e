@@ -1,6 +1,27 @@
 const { I } = inject();
 
 module.exports = {
+  // === LOCATORS ===
+  locators: {
+    // Links & Buttons
+    adminMenuLink: '管理者メニュー',
+    loginLink: 'ログイン',
+    executeButton: '実行',
+
+    // Text
+    jsonInputLabel: 'JSON入力',
+    personCategoryLabel: 'パーソンカテゴリ',
+    responseLabel: 'レスポンス',
+
+    // Fields
+    loginIdInput: 'input[id="loginId"]',
+    passwordInput: 'input[id="pwd"]',
+    smsGroupSelect: 'select[id="smsgroup"]',
+
+    // Areas
+    responseArea: 'pre',
+  },
+
   // APIテストページへの遷移とパラメータ設定、API実行、トークン抽出を行うメソッド
   /**
    * APIテストページへ遷移し、パラメータを設定してAPIを実行、tcnTokenを抽出します。
@@ -11,22 +32,22 @@ module.exports = {
    */
   async performApiTestAndExtractToken(loginId, password, smsGroup) {
     I.say('APIテストページへ遷移します');
-    I.click('管理者メニュー');
-    I.see('JSON入力');
-    I.click('ログイン');
-    I.see('パーソンカテゴリ');
+    I.click(this.locators.adminMenuLink);
+    I.see(this.locators.jsonInputLabel);
+    I.click(this.locators.loginLink);
+    I.see(this.locators.personCategoryLabel);
 
     I.say('API実行のパラメータを設定します');
-    I.fillField('input[id="loginId"]', loginId);
-    I.fillField('input[id="pwd"]', password);
-    I.selectOption('select[id="smsgroup"]', smsGroup);
+    I.fillField(this.locators.loginIdInput, loginId);
+    I.fillField(this.locators.passwordInput, password);
+    I.selectOption(this.locators.smsGroupSelect, smsGroup);
 
     I.say('APIを実行し、レスポンスからトークンを抽出します');
-    I.click('実行');
-    I.waitForText('レスポンス', 10);
+    I.click(this.locators.executeButton);
+    I.waitForText(this.locators.responseLabel, 10);
 
     // <pre> タグに表示されたレスポンスJSONを取得します
-    const responseSelector = 'pre';
+    const responseSelector = this.locators.responseArea;
     const responseText = await I.grabTextFrom(responseSelector);
 
     // 正規表現を使って "tcnToken" の値を抽出します
