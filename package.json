@@ -1,20 +1,14 @@
 {
-  "name": "e2e",
+  "name": "e2e-tests",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "CodeceptJS E2E Tests",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx codeceptjs run",
+    "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura",
+    "test_t": "npx codeceptjs run ./tests/tframe/*_test.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "allure-codeceptjs": "^2.15.1",
-    "codeceptjs": "^3.7.4",
-    "playwright": "^1.30.0"
-  },
-  "devDependencies": {
-    "dotenv": "^17.2.2"
-  }
+  "keywords": [
+    "codeceptjs",
+    "e2e"
+  ]
 }

@@ -3,9 +3,9 @@ const { I } = inject();
 module.exports = {
   // TODO: しまむら用のログインページの実際の要素に合わせてセレクタを修正してください
   locators: {
-    usernameField: 'input[id="loginmodel-username"]', // 例: 'input[name="email"]'
-    passwordField: 'input[id="loginmodel-password"]', // 例: 'input[name="password"]'
-    loginButton: 'サインイン', // 例: 'button[type="submit"]'
+    usernameField: 'input[name="user_name"]', // 例: 'input[name="email"]'
+    passwordField: 'input[name="user_password"]', // 例: 'input[name="password"]'
+    loginButton: 'ログイン', // 例: 'button[type="submit"]'
     logoutText: 'ログアウト',
   },
 
