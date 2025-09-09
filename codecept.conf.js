@@ -38,7 +38,8 @@ exports.config = {
     apiTestPage: './pages/ApiTestPage.js',
     personalInfoPage: './pages/PersonalInfoPage.js',
     loginMyPage: './pages/LoginMyPage.js',
-    loginPageShimamura: './pages/LoginPage_Shimamura.js'
+    loginPageShimamura: './pages/LoginPage_Shimamura.js',
+    classMemberPageShimamura: './pages/ClassMemberPage_Shimamura.js'
   },
   name: 'e2e'
 }

@@ -1,36 +1,40 @@
 Feature('しまむら クラス会員登録機能');
 
-// 必要なPage Objectをインジェクトします
-// 今後、クラス会員登録用のPage Objectを作成した場合は、ここに追加してください。
-// 例: Scenario('...', ({ I, loginPageShimamura, classMemberPage }) => {
-Scenario('クラス会員の新規登録ができる', ({ I, loginPageShimamura }) => {
-  // --- 前提: ログイン処理 ---
+// Beforeフックを使い、各シナリオの前にログイン処理を共通化します。
+Before(({ I, loginPageShimamura }) => {
   I.say('--- 前提処理開始: ログイン ---');
   const username = process.env.TESTGCP_SHIMAMURA_USER;
   const password = process.env.TESTGCP_SHIMAMURA_PASSWORD;
   const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
-
   // ログインしてメインメニューへ
   loginPageShimamura.login(username, password);
   loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
   I.say('--- 前提処理終了: ログイン ---');
+});
 
+// ログイン処理はBeforeフックで行われるため、ここでは classMemberPageShimamura のみインジェクトします。
+Scenario('クラス会員の新規登録ができる', ({ I, classMemberPageShimamura }) => {
   // --- テスト本編: クラス会員登録 ---
   I.say('--- テスト開始: クラス会員登録 ---');
 
-  // TODO: ここにメインメニューからクラス会員登録ページへ遷移する操作を記述します。
-  // 例: I.click('クラス会員登録');
-  I.say('ステップ1: クラス会員登録ページへ遷移します。');
+  // ステップ1: メインメニューからコース管理ページへ遷移します。
+  // ページ遷移の具体的な操作は `classMemberPageShimamura` に集約されています。
+  I.say('ステップ1: コース管理ページへ遷移します。');
+  classMemberPageShimamura.navigateToAdminTab('コース', 'コース一覧');
+  // TODO: 遷移後のヘッダーテキストが「クラス一覧」で正しいか確認してください
+  classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
 
-  // TODO: ここにクラス会員情報を入力し、登録ボタンをクリックする操作を記述します。
-  // 今後、classMemberPage のような新しいPage Objectを作成し、
-  // そちらに処理をまとめることを推奨します。
-  // 例: classMemberPage.registerNewMember('山田', '太郎', 'yamada.taro@example.com');
-  I.say('ステップ2: 新規会員情報を入力し、登録を実行します。');
+  I.say('ステップ2: クラスを検索します。');
+  const searchCriteria = {
+    className: '合同発表会2027冬_kage',
+    teacherStatus: '下記の項目のすべて',
+    courseCategory: '発表会',
+  };
+  classMemberPageShimamura.searchClass(searchCriteria);
 
-  // TODO: ここに登録が成功したことを確認する検証ステップを記述します。
-  // 例: I.see('会員登録が完了しました。');
-  I.say('ステップ3: 登録完了メッセージが表示されることを確認します。');
+  I.say('ステップ3: 検索結果を確認し、新規登録へ進みます。');
+  classMemberPageShimamura.selectClassFromSearchResult(searchCriteria.className);
+  // TODO: クラス詳細画面で、特定の要素が表示されていることを確認する検証ステップを追加してください。
 
   // 最終確認のスクリーンショット
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
