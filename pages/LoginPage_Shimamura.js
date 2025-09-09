@@ -3,9 +3,12 @@ const { I } = inject();
 module.exports = {
   // TODO: しまむら用のログインページの実際の要素に合わせてセレクタを修正してください
   locators: {
-    usernameField: 'input[name="user_name"]', // 例: 'input[name="email"]'
-    passwordField: 'input[name="user_password"]', // 例: 'input[name="password"]'
-    loginButton: 'ログイン', // 例: 'button[type="submit"]'
+    usernameField: 'input[name="user_name"]',
+    passwordField: 'input[name="user_password"]',
+    loginButton: 'ログイン',
+    tantousyaNumberPromptText: '担当者番号を入力してください',
+    tantousyaNumberField: 'input[name="idnumber"]',
+    mainMenuButton: 'メインメニュー',
     logoutText: 'ログアウト',
   },
 
@@ -23,9 +26,16 @@ module.exports = {
     I.click(this.locators.loginButton);
   },
 
-  // ログイン成功後の状態（ログアウトボタンの表示）を確認します
-  seeLogout() {
-    I.waitForText(this.locators.logoutText, 10);
-    I.see(this.locators.logoutText);
+  /**
+   * 担当者番号を入力してメインメニューへ進みます。
+   * .env.shimamura に TESTGCP_SHIMAMURA_TANTOUSYA を設定する必要があります。
+   */
+  enterTantousyaNumberAndProceed() {
+    I.say('担当者番号を入力してメインメニューへ進みます...');
+    I.waitForText(this.locators.tantousyaNumberPromptText, 10); // 画面が変わるのを待つ
+    const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
+    I.fillField(this.locators.tantousyaNumberField, tantousyaNumber);
+    I.click(this.locators.mainMenuButton);
   }
+
 };
