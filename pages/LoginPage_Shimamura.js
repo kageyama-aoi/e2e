@@ -18,6 +18,7 @@ module.exports = {
    * @param {string} password - パスワード
    */
   login(username, password) {
+    I.say(`しまむらログインページに遷移し、ユーザー名「${username}」でログインします...`);
     // .env.shimamura で定義されたURLを使用します
     I.amOnPage(process.env.LOGIN_SHIMAMURA_URL);
     I.waitForElement(this.locators.usernameField, 5);
@@ -28,12 +29,11 @@ module.exports = {
 
   /**
    * 担当者番号を入力してメインメニューへ進みます。
-   * .env.shimamura に TESTGCP_SHIMAMURA_TANTOUSYA を設定する必要があります。
+   * @param {string} tantousyaNumber - 担当者番号
    */
-  enterTantousyaNumberAndProceed() {
+  enterTantousyaNumberAndProceed(tantousyaNumber) {
     I.say('担当者番号を入力してメインメニューへ進みます...');
     I.waitForText(this.locators.tantousyaNumberPromptText, 10); // 画面が変わるのを待つ
-    const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
     I.fillField(this.locators.tantousyaNumberField, tantousyaNumber);
     I.click(this.locators.mainMenuButton);
   }
