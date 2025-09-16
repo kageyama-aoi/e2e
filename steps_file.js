@@ -1,71 +1,101 @@
+// steps_file.js
 // in this file you can append custom step methods to 'I' object
 
 module.exports = function() {
   return actor({
 
-    // Define custom steps here, use 'this' to access default methods of I.
-    // It is recommended to place a general 'login' function here.
-
     /**
      * ファイル名にタイムスタンプを付与してスクリーンショットを保存します。
-     * @param {string} fileName - 保存するスクリーンショットのベースファイル名 (例: 'my_screenshot.png')
+     * @param {string} fileName - 例: 'my_screenshot.png'（拡張子省略時は png）
      */
-    saveScreenshotWithTimestamp(fileName) {
-      // ファイル名を拡張子の前で分割します
-      const parts = fileName.split('.');
-      const ext = parts.pop() || 'png';
-      const name = parts.join('.');
+    saveScreenshotWithTimestamp(fileName = 'screenshot.png') {
+      const parts = String(fileName).split('.');
+      const ext = (parts.length > 1 ? parts.pop() : 'png') || 'png';
+      const name = parts.join('.') || 'screenshot';
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       this.saveScreenshot(`${name}_${timestamp}.${ext}`);
     },
 
     /**
-     * 指定された要素からテキストを取得し、JSONオブジェクトとして解析して返します。
-     * @param {string} selector - テキストを取得する要素のCSSセレクターまたはXPath。
-     * @returns {Promise<object>} パースされたJSONオブジェクト。
+     * 指定要素のテキストを取得し、JSONとしてパースして返す。
+     * コードフェンスや&nbsp;等のノイズをある程度除去してからパースします。
+     * @param {string|CodeceptJS.Locator} selector
+     * @returns {Promise<object>}
      */
     async grabAndParseJsonFrom(selector) {
-      const text = await this.grabTextFrom(selector);
+      const raw = await this.grabTextFrom(selector);
+      // ```json ～ ``` / 余計なノンブレークスペース / 先頭・末尾のノイズを除去
+      const text = String(raw)
+        .replace(/^\s*```(?:json)?\s*/i, '')
+        .replace(/\s*```\s*$/i, '')
+        .replace(/\u00A0/g, ' ')
+        .trim();
+
       try {
         return JSON.parse(text);
       } catch (e) {
-        this.fail(`要素'${selector}'から取得したテキストのJSONパースに失敗しました。テキスト: "${text}"`);
+        this.saveScreenshotWithTimestamp('json_parse_error.png');
+        this.fail(
+          `要素 '${selector}' のJSONパースに失敗しました。\n--- 取得テキスト ---\n${text}\n--------------------`
+        );
       }
     },
 
     /**
-     * 指定された要素が表示されている場合のみクリックします。
-     * Cookieバナーの同意ボタンなど、表示が不確定な要素の操作に便利です。
-     * @param {string} selector - クリック対象の要素のセレクター。
-     * @param {number} [timeout=2] - 要素の存在を待つ最大秒数（デフォルトは2秒）。
+     * 指定要素が見えていればクリック（見えなければスキップ）。
+     * @param {string|CodeceptJS.Locator} selector
+     * @param {number} [timeoutSec=2] ポーリング上限（秒）
      */
-    async acceptCookiesIfVisible(selector, timeout = 2) {
-      // 指定時間内に要素がいくつ表示されるか確認
-      const numVisible = await this.grabNumberOfVisibleElements(selector, timeout);
-      if (numVisible > 0) {
-        this.say(`要素'${selector}'が見つかったため、クリックします。`);
-        this.click(selector);
+    async acceptCookiesIfVisible(selector, timeoutSec = 2) {
+      const deadline = Date.now() + timeoutSec * 1000;
+      let visible = 0;
+
+      while (Date.now() < deadline) {
+        visible = await this.grabNumberOfVisibleElements(selector);
+        if (visible > 0) break;
+        await this.wait(0.2); // 200ms間隔で軽くポーリング
+      }
+
+      if (visible > 0) {
+        this.say(`要素 '${selector}' が見つかったためクリックします。`);
+        // 軽いリトライをかけてクリックの成功率を上げる
+        await this.retry({ retries: 2, minTimeout: 200 }).click(selector);
       } else {
-        this.say(`要素'${selector}'は見つかりませんでした。処理をスキップします。`);
+        this.say(`要素 '${selector}' は見つからず、クリックをスキップします。`);
       }
     },
 
     /**
-     * JavaScriptを使って要素を強制的にクリックします。
-     * 通常のclickが機能しない場合に利用します。
-     * @param {string} selector - クリック対象の要素のセレクター。
+     * JSで強制クリック（通常のclickが効かない時の最終手段）。
+     * Shadow DOM / iframe には未対応。必要なら個別対応してください。
+     * @param {string} selector
      */
-    forceClick(selector) {
-      this.executeScript((elSelector) => {
-        const el = document.querySelector(elSelector);
-        if (el) el.click();
+    async forceClick(selector) {
+      const ok = await this.executeScript((sel) => {
+        const el = document.querySelector(sel);
+        if (!el) return false;
+        try {
+          el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+        } catch (_) { /* older browsers */ }
+        const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+        return el.dispatchEvent(evt);
       }, selector);
-    },
-    
 
-    
+      if (!ok) this.say(`forceClick: '${selector}' が見つからないか、クリックできませんでした。`);
+    },
+
+    /**
+     * よく使う「待って→クリア→入力」の合わせ技。
+     * @param {string|CodeceptJS.Locator} selector
+     * @param {string} value
+     * @param {number} [timeoutSec=5]
+     */
+    async waitAndFill(selector, value, timeoutSec = 5) {
+      await this.waitForElement(selector, timeoutSec);
+      // clearField は Playwright/Puppeteer/WebDriver で利用可能
+      await this.clearField(selector);
+      await this.fillField(selector, value);
+    },
 
   });
 }
-
-
