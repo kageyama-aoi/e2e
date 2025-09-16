@@ -10,7 +10,7 @@ if (profile) {
 const { setCommonPlugins } = require('@codeceptjs/configure');
 
 // enable all common plugins https://github.com/codeceptjs/configure#setcommonplugins
-setCommonPlugins();
+// setCommonPlugins(); // この行をコメントアウトすると、テスト後にブラウザが閉じるのを防げます
 
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
@@ -21,7 +21,10 @@ exports.config = {
       files: './tests/shimamura/*_test.js'
     },
     tframe: {
-      files: './tests/tframe/*_test.js'
+      // 既存のパターンに加えて、新しいテストファイルも明示的に含める
+      files: [
+        './tests/tframe/*_test.js'
+      ]
     }
   },
   output: './output',
@@ -29,7 +32,12 @@ exports.config = {
     Playwright: {
       url: process.env.BASE_URL || 'http://localhost',
       show: process.env.HEADLESS !== 'true',
-      browser: 'chromium'
+      browser: 'chromium',
+      // trueに設定すると、テスト実行後もブラウザを開いたままにします。
+      // デバッグ時に最終画面を確認するのに便利です。
+      // 通常のCI/CD実行時には false またはこの行を削除することを推奨します。
+      keepBrowserState: false,
+      // keepBrowserStateを有効にするには、restart: 'session' が必要です
     }
   },
   include: {

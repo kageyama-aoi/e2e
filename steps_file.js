@@ -60,7 +60,12 @@ module.exports = function() {
         const el = document.querySelector(elSelector);
         if (el) el.click();
       }, selector);
-    }
+    },
+    
+
+    
 
   });
 }
+
+
