@@ -1,3 +1,5 @@
+const getTeacherPaymentReportParams = require('../../data/tframe/teacherPaymentReportParams');
+
 Feature('講師支払調書APIテスト');
 
 // このFeature内のBeforeフックと全シナリオで共有される変数。
@@ -35,14 +37,8 @@ Scenario('指定した年月の講師支払調書が取得できる', async ({ I
   const targetYear = '2025';
   const targetMonth = '09';
   
-  // APIリクエストのパラメータを定義
-  const apiParams = {
-    api: 'displayTeacherPaymentReport',
-    tcnToken: tcnToken,
-    targetYear: targetYear,
-    targetMonth: targetMonth,
-    headderPattern: '001',
-  };
+  // APIリクエストのパラメータをデータモジュールから取得
+  const apiParams = getTeacherPaymentReportParams(tcnToken, targetYear, targetMonth);
   // 定義したパラメータでAPIを実行
   jsonInputPage.executeApi(apiParams);
 

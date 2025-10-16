@@ -17,6 +17,9 @@ exports.config = {
   // 'tests' プロパティは suites と併用できないため、コメントアウトまたは削除します。
   // tests: './tests/*_test.js',
   suites: {
+    smoke: {
+      files: './tests/smoke/*_test.js'
+    },
     shimamura: {
       files: './tests/shimamura/*_test.js'
     },
@@ -41,14 +44,14 @@ exports.config = {
     }
   },
   include: {
-    I: './steps_file.js',
-    loginPage: './pages/LoginPage_Tframe.js',
-    apiTestPage: './pages/ApiTestPage.js',
-    personalInfoPage: './pages/PersonalInfoPage.js',
-    jsonInputPage: './pages/JsonInputPage.js',
-    loginMyPage: './pages/LoginMyPage.js',
-    loginPageShimamura: './pages/LoginPage_Shimamura.js',
-    classMemberPageShimamura: './pages/ClassMemberPage_Shimamura.js'
+    I: './support/steps_file.js',
+    loginPage: './pages/tframe/LoginPage.js',
+    apiTestPage: './pages/tframe/ApiTestPage.js',
+    personalInfoPage: './pages/tframe/PersonalInfoPage.js',
+    jsonInputPage: './pages/tframe/JsonInputPage.js',
+    loginMyPage: './pages/tframe/LoginMyPage.js',
+    loginPageShimamura: './pages/shimamura/LoginPage.js',
+    classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js'
   },
   name: 'e2e'
 }

@@ -1,0 +1,90 @@
+# リファクタリング提案書
+
+現在のプロジェクト構成を、より整理され、将来的にメンテナンスしやすい構造にするためのリファクタリング案を提案します。
+
+## 1. ディレクトリ構成の改善
+
+現状、ファイルがルートディレクトリや `pages` ディレクトリに混在しているため、関連性が分かりにくくなっています。テスト対象のアプリケーション（tframe, shimamura）ごとにファイルを分類し、構造を直感的にします。
+
+### 提案するディレクトリ構造:
+
+C:\Users\kageyama\Tools\testcode\e2e\
+├── codecept.conf.js
+├── package.json
+├── ... (その他の設定ファイル)
+├── doc/
+│   └── refactoring_proposal.txt
+├── data/                <- (新規) テストデータ用
+│   └── tframe/
+│       └── teacherPaymentReportParams.js
+├── pages/               <- (再編成)
+│   ├── shimamura/
+│   │   └── LoginPage.js
+│   └── tframe/
+│       ├── LoginPage.js
+│       ├── ApiTestPage.js
+│       └── JsonInputPage.js
+├── support/             <- (新規) テスト支援ファイル用
+│   └── steps_file.js
+└── tests/
+    ├── shimamura/
+    │   └── shimamura_login_test.js
+    └── tframe/
+        └── 96-60_teacher_payment_report_test.js
+
+### 主な変更点:
+
+- **`pages` ディレクトリの再編成**:
+  - `pages` の下に `shimamura` と `tframe` のサブディレクトリを作成します。
+  - 各アプリケーション専用のページオブジェクトを、対応するサブディレクトリに移動します。
+    - 例: `pages/LoginPage_Tframe.js` → `pages/tframe/LoginPage.js`
+
+- **`support` ディレクトリの新規作成**:
+  - テストの動作を補助するファイルを集約する `support` ディレクトリを新設します。
+  - `steps_file.js` をここへ移動します。
+
+- **`data` ディレクトリの新規作成**:
+  - APIのリクエスト内容のような「テストデータ」を、テストコードから分離して管理するための `data` ディレクトリを新設します。これにより、テストコードは「操作」、データファイルは「値」に専念でき、見通しが良くなります。
+
+## 2. 命名規則の統一
+
+ディレクトリで分類されるため、ファイル名からアプリケーション名（`_Tframe` など）を削除し、命名をシンプルにします。
+
+- **変更前**: `LoginPage_Tframe.js`
+- **変更後**: `LoginPage.js` (in `pages/tframe/`)
+
+## 3. コードとデータの分離 (具体的な実装案)
+
+`96-60_teacher_payment_report_test.js` のリクエストパラメータを、新設する `data` ディレクトリで管理する例です。
+
+#### `data/tframe/teacherPaymentReportParams.js` (新規作成)
+```javascript
+module.exports = (token, year, month) => ({
+  api: 'displayTeacherPaymentReport',
+  tcnToken: token,
+  targetYear: year,
+  targetMonth: month,
+  headderPattern: '001',
+});
+```
+
+#### `tests/tframe/96-60_teacher_payment_report_test.js` (修正後)
+```javascript
+// ...
+const getApiParams = require('../../data/tframe/teacherPaymentReportParams');
+
+// ...
+Scenario('...', async ({ I, jsonInputPage }) => {
+  // ...
+  const apiParams = getApiParams(tcnToken, targetYear, targetMonth);
+  jsonInputPage.executeApi(apiParams);
+  // ...
+});
+```
+このように、テストデータを作成するロジックを外部ファイルに切り出すことで、テストコード本体は「何をしているか」がより明確になります。
+
+## 4. 設定ファイルの更新
+
+上記の変更に伴い、`codecept.conf.js` の `include` セクションのパスを、新しいファイル配置に合わせて更新する必要があります。
+
+```
