@@ -97,5 +97,57 @@ module.exports = function() {
       await this.fillField(selector, value);
     },
 
+    /**
+     * 指定された要素が画面内に表示されるようにスクロールします。
+     * @param {string|CodeceptJS.Locator} selector - スクロール対象の要素のセレクタ
+     */
+    async scrollIntoView(selector) {
+      await this.executeScript((sel) => {
+        // PlaywrightではCSSセレクタのみが渡されるため、複雑なロケータは使えない点に注意
+        const el = document.querySelector(sel);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
+        }
+      }, selector);
+      this.say(`Scrolled to element ${selector}`);
+    },
+
+    /**
+     * outputディレクトリにリクエストとレスポンスを含むログファイルを保存します。
+     * @param {string} fileName - 保存するファイル名
+     * @param {string} responseContent - 保存するレスポンス内容
+     * @param {object|string} [requestContent=null] - 保存するリクエスト内容
+     */
+    async saveLogToFile(fileName, responseContent, requestContent = null) {
+      const fs = require('fs');
+      const path = require('path');
+      // codecept.conf.js から output ディレクトリのパスを取得
+      const outputDir = require('./codecept.conf.js').config.output;
+      const filePath = path.join(outputDir, fileName);
+
+      let logContent = `--- Log created at: ${new Date().toISOString()} ---\n\n`;
+
+      if (requestContent) {
+        logContent += '--- REQUEST ---\n';
+        if (typeof requestContent === 'object') {
+          logContent += JSON.stringify(requestContent, null, 2);
+        } else {
+          logContent += requestContent;
+        }
+        logContent += '\n\n';
+      }
+
+      logContent += '--- RESPONSE ---\n';
+      logContent += responseContent;
+      logContent += '\n';
+
+      try {
+        fs.writeFileSync(filePath, logContent);
+        this.say(`${fileName} を ${outputDir} ディレクトリに保存しました。`);
+      } catch (e) {
+        this.say(`${fileName} の保存中にエラーが発生しました: ${e.message}`);
+      }
+    },
+
   });
 }

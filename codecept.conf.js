@@ -45,6 +45,7 @@ exports.config = {
     loginPage: './pages/LoginPage_Tframe.js',
     apiTestPage: './pages/ApiTestPage.js',
     personalInfoPage: './pages/PersonalInfoPage.js',
+    jsonInputPage: './pages/JsonInputPage.js',
     loginMyPage: './pages/LoginMyPage.js',
     loginPageShimamura: './pages/LoginPage_Shimamura.js',
     classMemberPageShimamura: './pages/ClassMemberPage_Shimamura.js'

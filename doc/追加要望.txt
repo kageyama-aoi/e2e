@@ -1,0 +1,29 @@
+テストケースを新たに追加したい
+
+Beforeは、token_usage_test.jsと同じ内容でよい
+
+
+仕様を説明する
+
+「JSON入力」
+というメニューをクリックすることで画面遷移できる「JSON入力」画面へ遷移する
+
+以下の①の範囲に②の値を設定します
+
+①
+<textarea id="apiParams" class="tf-data form-control input-control tf-textarea" name="apiParams" rows="20" data-wrapper-id="wrapper_apiParams"></textarea>
+
+②  
+  {
+    "api": "displayTeacherPaymentReport",
+    "tcnToken": "XXXX",
+    "targetYear": "2025",
+    "targetMonth": "09",
+    "headderPattern": "001"
+  }
+
+apiとheadderPatternの値を固定値として
+それ以外は可変
+
+
+ここまで実行したら、「実行」ボタンを押下
