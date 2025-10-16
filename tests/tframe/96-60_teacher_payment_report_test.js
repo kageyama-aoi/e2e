@@ -7,15 +7,15 @@ let tcnToken;
 
 // このファイル内の各シナリオ実行前に自動実行されるBeforeフック。
 // ログインとトークン取得を行い、テストの前提条件を整備。
-Before(async ({ I, loginPage, apiTestPage }) => {
+Before(async ({ I, loginKannrisyaPage, apiCommonLoginPage }) => {
   I.say('セットアップ: ログインとトークン取得を開始。');
 
   // 1. 管理者としてログイン
-  loginPage.login(process.env.ADMIN_USER, process.env.ADMIN_PASSWORD);
-  loginPage.seeLogout();
+  loginKannrisyaPage.login(process.env.ADMIN_USER, process.env.ADMIN_PASSWORD);
+  loginKannrisyaPage.seeLogout();
 
   // 2. APIテストを実行し、トークンを取得してFeatureスコープの変数に保存。
-  tcnToken = await apiTestPage.performApiTestAndExtractToken(
+  tcnToken = await apiCommonLoginPage.performApiTestAndExtractToken(
     process.env.TEST_USER_TEACHER,
     process.env.TEST_PASSWORD_TEACHER,
     '講師'

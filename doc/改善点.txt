@@ -1,4 +1,5 @@
-ファイルが散らかって気がしますので整理や今後メンテもかねて
-リファクタリング案の提案をお願いします。txtファイルなどにまとめてください
+ファイル名の修正　及び　関連箇所の修正
 
-コードの修正の他にも、命名規則や、ファイルの配置とかも提案してほしいです
+LoginPage.js → LoginKannrisyaPage.js
+ApiTestPage.js → ApiCommonLoginPage.js
+PersonalInfoPage.js → ApiTeacherInfoGetPage.js

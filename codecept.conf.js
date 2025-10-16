@@ -15,7 +15,8 @@ const { setCommonPlugins } = require('@codeceptjs/configure');
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
   // 'tests' プロパティは suites と併用できないため、コメントアウトまたは削除します。
-  // tests: './tests/*_test.js',
+  // tests: './tests/**/*_test.js', // Enabled
+  
   suites: {
     smoke: {
       files: './tests/smoke/*_test.js'
@@ -24,12 +25,10 @@ exports.config = {
       files: './tests/shimamura/*_test.js'
     },
     tframe: {
-      // 既存のパターンに加えて、新しいテストファイルも明示的に含める
-      files: [
-        './tests/tframe/*_test.js'
-      ]
+      files: './tests/tframe/*_test.js' // Use the correct glob pattern
     }
   },
+  
   output: './output',
   helpers: {
     Playwright: {
@@ -45,9 +44,9 @@ exports.config = {
   },
   include: {
     I: './support/steps_file.js',
-    loginPage: './pages/tframe/LoginPage.js',
-    apiTestPage: './pages/tframe/ApiTestPage.js',
-    personalInfoPage: './pages/tframe/PersonalInfoPage.js',
+    loginKannrisyaPage: './pages/tframe/LoginKannrisyaPage.js',
+    apiCommonLoginPage: './pages/tframe/ApiCommonLoginPage.js',
+    apiTeacherInfoGetPage: './pages/tframe/ApiTeacherInfoGetPage.js',
     jsonInputPage: './pages/tframe/JsonInputPage.js',
     loginMyPage: './pages/tframe/LoginMyPage.js',
     loginPageShimamura: './pages/shimamura/LoginPage.js',
