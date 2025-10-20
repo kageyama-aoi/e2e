@@ -1,5 +1,14 @@
-ファイル名の修正　及び　関連箇所の修正
+96-60_teacher_payment_report_test.jsの改良を手伝ってください
 
-LoginPage.js → LoginKannrisyaPage.js
-ApiTestPage.js → ApiCommonLoginPage.js
-PersonalInfoPage.js → ApiTeacherInfoGetPage.js
+
+1つ目
+  I.say('Step 3: APIを実行して支払調書を取得。');
+  const targetYear = '2025';
+  const targetMonth = '09';
+  
+  上記二つのパラメータが未設定の場合は、デフォルトとして先月を指定してください
+
+2つ目
+ テストなのでパラメータを変えながら実行していきたいです
+ teacherPaymentReportParams.jsでheadderPattern: '001'と指定されていますがheadderPattern: '002'の値でもテストしてほしいです
+  

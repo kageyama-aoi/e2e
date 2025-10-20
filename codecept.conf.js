@@ -28,7 +28,6 @@ exports.config = {
       files: './tests/tframe/*_test.js' // Use the correct glob pattern
     }
   },
-  
   output: './output',
   helpers: {
     Playwright: {
@@ -52,5 +51,16 @@ exports.config = {
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js'
   },
-  name: 'e2e'
+  name: 'e2e',
+  plugins: {
+    allure: {
+      enabled: true,
+      require: "allure-codeceptjs",
+    },
+    stepByStepReport: {
+      enabled: true,
+      screenshotsForAllSteps: true,
+      deleteSuccessful: false,
+    },
+  },
 }
