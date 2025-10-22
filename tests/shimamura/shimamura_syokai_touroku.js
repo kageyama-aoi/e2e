@@ -30,17 +30,10 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
 
   await SubmenuClick('submenu__candidates_grp_sub','候補生');
 
-  // const display = await I.grabCssPropertyFrom('#submenu__candidates_grp_sub', 'display');
-  // if (display === 'none') {
-  //   I.click(locate('span').withText('候補生'));
-  //   console.log('✅ 「＋」ボタンが表示中なのでリンクを押下');
-  // } else {
-  //   console.log('⚠️ 「-」ボタンなのでスキップ');
-  // }
   classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
 
   async function KouhoViewOperate() {
-    I.waitForElement(locate('body').withText('候補生一覧'), 10);
+    I.waitForElement(locate('body').withText('候補生一覧'), 5);
     I.fillField('last_name', 'かげやま');
     I.click('検索');
     I.waitForElement('.listViewTdLinkS1',10);
@@ -49,44 +42,60 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
     I.click(locate('.listViewTdLinkS1'));
     return student_name;
   }
-  const student_name = await KouhoViewOperate();
+  
  
-  async function ChangeStudent(){
+  async function ChangeFromKouhoToStudent(){
     const idnumber = await I.grabTextFrom('#td_idnumber');
-    I.waitForElement(locate('body').withText('候補生詳細'), 10);
+    I.waitForElement(locate('body').withText('候補生詳細'), 5);
     I.say(`受講生情報: ${idnumber}_${student_name}`);
     I.click('受講生へ移動');
    
   }
 
 
-  await ChangeStudent();
+  
   
   async function KeirisyoriStart(){
-    I.waitForElement(locate('body').withText('受講生詳細'), 10);
+    I.waitForElement(locate('body').withText('受講生詳細'), 5);
     await SubmenuClick('submenu__detailviews_sub','閲覧/登録・経理ビュー');
     classMemberPageShimamura.clickSubMenuLink('受講生登録・経理ビュー（個人）', '受講生登録・経理ビュー（個人）');
-    I.waitForElement(locate('body').withText('クラス追加/更新する'), 10);
+    I.waitForElement(locate('body').withText('クラス追加/更新する'), 5);
     I.click('クラス追加/更新する')
-    }
+  }
+
+  async function KeirisyoriScreenB(){
+    I.waitForElement('#course_popup_popup_button', 5);
+    I.click('クラス選択')
+    I.switchToNextTab();
+    I.waitForElement('#AN_1_area_id', 5);
+    I.fillField('#course_name', '');
+    I.selectOption('#course_category','スクール')
+    I.selectOption('#AN_1_area_id','すべて');
+    I.selectOption('#school_id','すべて');
+    I.click('検索');
+    I.waitForElement('.listViewTdLinkS1',10);
+    const class_name = await I.grabTextFrom('a.listViewTdLinkS1');
+    I.say(`リンクラベル: ${class_name}`);
+    I.click(locate('.listViewTdLinkS1'));
+    I.switchToNextTab();
+    // I.waitForElement(locate('body').withText('クラス適用'), 5);
+    // I.click('クラス適用')
+  }
+
+  
+  const student_name = await KouhoViewOperate();  
+  await ChangeFromKouhoToStudent();
+  await KeirisyoriStart();
+  await KeirisyoriScreenB();
   
   pause(); // ←ここでインタラクティブシェルへ
 
 
-I.click('クラス選択')
-I.switchToNextTab();
-I.fillField('course_name', 'か');
-I.click('検索');
-I.selectOption('#course_category','スクール')
-I.selectOption('AN_1_area_id','すべて');
-I.selectOption('school_id','すべて');
-I.switchToNextTab();
-I.click('クラス選択')
-I.click('クラス適用')
+
   
   //クラス画面　操作
   function ClassOperate(){
-    I.waitForElement('#tab_link_student_tab', 10);
+    I.waitForElement('#tab_link_student_tab', 5);
     I.click('#tab_link_student_tab');
     I.seeElement('#tab_li_student_tab.active');   
     I.selectOption('#cs_course_seletion_pulldown', course_name); 
