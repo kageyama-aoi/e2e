@@ -31,18 +31,17 @@ module.exports = {
    * @returns {Promise<string>} 抽出されたtcnToken
    */
   async performApiTestAndExtractToken(loginId, password, smsGroup) {
-    I.say('APIテストページへ遷移します');
+
+    I.say('管理画面からAPIを実行し、レスポンスから個人情報（講師）アクセス用のトークンを抽出');
     I.click(this.locators.adminMenuLink);
     I.see(this.locators.jsonInputLabel);
     I.click(this.locators.loginLink);
     I.see(this.locators.personCategoryLabel);
 
-    I.say('API実行のパラメータを設定します');
-    I.fillField(this.locators.loginIdInput, loginId);
-    I.fillField(this.locators.passwordInput, password);
+    I.fillField(this.locators.loginIdInput, secret(loginId));
+    I.fillField(this.locators.passwordInput, secret(password));
     I.selectOption(this.locators.smsGroupSelect, smsGroup);
 
-    I.say('APIを実行し、レスポンスからトークンを抽出します');
     I.click(this.locators.executeButton);
     I.waitForText(this.locators.responseLabel, 10);
 

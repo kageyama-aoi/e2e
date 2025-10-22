@@ -34,6 +34,18 @@ exports.config = {
       url: process.env.BASE_URL || 'http://localhost',
       show: process.env.HEADLESS !== 'true',
       browser: 'chromium',
+      windowSize: '1280x800',
+      pressDelay: 0,           // ← 入力爆速化
+      waitForTimeout: 5000,    // ← 待ち時間の上限短縮
+      waitForAction: 50,       // ← 各操作間のディレイ（クリックなど）も少し短く
+      chromium: {
+        viewport: {
+          width: 1280,
+          height: 800
+        },      
+      args: ['--force-device-scale-factor=1']
+      },
+
       // trueに設定すると、テスト実行後もブラウザを開いたままにします。
       // デバッグ時に最終画面を確認するのに便利です。
       // 通常のCI/CD実行時には false またはこの行を削除することを推奨します。
