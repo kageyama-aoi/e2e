@@ -64,47 +64,82 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   }
 
   async function KeirisyoriScreenB(){
-    I.waitForElement('#course_popup_popup_button', 5);
-    I.click('クラス選択')
+
+    const S = {
+      textbox:
+      {
+        keiyaku_date:'#contract_dateclass_operation',
+        kaishi_date:'#start_dateclass_operation',
+        class_name:'#course_name'
+      }
+      ,
+      pulldown:
+      {
+        area:'#AN_1_area_id',
+        tenpo:'#school_id',
+        couse_category:'#course_category'
+      },
+      button:
+      {
+        class_select:'#course_popup_popup_button',
+        class_apply:'#apply_class'
+      }
+
+
+    }
+    I.waitForElement(S.button.class_select, 10);
+    I.click(S.button.class_select);
     I.switchToNextTab();
-    I.waitForElement('#AN_1_area_id', 5);
-    I.fillField('#course_name', '');
-    I.selectOption('#course_category','スクール')
-    I.selectOption('#AN_1_area_id','すべて');
-    I.selectOption('#school_id','すべて');
+    I.waitForElement(S.pulldown.area, 5);
+    I.fillField(S.textbox.class_name, 'ピアノ水曜日_01_03');
+    I.selectOption(S.pulldown.couse_category,'スクール')
+    I.selectOption(S.pulldown.area,'すべて');
+    I.selectOption(S.pulldown.tenpo,'すべて');
+    const currentUrl01 = await I.grabCurrentUrl();
+    I.say(`現在のURL01: ${currentUrl01}`);
     I.click('検索');
     I.waitForElement('.listViewTdLinkS1',10);
-    const class_name = await I.grabTextFrom('a.listViewTdLinkS1');
-    I.say(`リンクラベル: ${class_name}`);
+    // const class_name = await I.grabTextFrom('a.listViewTdLinkS1');
     I.click(locate('.listViewTdLinkS1'));
+    
+    // pause();
     I.switchToNextTab();
-    // I.waitForElement(locate('body').withText('クラス適用'), 5);
-    // I.click('クラス適用')
+    const currentUrl02 = await I.grabCurrentUrl();
+    I.say(`現在のURL02: ${currentUrl02}`);
+    
+    I.waitForElement(locate('body').withText('受講生詳細'), 5);
+    I.click('クラス適用');
+   
+    // I.waitForEnabled(S.textbox.keiyaku_date, 15);
+    I.seeElement(S.textbox.keiyaku_date, 5);
+    I.fillField(S.textbox.keiyaku_date, '2025-10-01');
+    I.fillField(S.textbox.kaishi_date, '2025-10-01');
+    I.click('コース料金設定');
+
+    I.wait(5); 
+    I.click('売上計上する');
+
+    I.wait(5); 
+    
+    I.click('確認完了（経理ビューへ）')
+
+
+  // HM_ﾋﾟｱﾉ初級30分
+  // コース料金設定
+
+  //mid_month
   }
 
-  
   const student_name = await KouhoViewOperate();  
   await ChangeFromKouhoToStudent();
   await KeirisyoriStart();
+
   await KeirisyoriScreenB();
   
-  pause(); // ←ここでインタラクティブシェルへ
-
-
-
-  
-  //クラス画面　操作
-  function ClassOperate(){
-    I.waitForElement('#tab_link_student_tab', 5);
-    I.click('#tab_link_student_tab');
-    I.seeElement('#tab_li_student_tab.active');   
-    I.selectOption('#cs_course_seletion_pulldown', course_name); 
-    I.click('発表会選択')    
-  }
-
 
   // 最終確認のスクリーンショット
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
 
   I.say('--- テスト正常終了: クラス会員登録 ---');
-});
+}
+);
