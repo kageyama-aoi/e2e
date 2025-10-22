@@ -130,11 +130,21 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   //mid_month
   }
 
+  async function TaikaiStart(){
+    I.waitForElement(locate('body').withText('受講生詳細'), 5);
+    await SubmenuClick('submenu__detailviews_sub','閲覧/登録・経理ビュー');
+    classMemberPageShimamura.clickSubMenuLink('受講生詳細', '受講生登録・経理ビュー（個人）');
+    
+    I.waitForElement(locate('body').withText('退会処理'), 5);
+    I.click('退会処理')
+  }
+
   const student_name = await KouhoViewOperate();  
   await ChangeFromKouhoToStudent();
   await KeirisyoriStart();
 
   await KeirisyoriScreenB();
+  await TaikaiStart();
   
 
   // 最終確認のスクリーンショット
