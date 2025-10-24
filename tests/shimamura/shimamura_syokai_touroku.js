@@ -87,9 +87,26 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
 
 
     }
-    I.waitForElement(S.button.class_select, 10);
+    // I.waitForElement(S.button.class_select, 10);
+    // // ボタンをクリックして新しいタブが開くのを待つ
+    // const beforeTabs = await I.grabBrowserTabs();
+    // I.click(S.button.class_select);
+    // // I.switchToNextTab();
+    
+
+    // await I.wait(3); // 少し待機（必要に応じて調整）
+    // const afterTabs = await I.grabBrowserTabs();
+
+    // if (afterTabs.length > beforeTabs.length) {
+    //   I.switchToNextTab();
+    // } else {
+    //   I.say('新しいタブが開きませんでした。');
+    // }
     I.click(S.button.class_select);
+    await I.wait(3);
     I.switchToNextTab();
+
+
     I.waitForElement(S.pulldown.area, 5);
     I.fillField(S.textbox.class_name, 'ピアノ水曜日_01_03');
     I.selectOption(S.pulldown.couse_category,'スクール')
@@ -110,8 +127,8 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
     I.waitForElement(locate('body').withText('受講生詳細'), 5);
     I.click('クラス適用');
    
-    // I.waitForEnabled(S.textbox.keiyaku_date, 15);
-    I.seeElement(S.textbox.keiyaku_date, 5);
+    I.waitForEnabled(S.textbox.keiyaku_date, 15);
+    // I.seeElement(S.textbox.keiyaku_date, 5);
     I.fillField(S.textbox.keiyaku_date, '2025-10-01');
     I.fillField(S.textbox.kaishi_date, '2025-10-01');
     I.click('コース料金設定');
@@ -133,10 +150,10 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   async function TaikaiStart(){
     I.waitForElement(locate('body').withText('受講生詳細'), 5);
     await SubmenuClick('submenu__detailviews_sub','閲覧/登録・経理ビュー');
-    classMemberPageShimamura.clickSubMenuLink('受講生詳細', '受講生登録・経理ビュー（個人）');
-    
-    I.waitForElement(locate('body').withText('退会処理'), 5);
+    classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');    
+    // I.waitForElement(locate('body').withText('退会処理'), 5);
     I.click('退会処理')
+    pause();
   }
 
   const student_name = await KouhoViewOperate();  
