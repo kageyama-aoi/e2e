@@ -1,7 +1,7 @@
-module.exports = (token, year, month, headderPattern = '001') => ({
+module.exports = (token, year, month, headerPattern = '001') => ({
   api: 'displayTeacherPaymentReport',
   tcnToken: token,
   targetYear: year,
   targetMonth: month,
-  headderPattern: headderPattern,
+  headerPattern: headerPattern,
 });

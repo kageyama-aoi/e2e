@@ -23,16 +23,16 @@ Before(async ({ I, loginKannrisyaPage, apiCommonLoginPage }) => {
   I.say(`セットアップ: トークン取得成功: ${secret(tcnToken)}`);
 });
 
-// データテーブル定義（列名: headderPattern）
-const headderPatternData = new DataTable(['headderPattern']);
-headderPatternData.add(['001']);
-headderPatternData.add(['002']);
+// データテーブル定義（列名: headerPattern）
+const headerPatternData = new DataTable(['headerPattern']);
+headerPatternData.add(['001']);
+headerPatternData.add(['002']);
 
 // ★ Data(DataTable).Scenario でデータ駆動
-Data(headderPatternData).Scenario(
-  '指定した年月の講師支払調書が取得できる (headderPattern: %{headderPattern})',
+Data(headerPatternData).Scenario(
+  '指定した年月の講師支払調書が取得できる (headerPattern: %{headerPattern})',
   async ({ I, jsonInputPage, current }) => {
-    const headderPattern = current.headderPattern;
+    const headerPattern = current.headerPattern;
 
     I.say('Step 1: トークン有効性の確認');
     if (!tcnToken) I.fail('Beforeフックでトークンが取得されていない。');
@@ -47,22 +47,25 @@ Data(headderPatternData).Scenario(
     const targetYear = String(d.getFullYear());
     const targetMonth = String(d.getMonth() + 1).padStart(2, '0');
 
-    // パラメータ生成（headderPattern を渡す）
+    // パラメータ生成（headerPattern を渡す）
     const apiParams = getTeacherPaymentReportParams(
       tcnToken,
       targetYear,
       targetMonth,
-      headderPattern
+      headerPattern
     );
 
     // API 実行
     jsonInputPage.executeApi(apiParams);
+    pause();
 
     I.say('Step 4: レスポンスをログ保存');
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const baseFileName = `96-60_teacher_payment_report_${headderPattern}_${timestamp}`;
+    const baseFileName = `96-60_teacher_payment_report_${headerPattern}_${timestamp}`;
     const responseText = await I.grabTextFrom(jsonInputPage.locators.responseArea);
     await I.saveLogToFile(`${baseFileName}_response.log`, responseText, apiParams);
+
+    parse();
 
     I.say('Step 5: レスポンス検証（現状はサーバーエラーを期待）');
     I.see('Internal Server Error', jsonInputPage.locators.responseArea);

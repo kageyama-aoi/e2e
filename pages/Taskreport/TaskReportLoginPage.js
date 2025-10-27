@@ -18,7 +18,7 @@ module.exports = {
   }
   ,
   // ▼ ページ操作関数
-    async grabBugTable2D() {
+  async grabBugTable2D() {
     return await I.executeScript(() => {
       const headerTr = document.querySelector('tr.bugTitle');
       if (!headerTr) return [];
