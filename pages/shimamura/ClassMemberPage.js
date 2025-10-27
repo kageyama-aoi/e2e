@@ -34,30 +34,30 @@ module.exports = {
   /**
    * メインメニューから指定された管理タブへ遷移し、ヘッダーテキストを検証します。
    * @param {string} tabName - クリックするタブのテキスト（例: 'コース'）
-   * @param {string} expectedHeaderText - 表示されるべきヘッダーのテキスト（例: 'コース一覧'）
+   * @param {string} expectedTitle - 表示されるべきヘッダーのテキスト（例: 'コース一覧'）
    */
-  navigateToAdminTab(tabName, expectedHeaderText) {
+  navigateToAdminTab(tabName, expectedTitle) {
     I.say(`メインメニューから「${tabName}」機能一覧へ遷移します。`);
     I.waitForElement(this.locators.kanriLink, 10);
     I.click(this.locators.kanriLink);
     this.clickOtherTab(tabName);
-    I.say(`「${expectedHeaderText}」が表示されたことを確認します。`);
-    I.see(expectedHeaderText);
+    I.say(`「${expectedTitle}」が表示されたことを確認します。`);
+    I.see(expectedTitle);
   },
 
   /**
    * サブメニュー内のリンクをクリックして、指定されたヘッダーが表示されることを確認します。
    * @param {string} linkText - クリックするリンクのテキスト（例: 'クラス一覧'）
-   * @param {string} [expectedHeaderText] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
+   * @param {string} [expectedTitle] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
    */
-  clickSubMenuLink(linkText, expectedHeaderText) {
+  clickSubMenuLink(linkText, expectedTitle) {
     I.say(`「${linkText}」をクリックしてページへ遷移します。`);
     const linkSelector = this.locators.subMenuLink(linkText);
     I.waitForElement(linkSelector, 10);
     I.click(linkSelector);
-    if (expectedHeaderText) {
-      I.say(`「${expectedHeaderText}」が表示されたことを確認します。`);
-      I.see(expectedHeaderText);
+    if (expectedTitle) {
+      I.say(`「${expectedTitle}」が表示されたことを確認します。`);
+      I.see(expectedTitle);
     }
   },
 

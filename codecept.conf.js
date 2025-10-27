@@ -26,6 +26,9 @@ exports.config = {
     },
     tframe: {
       files: './tests/tframe/*_test.js' // Use the correct glob pattern
+    },
+    taskreport: {
+      files: './tests/Taskreport/*_test.js'
     }
   },
   output: './output',
@@ -61,7 +64,8 @@ exports.config = {
     jsonInputPage: './pages/tframe/JsonInputPage.js',
     loginMyPage: './pages/tframe/LoginMyPage.js',
     loginPageShimamura: './pages/shimamura/LoginPage.js',
-    classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js'
+    classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
+    taskReportLoginPage: './pages/Taskreport/TaskReportLoginPage.js'
   },
   name: 'e2e',
   plugins: {

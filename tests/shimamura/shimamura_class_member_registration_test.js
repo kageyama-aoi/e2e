@@ -17,9 +17,11 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
 
   // メインメニューからコース管理ページへ遷移。
   classMemberPageShimamura.navigateToAdminTab('コース', 'コース一覧');
+  I.say("Course List Page URL: " + await I.grabCurrentUrl());
 
   // コースTabの中のクラス一覧画面に遷移
   classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
+  I.say("Class List Page URL: " + await I.grabCurrentUrl());
   
    // クラス一覧画面にて、1番上に表示されたクラスリンクを押下
   async function ClassViewOperate() {
@@ -30,22 +32,26 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
     I.selectOption('school_id','すべて');
     I.selectOption('course_category','発表会');
     I.click('検索');
+    I.say("Search Result Page URL: " + await I.grabCurrentUrl());
     I.waitForElement('.listViewTdLinkS1',10);
     const course_name = await I.grabTextFrom('a.listViewTdLinkS1');
     I.say(`リンクラベル: ${course_name}`);
     I.click(locate('.listViewTdLinkS1').at(2));
+    I.say("Course Detail Page URL: " + await I.grabCurrentUrl());
     return course_name;
   }
 
   const course_name = await ClassViewOperate();
   
   //クラス画面　操作
-  function ClassOperate(){
+  async function ClassOperate(){
     I.waitForElement('#tab_link_student_tab', 10);
     I.click('#tab_link_student_tab');
+    I.say("Student Tab Page URL: " + await I.grabCurrentUrl());
     I.seeElement('#tab_li_student_tab.active');   
     I.selectOption('#cs_course_seletion_pulldown', course_name); 
-    I.click('発表会選択')    
+    I.click('発表会選択');
+    I.say("Presentation Selection Page URL: " + await I.grabCurrentUrl());
   }
 
   await ClassOperate();
