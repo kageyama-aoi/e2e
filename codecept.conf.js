@@ -2,8 +2,11 @@
 require('dotenv').config();
 // 2. --profile オプションが指定されていれば、対応する .env.xxx ファイルを読み込んで設定を上書きします
 const profile = process.argv.includes('--profile') ? process.argv[process.argv.indexOf('--profile') + 1] : null;
+
+
+
+  // `override: true` で .env の値を上書き
 if (profile) {
-  // `override: true` で .env の値を上書きできます
   require('dotenv').config({ path: `.env.${profile}`, override: true });
 }
 
@@ -16,7 +19,7 @@ const { setCommonPlugins } = require('@codeceptjs/configure');
 exports.config = {
   // 'tests' プロパティは suites と併用できないため、コメントアウトまたは削除します。
   // tests: './tests/**/*_test.js', // Enabled
-  
+
   suites: {
     smoke: {
       files: './tests/smoke/*_test.js'
@@ -45,8 +48,8 @@ exports.config = {
         viewport: {
           width: 1280,
           height: 800
-        },      
-      args: ['--force-device-scale-factor=1']
+        },
+        args: ['--force-device-scale-factor=1']
       },
 
       // trueに設定すると、テスト実行後もブラウザを開いたままにします。
@@ -77,6 +80,24 @@ exports.config = {
       enabled: true,
       screenshotsForAllSteps: true,
       deleteSuccessful: false,
+    },
+    autoLogin: {
+      enabled: true,       // ← 有効化スイッチ
+      saveToFile: true,    // ← Cookieをファイルに保存して再利用
+      inject: 'login',     // ← テスト内で { login } として使えるようになる
+      users: {
+        user: {
+          login: () => {
+            const loginPageShimamura = require('./pages/shimamura/LoginPage.js');
+            loginPageShimamura.login();
+          },
+          // ログイン済みか確認
+          check: () => {
+            const loginPageShimamura = require('./pages/shimamura/LoginPage.js');
+            loginPageShimamura.seeLoggedIn();
+          },
+        },
+      },
     },
   },
 }

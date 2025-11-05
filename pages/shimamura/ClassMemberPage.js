@@ -36,13 +36,14 @@ module.exports = {
    * @param {string} tabName - クリックするタブのテキスト（例: 'コース'）
    * @param {string} expectedTitle - 表示されるべきヘッダーのテキスト（例: 'コース一覧'）
    */
-  navigateToAdminTab(tabName, expectedTitle) {
+  async navigateToAdminTab(tabName, expectedTitle) {
     I.say(`メインメニューから「${tabName}」機能一覧へ遷移します。`);
     I.waitForElement(this.locators.kanriLink, 10);
     I.click(this.locators.kanriLink);
     this.clickOtherTab(tabName);
     I.say(`「${expectedTitle}」が表示されたことを確認します。`);
     I.see(expectedTitle);
+    console.log(expectedTitle + "_URL: " + await I.grabCurrentUrl());
   },
 
   /**

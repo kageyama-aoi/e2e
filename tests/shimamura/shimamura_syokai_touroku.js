@@ -1,21 +1,17 @@
 // Feature('しまむら 受講生登録機能');
 Feature('Dev sandbox (@dev)');
 
-// Beforeフックを使い、各シナリオの前にログイン処理を共通化します。
-Before(({ I, loginPageShimamura }) => {
-  const username = process.env.TESTGCP_SHIMAMURA_USER;
-  const password = process.env.TESTGCP_SHIMAMURA_PASSWORD;
+Before(async ({ login,loginPageShimamura }) => {
   const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
-  loginPageShimamura.login(username, password);
-  loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
+  await login('user');
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
+
 });
 
 Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
-  async function ChangeFromTopToKoufo(){
-    classMemberPageShimamura.navigateToAdminTab('受講生', '受講生登録');
-    console.log("受講生登録ページURL: " + await I.grabCurrentUrl());
+  async function ShouldBeOnStudentGroup(){
     await SubmenuClick('submenu__candidates_grp_sub','候補生');
     classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
     console.log("候補生検索ページURL: " + await I.grabCurrentUrl());
@@ -25,42 +21,87 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
     const display = await I.grabCssPropertyFrom(`#${icon_element}`, 'display');
     if (display === 'none') {
       I.click(locate('span').withText(menuname));
-      console.log(`✅ ${menuname}「＋」ボタンが表示中なのでリンクを押下`);
+      console.log(`✅ サブメニューグループ：${menuname}「＋」ボタンが表示中なのでリンクを押下`);
     } else {
-    console.log(`⚠️ ${menuname}「-」ボタンなのでスキップ`);
+    console.log(`⚠️ サブメニューグループ：${menuname}「-」ボタンなのでスキップ`);
     }
   }
 
-  async function KouhoViewOperate() {
-    I.waitForElement(locate('body').withText('候補生一覧'), 5);
-    I.fillField('last_name', 'かげやま');
+  async function ShouldBeOnKouhoseiList(last_name='かげやま') {
+    const S ={
+      screen:
+      {
+        name:'候補生一覧'
+      },
+      button:
+      {
+        name:''
+      },
+      kekka:
+      {
+        element:'.listViewTdLinkS1'
+      }
+    }
+    I.waitForElement(locate('body').withText(S.screen.name), 5);
+    I.fillField('last_name', last_name);
     I.click('検索');
-    I.waitForElement('.listViewTdLinkS1',10);
+    I.waitForElement(S.kekka.element,10);
+    console.log(S.screen.name + `/fURL:`+await I.grabCurrentUrl());
+    
     const student_name = await I.grabTextFrom('a.listViewTdLinkS1');
-    I.say(`リンクラベル: ${student_name}`);
-    I.click(locate('.listViewTdLinkS1'));
+    I.click(locate(S.kekka.element));
+    console.log(`link_: ${student_name}`);
     return student_name;
   }
   
  
-  async function ChangeFromKouhoToStudent(){
+  async function ShouldBeOnKouhouseiDetail(){
+    const S ={
+      screen:
+      {
+        name:'候補生詳細'
+      },
+      button:
+      {
+        name:'受講生へ移動'
+      }
+    }
+    I.waitForElement(locate('body').withText(S.screen.name), 5);
+    console.log(S.screen.name+ `/URL:`+ await I.grabCurrentUrl());
+
     const idnumber = await I.grabTextFrom('#td_idnumber');
-    I.waitForElement(locate('body').withText('候補生詳細'), 5);
     console.log(`受講生情報: ${idnumber}_${student_name}`);
-    I.click('受講生へ移動');
+
+    I.click(S.button.name);
    
   }
 
 
-  async function KeirisyoriStart(){
-    I.waitForElement(locate('body').withText('受講生詳細'), 5);
-    await SubmenuClick('submenu__detailviews_sub','閲覧/登録・経理ビュー');
+  async function ShouldBeOnKeirisyoriScreenA(){
+      const S = {
+      submenu:
+      {
+        element_name:'submenu__detailviews_sub'
+      },
+      button:{
+        label:'クラス追加/更新する'
+      },
+      screen:
+      {
+        name:'受講生詳細'
+      }
+
+    }
+
+    I.waitForElement(locate('body').withText(S.screen.name), 5);
+    await SubmenuClick(S.submenu.element_name,'閲覧/登録・経理ビュー');
     classMemberPageShimamura.clickSubMenuLink('受講生登録・経理ビュー（個人）', '受講生登録・経理ビュー（個人）');
-    I.waitForElement(locate('body').withText('クラス追加/更新する'), 5);
-    I.click('クラス追加/更新する')
+    console.log(S.screen.name + `/URL:`+await I.grabCurrentUrl());
+    I.waitForElement(locate('body').withText(S.button.label), 5);
+    I.click(S.button.label)
   }
 
-  async function KeirisyoriScreenB(){
+  async function ShouldBeOnKeirisyoriScreenB(){
 
     const S = {
       textbox:
@@ -79,52 +120,92 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
       button:
       {
         class_select:'#course_popup_popup_button',
-        class_apply:'#apply_class'
+        label_class_set:'クラス適用',
+        label_course_set:'コース料金設定',
+        label_tran_set:'売上計上する',
+        label_keiri_finish:'確認完了（経理ビューへ）'
+      },
+      screen:
+      {
+        name:'受講生詳細'
+      },
+      screenE:
+      {
+        url_segment:'DWConfirmCarteKeiri_AN'
       }
+    }
 
+
+    I.click(S.button.class_select);
+    await ShouldBoOnClassSelectPopup(class_name01='ピアノ水曜日_01_03',S);
+    
+    I.switchToNextTab();
+    I.waitForElement(locate('body').withText(S.screen.name), 5);
+    I.click(S.button.label_class_set);
+   
+    (function setKensakuKoumoku() {
+      keiyaku_date='2025-10-01',kaishi_date='2025-10-01'
+      I.waitForEnabled(S.textbox.keiyaku_date, 15);
+      I.fillField(S.textbox.keiyaku_date, keiyaku_date);
+      I.fillField(S.textbox.kaishi_date, kaishi_date);
+    })();  
+
+    I.click(S.button.label_course_set);
+
+    I.wait(5); 
+    console.log(`経理ビューB_クラス選択POP_UP閉じたあと/URL:`+await I.grabCurrentUrl());
+    I.click(S.button.label_tran_set);
+
+    // console.log(`経理ビューE/URL:`+await I.grabCurrentUrl());
+    // await verifyNavigationByUrlChange(5, S.screenE.url_segment, S.button.label_keiri_finish);
+
+    // console.log(`経理ビューA/URL:`+await I.grabCurrentUrl());
+
+    async function ShouldBoOnClassSelectPopup(class_name01,S){
+      const SS = {
+        display:
+        {
+          name:'クラス選択POP_UP'
+        }
+    }
+      await I.wait(3);
+      
+      I.switchToNextTab();
+
+      (function setKensakuKoumoku() {
+        I.waitForElement(S.pulldown.area, 5);
+        I.fillField(S.textbox.class_name, class_name01);
+        I.selectOption(S.pulldown.couse_category,'スクール')
+        I.selectOption(S.pulldown.area,'すべて');
+        I.selectOption(S.pulldown.tenpo,'すべて');
+      })(); 
+
+
+      console.log(SS.display.name+`/URL:`+await I.grabCurrentUrl());      
+      I.click('検索');
+
+      I.waitForElement('.listViewTdLinkS1',10);
+      I.click(locate('.listViewTdLinkS1'));
 
     }
 
-    I.click(S.button.class_select);
-    await I.wait(3);
-    console.log("Current URL (after class select wait): " + await I.grabCurrentUrl());
-    I.switchToNextTab();
-
-
-    I.waitForElement(S.pulldown.area, 5);
-    I.fillField(S.textbox.class_name, 'ピアノ水曜日_01_03');
-    I.selectOption(S.pulldown.couse_category,'スクール')
-    I.selectOption(S.pulldown.area,'すべて');
-    I.selectOption(S.pulldown.tenpo,'すべて');
-    console.log(`現在のURL01:`+await I.grabCurrentUrl());
-    
-    I.click('検索');
-    I.waitForElement('.listViewTdLinkS1',10);
-    I.click(locate('.listViewTdLinkS1'));
-    
-    I.switchToNextTab();
-    console.log(`現在のURL02:`+await I.grabCurrentUrl());
-    I.waitForElement(locate('body').withText('受講生詳細'), 5);
-    I.click('クラス適用');
-   
-    I.waitForEnabled(S.textbox.keiyaku_date, 15);
-    I.fillField(S.textbox.keiyaku_date, '2025-10-01');
-    I.fillField(S.textbox.kaishi_date, '2025-10-01');
-    I.click('コース料金設定');
-
-    I.wait(5); 
-    console.log("Current URL (after course fee setting wait): " + await I.grabCurrentUrl());
-    I.click('売上計上する');
-
-    await verifyNavigationByUrlChange(5, 'DWConfirmCarteKeiri_AN', '確認完了（経理ビューへ）');
-
   }
 
-  async function TaikaiStart(){
+
+  // E
+  async function ShouldBeOnKeirisyoriScreenE(){
+    console.log(`経理ビューE/URL:`+await I.grabCurrentUrl());
+    await verifyNavigationByUrlChange(5, S.screenE.url_segment, S.button.label_keiri_finish);
+    console.log(`経理ビューA/URL:`+await I.grabCurrentUrl());
+  }
+
+
+  async function ShouldBeOnTaikai(){
     I.waitForElement(locate('body').withText('受講生詳細'), 5);
     await SubmenuClick('submenu__detailviews_sub','閲覧/登録・経理ビュー');
-    classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');    
+    classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');   
     I.click('退会処理')
+    console.log(`退会処理/URL:`+await I.grabCurrentUrl());
     // pause();
   }
 
@@ -149,12 +230,15 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
  
   }
 
-  await ChangeFromTopToKoufo();
-  const student_name = await KouhoViewOperate();  
-  await ChangeFromKouhoToStudent();
-  await KeirisyoriStart();
-  await KeirisyoriScreenB();
-  await TaikaiStart();
+  await classMemberPageShimamura.navigateToAdminTab('受講生', '受講生登録');
+
+  await ShouldBeOnStudentGroup();
+  const student_name = await ShouldBeOnKouhoseiList();  
+  await ShouldBeOnKouhouseiDetail();
+  await ShouldBeOnKeirisyoriScreenA();
+  await ShouldBeOnKeirisyoriScreenB();
+  await ShouldBeOnKeirisyoriScreenE();
+  await ShouldBeOnTaikai();
   
   
 
@@ -162,5 +246,6 @@ Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
 
   I.say('--- テスト正常終了: 退会画面へ遷移 ---');
-}
+  }
+
 );

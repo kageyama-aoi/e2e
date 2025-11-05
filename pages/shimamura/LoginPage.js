@@ -1,41 +1,65 @@
 const { I } = inject();
 
-module.exports = {
-  // TODO: しまむら用のログインページの実際の要素に合わせてセレクタを修正してください
-  locators: {
-    usernameField: 'input[name="user_name"]',
-    passwordField: 'input[name="user_password"]',
-    loginButton: 'ログイン',
-    tantousyaNumberPromptText: '担当者番号を入力してください',
-    tantousyaNumberField: 'input[name="idnumber"]',
-    mainMenuButton: 'メインメニュー',
-    logoutText: 'ログアウト',
-  },
+const locators_2 = {
+  usernameField: 'input[name="user_name"]',
+  passwordField: 'input[name="user_password"]',
+  tantousyaNumberField: 'input[name="idnumber"]',
+};
 
+const messages_2 = {
+  tantousyaPrompt: '担当者番号を入力してください．',
+  mainMenuKeyword: '管理',
+};
+
+const promt = {
+  tantousyaNumberPromptText: '担当者番号を入力してください',
+}
+
+module.exports = {
+  locators_2,
+  messages_2,
   /**
    * ログイン処理を実行します
    * @param {string} username - ユーザー名
    * @param {string} password - パスワード
    */
-  login(username, password) {
-    I.say(`しまむらログインページに遷移し、ユーザー名「${username}」でログインします...`);
-    // .env.shimamura で定義されたURLを使用します
-    I.amOnPage(process.env.LOGIN_SHIMAMURA_URL);
-    I.waitForElement(this.locators.usernameField, 5);
-    I.fillField(this.locators.usernameField, username);
-    I.fillField(this.locators.passwordField, secret(password));
-    I.click(this.locators.loginButton);
+  // login(username, password) {
+  login() {
+    I.say('AutoLoginへ進みます...');
+    I.amOnPage('/');
+    I.waitForElement(locators_2.usernameField, 5);
+    I.fillField(locators_2.usernameField, process.env.TESTGCP_SHIMAMURA_USER);
+    I.fillField(locators_2.passwordField, process.env.TESTGCP_SHIMAMURA_PASSWORD);
+    I.click('ログイン');
+    I.see('担当者番号を入力してください．', 'tbody');
+  },
+
+  // ログイン済みかの簡易チェック
+  seeLoggedIn() {
+    I.amOnPage('/');
+    I.see(messages_2.mainMenuKeyword, 'tbody');
   },
 
   /**
    * 担当者番号を入力してメインメニューへ進みます。
    * @param {string} tantousyaNumber - 担当者番号
    */
-  enterTantousyaNumberAndProceed(tantousyaNumber) {
+  async enterTantousyaNumberAndProceed(tantousyaNumber) {
+    // I.click('操作者変更');
+    const linkLocator = locate('a.myAreaLink').withText('操作者変更')
+
+    const count = await I.grabNumberOfVisibleElements(linkLocator);
+    if (count > 0) {
+      I.say('操作者変更リンクをクリックします');
+      I.click(linkLocator);
+    } else {
+      I.say('操作者変更リンクが見つからないのでスキップします');
+    }
+
     I.say('担当者番号を入力してメインメニューへ進みます...');
-    I.waitForText(this.locators.tantousyaNumberPromptText, 10); // 画面が変わるのを待つ
-    I.fillField(this.locators.tantousyaNumberField, tantousyaNumber);
-    I.click(this.locators.mainMenuButton);
+    I.waitForText(promt.tantousyaNumberPromptText, 5); // 画面が変わるのを待つ
+    I.fillField(locators_2.tantousyaNumberField, tantousyaNumber);
+    I.click('メインメニュー');
   }
 
 };
