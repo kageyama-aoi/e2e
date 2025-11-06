@@ -9,9 +9,10 @@ Scenario('正しい認証情報でマイページにログインできる', ({ I
 
   // Page Objectのメソッドを呼び出してログイン処理を実行します
   loginMyPage.login(username, password);
-
+  pause();
   // ログイン後の成功を検証します
   loginMyPage.seeLogout();
+
 
   // タイムスタンプ付きでスクリーンショットを保存するカスタムステップを呼び出します
   I.saveScreenshotWithTimestamp('LOGIN_Mypage.png');

@@ -1,25 +1,48 @@
-// 1. ベースとなる .env を読み込みます
+// ------------------------------------------------------
+//  環境変数の読み込み (.env ベース + プロファイル .env.xxx)
+// ------------------------------------------------------
 require('dotenv').config();
-// 2. --profile オプションが指定されていれば、対応する .env.xxx ファイルを読み込んで設定を上書きします
-const profile = process.argv.includes('--profile') ? process.argv[process.argv.indexOf('--profile') + 1] : null;
 
+/**
+ * コマンドライン引数から --profile の値を取得します。
+ * 例）npx codeceptjs run --profile shimamura
+ */
+function getProfileFromArgs() {
+  const profileIndex = process.argv.indexOf('--profile');
+  if (profileIndex === -1) return null;
 
+  // 値がなくても落ちないようにガード
+  return process.argv[profileIndex + 1] ?? null;
+}
 
-  // `override: true` で .env の値を上書き
+const profile = getProfileFromArgs();
+
+// `override: true` で .env の値を上書き
 if (profile) {
-  require('dotenv').config({ path: `.env.${profile}`, override: true });
+  require('dotenv').config({
+    path: `.env.${profile}`,
+    override: true
+  });
 }
 
 const { setCommonPlugins } = require('@codeceptjs/configure');
 
-// enable all common plugins https://github.com/codeceptjs/configure#setcommonplugins
-// setCommonPlugins(); // この行をコメントアウトすると、テスト後にブラウザが閉じるのを防げます
+// ------------------------------------------------------
+//  共通プラグインのON/OFFを環境変数で切り替え
+//  例）USE_COMMON_PLUGINS=true npx codeceptjs run
+// ------------------------------------------------------
+if (process.env.USE_COMMON_PLUGINS === 'true') {
+  setCommonPlugins();
+}
 
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
-  // 'tests' プロパティは suites と併用できないため、コメントアウトまたは削除します。
-  // tests: './tests/**/*_test.js', // Enabled
+  output: './output',
+  name: 'e2e',
 
+  // ----------------------------------------------------
+  //  テストスイート定義（tests は使わず suites のみに統一）
+  // ----------------------------------------------------
   suites: {
     smoke: {
       files: './tests/smoke/*_test.js'
@@ -34,16 +57,22 @@ exports.config = {
       files: './tests/Taskreport/*_test.js'
     }
   },
-  output: './output',
+
+  // ----------------------------------------------------
+  //  ヘルパー（Playwright）
+  // ----------------------------------------------------
   helpers: {
     Playwright: {
       url: process.env.BASE_URL || 'http://localhost',
       show: process.env.HEADLESS !== 'true',
       browser: 'chromium',
       windowSize: '1280x800',
-      pressDelay: 0,           // ← 入力爆速化
-      waitForTimeout: 5000,    // ← 待ち時間の上限短縮
-      waitForAction: 50,       // ← 各操作間のディレイ（クリックなど）も少し短く
+
+      // パフォーマンスチューニング設定
+      pressDelay: 0,
+      waitForTimeout: 5000,
+      waitForAction: 50,
+
       chromium: {
         viewport: {
           width: 1280,
@@ -52,13 +81,16 @@ exports.config = {
         args: ['--force-device-scale-factor=1']
       },
 
-      // trueに設定すると、テスト実行後もブラウザを開いたままにします。
-      // デバッグ時に最終画面を確認するのに便利です。
-      // 通常のCI/CD実行時には false またはこの行を削除することを推奨します。
+      // デフォルトはブラウザを閉じる
       keepBrowserState: false,
       // keepBrowserStateを有効にするには、restart: 'session' が必要です
+      // restart: 'session',
     }
   },
+
+  // ----------------------------------------------------
+  //  ページオブジェクト / steps の定義
+  // ----------------------------------------------------
   include: {
     I: './support/steps_file.js',
     loginKannrisyaPage: './pages/tframe/LoginKannrisyaPage.js',
@@ -70,7 +102,9 @@ exports.config = {
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
     taskReportLoginPage: './pages/Taskreport/TaskReportLoginPage.js'
   },
-  name: 'e2e',
+  // ----------------------------------------------------
+  //  プラグイン設定
+  // ----------------------------------------------------
   plugins: {
     allure: {
       enabled: true,
@@ -87,7 +121,9 @@ exports.config = {
       inject: 'login',     // ← テスト内で { login } として使えるようになる
       users: {
         user: {
+          // ログイン処理
           login: () => {
+            // ページオブジェクト側で inject() を使っている前提なので require の位置は現状維持
             const loginPageShimamura = require('./pages/shimamura/LoginPage.js');
             loginPageShimamura.login();
           },
