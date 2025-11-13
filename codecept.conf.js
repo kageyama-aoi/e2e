@@ -93,13 +93,16 @@ exports.config = {
   // ----------------------------------------------------
   include: {
     I: './support/steps_file.js',
+
     loginKannrisyaPage: './pages/tframe/LoginKannrisyaPage.js',
     apiCommonLoginPage: './pages/tframe/ApiCommonLoginPage.js',
     apiTeacherInfoGetPage: './pages/tframe/ApiTeacherInfoGetPage.js',
     jsonInputPage: './pages/tframe/JsonInputPage.js',
     loginMyPage: './pages/tframe/LoginMyPage.js',
+    
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
+    
     taskReportLoginPage: './pages/Taskreport/TaskReportLoginPage.js'
   },
   // ----------------------------------------------------
