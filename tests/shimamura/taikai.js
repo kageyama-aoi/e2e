@@ -53,81 +53,82 @@ async function ShouldBeOnZyukouseiList(I, idnumber) {
  */
 
 
+/**
+ * 退会画面までの遷移を行う（入力はまだしない）
+ */
+async function navigateToTaikaiScreen(I, classMemberPageShimamura) {
+  const S = {
+    screen: {
+      detailTitle: '受講生詳細',
+    },
+    submenu: {
+      iconId: 'submenu__detailviews_sub',
+      menuName: '閲覧/登録・経理ビュー',
+    },
+    accordion: {
+      paymentGroup: 'div[onclick*="payment_det_group"]',
+      kojin1: 'div[onclick*="kojin_1"]',
+    },
+    submenuLink: {
+      mainTitle: '受講生詳細',
+      subTitle: '個人情報１',
+    },
+    buttons: {
+      taikai: '退会処理',
+    },
+  };
 
-
-
-async function ShouldBeOnTaikai(I, classMemberPageShimamura) {
-
-   // 退会処理画面用 定数まとめ
-const TAIKAI = {
-  screen: {
-    detailTitle: '受講生詳細',
-  },
-  submenu: {
-    iconId: 'submenu__detailviews_sub',
-    menuName: '閲覧/登録・経理ビュー',
-  },
-  accordion: {
-    paymentGroup: 'div[onclick*="payment_det_group"]',
-    kojin1: 'div[onclick*="kojin_1"]',
-  },
-  submenuLink: {
-    mainTitle: '受講生詳細',
-    subTitle: '個人情報１',
-  },
-  buttons: {
-    taikai: '退会処理',
-    update: '更新',
-  },
-  fields: {
-    finalYear: '#final_enrollment_year',
-    finalMonth: '#final_enrollment_month',
-  },
-  checkboxes: {
-    firstMassAn: '(//input[@type="checkbox" and @name="mass_AN[]"])[1]',
-  },
-  values: {
-    finalYear: '2025',
-    finalMonth: '12',
-  },
-};
   // 受講生詳細 画面にいることを確認
-  I.waitForElement(locate('body').withText(TAIKAI.screen.detailTitle), 5);
+  I.waitForElement(locate('body').withText(S.screen.detailTitle), 5);
 
   // サブメニューグループ「閲覧/登録・経理ビュー」を開く
   await toggleGroupmenu(I, {
-    icon_id: TAIKAI.submenu.iconId,
-    menuname: TAIKAI.submenu.menuName,
+    icon_id: S.submenu.iconId,
+    menuname: S.submenu.menuName,
   });
 
   // アコーディオンの閉じるリンクをクリック
-  I.click(TAIKAI.accordion.paymentGroup);
-  I.click(TAIKAI.accordion.kojin1);
+  I.click(S.accordion.paymentGroup);
+  I.click(S.accordion.kojin1);
 
   // 受講生詳細へ移動（個人情報1タブ）
   classMemberPageShimamura.clickSubMenuLink(
-    TAIKAI.submenuLink.mainTitle,
-    TAIKAI.submenuLink.subTitle
+    S.submenuLink.mainTitle,
+    S.submenuLink.subTitle
   );
 
-  // デバッグ用: 必要なときだけ生かす
-  // pause();
-
   // 退会画面へ遷移
-  I.click(TAIKAI.buttons.taikai);
+  I.click(S.buttons.taikai);
   I.say(`退会処理/URL:` + await I.grabCurrentUrl());
-
-  // 退会画面入力
-  I.fillField(TAIKAI.fields.finalYear, TAIKAI.values.finalYear);
-  I.fillField(TAIKAI.fields.finalMonth, TAIKAI.values.finalMonth);
-
-  // チェックボックス（mass_AN[] の1番目）をON
-  I.click(TAIKAI.checkboxes.firstMassAn);
-
-  // 退会処理の実行
-  I.click(TAIKAI.buttons.update);
 }
 
+/**
+ * 退会画面にいる前提で、入力・チェック・更新を行う
+ */
+async function ShouldBeOnTaikai(I,finalYear, finalMonth) {
+  const S = {
+    fields: {
+      finalYear: '#final_enrollment_year',
+      finalMonth: '#final_enrollment_month',
+    },
+    checkboxes: {
+      firstMassAn: '(//input[@type="checkbox" and @name="mass_AN[]"])[1]',
+    },
+    buttons: {
+      update: '更新',
+    }
+  };
+
+  I.fillField(S.fields.finalYear, finalYear);
+  I.fillField(S.fields.finalMonth, finalMonth);
+
+
+  // チェックボックス（mass_AN[] の1番目）をON
+  I.click(S.checkboxes.firstMassAn);
+
+  // 退会処理の実行
+  I.click(S.buttons.update);
+}
 
 
 async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElement) {
@@ -169,14 +170,15 @@ Scenario('会員退会 @dev', async ({ I, classMemberPageShimamura }) => {
   await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生検索');
 
 
-  const idnumber = '29TK202510042';
+  const idnumber = '29TK202510041';
+  const finalYear = '2026';
+  const finalMonth = '02';
+
   await ShouldBeOnZyukouseiList(I, idnumber) ;
+  await navigateToTaikaiScreen(I, classMemberPageShimamura);
+  await ShouldBeOnTaikai(I,finalYear,finalMonth);
 
-  // await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
-  // const student_name = await ShouldBeOnKouhoseiList(I, last_name = 'かげやま');
 
-  await ShouldBeOnTaikai(I, classMemberPageShimamura);
-  pause();
 
   // 最終確認のスクリーンショット
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
