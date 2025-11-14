@@ -153,37 +153,36 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
 }
 
 
-/**
- * テストシナリオ
- */
+
+async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear, finalMonth }) {
+  I.say(`--- テスト開始: 対象受講生 ${idnumber} ---`);
+
+  // 管理タブ -> 受講生検索へ
+  await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生検索');
+
+  // 受講生検索 → 詳細 → 退会画面へ
+  await ShouldBeOnZyukouseiList(I, idnumber);
+  await navigateToTaikaiScreen(I, classMemberPageShimamura);
+
+  // 退会入力 & 更新
+  await ShouldBeOnTaikai(I, finalYear, finalMonth);
+
+  // スクリーンショット（idnumber付きだと追いやすい）
+  I.saveScreenshotWithTimestamp(`CLASS_MEMBER_TAIKAI_${idnumber}.png`);
+
+  I.say(`--- テスト正常終了: 退会処理 idnumber=${idnumber} ---`);
+}
 
 
 Scenario('会員退会 @dev', async ({ I, classMemberPageShimamura }) => {
-  I.say('--- テスト開始: 対象受講生 ---');
-
-  const input =
-  {
-    p1: '',
-    p2: ''
-  }
-
-  await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生検索');
-
 
   const idnumber = '29TK202510041';
   const finalYear = '2026';
-  const finalMonth = '02';
+  const finalMonth = '03';
 
-  await ShouldBeOnZyukouseiList(I, idnumber) ;
-  await navigateToTaikaiScreen(I, classMemberPageShimamura);
-  await ShouldBeOnTaikai(I,finalYear,finalMonth);
-
-
-
-  // 最終確認のスクリーンショット
-  I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
-
-  I.say('--- テスト正常終了: 退会画面へ遷移 ---');
-}
-
-);
+  await runTaikaiFlow(I, classMemberPageShimamura, {
+    idnumber,
+    finalYear,
+    finalMonth,
+  });
+});
