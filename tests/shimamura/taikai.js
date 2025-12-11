@@ -8,6 +8,27 @@ Before(async ({ login, loginPageShimamura }) => {
 });
 
 
+const fs = require('fs');
+const path = require('path');
+
+function loadTaikaiTestDataFromCsv(csvFileName) {
+  const filePath = path.join(__dirname, csvFileName);
+  const content = fs.readFileSync(filePath, 'utf8').trim();
+
+  const lines = content.split('\n').filter(line => line.trim() !== '');
+  const [headerLine, ...rows] = lines;
+  const headers = headerLine.split(',').map(h => h.trim());
+
+  return rows.map(line => {
+    const cols = line.split(',').map(c => c.trim());
+    const record = {};
+    headers.forEach((key, index) => {
+      record[key] = cols[index] || '';
+    });
+    return record;
+  });
+}
+
 /**
  * トグルメニュー（個別コードではなく、共通化
  */
@@ -174,15 +195,27 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear,
 }
 
 
+
 Scenario('会員退会 @dev', async ({ I, classMemberPageShimamura }) => {
 
-  const idnumber = '29TK202510041';
-  const finalYear = '2026';
-  const finalMonth = '03';
+  const testDataList = loadTaikaiTestDataFromCsv('taikai_testdata.csv');
 
-  await runTaikaiFlow(I, classMemberPageShimamura, {
-    idnumber,
-    finalYear,
-    finalMonth,
-  });
+  I.say(`CSVテストデータ件数: ${testDataList.length}件`);
+
+  for (const data of testDataList) {
+    const { idnumber, finalYear, finalMonth } = data;
+
+    if (!idnumber) {
+      I.say('⚠️ idnumber が空の行をスキップ');
+      continue;
+    }
+
+    await runTaikaiFlow(I, classMemberPageShimamura, {
+      idnumber,
+      finalYear,
+      finalMonth,
+    });
+  }
+
+  I.say('=== 全テストデータ分の退会処理シナリオ完了 ===');
 });

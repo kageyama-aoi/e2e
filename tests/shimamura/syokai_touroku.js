@@ -249,12 +249,20 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
 Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
-  const input =
+  // const input =
+  // {
+  //   class_name01: 'ピアノ水曜日_01_03',
+  //   keiyaku_date: '2025-11-04',
+  //   kaishi_date: '2025-11-05'
+  // }
+
+    const input =
   {
-    class_name01: 'ピアノ水曜日_01_03',
-    keiyaku_date: '2025-11-04',
-    kaishi_date: '2025-11-05'
+    class_name01: 'ドラム-水-19:00-萩本宗太',
+    keiyaku_date: '2025-12-04',
+    kaishi_date: '2025-12-05'
   }
+
 
   await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生登録');
   await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
