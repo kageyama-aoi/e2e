@@ -1,0 +1,11 @@
+npm run test:shimamura:syokai -- --profile shimamura.testgcp2
+実行したら
+
+> e2e-tests@1.0.0 test:shimamura:syokai
+> npx codeceptjs run ./tests/shimamura/syokai_touroku.js shimamura.testgcp2
+
+[dotenv@17.2.3] injecting env (12) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+--- DEBUG: Detected Profile: shimamura
+--- DEBUG: Loading Env From: C:\Users\kageyama\Tools\testcode\e2e\.env.shimamura
+
+ってなってるね

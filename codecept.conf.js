@@ -8,21 +8,52 @@ require('dotenv').config();
  * 例）npx codeceptjs run --profile shimamura
  */
 function getProfileFromArgs() {
-  const profileIndex = process.argv.indexOf('--profile');
-  if (profileIndex === -1) return null;
+  const args = process.argv;
+  // 1. 環境変数を最優先
+  if (process.env.PROFILE) {
+    console.log('--- DEBUG: Detected Profile from ENV:', process.env.PROFILE);
+    return process.env.PROFILE;
+  }
 
-  // 値がなくても落ちないようにガード
-  return process.argv[profileIndex + 1] ?? null;
+  // 2. 引数 --profile を検索
+  let profile = null;
+  for (let i = args.length - 1; i >= 0; i--) {
+    if (args[i] === '--profile' && args[i + 1]) {
+      profile = args[i + 1];
+      break;
+    }
+  }
+
+  // 3. 特殊ケース: npm経由でフラグが消えて値だけが最後に残っている場合
+  // (npx codeceptjs run test.js shimamura.testgcp2 のようなケース)
+  if (!profile && args.length > 0) {
+    const lastArg = args[args.length - 1];
+    if (lastArg.startsWith('shimamura.')) {
+      profile = lastArg;
+    }
+  }
+  
+  // 4. 指定がない場合のデフォルト
+  if (!profile) profile = 'shimamura';
+
+  console.log('--- DEBUG: Detected Profile:', profile);
+  return profile;
 }
 
 const profile = getProfileFromArgs();
 
 // `override: true` で .env の値を上書き
 if (profile) {
-  require('dotenv').config({
-    path: `.env.${profile}`,
-    override: true
-  });
+  const envPath = require('path').resolve(process.cwd(), `.env.${profile}`);
+  if (require('fs').existsSync(envPath)) {
+    console.log('--- DEBUG: Loading Env From:', envPath);
+    require('dotenv').config({
+      path: envPath,
+      override: true
+    });
+  } else {
+    console.log('--- DEBUG: Env file not found, skipping override:', envPath);
+  }
 }
 
 const { setCommonPlugins } = require('@codeceptjs/configure');

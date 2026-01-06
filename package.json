@@ -7,6 +7,7 @@
     "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura",
     "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",
     "test_taskreport": "npx codeceptjs run ./tests/Taskreport/*_test.js --profile taskreport",
+    "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku.js",
     "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/navigation_after_login_student_test.js"
   },
   "keywords": [

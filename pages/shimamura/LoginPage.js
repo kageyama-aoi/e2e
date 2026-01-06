@@ -28,8 +28,8 @@ module.exports = {
     I.say('AutoLoginへ進みます...');
     I.amOnPage('/');
     I.waitForElement(locators_2.usernameField, 5);
-    I.fillField(locators_2.usernameField, process.env.TESTGCP_SHIMAMURA_USER);
-    I.fillField(locators_2.passwordField, process.env.TESTGCP_SHIMAMURA_PASSWORD);
+    I.fillField(locators_2.usernameField, process.env.SHIMAMURA_USER);
+    I.fillField(locators_2.passwordField, process.env.SHIMAMURA_PASSWORD);
     I.click('ログイン');
     I.see('担当者番号を入力してください．', 'tbody');
   },
@@ -56,9 +56,9 @@ module.exports = {
       I.say('操作者変更リンクが見つからないのでスキップします');
     }
 
-    I.say('担当者番号を入力してメインメニューへ進みます...');
+    I.say(`担当者番号[${tantousyaNumber}]を入力してメインメニューへ進みます...`);
     I.waitForText(promt.tantousyaNumberPromptText, 5); // 画面が変わるのを待つ
-    I.fillField(locators_2.tantousyaNumberField, tantousyaNumber);
+    I.fillField(locators_2.tantousyaNumberField, String(tantousyaNumber));
     I.click('メインメニュー');
   }
 

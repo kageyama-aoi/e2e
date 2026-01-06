@@ -1,10 +1,58 @@
-// Feature('しまむら 受講生登録機能');
+const fs = require('fs');
+const path = require('path');
+
+function readCsv(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+    if (lines.length < 2) return []; // ヘッダーのみまたは空の場合
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      if (values.length === headers.length) {
+        const row = {};
+        for (let j = 0; j < headers.length; j++) {
+          row[headers[j]] = values[j];
+        }
+        data.push(row);
+      }
+    }
+    return data;
+  } catch (err) {
+    console.error(`Error reading CSV file: ${filePath}`, err);
+    return [];
+  }
+}
+
+function getProfileFromArgs() {
+  const profileIndex = process.argv.indexOf('--profile');
+  if (profileIndex === -1) return null;
+  return process.argv[profileIndex + 1] ?? null;
+}
+
+const profile = getProfileFromArgs();
+const defaultCsvPath = path.join(__dirname, 'syokai_touroku_data.csv');
+const profileCsvPath = profile ? path.join(__dirname, `syokai_touroku_data_${profile}.csv`) : null;
+
+let csvData = [];
+if (profileCsvPath && fs.existsSync(profileCsvPath)) {
+  csvData = readCsv(profileCsvPath);
+} else {
+  csvData = readCsv(defaultCsvPath);
+}
+
 Feature('Dev sandbox (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
+  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
+  if (!tantousyaNumber) {
+    throw new Error('❌ SHIMAMURA_TANTOUSYA が環境変数（.envファイル）に設定されていません。プロファイルが正しく指定されているか確認してください。');
+  }
   await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber.replace(/['"]/g, ''));
 
 });
 
@@ -192,7 +240,7 @@ async function ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura) {
  * 退会処理
  */
 
-async function ShouldBeOnTaikai(I, classMemberPageShimamura) {
+async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
   //   const S = {
   //   display: { name: 'クラス選択POP_UP' },
   //   button: { search: '検索' },
@@ -208,8 +256,8 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura) {
   I.click('退会処理')
   I.say(`退会処理/URL:` + await I.grabCurrentUrl());
   
-  I.fillField('#final_enrollment_year', '2026');
-  I.fillField('#final_enrollment_month', '02');
+  I.fillField('#final_enrollment_year', taikaiYear);
+  I.fillField('#final_enrollment_month', taikaiMonth);
   // I.fillField(locators.textbox.class_name, className);
   
   // final_enrollment_year
@@ -246,33 +294,26 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
  */
 
 
-Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura }) => {
+Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura, current }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
-  // const input =
-  // {
-  //   class_name01: 'ピアノ水曜日_01_03',
-  //   keiyaku_date: '2025-11-04',
-  //   kaishi_date: '2025-11-05'
-  // }
-
-    const input =
+  const input =
   {
-    class_name01: 'ドラム-水-19:00-萩本宗太',
-    keiyaku_date: '2025-12-04',
-    kaishi_date: '2025-12-05'
+    class_name01: current.className,
+    keiyaku_date: current.keiyakuDate,
+    kaishi_date: current.kaishiDate
   }
 
 
   await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生登録');
   await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
-  const student_name = await ShouldBeOnKouhoseiList(I, last_name = 'かげやま');
+  const student_name = await ShouldBeOnKouhoseiList(I, last_name = current.lastName);
   await ShouldBeOnKouhouseiDetail(I, student_name);
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
   await ShouldBeOnKeirisyoriScreenB(I, input);
 
   await ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura);
-  await ShouldBeOnTaikai(I, classMemberPageShimamura);
+  await ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear: current.taikaiYear, taikaiMonth: current.taikaiMonth });
 
 
 
