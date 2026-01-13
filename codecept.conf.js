@@ -44,7 +44,7 @@ const profile = getProfileFromArgs();
 
 // `override: true` で .env の値を上書き
 if (profile) {
-  const envPath = require('path').resolve(process.cwd(), `.env.${profile}`);
+  const envPath = require('path').resolve(process.cwd(), 'env', `.env.${profile}`);
   if (require('fs').existsSync(envPath)) {
     console.log('--- DEBUG: Loading Env From:', envPath);
     require('dotenv').config({

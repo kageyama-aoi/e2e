@@ -4,4 +4,5 @@ allure-results/
 
 # Environment variables
 .env
-.env.shimamura
+env/.env.*
+!env/.env.shimamura.template
