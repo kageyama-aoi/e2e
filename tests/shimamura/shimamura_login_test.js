@@ -2,11 +2,15 @@
 Feature('Dev sandbox (@dev)');
 // `loginPageShimamura` Page Objectをインジェクトします
 Scenario('正しい認証情報でしまむらにログインし、担当者番号を入力してメインメニューへ進める', ({ I, loginPageShimamura }) => {
-  // .env.shimamura ファイルに定義したユーザー情報を使用します
-  const username = process.env.TESTGCP_SHIMAMURA_USER;
-  const password = process.env.TESTGCP_SHIMAMURA_PASSWORD;
-  const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
+  // 環境変数からログイン情報を取得します（プロファイルによって値が切り替わります）
+  const username = process.env.SHIMAMURA_USER;
+  const password = process.env.SHIMAMURA_PASSWORD;
+  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
 
+  // 環境変数が正しく読み込まれているかチェック
+  if (!username || !password || !tantousyaNumber) {
+    throw new Error('❌ ログイン情報（SHIMAMURA_USER, SHIMAMURA_PASSWORD, SHIMAMURA_TANTOUSYA）が環境変数に設定されていません。プロファイルの設定を確認してください。');
+  }
 
   // Page Objectのメソッドを呼び出してログイン処理を実行します
   loginPageShimamura.login(username, password);
