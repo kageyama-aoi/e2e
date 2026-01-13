@@ -18,23 +18,37 @@ npm install
 
 ## 環境設定 (Configuration)
 
-本プロジェクトでは `dotenv` を使用して環境設定を管理しています。基本設定は `.env` から、プロファイル固有の設定は `.env.<profile>` から読み込まれます。
+本プロジェクトでは `dotenv` を使用して環境設定を管理しています。基本設定は `.env`（ルート）から、プロファイル固有の設定は `env/` ディレクトリ内の `.env.<profile>` から読み込まれます。
 
-### 利用可能な環境設定ファイル例
-- `.env.shimamura.template` (テンプレート)
-- `.env.shimamura.testgcp`
-- `.env.shimamura.testgcp2`
-- `.env.shimamura.traininggcp`
-- `.env.taskreport`
+### 利用可能な環境設定ファイル (env/ 配下)
+- `env/.env.shimamura.template` (テンプレート)
+- `env/.env.shimamura.testgcp`
+- `env/.env.shimamura.testgcp2`
+- `env/.env.shimamura.traininggcp`
+- `env/.env.taskreport`
 
 ## テストの実行方法
 
 ### 推奨: バッチファイルでの実行 (しまむら環境)
 
-プロジェクトルートにある `run_syokai_shimamura.bat` を使用すると、簡単に初回登録テストを実行できます。
+プロジェクトルートにある `run_syokai_shimamura.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。
 
-1. `run_syokai_shimamura.bat` をダブルクリック（またはコマンドラインから実行）。
-2. プロンプトが表示されたら、プロファイル名を入力（例: `shimamura.testgcp`）。
+1. `run_syokai_shimamura.bat` をダブルクリック。
+2. `Enter profile name:` と表示されたら、プロファイル名を入力します。
+   - `shimamura.testgcp` 等
+   - 何も入力せずに Enter を押すと `shimamura` が選択されます。
+
+### コマンドラインでの実行
+
+特定のプロファイルを指定して実行する場合は、`--profile` フラグを使用します。
+
+```bash
+# プロファイルを指定して実行
+npx codeceptjs run --profile shimamura.testgcp
+
+# しまむら初回登録テストを直接指定して実行
+npx codeceptjs run ./tests/shimamura/syokai_touroku.js --profile shimamura.testgcp
+```
 
 ### npm コマンドでの実行
 
@@ -58,50 +72,15 @@ npm test
     npm run test_taskreport
     ```
 
-### プロファイルの指定
-
-`--profile` フラグを使用することで、特定の環境設定 (`.env.<profile>`) を読み込んでテストを実行できます。
-
-```bash
-npx codeceptjs run --profile shimamura.testgcp
-```
-
-特定のスクリプト経由:
-```bash
-npm run test:shimamura:syokai -- --profile shimamura.testgcp
-```
-
-### デバッグモード
-
-ステップごとの実行内容を表示しながらデバッグ実行する場合:
-```bash
-npm run test_now
-```
-
-## テストデータ (データ駆動テスト)
-
-`shimamura` プロジェクトでは、CSVファイルを使用したデータ駆動テストが可能です。
-`tests/shimamura/` 配下の CSV ファイルがプロファイル名に基づいて自動的に読み込まれます。
-
-*   **命名規則:** `syokai_touroku_data_[profile].csv`
-*   **例:** `syokai_touroku_data_shimamura.testgcp.csv`
-
-該当するプロファイル用のCSVが存在しない場合は、デフォルトの `syokai_touroku_data.csv` が使用されます。
-
-**CSVフォーマット例:**
-```csv
-lastName,className,keiyakuDate,kaishiDate,taikaiYear,taikaiMonth
-退会_TestGCP,ドラム-水-19:00-テスト太郎,2026-02-01,2026-02-02,2026,03
-```
-
-## ディレクトリ構成
+### ディレクトリ構成
 
 - **tests/**: テストファイル (`shimamura`, `tframe`, `taskreport`, `smoke` フォルダ別)。
-- **pages/**: ページオブジェクト (Page Objects)。セレクタや操作ロジックを管理。
+- **pages/**: ページオブジェクト。
+- **env/**: 環境設定ファイル (`.env.*`)。
 - **support/**: ヘルパーファイルや `steps_file.js`。
-- **output/**: テスト結果のアーティファクト (スクリーンショット、レポートなど)。
-- **doc/**: 詳細なドキュメントや設計図。
+- **output/**: テスト結果（スクリーンショット等）。
 - **codecept.conf.js**: CodeceptJS のメイン設定ファイル。
+
 
 ## レポート
 
