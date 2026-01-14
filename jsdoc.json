@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["tests/shimamura"],
+    "includePattern": ".+\\.js$"
+  },
+  "opts": {
+    "destination": "docs/generated/html",
+    "recurse": true,
+    "template": "node_modules/docdash"
+  }
+}

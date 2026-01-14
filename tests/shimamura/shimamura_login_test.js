@@ -1,6 +1,13 @@
 // Feature('しまむら １ログイン機能');
 Feature('Dev sandbox (@dev)');
-// `loginPageShimamura` Page Objectをインジェクトします
+
+/**
+ * しまむらログイン機能のテストシナリオ
+ * 正常な認証情報と担当者番号を使用してログインフローを検証する
+ * @param {object} args - CodeceptJSのDI引数
+ * @param {CodeceptJS.I} args.I - Iオブジェクト
+ * @param {object} args.loginPageShimamura - ログインページオブジェクト
+ */
 Scenario('正しい認証情報でしまむらにログインし、担当者番号を入力してメインメニューへ進める', ({ I, loginPageShimamura }) => {
   // 環境変数からログイン情報を取得します（プロファイルによって値が切り替わります）
   const username = process.env.SHIMAMURA_USER;

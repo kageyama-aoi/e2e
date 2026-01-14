@@ -1,7 +1,13 @@
 // Feature('しまむら クラス会員登録機能');
 Feature('Dev sandbox (@dev)');
 
-// Beforeフックを使い、各シナリオの前にログイン処理を共通化します。
+/**
+ * テスト実行前のセットアップ
+ * 各シナリオの前にログイン処理と担当者番号入力を共通で行う
+ * @param {object} args - CodeceptJSのDI引数
+ * @param {CodeceptJS.I} args.I - Iオブジェクト
+ * @param {object} args.loginPageShimamura - ログインページオブジェクト
+ */
 Before(({ I, loginPageShimamura }) => {
   const username = process.env.TESTGCP_SHIMAMURA_USER;
   const password = process.env.TESTGCP_SHIMAMURA_PASSWORD;
@@ -10,7 +16,9 @@ Before(({ I, loginPageShimamura }) => {
   loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
-// ログイン処理はBeforeフックで行われるため、ここでは classMemberPageShimamura のみインジェクトします。
+/**
+ * クラス会員登録のテストシナリオ
+ */
 Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMemberPageShimamura }) => {
   // --- テスト本編: クラス会員登録 ---
   I.say('--- テスト開始: クラス会員登録 ---');
@@ -23,7 +31,10 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
   classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
   I.say("Class List Page URL: " + await I.grabCurrentUrl());
   
-   // クラス一覧画面にて、1番上に表示されたクラスリンクを押下
+   /**
+    * クラス一覧画面にて、検索条件を入力し、結果のリンクをクリックして詳細へ移動する
+    * @returns {Promise<string>} 選択したコース名
+    */
   async function ClassViewOperate() {
     I.fillField('name', '鈴木');
     I.selectOption('display_hyouji','すべて');
@@ -43,7 +54,9 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
 
   const course_name = await ClassViewOperate();
   
-  //クラス画面　操作
+  /**
+   * クラス詳細画面でのタブ操作とコース選択を行う
+   */
   async function ClassOperate(){
     I.waitForElement('#tab_link_student_tab', 10);
     I.click('#tab_link_student_tab');
