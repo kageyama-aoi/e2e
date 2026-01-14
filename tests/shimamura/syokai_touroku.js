@@ -34,8 +34,9 @@ function getProfileFromArgs() {
 }
 
 const profile = getProfileFromArgs();
-const defaultCsvPath = path.join(__dirname, 'syokai_touroku_data.csv');
-const profileCsvPath = profile ? path.join(__dirname, `syokai_touroku_data_${profile}.csv`) : null;
+// CSVパス
+const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_data.csv');
+const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_data_${profile}.csv`) : null;
 
 let csvData = [];
 if (profileCsvPath && fs.existsSync(profileCsvPath)) {

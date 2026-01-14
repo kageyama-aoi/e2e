@@ -20,6 +20,36 @@ exports.config = {
   name: 'e2e',
 
   // ----------------------------------------------------
+  //  Bootstrap: テスト実行前の初期化処理
+  // ----------------------------------------------------
+  bootstrap: function() {
+    const fs = require('fs');
+    const path = require('path');
+    const allureResultsDir = path.join(__dirname, 'allure-results');
+    
+    // allure-results フォルダがない場合は作成
+    if (!fs.existsSync(allureResultsDir)) {
+      fs.mkdirSync(allureResultsDir, { recursive: true });
+    }
+  
+    // Allure レポートに表示したい環境情報を定義
+    // ここで .env から読み込んだ値やプロファイル名を出力します
+    const envData = `Profile=${process.env.profile || 'default'}
+BaseURL=${process.env.BASE_URL || 'unknown'}
+Browser=${process.env.BROWSER || 'chromium'}
+EnvironmentFile=.env.${process.env.profile || ''}
+`;
+  
+    // environment.properties ファイルとして書き出し
+    try {
+      fs.writeFileSync(path.join(allureResultsDir, 'environment.properties'), envData);
+      console.log('Creates allure-results/environment.properties');
+    } catch (err) {
+      console.error('Failed to create allure-results/environment.properties', err);
+    }
+  },
+
+  // ----------------------------------------------------
   //  テストスイート定義（tests は使わず suites のみに統一）
   // ----------------------------------------------------
   suites: {

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Allure × npx エラーの整理と使い方まとめ</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.7;
+      margin: 40px;
+      color: #222;
+    }
+    h1, h2, h3 {
+      border-left: 6px solid #4a90e2;
+      padding-left: 10px;
+    }
+    code, pre {
+      background: #f5f7fa;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    pre {
+      overflow-x: auto;
+    }
+    .box {
+      background: #f9fbff;
+      border: 1px solid #cfd9e6;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 6px;
+    }
+    .why {
+      background: #fff8e1;
+      border-left: 6px solid #f5a623;
+      padding: 12px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Allure レポート生成エラーの整理と正しい使い方</h1>
+
+<h2>1. 起きていたこと（今回のエラー）</h2>
+
+<p>実行したコマンド：</p>
+
+<pre><code>npx allure generate allure-results --clean -o allure-report</code></pre>
+
+<p>表示されたエラー：</p>
+
+<pre><code>Unknown Syntax Error: Command not found
+While running generate allure-results --clean -o allure-report</code></pre>
+
+<div class="box">
+  <strong>ポイント：</strong><br />
+  Allure は起動できているが、<br />
+  <strong>コマンドの引数の解釈に失敗している</strong> 状態。
+</div>
+
+<h2>2. なぜこのエラーが起きたのか</h2>
+
+<div class="why">
+  <strong>原因の本質：</strong><br />
+  <ul>
+    <li>npx 経由で Allure CLI を実行している</li>
+    <li>PowerShell 環境</li>
+    <li>Allure CLI が独自のコマンドパーサを使っている</li>
+  </ul>
+  この組み合わせにより、<br />
+  <strong>引数全体が「1つの不正なコマンド」として解釈された</strong>
+</div>
+
+<p>
+つまり、Allure が壊れているのでも、<br />
+テスト結果がおかしいのでもありません。
+</p>
+
+<h2>3. 正しい解決方法（おすすめ）</h2>
+
+<h3>方法①：Allure をグローバルにインストール</h3>
+
+<pre><code>npm install -g allure-commandline</code></pre>
+
+<p>その後は、npx を使わずに実行します。</p>
+
+<pre><code>allure generate allure-results --clean -o allure-report</code></pre>
+
+<div class="box">
+  <strong>なぜこれが一番良いか</strong>
+  <ul>
+    <li>PowerShell / Git Bash / CI で挙動が安定</li>
+    <li>引数トラブルが起きにくい</li>
+    <li>実務・CI構成と同じ形になる</li>
+  </ul>
+</div>
+
+<h3>参考：npx を使う場合（非推奨）</h3>
+
+<pre><code>npx allure -- generate allure-results -o allure-report --clean</code></pre>
+
+<p>
+応急処置としては動くことがありますが、<br />
+再発しやすいため常用はおすすめされません。
+</p>
+
+<h2>4. allure-results の確認</h2>
+
+<pre><code>ls allure-results</code></pre>
+
+<p>
+中に <code>.json</code> ファイルがあれば OK。<br />
+なければ、テスト実行時に <code>--alluredir</code> が指定されていません。
+</p>
+
+<h2>5. 用語ミニ解説</h2>
+
+<h3>CLI（Command Line Interface）</h3>
+<p>
+コマンド（文字）で操作するツールのこと。<br />
+<code>allure</code>、<code>pytest</code>、<code>git</code> などが CLI。
+</p>
+
+<h3>NPM</h3>
+<p>
+Node.js のパッケージ管理ツール。<br />
+ライブラリや CLI ツールを <strong>インストールする役割</strong>。
+</p>
+
+<pre><code>npm install -g allure-commandline</code></pre>
+
+<h3>NPX</h3>
+<p>
+npm に付属する <strong>一時実行ツール</strong>。<br />
+インストールせずに、その場でコマンドを実行できる。
+</p>
+
+<p>
+便利だが、CLI ツールによっては<br />
+<strong>引数解釈の相性問題が起きる</strong>。
+</p>
+
+<h3>Allure</h3>
+<p>
+テスト結果を人が理解しやすい HTML レポートに変換するツール。<br />
+テストは実行せず、<strong>結果を可視化する役割</strong>に専念している。
+</p>
+
+<h2>6. まとめ</h2>
+
+<ul>
+  <li>今回のエラーは npx と Allure CLI の相性問題</li>
+  <li>Allure 自体は正常に動いている</li>
+  <li>実務では「グローバルインストール → allure コマンド」が安定</li>
+</ul>
+
+<p>
+この理解があると、<br />
+CI（GitHub Actions / Jenkins）への展開もスムーズになります。
+</p>
+
+</body>
+</html>

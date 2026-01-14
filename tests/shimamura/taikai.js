@@ -1,7 +1,7 @@
 Feature('退会処理 (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.TESTGCP_SHIMAMURA_TANTOUSYA;
+  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
   await login('user');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 
@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 
 function loadTaikaiTestDataFromCsv(csvFileName) {
-  const filePath = path.join(__dirname, csvFileName);
+  const filePath = path.join(__dirname, '../../data/shimamura', csvFileName);
   const content = fs.readFileSync(filePath, 'utf8').trim();
 
   const lines = content.split('\n').filter(line => line.trim() !== '');
