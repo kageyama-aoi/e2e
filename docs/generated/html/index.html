@@ -64,6 +64,422 @@
 
 
 
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            shimamura_class_member_registration_test.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>クラス会員登録機能のE2Eテスト**処理フロー**- 1. 担当者アカウントでログイン- 2. コース管理 > コース一覧 > クラス一覧 へ遷移- 3. クラス一覧で条件検索し、クラスを選択- 4. クラス詳細画面で受講生タブを選択し、会員登録操作を行う**前提条件**- 環境変数 `TESTGCP_SHIMAMURA_USER`, `TESTGCP_SHIMAMURA_PASSWORD`, `TESTGCP_SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="shimamura_class_member_registration_test.js.html">shimamura_class_member_registration_test.js</a>, <a href="shimamura_class_member_registration_test.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">クラス会員登録機能のE2Eテスト**処理フロー**- 1. 担当者アカウントでログイン- 2. コース管理 > コース一覧 > クラス一覧 へ遷移- 3. クラス一覧で条件検索し、クラスを選択- 4. クラス詳細画面で受講生タブを選択し、会員登録操作を行う**前提条件**- 環境変数 `TESTGCP_SHIMAMURA_USER`, `TESTGCP_SHIMAMURA_PASSWORD`, `TESTGCP_SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            shimamura_login_test.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら環境のログイン機能テスト**テスト内容**- 正しいユーザーID、パスワード、担当者番号を用いてログインできるか検証する- 正常系フローのみを確認する基本的なスモークテスト**前提条件**- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="shimamura_login_test.js.html">shimamura_login_test.js</a>, <a href="shimamura_login_test.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">しまむら環境のログイン機能テスト**テスト内容**- 正しいユーザーID、パスワード、担当者番号を用いてログインできるか検証する- 正常系フローのみを確認する基本的なスモークテスト**前提条件**- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            syokai_touroku.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>新規会員登録および経理処理の自動化テストデータ駆動（Data Driven）テストとして実装されており、CSVファイルからテストデータを読み込んで実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv` (または `--profile` オプションに応じたファイル)**最終更新日**- 2026-01-17</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="syokai_touroku.js.html">syokai_touroku.js</a>, <a href="syokai_touroku.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">新規会員登録および経理処理の自動化テストデータ駆動（Data Driven）テストとして実装されており、CSVファイルからテストデータを読み込んで実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv` (または `--profile` オプションに応じたファイル)**最終更新日**- 2026-01-17</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            taikai.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>会員退会処理のE2Eテストシナリオこのファイルは、CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン (Beforeフック)- 2. `taikai_testdata.csv` からテストデータを読み込み- 3. 各レコードに対して以下の処理を繰り返し実行:  - a. 受講生検索画面でID検索  - b. 受講生詳細画面へ遷移  - c. 「閲覧/登録・経理ビュー」>「個人情報1」>「退会処理」へ遷移  - d. 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること**最終更新日**- 2026-01-17</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="taikai.js.html">taikai.js</a>, <a href="taikai.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">会員退会処理のE2Eテストシナリオこのファイルは、CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン (Beforeフック)- 2. `taikai_testdata.csv` からテストデータを読み込み- 3. 各レコードに対して以下の処理を繰り返し実行:  - a. 受講生検索画面でID検索  - b. 受講生詳細画面へ遷移  - c. 「閲覧/登録・経理ビュー」>「個人情報1」>「退会処理」へ遷移  - d. 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること**最終更新日**- 2026-01-17</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
     
     
 </div>
@@ -71,7 +487,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Sat Jan 17 2026 06:05:31 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Sat Jan 17 2026 08:14:27 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

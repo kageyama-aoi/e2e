@@ -1,3 +1,18 @@
+/**
+ * @fileoverview TaskReport機能のサンプルテスト
+ * 
+ * **テスト内容**
+ * - TaskReportログイン画面へのアクセス
+ * - バグ検索フォームへの入力
+ * - 結果テーブルのデータをスクレイピングし、2次元配列として取得
+ * - 結果をJSONファイル（`tests/Taskreport/output/table2d.json`）に保存
+ * 
+ * **前提条件**
+ * - 環境変数 `BASE_URL` (.env.taskreport) が設定されていること
+ * 
+ * **最終更新日**
+ * - 2026-01-17
+ */
 const fs = require('fs');
 const path = require('path');
 

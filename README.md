@@ -63,6 +63,11 @@ npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
 | `npm run test_t` | T-Frame (`tframe`) のテスト実行 |
 | `npm run test_taskreport` | Task Report (`taskreport`) のテスト実行 |
 
+## 学習リソース (Learning Resources)
+
+- [CodeceptJS 学習ガイド](./docs/codeceptjs_learning_guide.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
+- [技術概要 (Technical Overview)](./docs/technical_overview.md): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
+
 ## ディレクトリ構成
 
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**

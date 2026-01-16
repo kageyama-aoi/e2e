@@ -1,3 +1,23 @@
+/**
+ * @fileoverview 講師支払調書APIのデータ駆動テスト
+ * 
+ * **テスト内容**
+ * - 管理者ログインを行い、講師ユーザーのAPIトークンを取得
+ * - JSON入力ページ（開発用ツールページ）経由でAPIをコール
+ * - 取得したレスポンス（現在はInternal Server Error期待）を検証
+ * 
+ * **処理フロー**
+ * - 1. 管理者ログイン & トークン取得 (Beforeフック)
+ * - 2. JSON入力ページへ遷移
+ * - 3. パラメータ生成（先月年月を指定）
+ * - 4. API実行 & レスポンスログ保存
+ * 
+ * **データソース**
+ * - `headerPatternData`: ['001'], ['002']
+ * 
+ * **最終更新日**
+ * - 2026-01-17
+ */
 // const { secret } = require('codeceptjs'); // secret is globally available
 const getTeacherPaymentReportParams = require('../../data/tframe/teacherPaymentReportParams');
 
