@@ -65,8 +65,10 @@ npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
 
 ## ディレクトリ構成
 
+💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
+
 <!-- TREE_START -->
-Last updated: 2026-01-17 06:59:02
+Last updated: 2026-01-17 07:33:35
 
 ```text
 e2e/
