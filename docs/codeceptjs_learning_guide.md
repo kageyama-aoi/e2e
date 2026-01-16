@@ -1,32 +1,32 @@
-# CodeceptJS Function Reference
+# CodeceptJS 関数リファレンス
 
-This project uses a variety of CodeceptJS I object methods to perform end-to-end testing. This document provides a summary of the main methods used, along with links to the official documentation.
+このプロジェクトでは、E2E（End-to-End）テストを実行するために、CodeceptJSの `I` オブジェクトが持つ様々なメソッドを利用しています。このドキュメントは、プロジェクト内で主に使用されているメソッドの概要と、公式ドキュメントへのリンクをまとめたものです。
 
-For more details, please refer to the [CodeceptJS Playwright Helper Documentation](https://codecept.io/helpers/Playwright/).
+より詳細な情報については、[CodeceptJS Playwright Helper Documentation](https://codecept.io/helpers/Playwright/) を参照してください。
 
-| Method                          | Description                                                                 | Documentation Link                                                                 |
-|---------------------------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| `amOnPage()` | 指定されたURLに移動します。 | [Link](https://codecept.io/helpers/Playwright/#amonpage) |
-| `click()` | リンク、ボタン、またはチェックボックスなどの要素をクリックします。 | [Link](https://codecept.io/helpers/Playwright/#click) |
+| メソッド | 概要 | 用例 | ドキュメント |
+|:---|:---|:---:|:---|
+| `amOnPage()` | 指定されたURLに移動します。 | [見る](#amonpage) | [Link](https://codecept.io/helpers/Playwright/#amonpage) |
+| `click()` | リンク、ボタン、またはチェックボックスなどの要素をクリックします。 | [見る](#click) | [Link](https://codecept.io/helpers/Playwright/#click) |
 | `fail()` | テストを手動で失敗させます。 | [Link](https://codecept.io/helpers/Playwright/#fail) |
-| `fillField()` | テキストフィールドやテキストエリアに値を入力します。 | [Link](https://codecept.io/helpers/Playwright/#fillfield) |
+| `fillField()` | テキストフィールドやテキストエリアに値を入力します。 | [見る](#fillfield) | [Link](https://codecept.io/helpers/Playwright/#fillfield) |
 | `grabCssPropertyFrom()` | 要素から指定されたCSSプロパティの値を取得します。 | [Link](https://codecept.io/helpers/Playwright/#grabcsspropertyfrom) |
 | `grabCurrentUrl()` | 現在のページのURLを取得します。 | [Link](https://codecept.io/helpers/Playwright/#grabcurrenturl) |
 | `grabNumberOfVisibleElements()` | 指定されたセレクタに一致する表示されている要素の数を取得します。 | [Link](https://codecept.io/helpers/Playwright/#grabnumberofvisibleelements) |
-| `grabTextFrom()` | 要素からテキストコンテンツを取得します。 | [Link](https://codecept.io/helpers/Playwright/#grabtextfrom) |
+| `grabTextFrom()` | 要素からテキストコンテンツを取得します。 | [見る](#grabtextfrom) | [Link](https://codecept.io/helpers/Playwright/#grabtextfrom) |
 | `grabTextFromAll()` | 指定されたセレクタに一致するすべての要素からテキストコンテンツを配列として取得します。 | [Link](https://codecept.io/helpers/Playwright/#grabtextfromall) |
 | `retry()` | 失敗した場合に特定のアクションを再試行します。 | [Link](https://codecept.io/helpers/Playwright/#retry) |
 | `saveLogToFile()` | カスタムログメッセージをファイルに保存します。 (カスタムメソッド) | [Link](# (custom-method)) |
 | `saveScreenshot()` | 現在のページのスクリーンショットを撮影します。 | [Link](https://codecept.io/helpers/Playwright/#savescreenshot) |
 | `saveScreenshotWithTimestamp()` | タイムスタンプ付きでスクリーンショットを保存します。 (カスタムメソッド) | [Link](# (custom-method)) |
-| `say()` | テストの実行中にコンソールにメッセージを出力します。 | [Link](https://codecept.io/helpers/Playwright/#say) |
+| `say()` | テストの実行中にコンソールにメッセージを出力します。 | [見る](#say) | [Link](https://codecept.io/helpers/Playwright/#say) |
 | `scrollIntoView()` | 指定された要素がビューポートに表示されるまでスクロールします。 | [Link](https://codecept.io/helpers/Playwright/#scrollintoview) |
-| `see()` | ページ上に指定されたテキストが表示されていることを確認します。 | [Link](https://codecept.io/helpers/Playwright/#see) |
-| `seeElement()` | ページ上に指定された要素が存在することを確認します。 | [Link](https://codecept.io/helpers/Playwright/#seeelement) |
-| `selectOption()` | ドロップダウンリストやリストボックスからオプションを選択します。 | [Link](https://codecept.io/helpers/Playwright/#selectoption) |
-| `switchToNextTab()` | 次のブラウザタブに切り替えます。 | [Link](https://codecept.io/helpers/Playwright/#switchtonexttab) |
+| `see()` | ページ上に指定されたテキストが表示されていることを確認します。 | [見る](#see) | [Link](https://codecept.io/helpers/Playwright/#see) |
+| `seeElement()` | ページ上に指定された要素が存在することを確認します。 | [見る](#see) | [Link](https://codecept.io/helpers/Playwright/#seeelement) |
+| `selectOption()` | ドロップダウンリストやリストボックスからオプションを選択します。 | [見る](#selectoption) | [Link](https://codecept.io/helpers/Playwright/#selectoption) |
+| `switchToNextTab()` | 次のブラウザタブに切り替えます。 | [見る](#switchtonexttab) | [Link](https://codecept.io/helpers/Playwright/#switchtonexttab) |
 | `wait()` | 指定された秒数だけ実行を一時停止します。 | [Link](https://codecept.io/helpers/Playwright/#wait) |
-| `waitForElement()` | 指定された要素がDOMに表示されるまで待ちます。 | [Link](https://codecept.io/helpers/Playwright/#waitforelement) |
+| `waitForElement()` | 指定された要素がDOMに表示されるまで待ちます。 | [見る](#waitforelement) | [Link](https://codecept.io/helpers/Playwright/#waitforelement) |
 | `waitForEnabled()` | 指定された要素が有効化（enabled）されるまで待ちます。 | [Link](https://codecept.io/helpers/Playwright/#waitforenabled) |
 
 ---
@@ -35,7 +35,7 @@ For more details, please refer to the [CodeceptJS Playwright Helper Documentatio
 
 ここでは、プロジェクト内で実際に使われているコードを例に、各メソッドの具体的な利用シーンを解説します。
 
-### `amOnPage()`
+### `amOnPage()` <a name='amonpage'></a>
 
 **目的:** テストを開始するページや、特定のURLへ遷移するために使用します。
 
@@ -56,7 +56,7 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
 
 ---
 
-### `fillField()`
+### `fillField()` <a name='fillfield'></a>
 
 **目的:** フォームの入力フィールド（`<input>`や`<textarea>`）にテキストを入力します。
 
@@ -91,7 +91,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 ---
 
-### `click()`
+### `click()` <a name='click'></a>
 
 **目的:** ボタンやリンクなど、クリック可能な要素を操作します。
 
@@ -122,7 +122,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 ---
 
-### `see()` / `seeElement()`
+### `see()` / `seeElement()` <a name='see'></a>
 
 **目的:** ページ上に特定のテキストや要素が表示されているか（存在するか）を検証します。テストが期待通りに進んでいるかを確認するアサーション（表明）の役割を担います。
 
@@ -151,7 +151,7 @@ APIのレスポンスを表示する特定の領域（`jsonInputPage.locators.re
 `I.click()`でタブをクリックした後、そのタブがアクティブ状態になった（CSSクラス`.active`が付与された）ことを`I.seeElement()`で確認しています。これにより、UIが正しく反応したことを検証しています。
 ---
 
-### `selectOption()`
+### `selectOption()` <a name='selectoption'></a>
 
 **目的:** ドロップダウンリスト（`<select>`要素）から特定のオプションを選択します。
 
@@ -175,7 +175,7 @@ async function ClassViewOperate() {
 
 ---
 
-### `grabTextFrom()`
+### `grabTextFrom()` <a name='grabtextfrom'></a>
 
 **目的:** ページ上の特定の要素からテキストコンテンツを取得し、変数に格納して後続の処理で利用します。
 
@@ -198,7 +198,7 @@ async function ClassViewOperate() {
 
 ---
 
-### `waitForElement()`
+### `waitForElement()` <a name='waitforelement'></a>
 
 **目的:** ページが読み込まれたり、JavaScriptが実行されたりした後に、特定の要素がDOM上に表示されるまで処理を待機させます。非同期なUIのテストを安定させるために不可欠です。
 
@@ -220,7 +220,7 @@ async function ClassViewOperate() {
 
 ---
 
-### `say()`
+### `say()` <a name='say'></a>
 
 **目的:** テストの実行ログに任意のメッセージを出力します。テストがどのステップを実行しているのか、どのような値が変数に格納されているのかをリアルタイムで確認できるため、デバッグやメンテナンスに非常に役立ちます。
 
@@ -243,7 +243,7 @@ async function ClassOperate(){
 
 ---
 
-### `switchToNextTab()`
+### `switchToNextTab()` <a name='switchtonexttab'></a>
 
 **目的:** リンクやボタンをクリックした結果、新しいブラウザタブが開かれた場合に、操作の対象をその新しいタブに切り替えます。
 

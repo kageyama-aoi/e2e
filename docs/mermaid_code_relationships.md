@@ -36,6 +36,7 @@ classDiagram
 ```
 
 ## テスト -> ページオブジェクト/補助 -> データ の関係
+### 案1: スイート別に分割（縦長に収める）
 ```mermaid
 flowchart TD
   subgraph TFRAME[tests/tframe]
@@ -67,11 +68,6 @@ flowchart TD
     P6[LoginPage.js]
     P7[ClassMemberPage.js]
     P8[TaskReportLoginPage.js]
-  end
-
-  subgraph SUPPORT[support/*]
-    C1[steps_file.js]
-    C2[envLoader.js]
   end
 
   subgraph DATA[data/*]
@@ -107,28 +103,125 @@ flowchart TD
   S4 --> D4
 
   R1 --> P8
+```
 
-  T1 --> C1
-  T2 --> C1
-  T3 --> C1
-  T4 --> C1
-  S1 --> C1
-  S2 --> C1
-  S3 --> C1
-  S4 --> C1
-  R1 --> C1
+補足（共通依存は注釈化）: `steps_file.js` は全テストで利用、`envLoader.js` は実行時に環境変数をロード。
 
-  C2 --> T1
-  C2 --> T2
-  C2 --> T3
-  C2 --> T4
-  C2 --> T5
-  C2 --> T6
-  C2 --> S1
-  C2 --> S2
-  C2 --> S3
-  C2 --> S4
-  C2 --> R1
+### 案2: 中継ノードで集約（線を大幅削減）
+```mermaid
+flowchart TD
+  subgraph TFRAME[tests/tframe]
+    TFRAME_TESTS[TFRAME tests/*]
+  end
+
+  subgraph SHIMAMURA[tests/shimamura]
+    SHIMAMURA_TESTS[SHIMAMURA tests/*]
+  end
+
+  subgraph TASKREPORT[tests/Taskreport]
+    TASKREPORT_TESTS[TASKREPORT tests/*]
+  end
+
+  subgraph PAGES[pages/*]
+    P_TFRAME[TFRAME pages]
+    P_SHIMAMURA[SHIMAMURA pages]
+    P_TASKREPORT[TaskReport pages]
+  end
+
+  subgraph DATA[data/*]
+    D_TFRAME[teacherPaymentReportParams.js]
+    D_SHIMAMURA[syokai/taikai CSV]
+  end
+
+  COMMON[Common support\nsteps_file.js / envLoader.js]
+
+  TFRAME_TESTS --> P_TFRAME
+  TFRAME_TESTS --> D_TFRAME
+  TFRAME_TESTS --> COMMON
+
+  SHIMAMURA_TESTS --> P_SHIMAMURA
+  SHIMAMURA_TESTS --> D_SHIMAMURA
+  SHIMAMURA_TESTS --> COMMON
+
+  TASKREPORT_TESTS --> P_TASKREPORT
+  TASKREPORT_TESTS --> COMMON
+```
+
+### 案3: 左→右配置（高さを使って横幅を抑える）
+```mermaid
+flowchart LR
+  subgraph TESTS[tests/*]
+    T1[navigation_after_login_test.js]
+    T2[navigation_after_login_student_test.js]
+    T3[token_usage_test.js]
+    T4[96-60_teacher_payment_report_test.js]
+    T5[login_test.js]
+    T6[mypage_login_test.js]
+    S1[shimamura_login_test.js]
+    S2[shimamura_class_member_registration_test.js]
+    S3[syokai_touroku.js]
+    S4[taikai.js]
+    R1[taskreport_sample_test.js]
+  end
+
+  subgraph PAGES[pages/*]
+    P1[LoginKannrisyaPage.js]
+    P2[ApiCommonLoginPage.js]
+    P3[ApiTeacherInfoGetPage.js]
+    P4[JsonInputPage.js]
+    P5[LoginMyPage.js]
+    P6[LoginPage.js]
+    P7[ClassMemberPage.js]
+    P8[TaskReportLoginPage.js]
+  end
+
+  subgraph DATA[data/*]
+    D1[teacherPaymentReportParams.js]
+    D2[syokai_touroku_data.csv]
+    D3[syokai_touroku_data_<profile>.csv]
+    D4[taikai_testdata.csv]
+  end
+
+  COMMON[Common support\nsteps_file.js / envLoader.js]
+
+  T1 --> P1
+  T1 --> P2
+  T2 --> P1
+  T2 --> P2
+  T3 --> P1
+  T3 --> P2
+  T3 --> P3
+  T4 --> P1
+  T4 --> P2
+  T4 --> P4
+  T4 --> D1
+  T5 --> P1
+  T6 --> P5
+
+  S1 --> P6
+  S2 --> P6
+  S2 --> P7
+  S3 --> P6
+  S3 --> P7
+  S3 --> D2
+  S3 --> D3
+  S4 --> P6
+  S4 --> P7
+  S4 --> D4
+
+  R1 --> P8
+
+  T1 --> COMMON
+  T2 --> COMMON
+  T3 --> COMMON
+  T4 --> COMMON
+  T5 --> COMMON
+  T6 --> COMMON
+  S1 --> COMMON
+  S2 --> COMMON
+  S3 --> COMMON
+  S4 --> COMMON
+  R1 --> COMMON
 ```
 
 ## 補足: CodeceptJS DI（inject）の関係
