@@ -4,13 +4,23 @@
   "description": "CodeceptJS E2E Tests",
   "scripts": {
     "test": "npx codeceptjs run",
+    
+    "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura.testgcp",
-    "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",
-    "test_taskreport": "npx codeceptjs run ./tests/Taskreport/*_test.js --profile taskreport",
     "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku.js",
+    
+    "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
+    "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",
     "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/navigation_after_login_student_test.js",
+    
+    "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
+    "test_taskreport": "npx codeceptjs run ./tests/Taskreport/*_test.js --profile taskreport",
+    
+    "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
+    "docs:shimamura": "jsdoc -c jsdoc.json",
     "docs:shimamura_shisaku": "npx jsdoc tests/shimamura -r -d docs/generated/html  -t node_modules/docdash",
-    "docs:shimamura": "jsdoc -c jsdoc.json"
+    "docs:update-readme-map": "python scripts/tree_generator.py -u",
+    "docs:tree:file": "python scripts/tree_generator.py -o docs/tree.md"
   },
   "keywords": [
     "codeceptjs",

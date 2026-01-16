@@ -32,9 +32,9 @@ npm install
 
 ### 1. 推奨: バッチファイルでの実行 (しまむら環境)
 
-プロジェクトルートにある `run_syokai_shimamura.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。
+プロジェクトルートにある `Run_Shimamura_Syokai_Test.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。
 
-1. `run_syokai_shimamura.bat` をダブルクリック。
+1. `Run_Shimamura_Syokai_Test.bat` をダブルクリック。
 2. `Enter profile name:` と表示されたら、プロファイル名を入力します。
    - `shimamura.testgcp` 等
    - 何も入力せずに Enter を押すと `shimamura` が選択されます。
@@ -66,8 +66,10 @@ npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
 ## ディレクトリ構成
 
 <!-- TREE_START -->
+Last updated: 2026-01-17 06:59:02
+
 ```text
-e2e/ 
+e2e/
 ├── data/ 
 │   ├── shimamura/ 
 │   │   ├── syokai_touroku_data.csv
@@ -96,6 +98,8 @@ e2e/
 │       ├── JsonInputPage.js
 │       ├── LoginKannrisyaPage.js
 │       └── LoginMyPage.js
+├── scripts/ 
+│   └── tree_generator.py
 ├── support/ 
 │   ├── envLoader.js
 │   └── steps_file.js
@@ -126,10 +130,8 @@ e2e/
 ├── package.json
 ├── read_alluroe.html
 ├── README.md
-├── run_syokai_shimamura.bat
-├── steps.d.ts
-├── tree.md
-└── tree_generator.py
+├── Run_Shimamura_Syokai_Test.bat
+└── steps.d.ts
 ```
 <!-- TREE_END -->
 

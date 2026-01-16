@@ -2,22 +2,31 @@
 ディレクトリ構造可視化ツール (Directory Tree Generator)
 
 このスクリプトは、プロジェクトのディレクトリ構成を走査し、Markdown形式のツリー図を生成します。
-主な機能は以下の通りです：
+Python標準ライブラリのみで動作するため、`pip install` は不要です。このファイルをコピーするだけで、
+あらゆるPythonプロジェクトで即座に利用可能です。
 
-1.  **ツリー図の生成**: ディレクトリ構造をテキストベースのツリー図として書き出します。
-2.  **README.md の自動更新**: 既存の Markdown ファイル（README.md 等）内の特定のマーカー
-    (`<!-- TREE_START -->` と `<!-- TREE_END -->`) の間を、最新のツリー図で自動的に書き換えます。
-3.  **高度なフィルタリング**:
-    - 特定のディレクトリ（.git, node_modules, allure-results 等）をデフォルトで除外。
-    - 隠しファイルの表示/非表示の切り替え。
-    - ディレクトリのみの抽出表示。
+【特徴】
+1.  **外部依存ゼロ**: Pythonがインストールされていればどこでも動きます。
+2.  **高い汎用性**: `AppConfig` クラスの設定を変更するだけで、除外ルールや出力をカスタマイズできます。
+3.  **ドキュメント連携**: `README.md` 内のマーカー (`<!-- TREE_START -->` 等) を自動検出し、
+    構成図を埋め込む機能を持っています。CI/CDパイプラインに組み込むのにも最適です。
 
-使い方:
+【主な機能】
+- ディレクトリ構造のテキストツリー化
+- 特定のディレクトリ（.git, node_modules 等）の除外
+- 隠しファイルの表示/非表示
+- README.md の自動更新モード
+- タイムスタンプの自動挿入
+
+【使い方】
     # README.md を自動更新する場合
     python tree_generator.py -u
 
     # 新規に tree.md を作成する場合
     python tree_generator.py -o tree.md
+
+    # ヘルプを表示
+    python tree_generator.py --help
 
 作成日: 2026-01-17
 """
@@ -25,6 +34,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -147,7 +157,7 @@ def build_tree_lines(
     """
     root = root.resolve()
 
-    lines: list[str] = [f"{root.name}/ "]
+    lines: list[str] = [f"{root.name}/" ]
 
     def walk(current: Path, prefix: str, depth: int) -> None:
         if max_depth is not None and depth >= max_depth:
@@ -186,6 +196,10 @@ def format_tree_for_markdown(tree_lines: Iterable[str]) -> str:
     """
     return "```text\n" + "\n".join(tree_lines) + "\n```"
 
+def get_timestamp_str() -> str:
+    """現在のタイムスタンプ文字列を返します。"""
+    now = datetime.datetime.now()
+    return f"Last updated: {now.strftime('%Y-%m-%d %H:%M:%S')}"
 
 def write_markdown(out_path: Path, title: str, tree_lines: Iterable[str]) -> None:
     """ディレクトリツリーをMarkdownファイルに書き込みます（新規作成・上書き）。
@@ -197,6 +211,8 @@ def write_markdown(out_path: Path, title: str, tree_lines: Iterable[str]) -> Non
     """
     md = []
     md.append(f"# {title}\n")
+    md.append(f"{get_timestamp_str()}\n")
+    md.append("\n")
     md.append(format_tree_for_markdown(tree_lines))
     md.append("\n")
 
@@ -236,12 +252,13 @@ def update_readme(target_path: Path, tree_lines: Iterable[str], config: AppConfi
     pre_content = content[:start_idx + len(start_marker)]
     post_content = content[end_idx:]
     
-    new_tree_content = "\n" + format_tree_for_markdown(tree_lines) + "\n"
+    # マーカーの直後にタイムスタンプとツリーを配置
+    new_tree_content = f"\n{get_timestamp_str()}\n\n" + format_tree_for_markdown(tree_lines) + "\n"
     
     new_content = pre_content + new_tree_content + post_content
     
     target_path.write_text(new_content, encoding="utf-8")
-    print(f"更新完了: {target_path.resolve()}")
+    print(f"README 内の構成図セクションを最新の状態に更新しました: {target_path.resolve()}")
 
 
 def parse_args() -> argparse.Namespace:
