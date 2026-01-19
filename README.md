@@ -73,13 +73,13 @@ npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-01-19 10:08:53
+Last updated: 2026-01-19 01:31:46
 
 ```text
 e2e/
 ├── .github/ 
 │   └── workflows/ 
-│       └── test.yaml
+│       └── documentation_update.yaml
 ├── data/ 
 │   ├── shimamura/ 
 │   │   ├── syokai_touroku_data.csv
@@ -90,12 +90,7 @@ e2e/
 │   └── tframe/ 
 │       └── teacherPaymentReportParams.js
 ├── env/ 
-│   ├── .env.shimamura
-│   ├── .env.shimamura.template
-│   ├── .env.shimamura.testgcp
-│   ├── .env.shimamura.testgcp2
-│   ├── .env.shimamura.traininggcp
-│   └── .env.taskreport
+│   └── .env.shimamura.template
 ├── pages/ 
 │   ├── shimamura/ 
 │   │   ├── ClassMemberPage.js
@@ -131,7 +126,6 @@ e2e/
 │       ├── navigation_after_login_student_test.js
 │       ├── navigation_after_login_test.js
 │       └── token_usage_test.js
-├── .env
 ├── .gitignore
 ├── codecept.conf.js
 ├── jsconfig.json
