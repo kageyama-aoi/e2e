@@ -1,4 +1,4 @@
-name: Update directory tree
+name: Update docs
 
 on:
   push:
@@ -6,29 +6,45 @@ on:
       - main
 
 permissions:
-  contents: write   # ← ★これが無かった
+  contents: write
 
 jobs:
-  update-tree:
+  update-docs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --- Python ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Generate directory tree and update README
+      - name: Update directory tree
         run: |
           python scripts/tree_generator.py -u
 
+      # --- Node.js / JSDoc ---
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install npm dependencies
+        run: |
+          npm ci
+
+      - name: Generate JSDoc
+        run: |
+          npx jsdoc -c jsdoc.json
+
+      # --- commit & push ---
       - name: Commit and push changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add README.md
-          git diff --cached --quiet || git commit -m "chore: update directory tree"
+          git add README.md docs generated || true
+          git diff --cached --quiet || git commit -m "chore: update docs"
           git push
