@@ -73,7 +73,7 @@ npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-01-19 01:31:46
+Last updated: 2026-01-19 10:37:40
 
 ```text
 e2e/
