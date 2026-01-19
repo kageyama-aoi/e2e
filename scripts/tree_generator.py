@@ -38,6 +38,7 @@ import datetime
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
+from zoneinfo import ZoneInfo
 
 
 @dataclass
@@ -197,8 +198,8 @@ def format_tree_for_markdown(tree_lines: Iterable[str]) -> str:
     return "```text\n" + "\n".join(tree_lines) + "\n```"
 
 def get_timestamp_str() -> str:
-    """現在のタイムスタンプ文字列を返します。"""
-    now = datetime.datetime.now()
+    """現在のタイムスタンプ文字列を返します（JST）。"""
+    now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
     return f"Last updated: {now.strftime('%Y-%m-%d %H:%M:%S')}"
 
 def write_markdown(out_path: Path, title: str, tree_lines: Iterable[str]) -> None:
