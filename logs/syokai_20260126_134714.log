@@ -1,0 +1,82 @@
+=== Running profile: shimamura.testgcp ===
+[dotenv@17.2.3] injecting env (12) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+--- DEBUG: Detected Profile from ENV: shimamura.testgcp
+--- DEBUG: Loading Env From: C:\Users\kageyama\Tools\testcode\e2e\env\.env.shimamura.testgcp
+[dotenv@17.2.3] injecting env (5) from env\.env.shimamura.testgcp -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+Creates allure-results/environment.properties
+CodeceptJS v3.3.7 #StandWithUkraine
+Using test root "C:\Users\kageyama\Tools\testcode\e2e"
+
+Dev sandbox (@dev) --
+受講生登録_URL: https://tcns.shimamura.co.jp/testgcp/index.php?module=Student&action=index&top_menu=1
+
+  × 新規会員登録 @dev | {"lastName":"かげやま","className":"ドラム-水-19:00-萩本宗太","keiyakuDate":"2026-01-04","kaishiDate":"2026-01-05","taikaiYear":"2026","taikaiMonth":"02"} in 39945ms
+
+-- FAILURES:
+
+  1) Dev sandbox (@dev)
+       新規会員登録 @dev | {"lastName":"かげやま","className":"ドラム-水-19:00-萩本宗太","keiyakuDate":"2026-01-04","kaishiDate":"2026-01-05","taikaiYear":"2026","taikaiMonth":"02"}:
+     element (.listViewTdLinkS1) still not present on page after 10 sec
+page.waitForSelector: Timeout 10000ms exceeded.
+=========================== logs ===========================
+waiting for locator('.listViewTdLinkS1')
+============================================================
+  Error: element (.listViewTdLinkS1) still not present on page after 10 sec
+  page.waitForSelector: Timeout 10000ms exceeded.
+  =========================== logs ===========================
+  
+  Scenario Steps:
+  - I.waitForElement(".listViewTdLinkS1", 10) at ShouldBoOnClassSelectPopup (.\tests\shimamura\syokai_touroku.js:280:5)
+  - I.click("検索") at ShouldBoOnClassSelectPopup (.\tests\shimamura\syokai_touroku.js:278:5)
+  - I.grabCurrentUrl() at ShouldBoOnClassSelectPopup (.\tests\shimamura\syokai_touroku.js:277:45)
+  - I.selectOption("#school_id", "すべて") at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:213:5)
+  - I.selectOption("#AN_1_area_id", "すべて") at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:212:5)
+  - I.selectOption("#course_category", "スクール") at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:211:5)
+  - I.fillField("#course_name", "ドラム-水-19:00-萩本宗太") at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:210:5)
+  - I.waitForElement("#AN_1_area_id", 5) at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:209:5)
+  - I.switchToNextTab() at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:208:5)
+  - I.wait(2) at fillClassSearchForm (.\tests\shimamura\syokai_touroku.js:207:5)
+  - I.click("#course_popup_popup_button") at ShouldBeOnKeirisyoriScreenB (.\tests\shimamura\syokai_touroku.js:246:5)
+  - I.click("クラス追加/更新する") at ShouldBeOnKeirisyoriScreenA (.\tests\shimamura\syokai_touroku.js:196:5)
+  - I.waitForElement({xpath: .//body[contains(., 'クラス追加/更新する')]}, 5) at ShouldBeOnKeirisyoriScreenA (.\tests\shimamura\syokai_touroku.js:195:5)
+  - I.grabCurrentUrl() at ShouldBeOnKeirisyoriScreenA (.\tests\shimamura\syokai_touroku.js:194:43)
+  - I.see("受講生登録・経理ビュー（個人）") at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:61:9)
+  - I.click("a:has-text("受講生登録・経理ビュー（個人）")") at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:58:7)
+  - I.waitForElement("a:has-text("受講生登録・経理ビュー（個人）")", 10) at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:57:7)
+  - I.click({xpath: .//span[contains(., '閲覧/登録・経理ビュー')]}) at toggleGroupmenu (.\tests\shimamura\syokai_touroku.js:99:7)
+  - I.grabCssPropertyFrom("#submenu__detailviews_sub", "display") at toggleGroupmenu (.\tests\shimamura\syokai_touroku.js:96:27)
+  - I.waitForElement({xpath: .//body[contains(., '受講生詳細')]}, 5) at ShouldBeOnKeirisyoriScreenA (.\tests\shimamura\syokai_touroku.js:186:5)
+  - I.click("受講生へ移動") at ShouldBeOnKouhouseiDetail (.\tests\shimamura\syokai_touroku.js:166:5)
+  - I.grabTextFrom("#td_idnumber") at ShouldBeOnKouhouseiDetail (.\tests\shimamura\syokai_touroku.js:163:28)
+  - I.grabCurrentUrl() at ShouldBeOnKouhouseiDetail (.\tests\shimamura\syokai_touroku.js:161:43)
+  - I.waitForElement({xpath: .//body[contains(., '候補生詳細')]}, 5) at ShouldBeOnKouhouseiDetail (.\tests\shimamura\syokai_touroku.js:160:5)
+  - I.click(.listViewTdLinkS1) at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:142:5)
+  - I.grabTextFrom("a.listViewTdLinkS1") at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:141:32)
+  - I.grabCurrentUrl() at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:139:43)
+  - I.waitForElement(".listViewTdLinkS1", 10) at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:137:5)
+  - I.click("検索") at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:136:5)
+  - I.fillField("last_name", "かげやま") at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:135:5)
+  - I.waitForElement({xpath: .//body[contains(., '候補生一覧')]}, 5) at ShouldBeOnKouhoseiList (.\tests\shimamura\syokai_touroku.js:134:5)
+  - I.grabCurrentUrl() at ShouldBeOnStudentGroup (.\tests\shimamura\syokai_touroku.js:117:35)
+  - I.see("候補生検索") at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:61:9)
+  - I.click("a:has-text("候補生検索")") at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:58:7)
+  - I.waitForElement("a:has-text("候補生検索")", 10) at Object.clickSubMenuLink (.\pages\shimamura\ClassMemberPage.js:57:7)
+  - I.click({xpath: .//span[contains(., '候補生')]}) at toggleGroupmenu (.\tests\shimamura\syokai_touroku.js:99:7)
+  - I.grabCssPropertyFrom("#submenu__candidates_grp_sub", "display") at toggleGroupmenu (.\tests\shimamura\syokai_touroku.js:96:27)
+  - I.grabCurrentUrl() at Object.navigateToAdminTab (.\pages\shimamura\ClassMemberPage.js:46:52)
+  - I.see("受講生登録") at Object.navigateToAdminTab (.\pages\shimamura\ClassMemberPage.js:45:7)
+  - I.click("a.otherTab:has-text("受講生")") at Object.clickOtherTab (.\pages\shimamura\ClassMemberPage.js:31:7)
+  - I.waitForElement("a.otherTab:has-text("受講生")", 10) at Object.clickOtherTab (.\pages\shimamura\ClassMemberPage.js:30:7)
+  - I.click("a.myAreaLink:has-text("管理")") at Object.navigateToAdminTab (.\pages\shimamura\ClassMemberPage.js:42:7)
+  - I.waitForElement("a.myAreaLink:has-text("管理")", 10) at Object.navigateToAdminTab (.\pages\shimamura\ClassMemberPage.js:41:7)
+  
+  Artifacts:
+  - screenshots: C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0000.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0001.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0002.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0003.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0004.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0005.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0006.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0007.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0008.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0009.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0010.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0011.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0012.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0013.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0014.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0015.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0016.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0017.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0018.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0019.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0020.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0021.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0022.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0023.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0024.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0025.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0026.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0027.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0028.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0029.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0030.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0031.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0032.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0033.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0034.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0035.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0036.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0037.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0038.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0039.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0040.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0041.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0042.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0043.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0044.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0045.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0046.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0047.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0048.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0049.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0050.png,C:\Users\kageyama\Tools\testcode\e2e\output\record_32b0a72f4ac3269fa7d8db24696a4ed6\0051.png
+  - screenshot: C:\Users\kageyama\Tools\testcode\e2e\output\新規会員登録_@dev.failed.png
+
+
+  FAIL  | 0 passed, 1 failed   // 47s
+Run with --verbose flag to see complete NodeJS stacktrace
+(*) Step-by-step preview: file://C:\Users\kageyama\Tools\testcode\e2e\output/records.html
+
+=== Finished (exit code 1) ===
