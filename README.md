@@ -180,6 +180,6 @@ npx allure generate allure-results --clean -o allure-report
 コード内の JSDoc コメントから HTML ドキュメントを生成できます。
 
 ```bash
-# ドキュメントの生成（設定が必要な場合は jsdoc を参照）
-npm run docs:gen
+# ドキュメントの生成（設定は jsdoc.json を参照）
+npm run docs:shimamura
 ```
