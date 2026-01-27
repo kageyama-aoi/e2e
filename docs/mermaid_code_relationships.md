@@ -51,8 +51,8 @@ flowchart TD
   subgraph SHIMAMURA[tests/shimamura]
     S1[shimamura_login_test.js]
     S2[shimamura_class_member_registration_test.js]
-    S3[syokai_touroku.js]
-    S4[taikai.js]
+    S3[syokai_touroku_test.js]
+    S4[taikai_test.js]
   end
 
   subgraph TASKREPORT[tests/Taskreport]
@@ -159,8 +159,8 @@ flowchart LR
     T6[mypage_login_test.js]
     S1[shimamura_login_test.js]
     S2[shimamura_class_member_registration_test.js]
-    S3[syokai_touroku.js]
-    S4[taikai.js]
+    S3[syokai_touroku_test.js]
+    S4[taikai_test.js]
     R1[taskreport_sample_test.js]
   end
 

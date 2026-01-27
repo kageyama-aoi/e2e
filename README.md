@@ -48,10 +48,10 @@ npm install
 npx codeceptjs run --profile shimamura.testgcp
 
 # しまむら初回登録テストを直接指定して実行
-npx codeceptjs run ./tests/shimamura/syokai_touroku.js --profile shimamura.testgcp
+npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --profile shimamura.testgcp
 
 # フォルダ内の全テストを実行（複数テスト）
-npx codeceptjs run "./tests/shimamura/*.js" --profile shimamura.testgcp
+npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ```
 
 ### 3. npm コマンドでの実行
@@ -112,8 +112,8 @@ e2e/
 │   ├── shimamura/ 
 │   │   ├── shimamura_class_member_registration_test.js
 │   │   ├── shimamura_login_test.js
-│   │   ├── syokai_touroku.js
-│   │   └── taikai.js
+│   │   ├── syokai_touroku_test.js
+│   │   └── taikai_test.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
 │   ├── Taskreport/ 

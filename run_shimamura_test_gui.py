@@ -3,7 +3,7 @@
 """
 しまむら会CodeceptJSテストを実行するためのGUIアプリケーション。
 
-このスクリプトは、テストプロファイルを選択して 'syokai_touroku.js' テストを実行するための
+このスクリプトは、テストプロファイルを選択して 'syokai_touroku_test.js' テストを実行するための
 シンプルなTkinterベースのUIを提供します。テスト出力をリアルタイムで表示し、
 ユーザーがテストの実行を停止できるようにします。
 
@@ -71,7 +71,7 @@ def build_command(profile):
         'npx',
         'codeceptjs',
         'run',
-        './tests/shimamura/syokai_touroku.js',
+        './tests/shimamura/syokai_touroku_test.js',
         '--profile',
         profile,
     ]

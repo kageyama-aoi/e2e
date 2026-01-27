@@ -7,7 +7,7 @@
     
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura.testgcp",
-    "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku.js",
+    "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js",
     
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
     "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",

@@ -40,8 +40,8 @@ e2e/
 │   ├── shimamura/ 
 │   │   ├── shimamura_class_member_registration_test.js
 │   │   ├── shimamura_login_test.js
-│   │   ├── syokai_touroku.js
-│   │   └── taikai.js
+│   │   ├── syokai_touroku_test.js
+│   │   └── taikai_test.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
 │   ├── Taskreport/ 

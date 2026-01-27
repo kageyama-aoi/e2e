@@ -62,7 +62,7 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
 
 **コード例 1: IDと文字列で指定**
 ```javascript
-// from: tests/shimamura/taikai.js
+// from: tests/shimamura/taikai_test.js
 async function ShouldBeOnTaikai(I, finalYear, finalMonth) {
   // ...
   I.fillField(S.fields.finalYear, finalYear);
@@ -249,7 +249,7 @@ async function ClassOperate(){
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/syokai_touroku.js
+// from: tests/shimamura/syokai_touroku_test.js
 async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kaishi_date }) {
   // ...
   I.click(S.button.class_select);
@@ -262,4 +262,4 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kais
 ```
 
 **解説:**
-`syokai_touroku.js`のテストでは、「クラス選択」ボタン（`S.button.class_select`）を押すと、クラスを検索するためのポップアップが新しいタブで開かれます。`I.switchToNextTab()`を呼び出すことで、CodeceptJSの操作対象がその新しいタブに移り、新しいタブ内での要素の検索や操作（`fillField`や`click`など）が可能になります。操作が終わったら、元のタブに戻るために`I.switchToPreviousTab()`を使うこともあります。
+`syokai_touroku_test.js`のテストでは、「クラス選択」ボタン（`S.button.class_select`）を押すと、クラスを検索するためのポップアップが新しいタブで開かれます。`I.switchToNextTab()`を呼び出すことで、CodeceptJSの操作対象がその新しいタブに移り、新しいタブ内での要素の検索や操作（`fillField`や`click`など）が可能になります。操作が終わったら、元のタブに戻るために`I.switchToPreviousTab()`を使うこともあります。
