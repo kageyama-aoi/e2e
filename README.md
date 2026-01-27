@@ -66,6 +66,7 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ## 学習リソース (Learning Resources)
 
 - [CodeceptJS 学習ガイド](./docs/codeceptjs_learning_guide.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
+- [しまむらテスト コーディング規約](./docs/shimamura_coding_guidelines.md): しまむら系テストの構成・命名・共通化のルールをまとめたガイドです。
 - [技術概要 (Technical Overview)](./docs/technical_overview.md): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
 ## ディレクトリ構成
