@@ -20,7 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const { readCsv, getProfileFromArgs } = require('../../support/utils');
-const { toggleGroupmenu } = require('../../support/shimamura/utils');
+const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
 
 const profile = getProfileFromArgs();
 // CSVパス
@@ -269,27 +269,6 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
   // ToggleCheckBoxesWithName(&quot;mass_AN[]&quot;, this);
   // <td class="oddListRowS1" bgcolor="#fdfdfd" valign="top"><input class="checkbox" type="checkbox" value="7a06973b-fc53-7000-5482-691433cfe2bb" name="mass_AN[]"></td>
   // pause();
-}
-
-async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElement) {
-
-  for (let i = 0; i < maxTries; i++) {
-    const currentUrl = await I.grabCurrentUrl();
-
-    if (currentUrl.includes(targetValue)) {
-      I.say(`✅ URLに '${targetValue}' を検出（${i + 1}回目）`);
-      I.click(clickElement);
-      break;
-    } else {
-      I.say(`⏳ 該当なし（${i + 1}回目）... 1秒待機`);
-      I.wait(1);
-    }
-
-    if (i === maxTries - 1) {
-      throw new Error(`❌ URLに '${targetValue}' が含まれませんでした（${maxTries}回試行）`);
-    }
-  }
-
 }
 
 
