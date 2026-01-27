@@ -29,8 +29,8 @@ Before(async ({ login, loginPageShimamura }) => {
 });
 
 
-const fs = require('fs');
 const path = require('path');
+const { readCsv } = require('../../support/utils');
 const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
 
 /**
@@ -40,20 +40,7 @@ const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/
  */
 function loadTaikaiTestDataFromCsv(csvFileName) {
   const filePath = path.join(__dirname, '../../data/shimamura', csvFileName);
-  const content = fs.readFileSync(filePath, 'utf8').trim();
-
-  const lines = content.split('\n').filter(line => line.trim() !== '');
-  const [headerLine, ...rows] = lines;
-  const headers = headerLine.split(',').map(h => h.trim());
-
-  return rows.map(line => {
-    const cols = line.split(',').map(c => c.trim());
-    const record = {};
-    headers.forEach((key, index) => {
-      record[key] = cols[index] || '';
-    });
-    return record;
-  });
+  return readCsv(filePath);
 }
 
 /**
