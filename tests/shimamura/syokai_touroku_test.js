@@ -37,6 +37,21 @@ if (profileCsvPath && fs.existsSync(profileCsvPath)) {
   csvData = readCsv(defaultCsvPath);
 }
 
+const validationErrorsDefaultPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_validation_errors.csv');
+const validationErrorsProfilePath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_validation_errors_${profile}.csv`) : null;
+
+let validationErrorData = [];
+if (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath)) {
+  validationErrorData = readCsv(validationErrorsProfilePath);
+} else {
+  validationErrorData = readCsv(validationErrorsDefaultPath);
+}
+
+function parseExpectedErrors(value) {
+  if (!value) return [];
+  return value.split('|').map(err => err.trim()).filter(Boolean);
+}
+
 Feature('Dev sandbox (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
@@ -206,6 +221,32 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kais
 
 }
 
+async function ShouldBeOnKeirisyoriScreenBWithValidationErrors(I, { class_name01, keiyaku_date, kaishi_date }, expectedErrors = []) {
+
+  const S = {
+    textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
+    pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category' },
+    button: { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定' },
+    screen: { name: '受講生詳細' },
+    error: { container: '#top_err_info_msg_div' }
+  }
+
+
+  I.click(S.button.class_select);
+  await ShouldBoOnClassSelectPopup(I, S, class_name01);
+
+  I.switchToNextTab();
+  I.waitForElement(locate('body').withText(S.screen.name), 5);
+  I.click(S.button.label_class_set);
+
+  await fillAccountingDates(I, S, { keiyaku_date, kaishi_date });
+
+  I.click(S.button.label_course_set);
+
+  I.waitForElement(S.error.container, 5);
+  expectedErrors.forEach(err => I.see(err, S.error.container));
+}
+
 /**
  * クラス選択ポップアップで検索してクラスを選択する
  * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
@@ -319,3 +360,23 @@ Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShi
 }
 
 );
+
+Data(validationErrorData).Scenario('経理日付バリデーションエラー @dev', async ({ I, classMemberPageShimamura, current }) => {
+  I.say(`--- テスト開始: ${current.label} ---`);
+
+  const input = {
+    class_name01: current.className,
+    keiyaku_date: current.keiyakuDate,
+    kaishi_date: current.kaishiDate
+  };
+
+  await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生登録');
+  await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
+  const student_name = await ShouldBeOnKouhoseiList(I, current.lastName);
+  await ShouldBeOnKouhouseiDetail(I, student_name);
+  await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
+  const expectedErrors = parseExpectedErrors(current.expectedErrors);
+  await ShouldBeOnKeirisyoriScreenBWithValidationErrors(I, input, expectedErrors);
+
+  I.say(`--- テスト終了: ${current.label} ---`);
+});

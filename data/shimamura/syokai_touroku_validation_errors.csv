@@ -1,0 +1,3 @@
+label,lastName,className,keiyakuDate,kaishiDate,expectedErrors
+開始日必須バリデーション,かげやま,ピアノ水曜日_01_01,2026-01-04,,開始日は必須項目です
+開始日が過去日,かげやま,ピアノ水曜日_01_01,2026-01-04,2025-12-31,開始日
