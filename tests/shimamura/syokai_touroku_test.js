@@ -204,8 +204,11 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kais
 }
 
 /**
- * クラス選択ポップアップ
-*/
+ * クラス選択ポップアップで検索してクラスを選択する
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} parentLocators - 親画面のロケーター
+ * @param {string} class_name01 - クラス名
+ */
 async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01) {
   const SS = {
     display: { name: 'クラス選択POP_UP' },
@@ -226,7 +229,9 @@ async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01) {
 
 
 /**
- * 経理処理画面E
+ * 経理処理画面Eを確認し、経理ビューへ戻る
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
  */
 async function ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura) {
   const S = {
@@ -241,9 +246,13 @@ async function ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura) {
 
 
 /**
- * 退会処理
+ * 退会処理画面へ遷移して最終在籍年月を入力する
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
+ * @param {Object} options - 退会情報
+ * @param {string} options.taikaiYear - 最終在籍年
+ * @param {string} options.taikaiMonth - 最終在籍月
  */
-
 async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
   //   const S = {
   //   display: { name: 'クラス選択POP_UP' },
