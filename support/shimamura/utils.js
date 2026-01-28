@@ -46,7 +46,186 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
   }
 }
 
+/**
+ * チェックボックスの要素を検出してクリックする（島村専用）
+ * - まずラベル文字列から近傍のinputを探す
+ * - 次に name / id で直接探索する
+ * - どれも見つからない場合は containerSelector をクリックする
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} options - 探索条件
+ * @param {string} options.labelText - 画面上のラベル（例: '月途中'）
+ * @param {string} [options.inputName] - inputのname属性
+ * @param {string} [options.inputId] - inputのid属性
+ * @param {string} [options.containerSelector] - 最終フォールバックのクリック対象
+ */
+async function clickCheckboxByLabelOrName(I, { labelText, inputName, inputId, containerSelector }) {
+  const clicked = await I.executeScript((args) => {
+    const { labelText, inputName, inputId, containerSelector } = args;
+    const labelCandidate = Array.from(document.querySelectorAll('label,td,th,span,div'))
+      .find(el => el.textContent && el.textContent.trim().includes(labelText));
+    const row = labelCandidate ? (labelCandidate.closest('tr') || labelCandidate.parentElement) : null;
+    const inputInRow = row
+      ? row.querySelector('input[type="checkbox"], input[type="radio"]')
+      : null;
+    const inputInNextCell = labelCandidate && labelCandidate.nextElementSibling
+      ? labelCandidate.nextElementSibling.querySelector('input[type="checkbox"], input[type="radio"]')
+      : null;
+    if (inputInRow) {
+      inputInRow.click();
+      return true;
+    }
+    if (inputInNextCell) {
+      inputInNextCell.click();
+      return true;
+    }
+    if (inputName) {
+      const inputByName = document.querySelector(`input[name="${inputName}"]`);
+      if (inputByName) {
+        inputByName.click();
+        return true;
+      }
+    }
+    if (inputId) {
+      const inputById = document.querySelector(`input#${inputId}`);
+      if (inputById) {
+        inputById.click();
+        return true;
+      }
+    }
+    if (containerSelector) {
+      const container = document.querySelector(containerSelector);
+      if (container) {
+        container.click();
+        return true;
+      }
+    }
+    return false;
+  }, { labelText, inputName, inputId, containerSelector });
+
+  if (!clicked) {
+    throw new Error(`Checkbox click failed: label="${labelText}", name="${inputName}", id="${inputId}"`);
+  }
+}
+
+/**
+ * チェックボックスがONになっているかを検証する（島村専用）
+ * - ラベル文字列 → 近傍input の順で検索
+ * - name / id を優先的に検証
+ * - inputがない場合は aria-checked を確認
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} options - 探索条件
+ * @param {string} options.labelText - 画面上のラベル（例: '月途中'）
+ * @param {string} [options.inputName] - inputのname属性
+ * @param {string} [options.inputId] - inputのid属性
+ * @param {string} [options.containerSelector] - ルート要素
+ */
+async function verifyCheckboxCheckedByLabelOrName(
+  I,
+  {
+    labelText,
+    inputName,
+    inputId,
+    containerSelector,
+    waitTries = 5,
+    waitSec = 0.5
+  }
+) {
+  for (let i = 0; i < waitTries; i++) {
+    const state = await I.executeScript((args) => {
+    const { labelText, inputName, inputId, containerSelector } = args;
+    const directInput = inputId
+      ? document.querySelector(`input#${inputId}`)
+      : null;
+    const namedInput = inputName
+      ? document.querySelector(`input[name="${inputName}"]`)
+      : null;
+    const labelCandidate = Array.from(document.querySelectorAll('label,td,th,span,div'))
+      .find(el => el.textContent && el.textContent.trim().includes(labelText));
+    const row = labelCandidate ? (labelCandidate.closest('tr') || labelCandidate.parentElement) : null;
+    const inputInRow = row
+      ? row.querySelector('input[type="checkbox"], input[type="radio"]')
+      : null;
+    const inputInNextCell = labelCandidate && labelCandidate.nextElementSibling
+      ? labelCandidate.nextElementSibling.querySelector('input[type="checkbox"], input[type="radio"]')
+      : null;
+    const container = containerSelector ? document.querySelector(containerSelector) : null;
+    const input = directInput || namedInput || inputInRow || inputInNextCell;
+    const target = input || container;
+    const ariaChecked = target ? target.getAttribute('aria-checked') : null;
+    return {
+      inputFound: Boolean(input),
+      checked: input ? input.checked : null,
+      ariaChecked,
+      labelFound: Boolean(labelCandidate),
+      rowFound: Boolean(row),
+      containerFound: Boolean(container),
+      inputId: input ? input.id : null,
+      inputName: input ? input.name : null
+    };
+  }, { labelText, inputName, inputId, containerSelector });
+
+    if (state.inputFound && state.checked === true) return;
+    if (!state.inputFound && state.ariaChecked === 'true') return;
+
+    if (i < waitTries - 1) {
+      I.wait(waitSec);
+    } else {
+      throw new Error(`Checkbox not checked: ${JSON.stringify(state)}`);
+    }
+  }
+}
+
+/**
+ * チェックボックスの状態を取得する（デバッグ用）
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} options - 探索条件
+ * @param {string} options.labelText - 画面上のラベル（例: '月途中'）
+ * @param {string} [options.inputName] - inputのname属性
+ * @param {string} [options.inputId] - inputのid属性
+ * @param {string} [options.containerSelector] - ルート要素
+ * @returns {Promise<Object>} 状態情報
+ */
+async function getCheckboxStateByLabelOrName(I, { labelText, inputName, inputId, containerSelector }) {
+  return I.executeScript((args) => {
+    const { labelText, inputName, inputId, containerSelector } = args;
+    const directInput = inputId
+      ? document.querySelector(`#${inputId}`)
+      : null;
+    const namedInput = inputName
+      ? document.querySelector(`input[name="${inputName}"]`)
+      : null;
+    const labelCandidate = Array.from(document.querySelectorAll('label,td,th,span,div'))
+      .find(el => el.textContent && el.textContent.trim().includes(labelText));
+    const row = labelCandidate ? (labelCandidate.closest('tr') || labelCandidate.parentElement) : null;
+    const inputInRow = row
+      ? row.querySelector('input[type="checkbox"], input[type="radio"]')
+      : null;
+    const container = containerSelector ? document.querySelector(containerSelector) : null;
+    const input = directInput || namedInput || inputInRow;
+    const target = input || container;
+    const ariaChecked = target ? target.getAttribute('aria-checked') : null;
+    const inputHtml = input ? input.outerHTML : null;
+    const containerHtml = container ? container.outerHTML : null;
+    return {
+      inputFound: Boolean(input),
+      checked: input ? input.checked : null,
+      ariaChecked,
+      labelFound: Boolean(labelCandidate),
+      rowFound: Boolean(row),
+      containerFound: Boolean(container),
+      inputId: input ? input.id : null,
+      inputName: input ? input.name : null,
+      inputType: input ? input.type : null,
+      inputHtml,
+      containerHtml
+    };
+  }, { labelText, inputName, inputId, containerSelector });
+}
+
 module.exports = {
   toggleGroupmenu,
   verifyNavigationByUrlChange,
+  clickCheckboxByLabelOrName,
+  verifyCheckboxCheckedByLabelOrName,
+  getCheckboxStateByLabelOrName,
 };

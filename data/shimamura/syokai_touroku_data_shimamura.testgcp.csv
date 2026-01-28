@@ -1,2 +1,2 @@
-lastName,className,courseCategory,keiyakuDate,kaishiDate,taikaiYear,taikaiMonth
-かげやま,ピアノ水曜日_01_01,スクール,2026-01-04,2026-01-05,2026,02
+lastName,className,courseCategory,keiyakuDate,kaishiDate,mid_month,remaining_classes,taikaiYear,taikaiMonth
+かげやま,ピアノ水曜日_01_01,スクール,2026-01-04,2026-01-05,true,2回,2026,02

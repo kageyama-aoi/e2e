@@ -1,2 +1,2 @@
-lastName,className,courseCategory,keiyakuDate,kaishiDate,taikaiYear,taikaiMonth
-かげやま,ドラム-水-19:00-テスト太郎,スクール,2026-02-01,2026-02-02,2026,03
+lastName,className,courseCategory,keiyakuDate,kaishiDate,mid_month,remaining_classes,taikaiYear,taikaiMonth
+かげやま,ドラム-水-19:00-テスト太郎,スクール,2026-02-01,2026-02-02,,,2026,03

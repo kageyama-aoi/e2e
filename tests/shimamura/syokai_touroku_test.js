@@ -28,7 +28,12 @@
 const fs = require('fs');
 const path = require('path');
 const { readCsv, getProfileFromArgs } = require('../../support/utils');
-const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
+const {
+  toggleGroupmenu,
+  verifyNavigationByUrlChange,
+  clickCheckboxByLabelOrName,
+  verifyCheckboxCheckedByLabelOrName
+} = require('../../support/shimamura/utils');
 
 const profile = getProfileFromArgs();
 // CSVパス（profileがあれば優先）
@@ -110,6 +115,8 @@ function getSkipStepsForBreakTarget(breakTarget) {
  * @param {string} input.course_category - クラスカテゴリー
  * @param {string} input.keiyaku_date - 契約日
  * @param {string} input.kaishi_date - 開始日
+ * @param {string} [input.mid_month] - 月途中（チェックボックス）
+ * @param {string} [input.remaining_classes] - 残り回数（1回 / 2回）
  * @param {string} [input.breakTarget] - 破壊対象（例: contract_date, start_date）
  * @param {string} [input.breakValue] - 上書き値 または SKIP
  * @returns {Object} 実行用入力データ
@@ -120,7 +127,9 @@ function prepareInput(input) {
     class_name01: input.class_name01,
     course_category: input.course_category,
     keiyaku_date: input.keiyaku_date,
-    kaishi_date: input.kaishi_date
+    kaishi_date: input.kaishi_date,
+    mid_month: input.mid_month,
+    remaining_classes: input.remaining_classes
   };
 
   if (breakSpec.target === 'contract_date' && breakSpec.value != null) {
@@ -348,6 +357,33 @@ async function fillAccountingDates(I, locators, dates) {
   I.waitForEnabled(locators.textbox.keiyaku_date, 15);
   I.fillField(locators.textbox.keiyaku_date, dates.keiyaku_date);
   I.fillField(locators.textbox.kaishi_date, dates.kaishi_date);
+
+  const midMonthValue = typeof dates.mid_month === 'string' ? dates.mid_month.trim() : dates.mid_month;
+  const remainingClassesValue = typeof dates.remaining_classes === 'string' ? dates.remaining_classes.trim() : dates.remaining_classes;
+  const shouldCheckMidMonth = Boolean(
+    (midMonthValue && String(midMonthValue).toLowerCase() !== '0' && String(midMonthValue).toLowerCase() !== 'false')
+    || remainingClassesValue
+  );
+
+  if (shouldCheckMidMonth) {
+    I.waitForElement(locators.checkbox.mid_month, 10);
+    await clickCheckboxByLabelOrName(I, {
+      labelText: '月途中',
+      inputName: 'ltd_mid_month',
+      inputId: 'ltd_mid_month',
+      containerSelector: locators.checkbox.mid_month
+    });
+    await verifyCheckboxCheckedByLabelOrName(I, {
+      labelText: '月途中',
+      inputName: 'ltd_mid_month',
+      inputId: 'ltd_mid_month',
+      containerSelector: locators.checkbox.mid_month
+    });
+    if (remainingClassesValue) {
+      I.waitForEnabled(locators.pulldown.remaining_classes, 10);
+      I.selectOption(locators.pulldown.remaining_classes, remainingClassesValue);
+    }
+  }
 }
 
 /**
@@ -358,15 +394,31 @@ async function fillAccountingDates(I, locators, dates) {
  * @param {string} input.course_category - クラスカテゴリー
  * @param {string} input.keiyaku_date - 契約日
  * @param {string} input.kaishi_date - 開始日
+ * @param {string} [input.mid_month] - 月途中（チェックボックス）
+ * @param {string} [input.remaining_classes] - 残り回数（1回 / 2回）
  * @param {string} [input.breakTarget] - 破壊対象（例: class_select, contract_date）
  * @param {string} [input.breakValue] - 上書き値 または SKIP
  * @param {string[]} [input.expectedErrors] - 期待エラー
  */
-async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, course_category, keiyaku_date, kaishi_date, breakTarget, breakValue, expectedErrors = [] }) {
+async function ShouldBeOnKeirisyoriScreenB(
+  I,
+  {
+    class_name01,
+    course_category,
+    keiyaku_date,
+    kaishi_date,
+    mid_month,
+    remaining_classes,
+    breakTarget,
+    breakValue,
+    expectedErrors = []
+  }
+) {
 
   const S = {
     textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
-    pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category' },
+    pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
+    checkbox: { mid_month: '#ltd_mid_month' },
     button: { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
     screen: { name: '受講生詳細' },
     error: { container: '#top_err_info_msg_div' }
@@ -377,6 +429,8 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, course_category, k
     course_category,
     keiyaku_date,
     kaishi_date,
+    mid_month,
+    remaining_classes,
     breakTarget,
     breakValue,
     expectedErrors
@@ -491,6 +545,8 @@ Data(csvData).Scenario('新規会員登録 @dev @normal', async ({ I, classMembe
     course_category: current.courseCategory,
     keiyaku_date: current.keiyakuDate,
     kaishi_date: current.kaishiDate,
+    mid_month: current.mid_month,
+    remaining_classes: current.remaining_classes,
     breakTarget: current.breakTarget,
     breakValue: current.breakValue,
     expectedErrors: parseExpectedErrors(current.expectedErrors)
@@ -525,6 +581,8 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
     course_category: current.courseCategory,
     keiyaku_date: current.keiyakuDate,
     kaishi_date: current.kaishiDate,
+    mid_month: current.mid_month,
+    remaining_classes: current.remaining_classes,
     breakTarget: current.breakTarget,
     breakValue: current.breakValue,
     expectedErrors: parseExpectedErrors(current.expectedErrors)
