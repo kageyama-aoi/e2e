@@ -31,46 +31,76 @@ const { readCsv, getProfileFromArgs } = require('../../support/utils');
 const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
 
 const profile = getProfileFromArgs();
-// CSVパス
+// CSVパス（profileがあれば優先）
 const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_data.csv');
 const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_data_${profile}.csv`) : null;
 
-let csvData = [];
-if (profileCsvPath && fs.existsSync(profileCsvPath)) {
-  csvData = readCsv(profileCsvPath);
-} else {
-  csvData = readCsv(defaultCsvPath);
-}
+const csvData = (profileCsvPath && fs.existsSync(profileCsvPath))
+  ? readCsv(profileCsvPath)
+  : readCsv(defaultCsvPath);
 
 const validationErrorsDefaultPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_validation_errors.csv');
 const validationErrorsProfilePath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_validation_errors_${profile}.csv`) : null;
 
-let validationErrorData = [];
-if (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath)) {
-  validationErrorData = readCsv(validationErrorsProfilePath);
-} else {
-  validationErrorData = readCsv(validationErrorsDefaultPath);
-}
+const validationErrorData = (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath))
+  ? readCsv(validationErrorsProfilePath)
+  : readCsv(validationErrorsDefaultPath);
 
+// CSV期待エラーの整形
 function parseExpectedErrors(value) {
   if (!value) return [];
   return value.split('|').map(err => err.trim()).filter(Boolean);
 }
 
+/**
+ * break 指定を正規化する（空文字や空白を除去）
+ * @param {string} breakTarget - 破壊対象
+ * @param {string} breakValue - 上書き値またはSKIP
+ * @returns {{ target: string, value: string }} 正規化済みの指定
+ */
 function normalizeBreakSpec(breakTarget, breakValue) {
   const target = typeof breakTarget === 'string' ? breakTarget.trim() : '';
   return { target, value: breakValue };
 }
 
+/**
+ * SKIP 指定かどうかを判定する
+ * @param {string} value - breakValue
+ * @returns {boolean} trueならSKIP
+ */
 function isSkipValue(value) {
   if (value == null) return false;
   const normalized = String(value).trim().toLowerCase();
   return normalized === 'skip' || normalized === '__skip__';
 }
 
+/**
+ * 期待エラーの検証を行う
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {string[]} expectedErrors - 期待エラー
+ * @param {string} containerSelector - エラー表示領域
+ */
 async function verifyValidationErrors(I, expectedErrors, containerSelector) {
   I.waitForElement(containerSelector, 5);
   expectedErrors.forEach(err => I.see(err, containerSelector));
+}
+
+/**
+ * 業務的な breakTarget からスキップ対象の step を解決する
+ * @param {string} breakTarget - 業務識別子
+ * @returns {string[]} スキップ対象の step
+ */
+function getSkipStepsForBreakTarget(breakTarget) {
+  const mapping = {
+    class_select: ['class_select'],
+    class_apply: ['class_apply'],
+    course_set: ['course_set'],
+    transaction: ['transaction'],
+    contract_date: ['fill_dates'],
+    start_date: ['fill_dates']
+  };
+
+  return mapping[breakTarget] || [];
 }
 
 /**
@@ -124,7 +154,7 @@ function buildExecutionPlan(input) {
 
   const skipSteps = new Set();
   if (breakSpec.target && isSkipValue(breakSpec.value)) {
-    skipSteps.add(breakSpec.target);
+    getSkipStepsForBreakTarget(breakSpec.target).forEach(step => skipSteps.add(step));
   }
 
   if (input.expectedErrors.length) {
@@ -445,7 +475,7 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
  */
 
 
-Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('新規会員登録 @dev @normal', async ({ I, classMemberPageShimamura, current }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
   const input = {
@@ -478,7 +508,7 @@ Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShi
 
 );
 
-Data(validationErrorData).Scenario('経理日付バリデーションエラー @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(validationErrorData).Scenario('経理日付バリデーションエラー @dev @error', async ({ I, classMemberPageShimamura, current }) => {
   I.say(`--- テスト開始: ${current.label} ---`);
 
   const input = {

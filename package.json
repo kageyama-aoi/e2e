@@ -8,6 +8,8 @@
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura.testgcp",
     "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js",
+    "test:shimamura:syokai:normal": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --grep \"@normal\"",
+    "test:shimamura:syokai:error": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --grep \"@error\"",
     
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
     "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",

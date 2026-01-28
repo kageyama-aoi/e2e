@@ -1,3 +1,6 @@
-label,lastName,className,keiyakuDate,kaishiDate,expectedErrors
-開始日必須バリデーション,かげやま,ピアノ水曜日_01_01,2026-01-04,,開始日は必須項目です
-開始日が過去日,かげやま,ピアノ水曜日_01_01,2026-01-04,2025-12-31,開始日
+label,lastName,className,keiyakuDate,kaishiDate,breakTarget,breakValue,expectedErrors
+開始日必須バリデーション,かげやま,ピアノ水曜日_01_01,2026-01-04,,start_date,SKIP,開始日は必須項目です
+開始日が過去日,かげやま,ピアノ水曜日_01_01,2026-01-04,2025-12-31,start_date,2025-12-31,開始日
+契約日必須バリデーション,かげやま,ピアノ水曜日_01_01,,2026-01-10,contract_date,SKIP,契約日は必須項目です
+日付フォーマット不正（契約日）,かげやま,ピアノ水曜日_01_01,2026/01/aa,2026-01-10,contract_date,2026/01/aa,日付形式が不正です
+コース設定未実施,かげやま,ピアノ水曜日_01_01,2026-01-04,2026-01-10,course_set,SKIP,コース料金を設定してください
