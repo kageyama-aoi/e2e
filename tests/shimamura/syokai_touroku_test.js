@@ -13,12 +13,17 @@
  * **データソース**
  * - `syokai_touroku_data.csv`（または `--profile` に応じたファイル）
  *
+ * **異常系の指定（CSV）**
+ * - `breakTarget`: 業務的な破壊ポイント（例: `class_select`, `class_apply`, `course_set`, `transaction`, `contract_date`, `start_date`）
+ * - `breakValue`: 上書き値 または `SKIP` / `__SKIP__`（操作スキップ）
+ * - `expectedErrors`: `|` 区切りの期待エラー文言
+ *
  * **前提条件**
  * - 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
  * - 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
  *
  * **最終更新日**
- * - 2026-01-27
+ * - 2026-01-28
  */
 const fs = require('fs');
 const path = require('path');
@@ -50,6 +55,133 @@ if (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath)) {
 function parseExpectedErrors(value) {
   if (!value) return [];
   return value.split('|').map(err => err.trim()).filter(Boolean);
+}
+
+function normalizeBreakSpec(breakTarget, breakValue) {
+  const target = typeof breakTarget === 'string' ? breakTarget.trim() : '';
+  return { target, value: breakValue };
+}
+
+function isSkipValue(value) {
+  if (value == null) return false;
+  const normalized = String(value).trim().toLowerCase();
+  return normalized === 'skip' || normalized === '__skip__';
+}
+
+async function verifyValidationErrors(I, expectedErrors, containerSelector) {
+  I.waitForElement(containerSelector, 5);
+  expectedErrors.forEach(err => I.see(err, containerSelector));
+}
+
+/**
+ * 入力値を実行用に整形する（UI名ではなく業務識別子で解釈する）
+ * @param {Object} input - 入力データ
+ * @param {string} input.class_name01 - クラス名
+ * @param {string} input.keiyaku_date - 契約日
+ * @param {string} input.kaishi_date - 開始日
+ * @param {string} [input.breakTarget] - 破壊対象（例: contract_date, start_date）
+ * @param {string} [input.breakValue] - 上書き値 または SKIP
+ * @returns {Object} 実行用入力データ
+ */
+function prepareInput(input) {
+  const breakSpec = normalizeBreakSpec(input.breakTarget, input.breakValue);
+  const preparedInput = {
+    class_name01: input.class_name01,
+    keiyaku_date: input.keiyaku_date,
+    kaishi_date: input.kaishi_date
+  };
+
+  if (breakSpec.target === 'contract_date' && breakSpec.value != null) {
+    preparedInput.keiyaku_date = isSkipValue(breakSpec.value) ? '' : breakSpec.value;
+  }
+  if (breakSpec.target === 'start_date' && breakSpec.value != null) {
+    preparedInput.kaishi_date = isSkipValue(breakSpec.value) ? '' : breakSpec.value;
+  }
+
+  return preparedInput;
+}
+
+/**
+ * 実行計画（Execution Plan）を生成する
+ * @param {Object} input - 入力データ
+ * @param {string} [input.breakTarget] - 破壊対象
+ * @param {string} [input.breakValue] - 上書き値 または SKIP
+ * @param {string[]} [input.expectedErrors] - 期待エラー
+ * @returns {{ plan: Array<{step: string, expect?: string}> }} 実行計画
+ */
+function buildExecutionPlan(input) {
+  const breakSpec = normalizeBreakSpec(input.breakTarget, input.breakValue);
+  const steps = [
+    { step: 'class_select' },
+    { step: 'switch_to_detail' },
+    { step: 'class_apply' },
+    { step: 'fill_dates' },
+    { step: 'course_set' },
+    { step: 'log_after_popup_close' },
+    { step: 'transaction', expect: 'success' },
+    { step: 'verify_errors', expect: 'validation_error' }
+  ];
+
+  const skipSteps = new Set();
+  if (breakSpec.target && isSkipValue(breakSpec.value)) {
+    skipSteps.add(breakSpec.target);
+  }
+
+  if (input.expectedErrors.length) {
+    skipSteps.add('transaction');
+  } else {
+    skipSteps.add('verify_errors');
+  }
+
+  const plan = steps.filter(step => !skipSteps.has(step.step));
+  return { plan };
+}
+
+/**
+ * Action Executor を生成する
+ * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
+ * @param {Object} locators - 画面ロケーター
+ * @param {Object} input - 実行用入力データ
+ * @param {string[]} expectedErrors - 期待エラー
+ * @returns {{ execute: (planItem: {step: string, expect?: string}) => Promise<void> }}
+ */
+function createActionExecutor(I, locators, input, expectedErrors) {
+  const actions = {
+    class_select: async () => {
+      I.click(locators.button.class_select);
+      await ShouldBoOnClassSelectPopup(I, locators, input.class_name01);
+    },
+    switch_to_detail: async () => {
+      I.switchToNextTab();
+      I.waitForElement(locate('body').withText(locators.screen.name), 5);
+    },
+    class_apply: async () => {
+      I.click(locators.button.label_class_set);
+    },
+    fill_dates: async () => {
+      await fillAccountingDates(I, locators, input);
+    },
+    course_set: async () => {
+      I.click(locators.button.label_course_set);
+    },
+    log_after_popup_close: async () => {
+      I.say(`経理ビューB_クラス選択POP_UP閉じたあと/URL:` + await I.grabCurrentUrl());
+    },
+    transaction: async () => {
+      I.retry({ retries: 2, minTimeout: 500 }).click(locators.button.label_tran_set);
+    },
+    verify_errors: async () => {
+      await verifyValidationErrors(I, expectedErrors, locators.error.container);
+    }
+  };
+
+  return {
+    execute: async (planItem) => {
+      const action = actions[planItem.step];
+      if (!action) throw new Error(`Unknown action: ${planItem.step}`);
+      await action();
+    }
+  };
 }
 
 Feature('Dev sandbox (@dev)');
@@ -193,58 +325,41 @@ async function fillAccountingDates(I, locators, dates) {
  * @param {string} input.class_name01 - クラス名
  * @param {string} input.keiyaku_date - 契約日
  * @param {string} input.kaishi_date - 開始日
+ * @param {string} [input.breakTarget] - 破壊対象（例: class_select, contract_date）
+ * @param {string} [input.breakValue] - 上書き値 または SKIP
+ * @param {string[]} [input.expectedErrors] - 期待エラー
  */
-async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kaishi_date }) {
+async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kaishi_date, breakTarget, breakValue, expectedErrors = [] }) {
 
   const S = {
     textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
     pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category' },
     button: { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
-    screen: { name: '受講生詳細' }
-  }
-
-
-  I.click(S.button.class_select);
-  await ShouldBoOnClassSelectPopup(I, S, class_name01);
-
-  I.switchToNextTab();
-  I.waitForElement(locate('body').withText(S.screen.name), 5);
-  I.click(S.button.label_class_set);
-
-  await fillAccountingDates(I, S, { keiyaku_date, kaishi_date });
-
-  I.click(S.button.label_course_set);
-
-  I.say(`経理ビューB_クラス選択POP_UP閉じたあと/URL:` + await I.grabCurrentUrl());
-  I.retry({ retries: 2, minTimeout: 500 }).click(S.button.label_tran_set);
-
-
-}
-
-async function ShouldBeOnKeirisyoriScreenBWithValidationErrors(I, { class_name01, keiyaku_date, kaishi_date }, expectedErrors = []) {
-
-  const S = {
-    textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
-    pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category' },
-    button: { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定' },
     screen: { name: '受講生詳細' },
     error: { container: '#top_err_info_msg_div' }
   }
 
+  const preparedInput = prepareInput({
+    class_name01,
+    keiyaku_date,
+    kaishi_date,
+    breakTarget,
+    breakValue,
+    expectedErrors
+  });
+  const { plan } = buildExecutionPlan({
+    class_name01,
+    keiyaku_date,
+    kaishi_date,
+    breakTarget,
+    breakValue,
+    expectedErrors
+  });
+  const executor = createActionExecutor(I, S, preparedInput, expectedErrors);
 
-  I.click(S.button.class_select);
-  await ShouldBoOnClassSelectPopup(I, S, class_name01);
-
-  I.switchToNextTab();
-  I.waitForElement(locate('body').withText(S.screen.name), 5);
-  I.click(S.button.label_class_set);
-
-  await fillAccountingDates(I, S, { keiyaku_date, kaishi_date });
-
-  I.click(S.button.label_course_set);
-
-  I.waitForElement(S.error.container, 5);
-  expectedErrors.forEach(err => I.see(err, S.error.container));
+  for (const step of plan) {
+    await executor.execute(step);
+  }
 }
 
 /**
@@ -333,11 +448,13 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
 Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura, current }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
-  const input =
-  {
+  const input = {
     class_name01: current.className,
     keiyaku_date: current.keiyakuDate,
-    kaishi_date: current.kaishiDate
+    kaishi_date: current.kaishiDate,
+    breakTarget: current.breakTarget,
+    breakValue: current.breakValue,
+    expectedErrors: parseExpectedErrors(current.expectedErrors)
   }
 
 
@@ -367,7 +484,10 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
   const input = {
     class_name01: current.className,
     keiyaku_date: current.keiyakuDate,
-    kaishi_date: current.kaishiDate
+    kaishi_date: current.kaishiDate,
+    breakTarget: current.breakTarget,
+    breakValue: current.breakValue,
+    expectedErrors: parseExpectedErrors(current.expectedErrors)
   };
 
   await classMemberPageShimamura.navigateToAdminTab(I,'受講生', '受講生登録');
@@ -375,8 +495,7 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
   const student_name = await ShouldBeOnKouhoseiList(I, current.lastName);
   await ShouldBeOnKouhouseiDetail(I, student_name);
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
-  const expectedErrors = parseExpectedErrors(current.expectedErrors);
-  await ShouldBeOnKeirisyoriScreenBWithValidationErrors(I, input, expectedErrors);
+  await ShouldBeOnKeirisyoriScreenB(I, input);
 
   I.say(`--- テスト終了: ${current.label} ---`);
 });
