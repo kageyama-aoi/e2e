@@ -107,6 +107,7 @@ function getSkipStepsForBreakTarget(breakTarget) {
  * 入力値を実行用に整形する（UI名ではなく業務識別子で解釈する）
  * @param {Object} input - 入力データ
  * @param {string} input.class_name01 - クラス名
+ * @param {string} input.course_category - クラスカテゴリー
  * @param {string} input.keiyaku_date - 契約日
  * @param {string} input.kaishi_date - 開始日
  * @param {string} [input.breakTarget] - 破壊対象（例: contract_date, start_date）
@@ -117,6 +118,7 @@ function prepareInput(input) {
   const breakSpec = normalizeBreakSpec(input.breakTarget, input.breakValue);
   const preparedInput = {
     class_name01: input.class_name01,
+    course_category: input.course_category,
     keiyaku_date: input.keiyaku_date,
     kaishi_date: input.kaishi_date
   };
@@ -179,7 +181,7 @@ function createActionExecutor(I, locators, input, expectedErrors) {
   const actions = {
     class_select: async () => {
       I.click(locators.button.class_select);
-      await ShouldBoOnClassSelectPopup(I, locators, input.class_name01);
+      await ShouldBoOnClassSelectPopup(I, locators, input.class_name01, input.course_category);
     },
     switch_to_detail: async () => {
       I.switchToNextTab();
@@ -353,13 +355,14 @@ async function fillAccountingDates(I, locators, dates) {
  * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
  * @param {Object} input - 入力データ
  * @param {string} input.class_name01 - クラス名
+ * @param {string} input.course_category - クラスカテゴリー
  * @param {string} input.keiyaku_date - 契約日
  * @param {string} input.kaishi_date - 開始日
  * @param {string} [input.breakTarget] - 破壊対象（例: class_select, contract_date）
  * @param {string} [input.breakValue] - 上書き値 または SKIP
  * @param {string[]} [input.expectedErrors] - 期待エラー
  */
-async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kaishi_date, breakTarget, breakValue, expectedErrors = [] }) {
+async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, course_category, keiyaku_date, kaishi_date, breakTarget, breakValue, expectedErrors = [] }) {
 
   const S = {
     textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
@@ -371,6 +374,7 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kais
 
   const preparedInput = prepareInput({
     class_name01,
+    course_category,
     keiyaku_date,
     kaishi_date,
     breakTarget,
@@ -397,13 +401,17 @@ async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kais
  * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
  * @param {Object} parentLocators - 親画面のロケーター
  * @param {string} class_name01 - クラス名
+ * @param {string} course_category - クラスカテゴリー
  */
-async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01) {
+async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01, course_category) {
+  const resolvedCategory = (typeof course_category === 'string' && course_category.trim())
+    ? course_category.trim()
+    : 'スクール';
   const SS = {
     display: { name: 'クラス選択POP_UP' },
     button: { search: '検索' },
     result: { link: '.listViewTdLinkS1' },
-    options: { couse_category: 'スクール', area: 'すべて', tenpo: 'すべて' }
+    options: { couse_category: resolvedCategory, area: 'すべて', tenpo: 'すべて' }
   }
 
   // I.switchToNextTab();
@@ -480,6 +488,7 @@ Data(csvData).Scenario('新規会員登録 @dev @normal', async ({ I, classMembe
 
   const input = {
     class_name01: current.className,
+    course_category: current.courseCategory,
     keiyaku_date: current.keiyakuDate,
     kaishi_date: current.kaishiDate,
     breakTarget: current.breakTarget,
@@ -513,6 +522,7 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
 
   const input = {
     class_name01: current.className,
+    course_category: current.courseCategory,
     keiyaku_date: current.keiyakuDate,
     kaishi_date: current.kaishiDate,
     breakTarget: current.breakTarget,
