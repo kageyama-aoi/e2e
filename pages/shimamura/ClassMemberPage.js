@@ -25,7 +25,7 @@ module.exports = {
    * @param {string} tabName - クリックするタブのテキスト（例: 'コース', '講師'）
    */
   clickOtherTab(tabName) {
-    I.say(`管理メニューの「${tabName}」タブをクリックします。`);
+    I.say(`【管理メニュー】「${tabName}」タブをクリック`);
     const tabSelector = this.locators.otherTab(tabName);
     I.waitForElement(tabSelector, 10);
     I.click(tabSelector);
@@ -37,13 +37,15 @@ module.exports = {
    * @param {string} expectedTitle - 表示されるべきヘッダーのテキスト（例: 'コース一覧'）
    */
   async navigateToAdminTab(I,tabName, expectedTitle) {
-    I.say(`メインメニューから「${tabName}」機能一覧へ遷移します。`);
+    I.say('=== 管理メニュー遷移 開始 ===');
+    I.say(`【メインメニュー】「${tabName}」機能一覧へ`);
     I.waitForElement(this.locators.kanriLink, 10);
     I.click(this.locators.kanriLink);
     this.clickOtherTab(tabName);
-    I.say(`「${expectedTitle}」が表示されたことを確認します。`);
+    I.say(`【画面確認】「${expectedTitle}」表示`);
     I.see(expectedTitle);
     console.log(expectedTitle + "_URL: " + await I.grabCurrentUrl());
+    I.say('=== 管理メニュー遷移 終了 ===');
   },
 
   /**
@@ -52,12 +54,12 @@ module.exports = {
    * @param {string} [expectedTitle] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
    */
   clickSubMenuLink(linkText, expectedTitle) {
-    I.say(`「${linkText}」をクリックしてページへ遷移します。`);
+    I.say(`【サブメニュー】「${linkText}」へ遷移`);
     const linkSelector = this.locators.subMenuLink(linkText);
     I.waitForElement(linkSelector, 10);
     I.click(linkSelector);
     if (expectedTitle) {
-      I.say(`「${expectedTitle}」が表示されたことを確認します。`);
+      I.say(`【画面確認】「${expectedTitle}」表示`);
       I.see(expectedTitle);
     }
   },
@@ -70,20 +72,20 @@ module.exports = {
    * @param {string} searchCriteria.courseCategory - コースカテゴリー
    */
   searchClass(searchCriteria) {
-    I.say('クラスの検索条件を入力します...');
+    I.say('【クラス検索】条件入力');
     I.fillField(this.locators.classNameInput, searchCriteria.className);
     I.selectOption(this.locators.teacherStatusSelect, searchCriteria.teacherStatus);
     I.selectOption(this.locators.courseCategorySelect, searchCriteria.courseCategory);
 
-    I.say('入力された値を確認します...');
+    I.say('【クラス検索】入力内容の確認');
     I.seeInField(this.locators.classNameInput, searchCriteria.className);
     I.seeInField(this.locators.teacherStatusSelect, searchCriteria.teacherStatus);
     I.seeInField(this.locators.courseCategorySelect, searchCriteria.courseCategory);
 
-    I.say('検索ボタンをクリックし、結果が表示されるのを待ちます...');
+    I.say('【クラス検索】検索実行');
     I.click(this.locators.searchButton);
     I.waitForVisible(this.locators.searchResultsContainer, 10);
-    I.say('検索結果が表示されました。');
+    I.say('【クラス検索】結果表示');
   },
 
   /**
@@ -91,7 +93,7 @@ module.exports = {
    * @param {string} className - クリックするクラスの名称
    */
   selectClassFromSearchResult(className) {
-    I.say(`検索結果のクラス「${className}」をクリックします。`);
+    I.say(`【クラス検索】結果から「${className}」を選択`);
     const linkLocator = this.locators.searchResultLink(className);
     I.waitForElement(linkLocator, 10);
     I.click(linkLocator);

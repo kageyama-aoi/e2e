@@ -69,6 +69,11 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 - [しまむらテスト コーディング規約](./docs/shimamura_coding_guidelines.md): しまむら系テストの構成・命名・共通化のルールをまとめたガイドです。
 - [技術概要 (Technical Overview)](./docs/technical_overview.md): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
+## デバッグのメモ
+
+- **`pause()` はグローバル関数**です（`I.pause()` は存在しないためエラーになります）。
+- 手元で一時停止したい場合は `pause();` を使用してください。
+
 ## ディレクトリ構成
 
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
