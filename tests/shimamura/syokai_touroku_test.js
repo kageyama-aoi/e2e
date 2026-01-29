@@ -1,5 +1,5 @@
 /**
- * @fileoverview しまむら：新規会員登録と経理処理のE2Eテスト
+ * @fileoverview しまむら：新規受講生登録と経理処理のE2Eテスト
  *
  * データ駆動（Data Driven）でCSVからテストデータを読み込み実行します。
  *
@@ -46,21 +46,47 @@ const profile = getProfileFromArgs();
 const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_data.csv');
 const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_data_${profile}.csv`) : null;
 
-const csvData = (profileCsvPath && fs.existsSync(profileCsvPath))
+const csvDataRaw = (profileCsvPath && fs.existsSync(profileCsvPath))
   ? readCsv(profileCsvPath)
   : readCsv(defaultCsvPath);
 
 const validationErrorsDefaultPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_validation_errors.csv');
 const validationErrorsProfilePath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_validation_errors_${profile}.csv`) : null;
 
-const validationErrorData = (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath))
+const validationErrorDataRaw = (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath))
   ? readCsv(validationErrorsProfilePath)
   : readCsv(validationErrorsDefaultPath);
+
+function withScenarioLabel(data, labelResolver) {
+  return data.map((row) => {
+    const label = labelResolver(row);
+    return {
+      ...row,
+      toString() {
+        return label;
+      }
+    };
+  });
+}
+
+const csvData = withScenarioLabel(csvDataRaw, (row) => {
+  const className = row.className || row.class_name01 || '';
+  const lastName = row.lastName || row.last_name || '';
+  return className || lastName || 'データ行';
+});
+
+const validationErrorData = withScenarioLabel(validationErrorDataRaw, (row) => {
+  return row.label || row.breakTarget || 'バリデーションエラー';
+});
 
 // CSV期待エラーの整形
 function parseExpectedErrors(value) {
   if (!value) return [];
   return value.split('|').map(err => err.trim()).filter(Boolean);
+}
+
+async function logScreenUrl(I, screenName) {
+  I.say(`${screenName}\nURL: ${await I.grabCurrentUrl()}`);
 }
 
 /**
@@ -212,7 +238,8 @@ function createActionExecutor(I, locators, input, expectedErrors) {
       I.click(locators.button.label_course_set);
     },
     log_after_popup_close: async () => {
-      I.say(`経理ビューB_クラス選択POP_UP閉じたあと/URL:` + await I.grabCurrentUrl());
+      const screenName = '経理ビューB_クラス選択POP_UP閉じたあと';
+      await logScreenUrl(I, screenName);
     },
     transaction: async () => {
       I.retry({ retries: 2, minTimeout: 500 }).click(locators.button.label_tran_set);
@@ -249,13 +276,14 @@ Before(async ({ login, loginPageShimamura }) => {
  * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
  */
 async function ShouldBeOnStudentGroup(I, classMemberPageShimamura) {
+  const S = { screen: { name: '候補生検索ページ' } };
   I.say('【候補生検索】メニュー遷移');
   await toggleGroupmenu(I, {
     icon_id: 'submenu__candidates_grp_sub',
     menuname: '候補生'
   });
   classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
-  I.say("候補生検索ページURL: " + await I.grabCurrentUrl());
+  await logScreenUrl(I, S.screen.name);
 }
 
 
@@ -278,7 +306,7 @@ async function ShouldBeOnKouhoseiList(I, last_name) {
   I.click(S.button.search);
   I.waitForElement(S.result.list, 10);
 
-  I.say(S.screen.name + `/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, S.screen.name);
 
   const student_name = await I.grabTextFrom(S.result.link);
   I.click(locate(S.result.list));
@@ -301,7 +329,7 @@ async function ShouldBeOnKouhouseiDetail(I, student_name) {
 
   I.say('【候補生詳細】受講生へ移動');
   I.waitForElement(locate('body').withText(S.screen.name), 5);
-  I.say(S.screen.name + `/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, S.screen.name);
 
   const idnumber = await I.grabTextFrom(S.element.idNumber);
   I.say(`受講生情報: ${idnumber}_${student_name}`);
@@ -335,7 +363,7 @@ async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura) {
   });
 
   classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
-  I.say(S.screen.name + `/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, S.screen.name);
   I.waitForElement(locate('body').withText(S.button.addUpdateClass), 5);
   I.click(S.button.addUpdateClass)
 }
@@ -485,7 +513,7 @@ async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01, cours
   I.say('【クラス選択】ポップアップ検索');
   await fillClassSearchForm(I, parentLocators, class_name01, SS.options);
 
-  I.say(SS.display.name + `/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, SS.display.name);
   I.click(SS.button.search);
 
   I.waitForElement(SS.result.link, 10);
@@ -499,15 +527,17 @@ async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01, cours
  * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
  */
 async function ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura) {
+  const screenNameE = '経理ビューE';
+  const screenNameA = '経理ビューA';
   const S = {
     screen: { url_segment: 'DWConfirmCarteKeiri_AN' },
     button: { label_keiri_finish: '確認完了（経理ビューへ）' },
 
   }
   I.say('【確認完了】経理ビューへ戻る');
-  I.say(`経理ビューE/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, screenNameE);
   await verifyNavigationByUrlChange(I, 5, S.screen.url_segment, S.button.label_keiri_finish);
-  I.say(`経理ビューA/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, screenNameA);
 }
 
 
@@ -520,6 +550,7 @@ async function ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura) {
  * @param {string} options.taikaiMonth - 最終在籍月
  */
 async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
+  const S = { screen: { name: '退会処理' } };
   //   const S = {
   //   display: { name: 'クラス選択POP_UP' },
   //   button: { search: '検索' },
@@ -534,7 +565,7 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
   });
   classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
   I.click('退会処理')
-  I.say(`退会処理/URL:` + await I.grabCurrentUrl());
+  await logScreenUrl(I, S.screen.name);
   
   I.fillField('#final_enrollment_year', taikaiYear);
   I.fillField('#final_enrollment_month', taikaiMonth);
@@ -553,13 +584,13 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
  */
 
 
-Data(csvData).Scenario('新規会員登録 @dev @normal', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMemberPageShimamura, current }) => {
   I.say('=== 経理処理 開始 ===');
-  I.say('【受講生登録】新規会員登録フロー');
+  I.say('【受講生登録】新規受講生登録フロー');
 
   setBusinessLabels({
-    epic: '会員管理',
-    feature: '新規会員登録＋経理処理',
+    epic: '受講生管理',
+    feature: '新規受講生登録＋経理処理',
     story: '正常登録フロー'
   });
 
@@ -621,8 +652,8 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
 
   const storyLabel = current.label || '経理日付エラー';
   setBusinessLabels({
-    epic: '会員管理',
-    feature: '新規会員登録＋経理処理',
+    epic: '受講生管理',
+    feature: '新規受講生登録＋経理処理',
     story: storyLabel
   });
 

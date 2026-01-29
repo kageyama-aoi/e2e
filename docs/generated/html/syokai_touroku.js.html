@@ -46,7 +46,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview 新規会員登録および経理処理の自動化テスト
+ * @fileoverview 新規受講生登録および経理処理の自動化テスト
  * 
  * データ駆動（Data Driven）テストとして実装されており、CSVファイルから
  * テストデータを読み込んで実行します。
@@ -402,7 +402,7 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
  */
 
 
-Data(csvData).Scenario('新規会員登録 @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('新規受講生登録 @dev', async ({ I, classMemberPageShimamura, current }) => {
   I.say('--- テスト開始: 経理処理 ---');
 
   const input =

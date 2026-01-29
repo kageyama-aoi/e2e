@@ -44,7 +44,7 @@ module.exports = {
     this.clickOtherTab(tabName);
     I.say(`【画面確認】「${expectedTitle}」表示`);
     I.see(expectedTitle);
-    console.log(expectedTitle + "_URL: " + await I.grabCurrentUrl());
+    I.say(`${expectedTitle}\nURL: ${await I.grabCurrentUrl()}`);
     I.say('=== 管理メニュー遷移 終了 ===');
   },
 
@@ -100,5 +100,5 @@ module.exports = {
     // TODO: 次のページ（クラス詳細など）が表示されたことを確認する検証を追加してください。
   },
 
-  // TODO: これ以降のクラス会員登録に関する操作（例: registerNewMember）をメソッドとして追加してください。
+  // TODO: これ以降のクラス受講生登録に関する操作（例: registerNewMember）をメソッドとして追加してください。
 };

@@ -46,13 +46,13 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview クラス会員登録機能のE2Eテスト
+ * @fileoverview クラス受講生登録機能のE2Eテスト
  * 
  * **処理フロー**
  * - 1. 担当者アカウントでログイン
  * - 2. コース管理 > コース一覧 > クラス一覧 へ遷移
  * - 3. クラス一覧で条件検索し、クラスを選択
- * - 4. クラス詳細画面で受講生タブを選択し、会員登録操作を行う
+ * - 4. クラス詳細画面で受講生タブを選択し、受講生登録操作を行う
  * 
  * **前提条件**
  * - 環境変数 `TESTGCP_SHIMAMURA_USER`, `TESTGCP_SHIMAMURA_PASSWORD`, `TESTGCP_SHIMAMURA_TANTOUSYA` が設定されていること
@@ -60,7 +60,7 @@
  * **最終更新日**
  * - 2026-01-17
  */
-// Feature('しまむら クラス会員登録機能');
+// Feature('しまむら クラス受講生登録機能');
 Feature('Dev sandbox (@dev)');
 
 /**
@@ -79,11 +79,11 @@ Before(({ I, loginPageShimamura }) => {
 });
 
 /**
- * クラス会員登録のテストシナリオ
+ * クラス受講生登録のテストシナリオ
  */
-Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMemberPageShimamura }) => {
-  // --- テスト本編: クラス会員登録 ---
-  I.say('--- テスト開始: クラス会員登録 ---');
+Scenario('クラス受講生の新規登録ができる @dev', async ({ I, classMemberPageShimamura }) => {
+  // --- テスト本編: クラス受講生登録 ---
+  I.say('--- テスト開始: クラス受講生登録 ---');
 
   // メインメニューからコース管理ページへ遷移。
   classMemberPageShimamura.navigateToAdminTab('コース', 'コース一覧');
@@ -131,7 +131,7 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
 
   await ClassOperate();
 
-  //クラス会員登録画面　操作
+  //クラス受講生登録画面　操作
   pause(); // ←ここでインタラクティブシェルへ
 
 
@@ -139,7 +139,7 @@ Scenario('クラス会員の新規登録ができる @dev', async ({ I, classMem
   // 最終確認のスクリーンショット
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
 
-  I.say('--- テスト正常終了: クラス会員登録 ---');
+  I.say('--- テスト正常終了: クラス受講生登録 ---');
 });
 </code></pre>
         </article>

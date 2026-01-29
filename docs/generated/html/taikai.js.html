@@ -46,7 +46,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview 会員退会処理のE2Eテストシナリオ
+ * @fileoverview 受講生退会処理のE2Eテストシナリオ
  * 
  * このファイルは、CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。
  * 
@@ -288,7 +288,7 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear,
 
 
 
-Scenario('会員退会 @dev', async ({ I, classMemberPageShimamura }) => {
+Scenario('受講生退会 @dev', async ({ I, classMemberPageShimamura }) => {
 
   const testDataList = loadTaikaiTestDataFromCsv('taikai_testdata.csv');
 

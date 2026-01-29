@@ -1,5 +1,5 @@
 /**
- * @fileoverview しまむら：会員退会処理のE2Eテスト
+ * @fileoverview しまむら：受講生退会処理のE2Eテスト
  *
  * CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。
  *
@@ -59,7 +59,7 @@ async function ShouldBeOnZyukouseiList(I, idnumber) {
   await I.click(S.button.search);
   await I.waitForElement(S.result.list, 10);
 
-  await I.say(S.screen.name + `/---URL:` + await I.grabCurrentUrl());
+  await I.say(`${S.screen.name}\nURL: ${await I.grabCurrentUrl()}`);
 
   const student_name = await I.grabTextFrom(S.result.link);
   await I.click(locate(S.result.list));
@@ -116,7 +116,7 @@ async function navigateToTaikaiScreen(I, classMemberPageShimamura) {
 
   // 退会画面へ遷移
   I.click(S.buttons.taikai);
-  I.say(`退会処理/URL:` + await I.grabCurrentUrl());
+  I.say(`退会処理\nURL: ${await I.grabCurrentUrl()}`);
 }
 
 /**
@@ -180,7 +180,7 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear,
 
 
 
-Scenario('会員退会 @dev', async ({ I, classMemberPageShimamura }) => {
+Scenario('受講生退会 @dev', async ({ I, classMemberPageShimamura }) => {
 
   const testDataList = loadTaikaiTestDataFromCsv('taikai_testdata.csv');
 

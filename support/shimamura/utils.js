@@ -14,9 +14,9 @@ async function toggleGroupmenu(I, { icon_id, menuname }) {
 
   if (display === 'none') {
     I.click(locate('span').withText(menuname));
-    I.say(`✅ サブメニューグループ：${menuname}「＋」ボタンが表示中なのでリンクを押下`);
+    I.say(`-サブメニューグループ：${menuname}「＋」ボタンが表示中⇒link click`);
   } else {
-    I.say(`⚠️ サブメニューグループ：${menuname}「-」ボタンなのでスキップ`);
+    I.say(`-サブメニューグループ：${menuname}「-」ボタン⇒skip`);
   }
 }
 
