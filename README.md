@@ -74,6 +74,33 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 - **`pause()` はグローバル関数**です（`I.pause()` は存在しないためエラーになります）。
 - 手元で一時停止したい場合は `pause();` を使用してください。
 
+## 補助ツール
+
+### サブメニュー抽出
+`extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
+JSON/CSV で出力するための補助ツールです。スクレーピングや画面構造の把握に使えます。
+
+**使い方 (対話式)**
+```bash
+python extract_submenus.py
+```
+
+**出力形式の選択**
+- `1`: JSON
+- `2`: CSV
+- `3`: CSV(フラット)
+
+**入出力**
+- 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
+- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\submenu_extract\`
+  - JSON: `submenu_extract.json`
+  - CSV: `submenu_extract.csv`
+  - CSV(フラット): `submenu_extract_flat.csv`
+
+**補足**
+- 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
+- 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
+
 ## ディレクトリ構成
 
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
