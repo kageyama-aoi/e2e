@@ -101,6 +101,31 @@ python extract_submenus.py
 - 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
 - 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
 
+### 画面フォーム要素抽出
+`extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
+フォーム要素（`input` / `select` / `textarea` / `button`）を抽出し、JSON/CSV で出力します。
+
+**使い方 (対話式)**
+```bash
+python extract_body_only_fields.py
+```
+
+**出力形式の選択**
+- `1`: JSON
+- `2`: CSV
+- `3`: CSV(フラット)
+
+**入出力**
+- 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
+- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\body_only_extract\`
+  - JSON: `body_only_fields.json`
+  - CSV: `body_only_fields.csv`
+  - CSV(フラット): `body_only_fields_flat.csv`
+
+**補足**
+- 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
+- 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
+
 ## ディレクトリ構成
 
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
