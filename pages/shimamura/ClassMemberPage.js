@@ -1,6 +1,27 @@
 const { I } = inject();
+const { attachScreenshotFromOutput } = require('../../support/utils');
 
 module.exports = {
+  /**
+   * 画面遷移スクリーンショットのON/OFFを判定します。
+   * @returns {boolean}
+   */
+  isNavScreenshotEnabled() {
+    const value = String(process.env.SCREENSHOT_ON_NAVIGATION || '').trim().toLowerCase();
+    return value === 'true' || value === '1' || value === 'yes' || value === 'on';
+  },
+
+  /**
+   * スクリーンショット用の名前を簡易的に整形します。
+   * @param {string} name
+   * @returns {string}
+   */
+  buildNavScreenshotName(name) {
+    return String(name || 'unknown')
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_')
+      .trim();
+  },
   /**
    * ページ内の要素（セレクタ）を定義します
    */
@@ -54,13 +75,23 @@ module.exports = {
    * @param {string} [expectedTitle] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
    */
   clickSubMenuLink(linkText, expectedTitle) {
-    I.say(`【サブメニュー】「${linkText}」へ遷移`);
+    // I.say(`【サブメニュー】「${linkText}」へ遷移`);
     const linkSelector = this.locators.subMenuLink(linkText);
     I.waitForElement(linkSelector, 10);
+    if (this.isNavScreenshotEnabled()) {
+      const baseName = this.buildNavScreenshotName(linkText);
+      const fileName = I.saveScreenshotWithTimestamp(`NAV_before_${baseName}.png`);
+      attachScreenshotFromOutput(fileName, '画面遷移_前');
+    }
     I.click(linkSelector);
     if (expectedTitle) {
-      I.say(`【画面確認】「${expectedTitle}」表示`);
+      // I.say(`【画面確認】「${expectedTitle}」表示`);
       I.see(expectedTitle);
+    }
+    if (this.isNavScreenshotEnabled()) {
+      const baseName = this.buildNavScreenshotName(expectedTitle || linkText);
+      const fileName = I.saveScreenshotWithTimestamp(`NAV_after_${baseName}.png`);
+      attachScreenshotFromOutput(fileName, '画面遷移_後');
     }
   },
 

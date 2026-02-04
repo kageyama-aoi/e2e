@@ -91,6 +91,20 @@ async function attachErrorScreenshot(I, baseName) {
   }
 }
 
+function attachScreenshotFromOutput(fileName, attachmentName = '画面キャプチャ') {
+  const outputDir = codeceptConfig && codeceptConfig.output
+    ? path.resolve(__dirname, '..', codeceptConfig.output)
+    : path.resolve(__dirname, '../output');
+  const filePath = path.join(outputDir, fileName);
+
+  if (fs.existsSync(filePath)) {
+    const buffer = fs.readFileSync(filePath);
+    withAllure((allure) => allure.addAttachment(attachmentName, buffer, 'image/png'));
+  } else {
+    withAllure((allure) => allure.addAttachment(attachmentName, `スクリーンショットが見つかりません: ${filePath}`, 'text/plain'));
+  }
+}
+
 module.exports = {
   readCsv,
   getProfileFromArgs,
@@ -98,4 +112,5 @@ module.exports = {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot,
+  attachScreenshotFromOutput,
 };

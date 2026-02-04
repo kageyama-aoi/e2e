@@ -277,7 +277,7 @@ Before(async ({ login, loginPageShimamura }) => {
  */
 async function ShouldBeOnStudentGroup(I, classMemberPageShimamura) {
   const S = { screen: { name: '候補生検索ページ' } };
-  I.say('【候補生検索】メニュー遷移');
+  I.say('【画面遷移】候補生検索 メニュー');
   await toggleGroupmenu(I, {
     icon_id: 'submenu__candidates_grp_sub',
     menuname: '候補生'
@@ -354,7 +354,7 @@ async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura) {
     button: { addUpdateClass: 'クラス追加/更新する' }
   }
 
-  I.say('【受講生登録・経理ビュー】画面遷移');
+  I.say('【画面遷移】受講生登録・経理ビュー');
   I.waitForElement(locate('body').withText(S.screen.name), 5);
 
   await toggleGroupmenu(I, {
@@ -631,7 +631,7 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
   I.say('=== 確認完了 処理 開始 ===');
   await ShouldBeOnKeirisyoriScreenE(I, classMemberPageShimamura);
   I.say('=== 確認完了 処理 終了 ===');
-  I.say('【退会処理】画面遷移');
+  I.say('【画面遷移】退会処理');
   I.say('=== 退会処理 開始 ===');
   await ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear: current.taikaiYear, taikaiMonth: current.taikaiMonth });
   I.say('=== 退会処理 終了 ===');

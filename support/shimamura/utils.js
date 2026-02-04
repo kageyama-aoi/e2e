@@ -46,6 +46,24 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
   }
 }
 
+function isCheckboxDebugEnabled() {
+  const value = String(process.env.CHECKBOX_DEBUG || '').trim().toLowerCase();
+  return value === 'true' || value === '1' || value === 'yes' || value === 'on';
+}
+
+function formatCheckboxDebugSummary(state, args) {
+  return [
+    '[checkbox-debug]',
+    `label="${args.labelText || ''}"`,
+    `name="${args.inputName || ''}"`,
+    `id="${args.inputId || ''}"`,
+    `found=${state.inputFound}`,
+    `checked=${state.checked}`,
+    `aria=${state.ariaChecked ?? 'null'}`,
+    `container=${state.containerFound}`
+  ].join(' ');
+}
+
 /**
  * チェックボックスの探索結果を取得する（島村専用）
  * 探索順: ラベル近傍 → 次セル → name → input#id → container
@@ -58,7 +76,8 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
  * @returns {Promise<Object>} 状態情報
  */
 async function resolveCheckboxState(I, { labelText, inputName, inputId, containerSelector }) {
-  return I.executeScript((args) => {
+  const args = { labelText, inputName, inputId, containerSelector };
+  const state = await I.executeScript((args) => {
     const { labelText, inputName, inputId, containerSelector } = args;
     const labelCandidate = Array.from(document.querySelectorAll('label,td,th,span,div'))
       .find(el => el.textContent && el.textContent.trim().includes(labelText));
@@ -92,7 +111,13 @@ async function resolveCheckboxState(I, { labelText, inputName, inputId, containe
       inputHtml: input ? input.outerHTML : null,
       containerHtml: container ? container.outerHTML : null
     };
-  }, { labelText, inputName, inputId, containerSelector });
+  }, args);
+
+  if (isCheckboxDebugEnabled()) {
+    I.say(formatCheckboxDebugSummary(state, args));
+  }
+
+  return state;
 }
 
 /**

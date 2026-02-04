@@ -13,7 +13,9 @@ module.exports = function() {
       const ext = (parts.length > 1 ? parts.pop() : 'png') || 'png';
       const name = parts.join('.') || 'screenshot';
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      this.saveScreenshot(`${name}_${timestamp}.${ext}`);
+      const finalName = `${name}_${timestamp}.${ext}`;
+      this.saveScreenshot(finalName);
+      return finalName;
     },
 
     /**
