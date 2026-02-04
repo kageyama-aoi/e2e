@@ -1,0 +1,2 @@
+label,targetMonth,targetSchool,expectedErrors
+対象月未入力,,すべて,対象月を入力してください。
