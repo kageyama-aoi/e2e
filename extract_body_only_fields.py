@@ -72,6 +72,7 @@ class BodyOnlyFieldExtractor(HTMLParser):
                 "name": attrs_dict.get("name", ""),
                 "value": "",
                 "text": "",
+                "input_type": "",
                 "label": self._consume_pending_label(),
                 "attrs": attrs_dict,
                 "options": [],
@@ -95,6 +96,7 @@ class BodyOnlyFieldExtractor(HTMLParser):
                 "name": attrs_dict.get("name", ""),
                 "value": attrs_dict.get("value", ""),
                 "text": "",
+                "input_type": attrs_dict.get("type", "") if tag == "input" else "",
                 "label": self._consume_pending_label(),
                 "attrs": attrs_dict,
             }
@@ -237,24 +239,51 @@ def detect_and_read_input(path: str, encoding: str, errors: str) -> str:
             return html
 
 
-def iter_flat_rows(fields: Iterable[Dict[str, Any]]) -> Iterable[Tuple[str, str, str, str, str, str, str]]:
+def iter_flat_rows(fields: Iterable[Dict[str, Any]]) -> Iterable[Tuple[str, str, str, str, str, str, str, str]]:
     """CSVのフラット形式（selectのoptionを展開）を生成する。"""
     for item in fields:
         if item["type"] == "select":
             options = item.get("options", [])
             if not options:
-                yield (item["type"], item["id"], item["name"], item["value"], item["text"], item.get("label", ""), "")
+                yield (
+                    item.get("label", ""),
+                    item["type"],
+                    item.get("input_type", ""),
+                    item["id"],
+                    item["name"],
+                    item["value"],
+                    item["text"],
+                    "",
+                )
                 continue
             for opt in options:
                 option_text = opt.get("text", "")
                 option_value = opt.get("value", "")
                 compact = f"{option_value}:{option_text}" if option_value or option_text else ""
-                yield (item["type"], item["id"], item["name"], compact, "", item.get("label", ""), "option")
+                yield (
+                    item.get("label", ""),
+                    item["type"],
+                    item.get("input_type", ""),
+                    item["id"],
+                    item["name"],
+                    compact,
+                    "",
+                    "option",
+                )
             continue
-        yield (item["type"], item["id"], item["name"], item["value"], item.get("text", ""), item.get("label", ""), "")
+        yield (
+            item.get("label", ""),
+            item["type"],
+            item.get("input_type", ""),
+            item["id"],
+            item["name"],
+            item["value"],
+            item.get("text", ""),
+            "",
+        )
 
 
-def iter_compact_rows(fields: Iterable[Dict[str, Any]]) -> Iterable[Tuple[str, str, str, str, str, str, str]]:
+def iter_compact_rows(fields: Iterable[Dict[str, Any]]) -> Iterable[Tuple[str, str, str, str, str, str, str, str]]:
     """CSVのコンパクト形式（options_compact）を生成する。"""
     for item in fields:
         options_compact = []
@@ -266,12 +295,13 @@ def iter_compact_rows(fields: Iterable[Dict[str, Any]]) -> Iterable[Tuple[str, s
                     options_compact.append(f"{option_value}:{option_text}")
         options_json = json.dumps(options_compact, ensure_ascii=False)
         yield (
+            item.get("label", ""),
             item["type"],
+            item.get("input_type", ""),
             item.get("id", ""),
             item.get("name", ""),
             item.get("value", ""),
             item.get("text", ""),
-            item.get("label", ""),
             options_json,
         )
 
@@ -287,13 +317,27 @@ def write_output_json(fields: List[Dict[str, Any]], output: Optional[str]) -> No
                 option_value = opt.get("value", "")
                 if option_value or option_text:
                     options_compact.append(f"{option_value}:{option_text}")
-            compact_item = dict(item)
-            compact_item["options"] = options_compact
-            compact_item.pop("attrs", None)
+            compact_item = {
+                "label": item.get("label", ""),
+                "type": item.get("type", ""),
+                "input_type": item.get("input_type", ""),
+                "id": item.get("id", ""),
+                "name": item.get("name", ""),
+                "value": item.get("value", ""),
+                "text": item.get("text", ""),
+                "options": options_compact,
+            }
             compact_fields.append(compact_item)
         else:
-            compact_item = dict(item)
-            compact_item.pop("attrs", None)
+            compact_item = {
+                "label": item.get("label", ""),
+                "type": item.get("type", ""),
+                "input_type": item.get("input_type", ""),
+                "id": item.get("id", ""),
+                "name": item.get("name", ""),
+                "value": item.get("value", ""),
+                "text": item.get("text", ""),
+            }
             compact_fields.append(compact_item)
     content = json.dumps(compact_fields, ensure_ascii=False, indent=2)
     if output:
@@ -309,21 +353,21 @@ def write_output_csv(fields: List[Dict[str, Any]], output: Optional[str], flat: 
         with open(output, "w", encoding="utf-8", newline="") as out:
             writer = csv.writer(out)
             if flat:
-                writer.writerow(["type", "id", "name", "value", "text", "label", "row_kind"])
+                writer.writerow(["label", "type", "input_type", "id", "name", "value", "text", "row_kind"])
                 for row in iter_flat_rows(fields):
                     writer.writerow(row)
             else:
-                writer.writerow(["type", "id", "name", "value", "text", "label", "options_json"])
+                writer.writerow(["label", "type", "input_type", "id", "name", "value", "text", "options_json"])
                 for row in iter_compact_rows(fields):
                     writer.writerow(row)
     else:
         writer = csv.writer(sys.stdout)
         if flat:
-            writer.writerow(["type", "id", "name", "value", "text", "label", "row_kind"])
+            writer.writerow(["label", "type", "input_type", "id", "name", "value", "text", "row_kind"])
             for row in iter_flat_rows(fields):
                 writer.writerow(row)
         else:
-            writer.writerow(["type", "id", "name", "value", "text", "label", "options_json"])
+            writer.writerow(["label", "type", "input_type", "id", "name", "value", "text", "options_json"])
             for row in iter_compact_rows(fields):
                 writer.writerow(row)
 
