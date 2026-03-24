@@ -2,6 +2,7 @@
  * しまむらテスト専用ユーティリティ
  */
 const { parseEnvBoolean } = require('../utils');
+const { TIMEOUTS } = require('./constants');
 
 /**
  * サイドメニューのトグルグループを開閉する
@@ -231,6 +232,17 @@ async function getCheckboxStateByLabelOrName(I, { labelText, inputName, inputId,
   return resolveCheckboxState(I, { labelText, inputName, inputId, containerSelector });
 }
 
+/**
+ * バリデーションエラーメッセージを検証する
+ * @param {CodeceptJS.I} I
+ * @param {string[]} expectedErrors - 期待するエラー文言の配列
+ * @param {string} containerSelector - エラー表示コンテナのセレクタ
+ */
+async function verifyValidationErrors(I, expectedErrors, containerSelector) {
+  I.waitForElement(containerSelector, TIMEOUTS.SCREEN);
+  expectedErrors.forEach(err => I.see(err, containerSelector));
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -239,4 +251,5 @@ module.exports = {
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName,
   getCheckboxStateByLabelOrName,
+  verifyValidationErrors,
 };

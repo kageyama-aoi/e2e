@@ -39,7 +39,8 @@ const {
   toggleGroupmenu,
   verifyNavigationByUrlChange,
   clickCheckboxByLabelOrName,
-  verifyCheckboxCheckedByLabelOrName
+  verifyCheckboxCheckedByLabelOrName,
+  verifyValidationErrors
 } = require('../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
@@ -89,16 +90,6 @@ function isSkipValue(value) {
   return normalized === 'skip' || normalized === '__skip__';
 }
 
-/**
- * 期待エラーの検証を行う
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {string[]} expectedErrors - 期待エラー
- * @param {string} containerSelector - エラー表示領域
- */
-async function verifyValidationErrors(I, expectedErrors, containerSelector) {
-  I.waitForElement(containerSelector, 5);
-  expectedErrors.forEach(err => I.see(err, containerSelector));
-}
 
 /**
  * 業務的な breakTarget からスキップ対象の step を解決する

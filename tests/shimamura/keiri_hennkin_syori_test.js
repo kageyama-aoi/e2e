@@ -31,7 +31,7 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { validateShimamuraEnv, toggleGroupmenu } = require('../../support/shimamura/utils');
+const { validateShimamuraEnv, toggleGroupmenu, verifyValidationErrors } = require('../../support/shimamura/utils');
 
 Feature('Dev sandbox (@dev)');
 
@@ -111,17 +111,6 @@ async function fillBatchCreateForm(I, input) {
   I.fillField(S.fields.targetMonth, input.targetMonth);
   I.selectOption(S.fields.targetSchool, input.targetSchool);
   I.click(S.buttons.search);
-}
-
-/**
- * 期待エラーの検証を行う
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {string[]} expectedErrors - 期待エラー
- * @param {string} containerSelector - エラー表示領域
- */
-async function verifyValidationErrors(I, expectedErrors, containerSelector) {
-  I.waitForElement(containerSelector, 5);
-  expectedErrors.forEach(err => I.see(err, containerSelector));
 }
 
 /**
