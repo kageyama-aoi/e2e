@@ -1,5 +1,5 @@
 const { I } = inject();
-const { attachScreenshotFromOutput } = require('../../support/utils');
+const { attachScreenshotFromOutput, parseEnvBoolean } = require('../../support/utils');
 
 module.exports = {
   /**
@@ -7,8 +7,7 @@ module.exports = {
    * @returns {boolean}
    */
   isNavScreenshotEnabled() {
-    const value = String(process.env.SCREENSHOT_ON_NAVIGATION || '').trim().toLowerCase();
-    return value === 'true' || value === '1' || value === 'yes' || value === 'on';
+    return parseEnvBoolean('SCREENSHOT_ON_NAVIGATION');
   },
 
   /**

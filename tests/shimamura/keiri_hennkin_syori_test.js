@@ -21,50 +21,20 @@
  * **最終更新日**
  * - 2026-02-04
  */
-const fs = require('fs');
-const path = require('path');
 const {
-  readCsv,
-  getProfileFromArgs,
+  loadCsvWithProfile,
+  withScenarioLabel,
+  parseEnvBoolean,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { toggleGroupmenu } = require('../../support/shimamura/utils');
+const { validateShimamuraEnv, toggleGroupmenu } = require('../../support/shimamura/utils');
 
 Feature('Dev sandbox (@dev)');
 
-/**
- * テスト実行前のセットアップ
- * 各シナリオの前にログイン処理と担当者番号入力を共通で行う
- * @param {object} args - CodeceptJSのDI引数
- * @param {CodeceptJS.I} args.I - Iオブジェクト
- * @param {object} args.loginPageShimamura - ログインページオブジェクト
- */
-const profile = getProfileFromArgs();
-const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'keiri_hennkin_syori_data.csv');
-const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `keiri_hennkin_syori_data_${profile}.csv`) : null;
-const csvDataRaw = (profileCsvPath && fs.existsSync(profileCsvPath))
-  ? readCsv(profileCsvPath)
-  : readCsv(defaultCsvPath);
-
-const validationErrorsDefaultPath = path.join(__dirname, '../../data/shimamura', 'keiri_hennkin_syori_validation_errors.csv');
-const validationErrorsProfilePath = profile ? path.join(__dirname, '../../data/shimamura', `keiri_hennkin_syori_validation_errors_${profile}.csv`) : null;
-const validationErrorDataRaw = (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath))
-  ? readCsv(validationErrorsProfilePath)
-  : readCsv(validationErrorsDefaultPath);
-
-function withScenarioLabel(data, labelResolver) {
-  return data.map((row) => {
-    const label = labelResolver(row);
-    return {
-      ...row,
-      toString() {
-        return label;
-      }
-    };
-  });
-}
+const csvDataRaw = loadCsvWithProfile('keiri_hennkin_syori_data');
+const validationErrorDataRaw = loadCsvWithProfile('keiri_hennkin_syori_validation_errors');
 
 const csvData = withScenarioLabel(csvDataRaw, (row) => {
   return row.label || row.targetMonth || 'データ行';
@@ -84,8 +54,7 @@ async function logScreenUrl(I, screenName) {
 }
 
 function isPauseEnabled() {
-  const value = String(process.env.PAUSE_ON_KEIRI || '').trim().toLowerCase();
-  return value === 'true' || value === '1' || value === 'yes' || value === 'on';
+  return parseEnvBoolean('PAUSE_ON_KEIRI');
 }
 
 /**
@@ -113,12 +82,9 @@ async function ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura)
 }
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
-  if (!tantousyaNumber) {
-    throw new Error('❌ SHIMAMURA_TANTOUSYA が環境変数（.envファイル）に設定されていません。プロファイルが正しく指定されているか確認してください。');
-  }
+  const tantousyaNumber = validateShimamuraEnv();
   await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(String(tantousyaNumber).replace(/['"]/g, ''));
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
 const S = {

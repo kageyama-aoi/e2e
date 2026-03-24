@@ -19,17 +19,10 @@
  * **最終更新日**
  * - 2026-01-27
  */
-const fs = require('fs');
-const path = require('path');
-const { readCsv, getProfileFromArgs } = require('../../support/utils');
+const { loadCsvWithProfile } = require('../../support/utils');
+const { validateShimamuraEnv } = require('../../support/shimamura/utils');
 
-const profile = getProfileFromArgs();
-const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_data.csv');
-const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_data_${profile}.csv`) : null;
-
-const csvData = (profileCsvPath && fs.existsSync(profileCsvPath))
-  ? readCsv(profileCsvPath)
-  : readCsv(defaultCsvPath);
+const csvData = loadCsvWithProfile('syokai_touroku_data');
 
 // className の重複チェックを避ける（同名クラスの繰り返し確認をしない）
 const uniqueClassRows = Array.from(
@@ -43,13 +36,9 @@ const uniqueClassRows = Array.from(
 Feature('Dev sandbox (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
-  if (!tantousyaNumber) {
-    throw new Error('❌ SHIMAMURA_TANTOUSYA が環境変数（.envファイル）に設定されていません。プロファイルが正しく指定されているか確認してください。');
-  }
-
+  const tantousyaNumber = validateShimamuraEnv();
   await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(String(tantousyaNumber).replace(/['"]/g, ''));
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
 const S = {

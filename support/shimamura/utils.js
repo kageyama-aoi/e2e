@@ -1,6 +1,7 @@
 /**
  * しまむらテスト専用ユーティリティ
  */
+const { parseEnvBoolean } = require('../utils');
 
 /**
  * サイドメニューのトグルグループを開閉する
@@ -46,9 +47,21 @@ async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElemen
   }
 }
 
+/**
+ * SHIMAMURA_TANTOUSYA 環境変数を検証し、正規化した値を返す
+ * @returns {string} 担当者番号
+ * @throws {Error} 未設定の場合
+ */
+function validateShimamuraEnv() {
+  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
+  if (!tantousyaNumber) {
+    throw new Error('❌ SHIMAMURA_TANTOUSYA が環境変数（.envファイル）に設定されていません。プロファイルが正しく指定されているか確認してください。');
+  }
+  return String(tantousyaNumber).replace(/['"]/g, '');
+}
+
 function isCheckboxDebugEnabled() {
-  const value = String(process.env.CHECKBOX_DEBUG || '').trim().toLowerCase();
-  return value === 'true' || value === '1' || value === 'yes' || value === 'on';
+  return parseEnvBoolean('CHECKBOX_DEBUG');
 }
 
 function formatCheckboxDebugSummary(state, args) {
@@ -229,6 +242,7 @@ async function getCheckboxStateByLabelOrName(I, { labelText, inputName, inputId,
 }
 
 module.exports = {
+  validateShimamuraEnv,
   toggleGroupmenu,
   verifyNavigationByUrlChange,
   resolveCheckboxState,

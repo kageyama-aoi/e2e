@@ -14,6 +14,8 @@
  * **最終更新日**
  * - 2026-01-27
  */
+const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+
 // Feature('しまむら クラス受講生登録機能');
 Feature('Dev sandbox (@dev)');
 
@@ -25,16 +27,9 @@ Feature('Dev sandbox (@dev)');
  * @param {object} args.loginPageShimamura - ログインページオブジェクト
  */
 Before(async ({ login, loginPageShimamura }) => {
-  const username = process.env.SHIMAMURA_USER;
-  const password = process.env.SHIMAMURA_PASSWORD;
-  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
-
-  if (!username || !password || !tantousyaNumber) {
-    throw new Error('❌ ログイン情報（SHIMAMURA_USER, SHIMAMURA_PASSWORD, SHIMAMURA_TANTOUSYA）が環境変数に設定されていません。プロファイルの設定を確認してください。');
-  }
-
+  const tantousyaNumber = validateShimamuraEnv();
   await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(String(tantousyaNumber).replace(/['"]/g, ''));
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
 const S = {

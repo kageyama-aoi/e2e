@@ -25,49 +25,23 @@
  * **最終更新日**
  * - 2026-01-28
  */
-const fs = require('fs');
-const path = require('path');
 const {
-  readCsv,
-  getProfileFromArgs,
+  loadCsvWithProfile,
+  withScenarioLabel,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
 const {
+  validateShimamuraEnv,
   toggleGroupmenu,
   verifyNavigationByUrlChange,
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName
 } = require('../../support/shimamura/utils');
 
-const profile = getProfileFromArgs();
-// CSVパス（profileがあれば優先）
-const defaultCsvPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_data.csv');
-const profileCsvPath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_data_${profile}.csv`) : null;
-
-const csvDataRaw = (profileCsvPath && fs.existsSync(profileCsvPath))
-  ? readCsv(profileCsvPath)
-  : readCsv(defaultCsvPath);
-
-const validationErrorsDefaultPath = path.join(__dirname, '../../data/shimamura', 'syokai_touroku_validation_errors.csv');
-const validationErrorsProfilePath = profile ? path.join(__dirname, '../../data/shimamura', `syokai_touroku_validation_errors_${profile}.csv`) : null;
-
-const validationErrorDataRaw = (validationErrorsProfilePath && fs.existsSync(validationErrorsProfilePath))
-  ? readCsv(validationErrorsProfilePath)
-  : readCsv(validationErrorsDefaultPath);
-
-function withScenarioLabel(data, labelResolver) {
-  return data.map((row) => {
-    const label = labelResolver(row);
-    return {
-      ...row,
-      toString() {
-        return label;
-      }
-    };
-  });
-}
+const csvDataRaw = loadCsvWithProfile('syokai_touroku_data');
+const validationErrorDataRaw = loadCsvWithProfile('syokai_touroku_validation_errors');
 
 const csvData = withScenarioLabel(csvDataRaw, (row) => {
   const className = row.className || row.class_name01 || '';
@@ -261,13 +235,9 @@ function createActionExecutor(I, locators, input, expectedErrors) {
 Feature('Dev sandbox (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
-  if (!tantousyaNumber) {
-    throw new Error('❌ SHIMAMURA_TANTOUSYA が環境変数（.envファイル）に設定されていません。プロファイルが正しく指定されているか確認してください。');
-  }
+  const tantousyaNumber = validateShimamuraEnv();
   await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber.replace(/['"]/g, ''));
-
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
 /**

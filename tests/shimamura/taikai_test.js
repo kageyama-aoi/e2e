@@ -19,16 +19,15 @@
 Feature('退会処理 (@dev)');
 
 Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = process.env.SHIMAMURA_TANTOUSYA;
+  const tantousyaNumber = validateShimamuraEnv();
   await login('user');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-
 });
 
 
 const path = require('path');
 const { readCsv } = require('../../support/utils');
-const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
+const { validateShimamuraEnv, toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
 
 /**
  * CSVファイルから退会テストデータを読み込む
