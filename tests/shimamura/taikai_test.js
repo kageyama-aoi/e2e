@@ -28,6 +28,7 @@ Before(async ({ login, loginPageShimamura }) => {
 const path = require('path');
 const { readCsv } = require('../../support/utils');
 const { validateShimamuraEnv, toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 /**
  * CSVファイルから退会テストデータを読み込む
@@ -52,11 +53,11 @@ async function ShouldBeOnZyukouseiList(I, idnumber) {
     button: { search: '検索' },
     result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
   }
-  await I.waitForElement(locate('body').withText(S.screen.name), 5);
-  await I.waitForElement(S.field.idnumber, 10);
+  await I.waitForElement(locate('body').withText(S.screen.name), TIMEOUTS.SCREEN);
+  await I.waitForElement(S.field.idnumber, TIMEOUTS.ELEMENT);
   await I.fillField(S.field.idnumber, idnumber);
   await I.click(S.button.search);
-  await I.waitForElement(S.result.list, 10);
+  await I.waitForElement(S.result.list, TIMEOUTS.RESULT);
 
   await I.say(`${S.screen.name}\nURL: ${await I.grabCurrentUrl()}`);
 
@@ -95,7 +96,7 @@ async function navigateToTaikaiScreen(I, classMemberPageShimamura) {
   };
 
   // 受講生詳細 画面にいることを確認
-  I.waitForElement(locate('body').withText(S.screen.detailTitle), 5);
+  I.waitForElement(locate('body').withText(S.screen.detailTitle), TIMEOUTS.SCREEN);
 
   // サブメニューグループ「閲覧/登録・経理ビュー」を開く
   await toggleGroupmenu(I, {

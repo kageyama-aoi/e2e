@@ -21,6 +21,7 @@
  */
 const { loadCsvWithProfile } = require('../../support/utils');
 const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 const csvData = loadCsvWithProfile('syokai_touroku_data');
 
@@ -78,7 +79,7 @@ async function fillFirstVisibleField(I, candidates, value) {
 }
 
 async function assertClassExistsOnClassList(I, className) {
-  I.waitForElement(locate('body').withText(S.classList.screenTitle), 10);
+  I.waitForElement(locate('body').withText(S.classList.screenTitle), TIMEOUTS.ELEMENT);
 
   const usedLocator = await fillFirstVisibleField(I, S.classList.fields.classNameCandidates, className);
   I.say(`クラス名入力欄: ${usedLocator}`);
@@ -87,7 +88,7 @@ async function assertClassExistsOnClassList(I, className) {
 
   // 何かしら結果が出るまで待つ。見つからなければ明示エラー。
   try {
-    I.waitForElement(S.classList.results.link, 10);
+    I.waitForElement(S.classList.results.link, TIMEOUTS.RESULT);
   } catch (err) {
     I.saveScreenshotWithTimestamp(`CLASS_EXISTENCE_NOT_FOUND_${className}.png`);
     throw new Error(`❌ クラス一覧で検索結果が見つかりませんでした: ${className}`);
