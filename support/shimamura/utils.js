@@ -147,37 +147,27 @@ async function resolveCheckboxState(I, { labelText, inputName, inputId, containe
  */
 async function clickCheckboxByLabelOrName(I, { labelText, inputName, inputId, containerSelector }) {
   const state = await resolveCheckboxState(I, { labelText, inputName, inputId, containerSelector });
+
   if (state.inputFound) {
-    await I.executeScript((args) => {
-      const { labelText, inputName, inputId, containerSelector } = args;
-      const labelCandidate = Array.from(document.querySelectorAll('label,td,th,span,div'))
-        .find(el => el.textContent && el.textContent.trim().includes(labelText));
-      const row = labelCandidate ? (labelCandidate.closest('tr') || labelCandidate.parentElement) : null;
-      const inputInRow = row
-        ? row.querySelector('input[type="checkbox"], input[type="radio"]')
+    // resolveCheckboxState が返した id / name を使って直接クリック（DOM再検索不要）
+    const selector = state.inputId
+      ? `#${state.inputId}`
+      : state.inputName
+        ? `input[name="${state.inputName}"]`
         : null;
-      const inputInNextCell = labelCandidate && labelCandidate.nextElementSibling
-        ? labelCandidate.nextElementSibling.querySelector('input[type="checkbox"], input[type="radio"]')
-        : null;
-      const inputByName = inputName
-        ? document.querySelector(`input[name="${inputName}"]`)
-        : null;
-      const inputById = inputId
-        ? document.querySelector(`input#${inputId}`)
-        : null;
-      const input = inputInRow || inputInNextCell || inputByName || inputById;
-      if (input) {
-        input.click();
-        return true;
-      }
-      return false;
-    }, { labelText, inputName, inputId, containerSelector });
-    return;
+
+    if (selector) {
+      await I.executeScript((sel) => {
+        const el = document.querySelector(sel);
+        if (el) el.click();
+      }, selector);
+      return;
+    }
   }
 
   if (containerSelector) {
-    const clicked = await I.executeScript((selector) => {
-      const container = document.querySelector(selector);
+    const clicked = await I.executeScript((sel) => {
+      const container = document.querySelector(sel);
       if (container) {
         container.click();
         return true;
