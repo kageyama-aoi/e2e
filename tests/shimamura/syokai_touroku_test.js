@@ -28,6 +28,8 @@
 const {
   loadCsvWithProfile,
   withScenarioLabel,
+  parseExpectedErrors,
+  logScreenUrl,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
@@ -64,15 +66,6 @@ const KEIRI_SCREEN_B_LOCATORS = {
   error: { container: '#top_err_info_msg_div' }
 };
 
-// CSV期待エラーの整形
-function parseExpectedErrors(value) {
-  if (!value) return [];
-  return value.split('|').map(err => err.trim()).filter(Boolean);
-}
-
-async function logScreenUrl(I, screenName) {
-  I.say(`${screenName}\nURL: ${await I.grabCurrentUrl()}`);
-}
 
 /**
  * break 指定を正規化する（空文字や空白を除去）

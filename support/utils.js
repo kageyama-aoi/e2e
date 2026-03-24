@@ -151,12 +151,33 @@ function withScenarioLabel(data, labelResolver) {
   });
 }
 
+/**
+ * CSV の expectedErrors 列を配列に変換する（「|」区切り）
+ * @param {string} value
+ * @returns {string[]}
+ */
+function parseExpectedErrors(value) {
+  if (!value) return [];
+  return value.split('|').map(err => err.trim()).filter(Boolean);
+}
+
+/**
+ * 現在の画面名と URL をログ出力する
+ * @param {CodeceptJS.I} I
+ * @param {string} screenName
+ */
+async function logScreenUrl(I, screenName) {
+  I.say(`${screenName}\nURL: ${await I.grabCurrentUrl()}`);
+}
+
 module.exports = {
   readCsv,
   getProfileFromArgs,
   parseEnvBoolean,
   loadCsvWithProfile,
   withScenarioLabel,
+  parseExpectedErrors,
+  logScreenUrl,
   withAllure,
   setBusinessLabels,
   attachBusinessContext,

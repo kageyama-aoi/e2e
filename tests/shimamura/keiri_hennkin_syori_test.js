@@ -25,6 +25,8 @@ const {
   loadCsvWithProfile,
   withScenarioLabel,
   parseEnvBoolean,
+  parseExpectedErrors,
+  logScreenUrl,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
@@ -44,14 +46,6 @@ const validationErrorData = withScenarioLabel(validationErrorDataRaw, (row) => {
   return row.label || row.breakTarget || 'バリデーションエラー';
 });
 
-function parseExpectedErrors(value) {
-  if (!value) return [];
-  return value.split('|').map(err => err.trim()).filter(Boolean);
-}
-
-async function logScreenUrl(I, screenName) {
-  I.say(`${screenName}\nURL: ${await I.grabCurrentUrl()}`);
-}
 
 function isPauseEnabled() {
   return parseEnvBoolean('PAUSE_ON_KEIRI');
