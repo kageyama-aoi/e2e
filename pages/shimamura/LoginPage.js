@@ -23,7 +23,6 @@ module.exports = {
    * @param {string} username - ユーザー名
    * @param {string} password - パスワード
    */
-  // login(username, password) {
   login() {
     I.say('=== ログイン 開始 ===');
     I.say('【ログイン】認証情報の入力');
@@ -49,8 +48,7 @@ module.exports = {
    */
   async enterTantousyaNumberAndProceed(tantousyaNumber) {
     I.say('=== 担当者番号入力 開始 ===');
-    // I.click('操作者変更');
-    const linkLocator = locate('a.myAreaLink').withText('操作者変更')
+    const linkLocator = locate('a.myAreaLink').withText('操作者変更');
 
     const count = await I.grabNumberOfVisibleElements(linkLocator);
     if (count > 0) {

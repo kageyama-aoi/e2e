@@ -74,7 +74,6 @@ module.exports = {
    * @param {string} [expectedTitle] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
    */
   clickSubMenuLink(linkText, expectedTitle) {
-    // I.say(`【サブメニュー】「${linkText}」へ遷移`);
     const linkSelector = this.locators.subMenuLink(linkText);
     I.waitForElement(linkSelector, 10);
     if (this.isNavScreenshotEnabled()) {
@@ -84,7 +83,6 @@ module.exports = {
     }
     I.click(linkSelector);
     if (expectedTitle) {
-      // I.say(`【画面確認】「${expectedTitle}」表示`);
       I.see(expectedTitle);
     }
     if (this.isNavScreenshotEnabled()) {

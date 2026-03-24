@@ -16,7 +16,6 @@
  */
 const { validateShimamuraEnv } = require('../../support/shimamura/utils');
 
-// Feature('しまむら クラス受講生登録機能');
 Feature('Dev sandbox (@dev)');
 
 /**

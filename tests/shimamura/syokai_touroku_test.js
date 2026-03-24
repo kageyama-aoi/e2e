@@ -54,7 +54,7 @@ const validationErrorData = withScenarioLabel(validationErrorDataRaw, (row) => {
   return row.label || row.breakTarget || 'バリデーションエラー';
 });
 
-// 経理処理画面B のロケーター定義（ShouldBeOnKeirisyoriScreenB / fillClassSearchForm / ShouldBoOnClassSelectPopup で共用）
+// 経理処理画面B のロケーター定義（ShouldBeOnKeirisyoriScreenB / fillClassSearchForm / ShouldBeOnClassSelectPopup で共用）
 const KEIRI_SCREEN_B_LOCATORS = {
   textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
   pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
@@ -207,7 +207,7 @@ function createActionExecutor(I, locators, input, expectedErrors) {
   const actions = {
     class_select: async () => {
       I.click(locators.button.class_select);
-      await ShouldBoOnClassSelectPopup(I, locators, input.class_name01, input.course_category);
+      await ShouldBeOnClassSelectPopup(I, locators, input.class_name01, input.course_category);
     },
     switch_to_detail: async () => {
       I.switchToNextTab();
@@ -472,7 +472,7 @@ async function ShouldBeOnKeirisyoriScreenB(
  * @param {string} class_name01 - クラス名
  * @param {string} course_category - クラスカテゴリー
  */
-async function ShouldBoOnClassSelectPopup(I, parentLocators, class_name01, course_category) {
+async function ShouldBeOnClassSelectPopup(I, parentLocators, class_name01, course_category) {
   const resolvedCategory = (typeof course_category === 'string' && course_category.trim())
     ? course_category.trim()
     : 'スクール';
