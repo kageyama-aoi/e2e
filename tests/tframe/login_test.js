@@ -21,3 +21,9 @@ Scenario('正しい認証情報でログインできる', ({ I, loginKannrisyaPa
   // ログイン後の成功を検証します
   loginKannrisyaPage.seeLogout();
 });
+
+Scenario('TEST_USER_STUDENTでログインできる', ({ I, loginKannrisyaPage }) => {
+  loginKannrisyaPage.login(process.env.TEST_USER_STUDENT, process.env.TEST_PASSWORD_STUDENT);
+  pause();
+  loginKannrisyaPage.seeLogout();
+});
