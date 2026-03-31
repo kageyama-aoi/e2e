@@ -63,7 +63,7 @@ EnvironmentFile=.env.${process.env.profile || ''}
       files: './tests/tframe/*_test.js' // Use the correct glob pattern
     },
     taskreport: {
-      files: './tests/Taskreport/*_test.js'
+      files: './tests/taskreport/*_test.js'
     }
   },
 
@@ -112,7 +112,7 @@ EnvironmentFile=.env.${process.env.profile || ''}
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
     
-    taskReportLoginPage: './pages/Taskreport/TaskReportLoginPage.js'
+    taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定

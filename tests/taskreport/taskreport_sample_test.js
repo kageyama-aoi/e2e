@@ -5,7 +5,7 @@
  * - TaskReportログイン画面へのアクセス
  * - バグ検索フォームへの入力
  * - 結果テーブルのデータをスクレイピングし、2次元配列として取得
- * - 結果をJSONファイル（`tests/Taskreport/output/table2d.json`）に保存
+ * - 結果をJSONファイル（`output/taskreport/table2d.json`）に保存
  * 
  * **前提条件**
  * - 環境変数 `BASE_URL` (.env.taskreport) が設定されていること
@@ -41,7 +41,7 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
   I.say(`抽出行数: ${table2D.length}`);
   console.log(JSON.stringify(table2D, null, 2));
 
-  const outDir = path.join(__dirname, 'output');
+  const outDir = path.join(__dirname, '../../output/taskreport');
   const outPath = path.join(outDir, 'table2d.json');
 
   fs.mkdirSync(outDir, { recursive: true });

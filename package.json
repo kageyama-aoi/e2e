@@ -16,7 +16,7 @@
     "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/navigation_after_login_student_test.js",
     
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
-    "test_taskreport": "npx codeceptjs run ./tests/Taskreport/*_test.js --profile taskreport",
+    "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport",
     
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
     "docs:shimamura": "jsdoc -c jsdoc.json",

@@ -3,7 +3,7 @@
 ## プロジェクト構成・モジュール整理
 - `tests/` にプロダクト別のシナリオ（`shimamura/`, `tframe/`, `Taskreport/`, `smoke/`）を配置。
 - `pages/` は Page Object（画面操作・セレクタ）を集約。
-- `support/` は共通ヘルパーと環境読み込み。
+- `support/` は共通ヘルパーと環境読み込み（`support/shimamura/` はしまむら固有のユーティリティ・定数）。
 - `data/` はプロダクト別のテストデータ（CSV/JS）。
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `output/`, `allure-results/`, `allure-report/` は生成物。

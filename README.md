@@ -32,7 +32,7 @@ npm install
 
 ### 1. 推奨: バッチファイルでの実行 (しまむら環境)
 
-プロジェクトルートにある `Run_Shimamura_Syokai_Test.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。
+プロジェクトルートにある `Run_Shimamura_Syokai_Test.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。補助スクリプト（`extract_submenus.py` 等）は `scripts/` に配置しています。
 
 1. `Run_Shimamura_Syokai_Test.bat` をダブルクリック。
 2. `Enter profile name:` と表示されたら、プロファイル名を入力します。
@@ -77,12 +77,12 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ## 補助ツール
 
 ### サブメニュー抽出
-`extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
+`scripts/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
 JSON/CSV で出力するための補助ツールです。スクレーピングや画面構造の把握に使えます。
 
 **使い方 (対話式)**
 ```bash
-python extract_submenus.py
+python scripts/extract_submenus.py
 ```
 
 **出力形式の選択**
@@ -102,12 +102,12 @@ python extract_submenus.py
 - 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
 
 ### 画面フォーム要素抽出
-`extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
+`scripts/extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
 フォーム要素（`input` / `select` / `textarea` / `button`）を抽出し、JSON/CSV で出力します。
 
 **使い方 (対話式)**
 ```bash
-python extract_body_only_fields.py
+python scripts/extract_body_only_fields.py
 ```
 
 **出力形式の選択**
@@ -131,7 +131,7 @@ python extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-01-19 10:37:40
+Last updated: 2026-03-31 17:00:00
 
 ```text
 e2e/
@@ -140,20 +140,40 @@ e2e/
 │       └── documentation_update.yaml
 ├── data/ 
 │   ├── shimamura/ 
+│   │   ├── keiri_hennkin_syori_data.csv
+│   │   ├── keiri_hennkin_syori_validation_errors.csv
 │   │   ├── syokai_touroku_data.csv
 │   │   ├── syokai_touroku_data_shimamura.testgcp.csv
 │   │   ├── syokai_touroku_data_shimamura.testgcp2.csv
 │   │   ├── syokai_touroku_data_shimamura.traininggcp.csv
+│   │   ├── syokai_touroku_validation_errors.csv
 │   │   └── taikai_testdata.csv
 │   └── tframe/ 
 │       └── teacherPaymentReportParams.js
+├── docs/ 
+│   ├── prompts/                          # AI向けプロンプト・作業指示メモ
+│   ├── generated/                        # 自動生成ドキュメント（gitignore推奨）
+│   ├── codeceptjs_e2e_tech_explanation.md
+│   ├── codeceptjs_learning_guide.md
+│   ├── mermaid_code_relationships.md
+│   ├── project_architecture_guide.md
+│   ├── read_allure.html
+│   ├── shimamura_coding_guidelines.md
+│   ├── technical_overview.md
+│   └── tree.md
 ├── env/ 
-│   └── .env.shimamura.template
+│   ├── .env.shimamura.template
+│   ├── .env.shimamura.testgcp
+│   ├── .env.shimamura.testgcp2
+│   ├── .env.shimamura.traininggcp
+│   └── .env.taskreport
+├── output/                               # テスト生成物（スクリーンショット等）
+│   └── taskreport/                       # Taskreport テストの出力
 ├── pages/ 
 │   ├── shimamura/ 
 │   │   ├── ClassMemberPage.js
 │   │   └── LoginPage.js
-│   ├── Taskreport/ 
+│   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 
 │       ├── ApiCommonLoginPage.js
@@ -162,19 +182,28 @@ e2e/
 │       ├── LoginKannrisyaPage.js
 │       └── LoginMyPage.js
 ├── scripts/ 
+│   ├── extract_body_only_fields.py
+│   ├── extract_submenus.py
+│   ├── run_shimamura_test_gui.py
 │   └── tree_generator.py
 ├── support/ 
+│   ├── shimamura/                        # しまむら固有ユーティリティ・定数
+│   │   ├── constants.js
+│   │   └── utils.js
 │   ├── envLoader.js
-│   └── steps_file.js
+│   ├── steps_file.js
+│   └── utils.js
 ├── tests/ 
 │   ├── shimamura/ 
+│   │   ├── keiri_hennkin_syori_test.js
+│   │   ├── shimamura_class_existence_check_test.js
 │   │   ├── shimamura_class_member_registration_test.js
 │   │   ├── shimamura_login_test.js
 │   │   ├── syokai_touroku_test.js
 │   │   └── taikai_test.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
-│   ├── Taskreport/ 
+│   ├── taskreport/ 
 │   │   └── taskreport_sample_test.js
 │   └── tframe/ 
 │       ├── 96-60_teacher_payment_report_test.js
@@ -190,7 +219,6 @@ e2e/
 ├── jsdoc.json
 ├── package-lock.json
 ├── package.json
-├── read_alluroe.html
 ├── README.md
 ├── Run_Shimamura_Syokai_Test.bat
 └── steps.d.ts
