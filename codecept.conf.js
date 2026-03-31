@@ -114,7 +114,17 @@ EnvironmentFile=.env.${process.env.profile || ''}
     
     taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
 
-    keiryoMasterPage: './pages/tframe/KeiryoMasterPage.js'
+    keiryoMasterPage: './pages/tframe/KeiryoMasterPage.js',
+
+    jukuseiPage:   './pages/tframe/JukuseiPage.js',
+    coursePage:    './pages/tframe/CoursePage.js',
+    koshiPage:     './pages/tframe/KoshiPage.js',
+    masterMenuPage:'./pages/tframe/MasterMenuPage.js',
+    calendarPage:  './pages/tframe/CalendarPage.js',
+    emailPage:     './pages/tframe/EmailPage.js',
+    reportPage:    './pages/tframe/ReportPage.js',
+    homePage:      './pages/tframe/HomePage.js',
+    helpPage:      './pages/tframe/HelpPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
