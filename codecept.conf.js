@@ -112,7 +112,9 @@ EnvironmentFile=.env.${process.env.profile || ''}
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
     
-    taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js'
+    taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
+
+    keiryoMasterPage: './pages/tframe/KeiryoMasterPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
