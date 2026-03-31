@@ -1,16 +1,17 @@
 @echo off
+
 echo ==============================
-echo  T-Frame ログインテスト実行
+echo  T-Frame Login Test Runner
 echo ==============================
 echo.
 
-:: ---- プロファイル選択 ----
-echo [プロファイル選択]
+:: ---- Profile Selection ----
+echo [Profile]
 echo   1. tframe.culture_beta
 echo   2. tframe.juku_test
-echo   （その他: 直接入力）
+echo   (other: type directly)
 echo.
-set /p CHOICE="番号またはプロファイル名を入力 (デフォルト: tframe.culture_beta): "
+set /p CHOICE="Select profile (default: tframe.culture_beta): "
 
 if "%CHOICE%"==""  set PROFILE_NAME=tframe.culture_beta
 if "%CHOICE%"=="1" set PROFILE_NAME=tframe.culture_beta
@@ -19,27 +20,33 @@ if not defined PROFILE_NAME set PROFILE_NAME=%CHOICE%
 
 echo.
 
-:: ---- シナリオ選択 ----
-echo [シナリオ選択]
-echo   1. 全シナリオ実行
-echo   2. admin のみ
-echo   3. student のみ
+:: ---- Scenario Selection ----
+echo [Scenario]
+echo   1. All scenarios
+echo   2. Admin only
+echo   3. Student only
 echo.
-set /p SCENARIO="番号を入力 (デフォルト: 1): "
+set /p SCENARIO="Select scenario (default: 1): "
 
-if "%SCENARIO%"==""  set GREP_OPT=
-if "%SCENARIO%"=="1" set GREP_OPT=
-if "%SCENARIO%"=="2" set GREP_OPT=--grep "正しい認証情報"
-if "%SCENARIO%"=="3" set GREP_OPT=--grep "TEST_USER_STUDENT"
+if "%SCENARIO%"=="" set SCENARIO=1
 
 echo.
-echo 実行プロファイル : %PROFILE_NAME%
-if "%GREP_OPT%"=="" (
-  echo シナリオ         : 全件
-) else (
-  echo シナリオ         : %GREP_OPT%
+echo Profile  : %PROFILE_NAME%
+
+if "%SCENARIO%"=="1" (
+  echo Scenario : All
+  echo.
+  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --steps
 )
-echo.
+if "%SCENARIO%"=="2" (
+  echo Scenario : Admin only
+  echo.
+  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep "正しい認証情報" --steps
+)
+if "%SCENARIO%"=="3" (
+  echo Scenario : Student only
+  echo.
+  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep "TEST_USER_STUDENT" --steps
+)
 
-call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% %GREP_OPT% --steps
 pause
