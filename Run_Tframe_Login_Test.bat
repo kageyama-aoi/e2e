@@ -23,8 +23,8 @@ echo.
 :: ---- Scenario Selection ----
 echo [Scenario]
 echo   1. All scenarios
-echo   2. Admin only
-echo   3. Student only
+echo   2. Admin only   (@admin)
+echo   3. Student only (@student)
 echo.
 set /p SCENARIO="Select scenario (default: 1): "
 
@@ -41,12 +41,12 @@ if "%SCENARIO%"=="1" (
 if "%SCENARIO%"=="2" (
   echo Scenario : Admin only
   echo.
-  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep "正しい認証情報" --steps
+  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep @admin --steps
 )
 if "%SCENARIO%"=="3" (
   echo Scenario : Student only
   echo.
-  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep "TEST_USER_STUDENT" --steps
+  call npx codeceptjs run ./tests/tframe/login_test.js --profile %PROFILE_NAME% --grep @student --steps
 )
 
 pause
