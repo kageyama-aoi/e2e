@@ -32,7 +32,7 @@ function getProfileFromArgs() {
   // 3. 特殊ケース: npm経由でフラグが消えて値だけが最後に残っている場合
   if (!profile && args.length > 0) {
     const lastArg = args[args.length - 1];
-    if (lastArg.startsWith('shimamura.') || lastArg === 'taskreport' || lastArg === 'shimamura') {
+    if (lastArg.startsWith('shimamura.') || lastArg.startsWith('tframe.') || lastArg === 'taskreport' || lastArg === 'shimamura' || lastArg === 'tframe') {
       profile = lastArg;
     }
   }
