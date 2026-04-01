@@ -1,0 +1,9 @@
+<!--
+  side_menu_extract 用の入力サンプルです。
+  このファイルに、画面から取得したサイドメニューHTMLをそのまま貼り付けてください。
+
+  想定しているのは、以下のような構造です。
+  - グループ: li.dropdown
+  - 子項目: グループ配下 ul の中の li > a
+-->
+<ul class="nav navbar-nav"><li id="help_help_main_wrap" class="dropdown"><a class="dropdown-toggle" href="#help_help_main" data-toggle="collapse" aria-expanded="true" onclick="tf.misc.onClickSideMenuBlock('help_help_main')"><span class="pull-left showopacity glyphicon glyphicon-minus menu-block-icon "></span>ヘルプ</a><ul id="help_help_main" class="dropdown-menu collapse in" role="menu" aria-expanded="true"><li><a href="/test/index.php?r=cmn%2Fgw%2Fhelp&amp;helpFileKey=General" title="全体説明" target="_blank" onclick="tf.misc.onClickSideMenuItem('help_help_main_general')"><span class="pull-left showopacity "></span>全体説明</a></li><div class="clear-both"></div><li><a class="side-menu-item-selected" href="/test/index.php?r=help%2Fsw%2FmanualList" title="マニュアル一覧" onclick="tf.misc.onClickSideMenuItem('help_help_main_manualList')"><span class="pull-left showopacity "></span>マニュアル一覧</a></li><div class="clear-both"></div></ul></li><div class="clear-both"></div></ul>

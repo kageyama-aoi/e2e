@@ -101,6 +101,46 @@ python scripts/extract_submenus.py
 - 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
 - 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
 
+### サイドメニューグループ抽出
+`scripts/extract_side_menu_groups.py` は、サイドメニューHTMLから
+「グループ名」と「配下のメニュー項目」を構造化して JSON/CSV で出力します。
+成果物はスクリプトの近くの `scripts/output/side_menu_extract/` 配下にまとめて出力します。
+既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成します。
+
+**使い方**
+```bash
+python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html"
+```
+
+**既定入力ファイル**
+- `[scripts/input/side_menu_extract/source.html](./scripts/input/side_menu_extract/source.html)`
+- このファイルにサイドメニューHTMLを貼り付けたうえで、引数なしで実行できます
+
+```bash
+python scripts/extract_side_menu_groups.py
+```
+
+**JSON出力例**
+- `group_count`: グループ数
+- `groups[]`: グループ一覧
+- `groups[].name`: グループ名（例: `Eメール`, `名簿リスト`）
+- `groups[].items[]`: 子メニュー一覧
+
+**日本語だけのJSON**
+```bash
+python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --jp-only
+```
+
+- `groups[].name`: グループ名のみ
+- `groups[].items[]`: 子メニュー名のみ
+- ID や href を省いた軽量形式です
+
+**既定出力**
+- 出力先ディレクトリ: `scripts/output/side_menu_extract/<先頭の日本語>/`
+- JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
+- JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
+- CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
+
 ### 画面フォーム要素抽出
 `scripts/extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
 フォーム要素（`input` / `select` / `textarea` / `button`）を抽出し、JSON/CSV で出力します。

@@ -4,6 +4,8 @@
 // ------------------------------------------------------
 require('./support/envLoader.js');
 
+const fs = require('fs');
+const path = require('path');
 const { setCommonPlugins } = require('@codeceptjs/configure');
 
 // ------------------------------------------------------
@@ -14,30 +16,52 @@ if (process.env.USE_COMMON_PLUGINS === 'true') {
   setCommonPlugins();
 }
 
+function sanitizePathSegment(value) {
+  return (value || 'default').replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_');
+}
+
+function buildRunTimestamp() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mi = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yyyy}${mm}${dd}_${hh}${mi}${ss}`;
+}
+
+const runProfile = sanitizePathSegment(process.env.PROFILE || process.env.profile || 'default');
+const runTimestamp = buildRunTimestamp();
+const runtimeOutputDir = `./output/${runProfile}/${runTimestamp}`;
+const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runTimestamp}`;
+const viewportWidth = Number(process.env.TFRAME_VIEWPORT_WIDTH || 1600);
+const viewportHeight = Number(process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
+const windowSize = `${viewportWidth}x${viewportHeight}`;
+
+fs.mkdirSync(path.resolve(__dirname, runtimeOutputDir), { recursive: true });
+fs.mkdirSync(path.resolve(__dirname, runtimeAllureResultsDir), { recursive: true });
+
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
-  output: './output',
+  output: runtimeOutputDir,
   name: 'e2e',
 
   // ----------------------------------------------------
   //  Bootstrap: テスト実行前の初期化処理
   // ----------------------------------------------------
   bootstrap: function() {
-    const fs = require('fs');
-    const path = require('path');
-    const allureResultsDir = path.join(__dirname, 'allure-results');
-    
-    // allure-results フォルダがない場合は作成
-    if (!fs.existsSync(allureResultsDir)) {
-      fs.mkdirSync(allureResultsDir, { recursive: true });
-    }
+    const allureResultsDir = path.resolve(__dirname, runtimeAllureResultsDir);
   
     // Allure レポートに表示したい環境情報を定義
     // ここで .env から読み込んだ値やプロファイル名を出力します
-    const envData = `Profile=${process.env.profile || 'default'}
-BaseURL=${process.env.BASE_URL || 'unknown'}
+    const envData = `Profile=${process.env.PROFILE || process.env.profile || 'default'}
+    BaseURL=${process.env.BASE_URL || 'unknown'}
 Browser=${process.env.BROWSER || 'chromium'}
-EnvironmentFile=.env.${process.env.profile || ''}
+Viewport=${windowSize}
+EnvironmentFile=.env.${process.env.PROFILE || process.env.profile || ''}
+OutputDir=${runtimeOutputDir}
+AllureResultsDir=${runtimeAllureResultsDir}
 `;
   
     // environment.properties ファイルとして書き出し
@@ -75,7 +99,7 @@ EnvironmentFile=.env.${process.env.profile || ''}
       url: process.env.BASE_URL || 'http://localhost',
       show: process.env.HEADLESS !== 'true',
       browser: 'chromium',
-      windowSize: '1280x800',
+      windowSize,
 
       // パフォーマンスチューニング設定
       pressDelay: 0,
@@ -84,8 +108,8 @@ EnvironmentFile=.env.${process.env.profile || ''}
 
       chromium: {
         viewport: {
-          width: 1280,
-          height: 800
+          width: viewportWidth,
+          height: viewportHeight
         },
         args: ['--force-device-scale-factor=1']
       },
@@ -133,6 +157,7 @@ EnvironmentFile=.env.${process.env.profile || ''}
     allure: {
       enabled: true,
       require: "allure-codeceptjs",
+      outputDir: runtimeAllureResultsDir,
     },
     stepByStepReport: {
       enabled: true,
