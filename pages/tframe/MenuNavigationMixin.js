@@ -130,6 +130,13 @@ module.exports = function createMenuNavigationMixin(prefix) {
 
       I.saveScreenshotWithTimestamp(this.buildSearchResultScreenshotName(itemName), true);
       await this.captureDetailTabsIfPresent(itemName);
+
+      const afterDetailUrl = await I.grabCurrentUrl();
+      if (afterDetailUrl !== beforeUrl) {
+        I.say(`【一覧復帰】${itemName}`);
+        I.amOnPage(beforeUrl);
+        I.wait(1);
+      }
     },
 
     buildDetailTabScreenshotName(itemName, tabLabel, index) {
@@ -236,4 +243,3 @@ module.exports = function createMenuNavigationMixin(prefix) {
     },
   };
 };
-
