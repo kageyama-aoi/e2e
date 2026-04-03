@@ -54,7 +54,42 @@ module.exports = function createMenuNavigationMixin(prefix) {
     },
 
     async clickFirstSearchResultLinkIfPresentAndVerify(itemName) {
-      const firstLink = await I.executeScript(() => {
+      const firstLink = await this.grabFirstSearchResultLinkInfo();
+
+      if (!firstLink || !firstLink.href) {
+        I.say(`【検索結果リンクスキップ】${itemName} の結果行に押下可能リンクなし`);
+        return;
+      }
+
+      I.say(`【検索結果リンク押下】${itemName} -> ${firstLink.label || firstLink.href}`);
+      const beforeUrl = await I.grabCurrentUrl();
+      const beforeSource = await I.grabSource();
+
+      const clicked = await this.clickFirstSearchResultLink();
+
+      assert(clicked, `expected clickable link in search results for ${itemName}`);
+
+      const changed = await this.waitForPageChange(beforeSource, 5);
+      const currentUrl = await I.grabCurrentUrl();
+
+      assert(
+        changed || currentUrl !== beforeUrl,
+        `expected navigation after clicking search result row for ${itemName}, but url stayed ${currentUrl}`
+      );
+
+      I.saveScreenshotWithTimestamp(this.buildSearchResultScreenshotName(itemName), true);
+      await this.captureDetailTabsIfPresent(itemName);
+
+      const afterDetailUrl = await I.grabCurrentUrl();
+      if (afterDetailUrl !== beforeUrl) {
+        I.say(`【一覧復帰】${itemName}`);
+        I.amOnPage(beforeUrl);
+        I.wait(1);
+      }
+    },
+
+    async grabFirstSearchResultLinkInfo() {
+      return I.executeScript(() => {
         const tbodies = Array.from(document.querySelectorAll('tbody'));
         for (const tbody of tbodies) {
           const rows = Array.from(tbody.querySelectorAll('tr')).filter((row) => {
@@ -82,17 +117,10 @@ module.exports = function createMenuNavigationMixin(prefix) {
         }
         return null;
       });
+    },
 
-      if (!firstLink || !firstLink.href) {
-        I.say(`【検索結果リンクスキップ】${itemName} の結果行に押下可能リンクなし`);
-        return;
-      }
-
-      I.say(`【検索結果リンク押下】${itemName} -> ${firstLink.label || firstLink.href}`);
-      const beforeUrl = await I.grabCurrentUrl();
-      const beforeSource = await I.grabSource();
-
-      const clicked = await I.executeScript(() => {
+    async clickFirstSearchResultLink() {
+      return I.executeScript(() => {
         const tbodies = Array.from(document.querySelectorAll('tbody'));
         for (const tbody of tbodies) {
           const rows = Array.from(tbody.querySelectorAll('tr')).filter((row) => {
@@ -117,26 +145,6 @@ module.exports = function createMenuNavigationMixin(prefix) {
         }
         return false;
       });
-
-      assert(clicked, `expected clickable link in search results for ${itemName}`);
-
-      const changed = await this.waitForPageChange(beforeSource, 5);
-      const currentUrl = await I.grabCurrentUrl();
-
-      assert(
-        changed || currentUrl !== beforeUrl,
-        `expected navigation after clicking search result row for ${itemName}, but url stayed ${currentUrl}`
-      );
-
-      I.saveScreenshotWithTimestamp(this.buildSearchResultScreenshotName(itemName), true);
-      await this.captureDetailTabsIfPresent(itemName);
-
-      const afterDetailUrl = await I.grabCurrentUrl();
-      if (afterDetailUrl !== beforeUrl) {
-        I.say(`【一覧復帰】${itemName}`);
-        I.amOnPage(beforeUrl);
-        I.wait(1);
-      }
     },
 
     buildDetailTabScreenshotName(itemName, tabLabel, index) {
