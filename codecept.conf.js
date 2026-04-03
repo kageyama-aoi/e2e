@@ -20,6 +20,28 @@ function sanitizePathSegment(value) {
   return (value || 'default').replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_');
 }
 
+function detectRunTargetFromArgs(argv) {
+  const args = Array.isArray(argv) ? argv : [];
+  const testArg = args.find((arg) => /_test\.js$/i.test(String(arg)));
+  if (testArg) {
+    const normalized = String(testArg).replace(/\\/g, '/');
+    const fileName = normalized.split('/').pop() || normalized;
+    const withoutExt = fileName.replace(/\.[^/.]+$/, '');
+    return sanitizePathSegment(withoutExt || 'all');
+  }
+
+  const runIndex = args.lastIndexOf('run');
+  if (runIndex >= 0 && args[runIndex + 1] && !String(args[runIndex + 1]).startsWith('-')) {
+    const candidate = String(args[runIndex + 1]);
+    const normalized = candidate.replace(/\\/g, '/');
+    const fileName = normalized.split('/').pop() || normalized;
+    const withoutExt = fileName.replace(/\.[^/.]+$/, '');
+    return sanitizePathSegment(withoutExt || 'all');
+  }
+
+  return 'all';
+}
+
 function buildRunTimestamp() {
   const now = new Date();
   const yyyy = now.getFullYear();
@@ -33,8 +55,10 @@ function buildRunTimestamp() {
 
 const runProfile = sanitizePathSegment(process.env.PROFILE || process.env.profile || 'default');
 const runTimestamp = buildRunTimestamp();
-const runtimeOutputDir = `./output/${runProfile}/${runTimestamp}`;
-const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runTimestamp}`;
+const runTarget = detectRunTargetFromArgs(process.argv);
+const runDirName = `${runTimestamp}_${runTarget}`;
+const runtimeOutputDir = `./output/${runProfile}/${runDirName}`;
+const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runDirName}`;
 const viewportWidth = Number(process.env.TFRAME_VIEWPORT_WIDTH || 1600);
 const viewportHeight = Number(process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
 const windowSize = `${viewportWidth}x${viewportHeight}`;

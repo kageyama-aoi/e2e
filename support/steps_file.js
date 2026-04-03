@@ -1,5 +1,8 @@
 // steps_file.js
 // in this file you can append custom step methods to 'I' object
+const fs = require('fs');
+const path = require('path');
+const { container } = require('codeceptjs');
 
 module.exports = function() {
   return actor({
@@ -8,13 +11,42 @@ module.exports = function() {
      * ファイル名にタイムスタンプを付与してスクリーンショットを保存します。
      * @param {string} fileName - 例: 'my_screenshot.png'（拡張子省略時は png）
      */
-    saveScreenshotWithTimestamp(fileName = 'screenshot.png') {
+    async saveScreenshotWithTimestamp(fileName = 'screenshot.png', fullPage = false) {
       const parts = String(fileName).split('.');
       const ext = (parts.length > 1 ? parts.pop() : 'png') || 'png';
       const name = parts.join('.') || 'screenshot';
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const finalName = `${name}_${timestamp}.${ext}`;
-      this.saveScreenshot(finalName);
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const mss = String(now.getMilliseconds()).padStart(3, '0');
+      const timestamp = `${yyyy}${mm}${dd}_${hh}${mi}${ss}_${mss}`;
+      const finalName = `${timestamp}_${name}.${ext}`;
+
+      await this.saveScreenshot(finalName, fullPage);
+
+      try {
+        const allure = container.plugins('allure');
+        if (!allure) {
+          return finalName;
+        }
+
+        const { config: codeceptConfig } = require('../codecept.conf.js');
+        const outputDir = codeceptConfig && codeceptConfig.output
+          ? path.resolve(__dirname, '..', codeceptConfig.output)
+          : path.resolve(__dirname, '../output');
+        const filePath = path.join(outputDir, finalName);
+        if (fs.existsSync(filePath)) {
+          const image = fs.readFileSync(filePath);
+          allure.addAttachment(finalName, image, 'image/png');
+        }
+      } catch (err) {
+        this.say(`Allure attachment skipped: ${err.message}`);
+      }
+
       return finalName;
     },
 

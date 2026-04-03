@@ -74,14 +74,13 @@ function attachBusinessContext({ label, input, breakTarget, breakValue, expected
 }
 
 async function attachErrorScreenshot(I, baseName) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const fileName = `${baseName}_${timestamp}.png`;
-  await I.saveScreenshot(fileName);
+  const fileName = `${baseName}.png`;
+  const savedFileName = await I.saveScreenshotWithTimestamp(fileName);
 
   const outputDir = codeceptConfig && codeceptConfig.output
     ? path.resolve(__dirname, '..', codeceptConfig.output)
     : path.resolve(__dirname, '../output');
-  const filePath = path.join(outputDir, fileName);
+  const filePath = path.join(outputDir, savedFileName);
 
   if (fs.existsSync(filePath)) {
     const buffer = fs.readFileSync(filePath);
@@ -184,3 +183,4 @@ module.exports = {
   attachErrorScreenshot,
   attachScreenshotFromOutput,
 };
+

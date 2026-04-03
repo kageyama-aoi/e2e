@@ -54,7 +54,7 @@ module.exports = {
 
     if (!tokenMatch || !tokenMatch[1]) {
       // 抽出に失敗した場合、スクリーンショットを保存してテストを失敗させます
-      I.saveScreenshot('token_extraction_failed.png');
+      I.saveScreenshotWithTimestamp('token_extraction_failed.png');
       // 失敗メッセージにレスポンス全体を含めるとトークンがログに残るため、メッセージを簡潔にします。
       I.fail(`レスポンスからtcnTokenを抽出できませんでした。詳細は'token_extraction_failed.png'を確認してください。`);
     }

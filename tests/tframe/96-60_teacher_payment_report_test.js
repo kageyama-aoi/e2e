@@ -92,6 +92,7 @@ Data(headerPatternData).Scenario(
 
     I.say('Step 6: レスポンス領域をスクロールしてスクショ取得');
     await I.scrollIntoView(jsonInputPage.locators.responseArea);
-    I.saveScreenshot(`${baseFileName}.png`);
+    I.saveScreenshotWithTimestamp(`${baseFileName}.png`);
   }
 );
+
