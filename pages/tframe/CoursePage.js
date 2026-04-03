@@ -13,14 +13,6 @@ module.exports = {
     I.click(this.courseIconLocator());
   },
 
-  async verifyMenuNavigation(menuDefinition) {
-    for (const group of menuDefinition.groups) {
-      for (const item of group.items) {
-        await this.clickMenuItemAndVerify(item);
-      }
-    }
-  },
-
   seeGroup(groupName) {
     I.say(`【グループ確認】${groupName}`);
     this.scrollMenuToText(groupName);
@@ -33,22 +25,6 @@ module.exports = {
     this.scrollMenuToText(itemName);
     I.waitForElement(this.linkByText(itemName), 10);
     I.see(itemName);
-  },
-
-  async clickMenuItemAndVerify(item) {
-    const itemName = item.name;
-    const expectedHref = item.href;
-    I.say(`【子メニュー押下】${itemName}`);
-    const itemLink = this.itemLinkLocator(item);
-    this.scrollToItem(item);
-    I.waitForElement(itemLink, 10);
-    const resolvedHref = expectedHref || await I.grabAttributeFrom(itemLink, 'href');
-    I.click(itemLink);
-    I.wait(1);
-    const currentUrl = await I.grabCurrentUrl();
-    this.assertCurrentUrlMatches(currentUrl, resolvedHref);
-    I.saveScreenshotWithTimestamp(this.buildScreenshotName(itemName), true);
-    await this.clickSearchIfPresentAndCapture(itemName);
   },
 
   linkByText(text) {
@@ -76,6 +52,19 @@ module.exports = {
         if (!target) return false;
         target.scrollIntoView({ block: 'center', inline: 'nearest' });
         return true;
+      },
+      { targetHref: href }
+    );
+  },
+
+  clickLinkByHref(href) {
+    I.executeScript(
+      ({ targetHref }) => {
+        const target = document.querySelector(`a[href="${targetHref}"]`);
+        if (!target) {
+          throw new Error(`link not found: ${targetHref}`);
+        }
+        target.click();
       },
       { targetHref: href }
     );
@@ -110,4 +99,3 @@ module.exports = {
 
   ...createMenuNavigationMixin('tframe_course'),
 };
-

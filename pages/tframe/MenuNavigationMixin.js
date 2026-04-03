@@ -257,6 +257,17 @@ module.exports = function createMenuNavigationMixin(prefix) {
       return false;
     },
 
+    async waitForCurrentUrlMatch(expectedHref, maxSeconds) {
+      for (let index = 0; index < maxSeconds; index += 1) {
+        const currentUrl = await I.grabCurrentUrl();
+        if (decodeURIComponent(currentUrl).includes(decodeURIComponent(expectedHref))) {
+          return currentUrl;
+        }
+        I.wait(1);
+      }
+      return I.grabCurrentUrl();
+    },
+
     searchButton() {
       return this.buttonByTexts(['検索', 'Search', 'Find']);
     },
