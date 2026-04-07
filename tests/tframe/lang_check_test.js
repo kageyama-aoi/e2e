@@ -76,17 +76,18 @@ async function scanLang(I, pageName) {
     return found;
   }, lang);
 
+  const safeName = String(pageName).replace(/[\\/:*?"<>|\s]/g, '_');
+
   if (!violations || violations.length === 0) {
     I.say(`【言語チェックOK】${lang}モード / ${pageName}`);
+    await I.saveScreenshotWithTimestamp(`LANG_OK_${lang.toUpperCase()}_${safeName}.png`, true);
     return;
   }
 
   for (const text of violations) {
     I.say(`【言語ミスマッチ】${lang}モード / ${pageName}: "${text}"`);
   }
-
-  const safeName = String(pageName).replace(/[\\/:*?"<>|\s]/g, '_');
-  await I.saveScreenshotWithTimestamp(`LANG_MISMATCH_${lang.toUpperCase()}_${safeName}.png`, true);
+  await I.saveScreenshotWithTimestamp(`LANG_NG_${lang.toUpperCase()}_${safeName}.png`, true);
 }
 
 /**
