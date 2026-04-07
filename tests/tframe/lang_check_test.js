@@ -48,12 +48,15 @@ async function scanLang(I, pageName) {
 
   const violations = await I.executeScript((mode) => {
     const elements = Array.from(document.querySelectorAll(
-      'button, input[type="submit"], input[type="button"], a'
-    )).filter(el => el.offsetParent !== null);
+      'button, input[type="submit"], input[type="button"], a, [role="button"]'
+    )).filter(el => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+    });
 
     const found = [];
     for (const el of elements) {
-      const text = (el.textContent || el.value || '').trim().replace(/\s+/g, ' ');
+      const text = (el.textContent || el.value || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
       if (!text) continue;
 
       let hit = false;
