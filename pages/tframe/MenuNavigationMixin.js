@@ -25,6 +25,7 @@ module.exports = function createMenuNavigationMixin(prefix) {
       const currentUrl = await this.waitForCurrentUrlMatch(item.href, 10);
       this.assertCurrentUrlMatches(currentUrl, item.href);
       I.saveScreenshotWithTimestamp(this.buildScreenshotName(item.name), true);
+      if (typeof this.onPageLoaded === 'function') await this.onPageLoaded(item.name);
       await this.clickSearchIfPresentAndCapture(item.name);
     },
 
@@ -69,6 +70,7 @@ module.exports = function createMenuNavigationMixin(prefix) {
       }
 
       I.saveScreenshotWithTimestamp(this.buildSearchScreenshotName(itemName), true);
+      if (typeof this.onPageLoaded === 'function') await this.onPageLoaded(`${itemName}_検索結果`);
       await this.clickFirstSearchResultLinkIfPresentAndVerify(itemName);
     },
 
@@ -97,6 +99,7 @@ module.exports = function createMenuNavigationMixin(prefix) {
       );
 
       I.saveScreenshotWithTimestamp(this.buildSearchResultScreenshotName(itemName), true);
+      if (typeof this.onPageLoaded === 'function') await this.onPageLoaded(`${itemName}_詳細`);
       await this.captureDetailTabsIfPresent(itemName);
 
       const afterDetailUrl = await I.grabCurrentUrl();
@@ -243,6 +246,7 @@ module.exports = function createMenuNavigationMixin(prefix) {
           return active ? (active.textContent || '').trim().replace(/\s+/g, ' ') : '';
         });
         I.saveScreenshotWithTimestamp(this.buildDetailTabScreenshotName(itemName, activeTabLabel || tab.label, index + 1), true);
+        if (typeof this.onPageLoaded === 'function') await this.onPageLoaded(`${itemName}_タブ_${activeTabLabel || tab.label}`);
       }
     },
 

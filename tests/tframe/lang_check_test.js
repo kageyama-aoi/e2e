@@ -10,9 +10,16 @@
  * - JA モード: 3文字以上の連続 ASCII アルファベットが含まれていないか
  *              （PDF / URL / API 等の略語も検出される点に注意）
  *
+ * **チェックタイミング**
+ * MenuNavigationMixin の onPageLoaded フック経由で画面遷移のたびに呼ばれる：
+ * - サブメニューページ
+ * - 検索結果ページ
+ * - 詳細ページ
+ * - 詳細タブページ（各タブごと）
+ *
  * **削除方法**
  * このファイル（tests/tframe/lang_check_test.js）を削除するだけで完結。
- * 他ファイルへの影響なし。
+ * MenuNavigationMixin の onPageLoaded フックは他テストでは呼ばれないため影響なし。
  *
  * **実行例**
  * npx codeceptjs run ./tests/tframe/lang_check_test.js --profile tframe.juku_test --steps
@@ -79,15 +86,11 @@ async function scanLang(I, pageName) {
 }
 
 /**
- * メニュー定義の全項目を順に遷移し、遷移ごとに scanLang を呼ぶ。
+ * ページオブジェクトに onPageLoaded フックをセットする。
+ * MenuNavigationMixin が各画面遷移後にこのフックを呼ぶ。
  */
-async function verifyWithLangCheck(page, menuDef, I) {
-  for (const group of menuDef.groups) {
-    for (const item of group.items) {
-      await page.clickMenuItemAndVerify(item);
-      await scanLang(I, item.name);
-    }
-  }
+function attachLangCheck(page, I) {
+  page.onPageLoaded = async (name) => scanLang(I, name);
 }
 
 Scenario(
@@ -109,39 +112,47 @@ Scenario(
     loginKannrisyaPage.seeLogout();
 
     // 受講生メニュー
+    attachLangCheck(jukuseiPage, I);
     jukuseiPage.clickJukuseiIcon();
-    await verifyWithLangCheck(jukuseiPage, studentSideMenu, I);
+    await jukuseiPage.verifyMenuNavigation(studentSideMenu);
 
     // コースメニュー
+    attachLangCheck(coursePage, I);
     coursePage.clickCourseIcon();
-    await verifyWithLangCheck(coursePage, courseSideMenu, I);
+    await coursePage.verifyMenuNavigation(courseSideMenu);
 
     // 講師メニュー
+    attachLangCheck(koshiPage, I);
     koshiPage.clickKoshiIcon();
-    await verifyWithLangCheck(koshiPage, teacherSideMenu, I);
+    await koshiPage.verifyMenuNavigation(teacherSideMenu);
 
     // マスターメニュー
+    attachLangCheck(masterMenuPage, I);
     masterMenuPage.clickMasterIcon();
-    await verifyWithLangCheck(masterMenuPage, masterSideMenu, I);
+    await masterMenuPage.verifyMenuNavigation(masterSideMenu);
 
     // カレンダーメニュー
+    attachLangCheck(calendarPage, I);
     calendarPage.clickCalendarIcon();
-    await verifyWithLangCheck(calendarPage, calendarSideMenu, I);
+    await calendarPage.verifyMenuNavigation(calendarSideMenu);
 
     // Eメールメニュー
+    attachLangCheck(emailPage, I);
     emailPage.clickEmailIcon();
-    await verifyWithLangCheck(emailPage, emailSideMenu, I);
+    await emailPage.verifyMenuNavigation(emailSideMenu);
 
     // レポートメニュー
+    attachLangCheck(reportPage, I);
     reportPage.clickReportIcon();
-    await verifyWithLangCheck(reportPage, reportSideMenu, I);
+    await reportPage.verifyMenuNavigation(reportSideMenu);
 
     // ホームメニュー（サブメニューなし：ページ自体をスキャン）
     homePage.clickHomeIcon();
     await scanLang(I, 'ホーム');
 
     // ヘルプメニュー
+    attachLangCheck(helpPage, I);
     helpPage.clickHelpIcon();
-    await verifyWithLangCheck(helpPage, helpSideMenu, I);
+    await helpPage.verifyMenuNavigation(helpSideMenu);
   }
 );
