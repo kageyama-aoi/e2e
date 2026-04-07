@@ -18,5 +18,4 @@ Scenario('管理者ログイン後にカレンダーメニュー配下を押下�
 
   calendarPage.clickCalendarIcon();
   await calendarPage.verifyMenuNavigation(calendarSideMenu);
-  pause();
 });
