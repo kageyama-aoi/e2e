@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0.."
 
 echo ==============================
 echo  T-Frame Login Test Runner

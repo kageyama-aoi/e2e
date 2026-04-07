@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0.."
 set /p PROFILE_NAME="Enter profile name (e.g., shimamura.testgcp2): "
 if "%PROFILE_NAME%"=="" set PROFILE_NAME=shimamura
 echo Running test with profile: %PROFILE_NAME%
