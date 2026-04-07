@@ -27,6 +27,7 @@
 
 // TEMPORARY
 
+const createMenuNavigationMixin = require('../../pages/tframe/MenuNavigationMixin');
 const studentSideMenu  = require('../../data/tframe/studentSideMenu');
 const courseSideMenu   = require('../../data/tframe/courseSideMenu');
 const teacherSideMenu  = require('../../data/tframe/teacherSideMenu');
@@ -89,11 +90,11 @@ async function scanLang(I, pageName) {
 }
 
 /**
- * ページオブジェクトに onPageLoaded フックをセットする。
- * MenuNavigationMixin が各画面遷移後にこのフックを呼ぶ。
+ * MenuNavigationMixin のモジュールレベルコールバックに scanLang をセットする。
+ * this に依存しないため CodeceptJS の Proxy ラップの影響を受けない。
  */
-function attachLangCheck(page, I) {
-  page.onPageLoaded = async (name) => scanLang(I, name);
+function attachLangCheck(I) {
+  createMenuNavigationMixin.setPageLoadedCallback(async (name) => scanLang(I, name));
 }
 
 Scenario(
@@ -114,38 +115,35 @@ Scenario(
     loginKannrisyaPage.login(process.env.ADMIN_USER, process.env.ADMIN_PASSWORD);
     loginKannrisyaPage.seeLogout();
 
+    // モジュールレベルのコールバックをセット（全ページ共通）
+    attachLangCheck(I);
+
     // 受講生メニュー
-    attachLangCheck(jukuseiPage, I);
     jukuseiPage.clickJukuseiIcon();
     await jukuseiPage.verifyMenuNavigation(studentSideMenu);
 
     // コースメニュー
-    attachLangCheck(coursePage, I);
     coursePage.clickCourseIcon();
     await coursePage.verifyMenuNavigation(courseSideMenu);
 
     // 講師メニュー
-    attachLangCheck(koshiPage, I);
     koshiPage.clickKoshiIcon();
     await koshiPage.verifyMenuNavigation(teacherSideMenu);
 
     // マスターメニュー
-    attachLangCheck(masterMenuPage, I);
     masterMenuPage.clickMasterIcon();
     await masterMenuPage.verifyMenuNavigation(masterSideMenu);
 
     // カレンダーメニュー
-    attachLangCheck(calendarPage, I);
+    // カレンダーメニュー
     calendarPage.clickCalendarIcon();
     await calendarPage.verifyMenuNavigation(calendarSideMenu);
 
     // Eメールメニュー
-    attachLangCheck(emailPage, I);
     emailPage.clickEmailIcon();
     await emailPage.verifyMenuNavigation(emailSideMenu);
 
     // レポートメニュー
-    attachLangCheck(reportPage, I);
     reportPage.clickReportIcon();
     await reportPage.verifyMenuNavigation(reportSideMenu);
 
@@ -154,8 +152,9 @@ Scenario(
     await scanLang(I, 'ホーム');
 
     // ヘルプメニュー
-    attachLangCheck(helpPage, I);
     helpPage.clickHelpIcon();
     await helpPage.verifyMenuNavigation(helpSideMenu);
+
+    createMenuNavigationMixin.clearPageLoadedCallback();
   }
 );
