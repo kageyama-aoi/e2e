@@ -59,3 +59,26 @@
 
 ---
 *このドキュメントは、tree_generator.py によって生成された最新のプロジェクト構造を基に管理されています。*
+
+---
+
+## 6. 技術スタック / 利用ツール一覧
+
+### フレームワーク・ライブラリ
+- **Node.js / npm / npx**: `package.json`
+- **CodeceptJS**（E2Eテストフレームワーク）: `package.json`, `codecept.conf.js`
+- **Playwright**（CodeceptJSのヘルパー）: `package.json`, `codecept.conf.js`
+- **Allure Report**（`allure-codeceptjs` プラグイン）: `package.json`, `codecept.conf.js`
+- **@codeceptjs/configure**（共通プラグイン設定）: `package.json`, `codecept.conf.js`
+- **dotenv**（`.env` / `env/.env.<profile>` ロード）: `package.json`, `support/envLoader.js`
+- **JSDoc**（ドキュメント生成）: `package.json`, `jsdoc.json`
+- **docdash**（JSDocテンプレート）: `package.json`, `jsdoc.json`
+- **Python**（補助スクリプト群）: `scripts/`
+- **Windowsバッチ**（テスト起動補助）: `Run_Shimamura_Syokai_Test.bat`
+
+### 共通設定 / 補助モジュール
+- **環境変数ローダー**: `support/envLoader.js`（`.env` と `env/.env.<profile>` の読み分け）
+- **カスタムSteps**: `support/steps_file.js`
+  - `saveScreenshotWithTimestamp`, `saveLogToFile`, `grabAndParseJsonFrom`, `acceptCookiesIfVisible`, `forceClick`, `waitAndFill`, `scrollIntoView`
+- **CodeceptJS設定**: `codecept.conf.js`
+  - スイート定義、`helpers.Playwright`、プラグイン（allure / stepByStepReport / autoLogin）

@@ -66,11 +66,11 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ## 学習リソース (Learning Resources)
 
 ### 共通
-- [CodeceptJS 学習ガイド](./docs/codeceptjs_learning_guide.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
-- [CodeceptJS 設計パターン・用語集](./docs/codeceptjs_e2e_tech_explanation.md): 設計思想（データ駆動・エラー注入・単一フロー設計）と技術用語を解説しています。
+- [CodeceptJS APIリファレンス](./docs/codeceptjs_api_reference.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
+- [CodeceptJS 設計パターン・用語集](./docs/codeceptjs_design_patterns.md): 設計思想（データ駆動・エラー注入・単一フロー設計）と技術用語を解説しています。
 - [プロジェクト設計・アーキテクチャガイド](./docs/project_architecture_guide.md): ディレクトリ構成・責務分離・設計ルールの詳細を説明しています。
 - [モジュール依存関係図](./docs/mermaid_code_relationships.md): テスト・Page Object・データファイルの依存関係を Mermaid 図で可視化しています。
-- [技術概要 (Technical Overview)](./docs/technical_overview.md): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
+- [技術概要 (Technical Overview)](./docs/project_architecture_guide.md#6-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
 ### プロダクト別
 - [しまむらテスト コーディング規約](./docs/shimamura_coding_guidelines.md): しまむら系テストの構成・命名・共通化のルールをまとめたガイドです。
