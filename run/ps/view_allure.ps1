@@ -31,9 +31,9 @@ if ($profiles.Count -eq 0) {
     Write-Host "        20260417_120000_syokai_test\"
     Write-Host ""
     Write-Host "  先にテストを実行してください:"
-    Write-Host "    bat\tframe_run_login.bat"
-    Write-Host "    bat\tframe_run_nav_all.bat"
-    Write-Host "    bat\shimamura_run_syokai.bat"
+    Write-Host "    run\tframe_run_login.bat"
+    Write-Host "    run\tframe_run_nav_all.bat"
+    Write-Host "    run\shimamura_run_syokai.bat"
     Write-Host ""
     Read-Host "Press Enter to exit"
     exit 0
