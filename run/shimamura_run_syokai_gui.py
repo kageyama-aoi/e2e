@@ -388,8 +388,8 @@ class RunnerApp(tk.Tk):
 
 def main():
     """アプリケーションのメインエントリポイント。"""
-    # The script is in the repo root
-    repo_root = os.path.abspath(os.path.dirname(__file__))
+    # The script lives in run/, so repo root is one level up
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     app = RunnerApp(repo_root)
     app.mainloop()
 
