@@ -17,13 +17,11 @@ Feature('ログイン機能');
 Scenario('正しい認証情報でログインできる @admin', ({ I, loginKannrisyaPage }) => {
   // Page Objectのメソッドを呼び出してログイン処理を実行します
   loginKannrisyaPage.login(process.env.ADMIN_USER, process.env.ADMIN_PASSWORD);
-  pause();
   // ログイン後の成功を検証します
   loginKannrisyaPage.seeLogout();
 });
 
 Scenario('TEST_USER_STUDENTでログインできる @student', ({ I, loginKannrisyaPage }) => {
   loginKannrisyaPage.login(process.env.TEST_USER_STUDENT, process.env.TEST_PASSWORD_STUDENT);
-  pause();
   loginKannrisyaPage.seeLogout();
 });
