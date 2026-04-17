@@ -47,7 +47,7 @@ npm install
 | :--- | :--- |
 | `bat/shimamura_run_syokai.bat` | しまむら 初回登録テスト |
 | `bat/tframe_run_login.bat` | T-Frame ログインテスト |
-| `bat/tframe_run_icons.bat` | T-Frame 各アイコンメニューテスト |
+| `bat/tframe_run_nav_all.bat` | T-Frame ナビゲーション全テスト（メニュー・アイコン一括） |
 | `bat/tframe_run_lang_check.bat` | T-Frame 言語チェックテスト |
 | `bat/tframe_run_dropdown_check.bat` | T-Frame プルダウン確認テスト |
 | `bat/view_allure.bat` | Allure レポートをブラウザで表示（全プロファイル対応・動的スキャン） |
@@ -232,7 +232,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-04-17 13:40:12
+Last updated: 2026-04-17 14:34:23
 
 ```text
 e2e/
@@ -272,12 +272,20 @@ e2e/
 │   ├── SPEC.md
 │   └── TODO.md
 ├── bat/ 
+│   ├── ps/ 
+│   │   ├── shimamura_run_syokai.ps1
+│   │   ├── tframe_run_dropdown_check.ps1
+│   │   ├── tframe_run_lang_check.ps1
+│   │   ├── tframe_run_login.ps1
+│   │   ├── tframe_run_nav_all.ps1
+│   │   └── view_allure.ps1
 │   ├── shimamura_run_syokai.bat
+│   ├── shimamura_run_syokai_gui.py
 │   ├── tframe_run_dropdown_check.bat
-│   ├── tframe_run_icons.bat
 │   ├── tframe_run_lang_check.bat
 │   ├── tframe_run_login.bat
-│   └── tframe_view_allure.bat
+│   ├── tframe_run_nav_all.bat
+│   └── view_allure.bat
 ├── data/ 
 │   ├── shimamura/ 
 │   │   ├── keiri_hennkin_syori_data.csv
@@ -341,7 +349,6 @@ e2e/
 │   ├── extract_side_menu_groups.py
 │   ├── extract_submenus.py
 │   ├── generate_prompt_index.py
-│   ├── run_shimamura_test_gui.py
 │   └── tree_generator.py
 ├── support/ 
 │   ├── shimamura/ 

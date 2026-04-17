@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path $PSScriptRoot -Parent
+$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 
 Write-Host "=============================="
-Write-Host " T-Frame Login Test Runner"
+Write-Host " T-Frame Dropdown Check"
 Write-Host "=============================="
 Write-Host ""
 
@@ -33,41 +33,10 @@ for ($i = 0; $i -lt $profiles.Count; $i++) {
 if (-not $profileName) { $profileName = $choice }
 
 Write-Host ""
-
-# ---- Scenario selection ----
-Write-Host "[Scenario]"
-Write-Host "  1. All scenarios"
-Write-Host "  2. Admin only   (@admin)"
-Write-Host "  3. Student only (@student)"
+Write-Host "Profile : $profileName"
 Write-Host ""
-$scenario = Read-Host "Select scenario (default: 1)"
-if (-not $scenario) { $scenario = "1" }
-
-Write-Host ""
-Write-Host "Profile  : $profileName"
 
 Set-Location $repoRoot
-switch ($scenario) {
-    "1" {
-        Write-Host "Scenario : All"
-        Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --steps
-    }
-    "2" {
-        Write-Host "Scenario : Admin only"
-        Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --grep "@admin" --steps
-    }
-    "3" {
-        Write-Host "Scenario : Student only"
-        Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --grep "@student" --steps
-    }
-    default {
-        Write-Host "Scenario : All"
-        Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --steps
-    }
-}
+& npx codeceptjs run ./tests/tframe/dropdown_check_test.js --profile $profileName --steps
 
 Read-Host "Press Enter to exit"

@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path $PSScriptRoot -Parent
+$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 
 Write-Host "=============================="
 Write-Host " Shimamura Syokai Test"

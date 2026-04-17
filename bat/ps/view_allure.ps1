@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$repoRoot = Split-Path $PSScriptRoot -Parent
+$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $resultsRoot = Join-Path $repoRoot "allure-results"
 $takeCount = 10
 
@@ -32,7 +32,7 @@ if ($profiles.Count -eq 0) {
     Write-Host ""
     Write-Host "  先にテストを実行してください:"
     Write-Host "    bat\tframe_run_login.bat"
-    Write-Host "    bat\tframe_run_icons.bat"
+    Write-Host "    bat\tframe_run_nav_all.bat"
     Write-Host "    bat\shimamura_run_syokai.bat"
     Write-Host ""
     Read-Host "Press Enter to exit"

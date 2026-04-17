@@ -1,2 +1,2 @@
 @echo off
-powershell -ExecutionPolicy Bypass -NoProfile -File "%~dp0view_allure.ps1" %*
+powershell -ExecutionPolicy Bypass -NoProfile -File "%~dp0ps\view_allure.ps1" %*

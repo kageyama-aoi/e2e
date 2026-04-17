@@ -2,7 +2,7 @@ param(
     [string]$Profile = "tframe.juku_admin"
 )
 $ErrorActionPreference = 'Stop'
-$repoRoot  = Split-Path $PSScriptRoot -Parent
+$repoRoot  = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $outputRoot = Join-Path $repoRoot "output" $Profile
 
 $failed    = 0
