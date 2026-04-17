@@ -198,7 +198,9 @@ def write_output_csv(submenus: List[Dict[str, Any]], output: Optional[str], flat
 
 def main() -> None:
     """エントリーポイント。"""
+    # IN:  ../source.txt（既定）または引数で指定したHTMLファイル
     default_input = os.path.join("..", "source.txt")
+    # OUT: ./output/submenu_extract/ 配下に json / csv / csv(flat) のいずれか
     default_output_dir = os.path.join(".", "output", "submenu_extract")
     default_output_json = os.path.join(default_output_dir, "submenu_extract.json")
     default_output_csv = os.path.join(default_output_dir, "submenu_extract.csv")
@@ -215,6 +217,7 @@ def main() -> None:
         elif args.format == "csv":
             args.output = default_output_csv
 
+    # 引数なし起動時は対話的に出力形式を選択
     if sys.stdin.isatty() and len(sys.argv) == 1:
         print("出力形式を選んでください: 1) json  2) csv  3) csv(flat)")
         choice = input("選択 (1/2/3) > ").strip()
@@ -234,10 +237,11 @@ def main() -> None:
     if args.output:
         os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
+    # PROCESS: HTMLを読み込み → <tr id="submenu__..."> ブロックをパース
     html = detect_and_read_input(args.input, args.encoding, args.errors)
-
     parser = SubmenuExtractor()
     parser.feed(html)
+    # OUT: parser.submenus = [{id, text, links:[{href, text}]}, ...]
 
     if args.format == "json":
         write_output_json(parser.submenus, args.output)

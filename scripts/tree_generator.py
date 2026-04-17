@@ -323,16 +323,17 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """メイン実行関数。"""
+    # IN:  スキャン対象ディレクトリ（デフォルト: カレント）
     args = parse_args()
-    config = AppConfig() # 設定オブジェクトのインスタンス化
+    config = AppConfig()
 
     root = Path(args.root)
     if not root.exists():
         raise SystemExit(f"ルートパスが見つかりません: {root}")
 
-    # コマンドライン引数から除外ディレクトリリストを生成
     exclude_dirs = {x.strip() for x in str(args.exclude_dirs).split(",") if x.strip()}
 
+    # PROCESS: ディレクトリを再帰走査してツリー行リストを生成
     tree_lines = build_tree_lines(
         root,
         max_depth=args.max_depth,
@@ -342,11 +343,11 @@ def main() -> None:
     )
 
     if args.update:
-        # 更新モード (-u / --update)
+        # OUT: 既存Markdownの <!-- TREE_START --> ～ <!-- TREE_END --> 間を上書き更新
         target_path = Path(args.update)
         update_readme(target_path, tree_lines, config)
     else:
-        # 新規作成モード (-o / --out)
+        # OUT: 新規Markdownファイル（デフォルト: tree.md）を作成
         out_path = Path(args.out)
         write_markdown(out_path, args.title, tree_lines)
 

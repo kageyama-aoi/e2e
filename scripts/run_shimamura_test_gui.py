@@ -305,6 +305,7 @@ class RunnerApp(tk.Tk):
 
     def _on_run(self):
         """「Run Test」ボタンのイベントハンドラ。"""
+        # IN:  profile_var（リストボックスで選択されたプロファイル名）
         profile = self.profile_var.get().strip()
         if not profile:
             messagebox.showerror('Profile required', 'Please select a profile.')
@@ -313,8 +314,7 @@ class RunnerApp(tk.Tk):
         if self.thread and self.thread.is_alive():
             messagebox.showinfo('Running', 'A test is already running.')
             return
-        
-        # Clear previous log content
+
         self.log_text.configure(state='normal')
         self.log_text.delete('1.0', tk.END)
         self.log_text.configure(state='disabled')
@@ -322,6 +322,8 @@ class RunnerApp(tk.Tk):
         self._append_log(f'=== Running profile: {profile} ===\n')
         self._set_running(True)
 
+        # PROCESS: npx codeceptjs run コマンドを組み立てて別スレッドで実行
+        # OUT:     標準出力をリアルタイムでログウィジェットに表示
         cmd = build_command(profile)
         self.thread = threading.Thread(target=self._run_process, args=(cmd,), daemon=True)
         self.thread.start()
@@ -347,6 +349,10 @@ class RunnerApp(tk.Tk):
 
         指定されたコマンドをサブプロセスで実行し、その出力を
         ログキューにパイプします。
+
+        IN:  cmd（npx codeceptjs run ... のリスト）
+        OUT: 標準出力を1行ずつ log_queue に送信 → GUIログ欄に表示
+             終了後、ログを logs/syokai_<timestamp>.log に自動保存
 
         Args:
             cmd (list[str]): 実行するコマンド。

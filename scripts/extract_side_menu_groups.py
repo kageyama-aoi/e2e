@@ -434,15 +434,22 @@ def build_default_output_paths(groups: List[Dict[str, Any]]) -> Dict[str, str]:
 
 def main() -> None:
     """エントリーポイント。"""
+    # IN:  scripts/input/side_menu_extract/source.html（既定）または引数で指定したHTMLファイル
     args = parse_args()
     if args.input is None:
         args.input = DEFAULT_INPUT
 
+    # PROCESS: HTMLを読み込み → li.dropdown をグループ、配下の li>a を子項目としてパース
     html = detect_and_read_input(args.input, args.encoding, args.errors)
-
     parser = SideMenuGroupExtractor()
     parser.feed(html)
     groups = parser.as_dicts()
+    # groups = [{id, name, toggle_target, items:[{id, name, title, href, selected}]}, ...]
+
+    # OUT先: 先頭の日本語ラベル + タイムスタンプ でディレクトリ・ファイル名を自動生成
+    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.json
+    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups_ja.json  (--jp-only 時)
+    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.csv      (--format csv 時)
     default_paths = build_default_output_paths(groups)
 
     if args.output is None:
@@ -457,6 +464,7 @@ def main() -> None:
     if args.format == "json":
         payload = to_output_payload_ja(groups) if args.jp_only else to_output_payload(groups)
         write_json(payload, args.output)
+        # 通常JSON出力時は日本語のみ軽量版も自動で併出力
         if not args.jp_only and os.path.normpath(args.output) == os.path.normpath(default_paths["json"]):
             os.makedirs(default_paths["dir"], exist_ok=True)
             write_json(to_output_payload_ja(groups), default_paths["json_ja"])
