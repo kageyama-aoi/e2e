@@ -50,7 +50,7 @@ npm install
 | `bat/tframe_run_icons.bat` | T-Frame 各アイコンメニューテスト |
 | `bat/tframe_run_lang_check.bat` | T-Frame 言語チェックテスト |
 | `bat/tframe_run_dropdown_check.bat` | T-Frame プルダウン確認テスト |
-| `bat/tframe_view_allure.bat` | Allure レポートをブラウザで表示 |
+| `bat/view_allure.bat` | Allure レポートをブラウザで表示（全プロファイル対応・動的スキャン） |
 
 ### 2. コマンドラインでの実行
 
