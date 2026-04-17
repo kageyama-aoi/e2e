@@ -1,6 +1,19 @@
+/**
+ * @fileoverview tframe メニューナビゲーション共通 Mixin
+ *
+ * 全tframeページが共有するメニュー操作・スクリーンショット・検索・タブ巡回の
+ * 共通ロジックを提供するファクトリ関数。
+ * 各ページで `...createMenuNavigationMixin('prefix')` として展開して使用する。
+ */
+
 const { I } = inject();
 const assert = require('assert');
 
+/**
+ * ファイル名に使用できない文字を _ に置換する
+ * @param {string} value - 変換する文字列
+ * @returns {string} サニタイズ済み文字列
+ */
 function sanitizeName(value) {
   return String(value || '')
     .replace(/[\\/:*?"<>|]/g, '_')
@@ -10,8 +23,21 @@ function sanitizeName(value) {
 // モジュールレベルのコールバック（lang_check_test から設定する）
 let _onPageLoaded = null;
 
+/**
+ * メニューナビゲーション Mixin を生成する
+ *
+ * 各ページ固有のスクリーンショット prefix を受け取り、
+ * メニュー操作・証跡収集・検索・タブ巡回メソッドを持つオブジェクトを返す。
+ *
+ * @param {string} prefix - スクリーンショットファイル名の接頭辞（例: 'tframe_home'）
+ * @returns {Object} メニューナビゲーション Mixin オブジェクト
+ */
 function createMenuNavigationMixin(prefix) {
   return {
+    /**
+     * メニュー定義に従い全メニュー項目を順番に押下・検証する
+     * @param {{groups: Array.<{items: Array.<{name: string, href: string}>}>}} menuDefinition - メニュー定義
+     */
     async verifyMenuNavigation(menuDefinition) {
       for (const group of menuDefinition.groups) {
         for (const item of group.items) {
@@ -20,6 +46,10 @@ function createMenuNavigationMixin(prefix) {
       }
     },
 
+    /**
+     * 1つのメニュー項目を押下し、URL遷移・スクリーンショットを検証する
+     * @param {{name: string, href: string}} item - メニュー項目
+     */
     async clickMenuItemAndVerify(item) {
       I.say(`【子メニュー押下】${item.name}`);
       this.scrollToHref(item.href);
@@ -32,18 +62,38 @@ function createMenuNavigationMixin(prefix) {
       await this.clickSearchIfPresentAndCapture(item.name);
     },
 
+    /**
+     * メニュー項目のスクリーンショットファイル名を生成する
+     * @param {string} itemName - メニュー項目名
+     * @returns {string} ファイル名（例: 'tframe_home_メニュー名.png'）
+     */
     buildScreenshotName(itemName) {
       return `${prefix}_${sanitizeName(itemName)}.png`;
     },
 
+    /**
+     * 検索後のスクリーンショットファイル名を生成する
+     * @param {string} itemName - メニュー項目名
+     * @returns {string} ファイル名（例: 'tframe_home_メニュー名_search.png'）
+     */
     buildSearchScreenshotName(itemName) {
       return `${prefix}_${sanitizeName(itemName)}_search.png`;
     },
 
+    /**
+     * 検索結果1行目のスクリーンショットファイル名を生成する
+     * @param {string} itemName - メニュー項目名
+     * @returns {string} ファイル名
+     */
     buildSearchResultScreenshotName(itemName) {
       return this.buildSearchScreenshotName(itemName).replace('_search.png', '_search_first_row.png');
     },
 
+    /**
+     * 現在URLが期待URLを含むか検証する（含まない場合は assert で失敗）
+     * @param {string} currentUrl - 現在のURL
+     * @param {string} expectedHref - 期待するhref
+     */
     assertCurrentUrlMatches(currentUrl, expectedHref) {
       const normalizedCurrentUrl = decodeURIComponent(currentUrl);
       const normalizedExpectedHref = decodeURIComponent(expectedHref);
@@ -54,6 +104,10 @@ function createMenuNavigationMixin(prefix) {
       );
     },
 
+    /**
+     * 検索ボタンが存在する場合に押下し、結果のスクリーンショットを撮影する
+     * @param {string} itemName - メニュー項目名（ログ・ファイル名に使用）
+     */
     async clickSearchIfPresentAndCapture(itemName) {
       const searchButton = this.searchButton();
       const visibleCount = await I.grabNumberOfVisibleElements(searchButton);
@@ -77,6 +131,10 @@ function createMenuNavigationMixin(prefix) {
       await this.clickFirstSearchResultLinkIfPresentAndVerify(itemName);
     },
 
+    /**
+     * 検索結果の1行目リンクを押下し、遷移・詳細タブ撮影・一覧復帰を行う
+     * @param {string} itemName - メニュー項目名
+     */
     async clickFirstSearchResultLinkIfPresentAndVerify(itemName) {
       const firstLink = await this.grabFirstSearchResultLinkInfo();
 
@@ -113,6 +171,10 @@ function createMenuNavigationMixin(prefix) {
       }
     },
 
+    /**
+     * 検索結果テーブルの1行目に存在するリンクのhrefとラベルを取得する
+     * @returns {Promise.<{href: string, label: string}|null>} リンク情報（存在しない場合はnull）
+     */
     async grabFirstSearchResultLinkInfo() {
       return I.executeScript(() => {
         const tbodies = Array.from(document.querySelectorAll('tbody'));
@@ -144,6 +206,10 @@ function createMenuNavigationMixin(prefix) {
       });
     },
 
+    /**
+     * 検索結果テーブルの1行目リンクをクリックする
+     * @returns {Promise.<boolean>} クリックできた場合 true
+     */
     async clickFirstSearchResultLink() {
       return I.executeScript(() => {
         const tbodies = Array.from(document.querySelectorAll('tbody'));
@@ -172,6 +238,13 @@ function createMenuNavigationMixin(prefix) {
       });
     },
 
+    /**
+     * 詳細タブのスクリーンショットファイル名を生成する
+     * @param {string} itemName - メニュー項目名
+     * @param {string} tabLabel - タブのラベル
+     * @param {number} index - タブのインデックス（1始まり）
+     * @returns {string} ファイル名
+     */
     buildDetailTabScreenshotName(itemName, tabLabel, index) {
       const safeTab = sanitizeName(tabLabel || `tab${index}`);
       return this
@@ -179,6 +252,10 @@ function createMenuNavigationMixin(prefix) {
         .replace('_search.png', `_detail_tab_${String(index).padStart(2, '0')}_${safeTab}.png`);
     },
 
+    /**
+     * 詳細画面にタブが存在する場合、全タブを順番にクリックしてスクリーンショットを撮影する
+     * @param {string} itemName - メニュー項目名
+     */
     async captureDetailTabsIfPresent(itemName) {
       const tabs = await I.executeScript(() => {
         const anchors = Array.from(
@@ -253,6 +330,12 @@ function createMenuNavigationMixin(prefix) {
       }
     },
 
+    /**
+     * ページのHTMLソースが変化するまで最大N秒待機する
+     * @param {string} beforeSource - 変化前のHTMLソース
+     * @param {number} maxSeconds - 最大待機秒数
+     * @returns {Promise.<boolean>} 変化があった場合 true
+     */
     async waitForPageChange(beforeSource, maxSeconds) {
       for (let index = 0; index < maxSeconds; index += 1) {
         I.wait(1);
@@ -264,6 +347,12 @@ function createMenuNavigationMixin(prefix) {
       return false;
     },
 
+    /**
+     * 現在URLが期待hrefを含むまで最大N秒ポーリングする
+     * @param {string} expectedHref - 期待するhref
+     * @param {number} maxSeconds - 最大待機秒数
+     * @returns {Promise.<string>} マッチした（またはタイムアウト時の）URL
+     */
     async waitForCurrentUrlMatch(expectedHref, maxSeconds) {
       for (let index = 0; index < maxSeconds; index += 1) {
         const currentUrl = await I.grabCurrentUrl();
@@ -275,10 +364,19 @@ function createMenuNavigationMixin(prefix) {
       return I.grabCurrentUrl();
     },
 
+    /**
+     * 検索ボタンのロケーターを返す（日英両対応）
+     * @returns {Object} CodeceptJS ロケーター
+     */
     searchButton() {
       return this.buttonByTexts(['検索', 'Search', 'Find']);
     },
 
+    /**
+     * 複数テキストのいずれかに一致するボタン・リンクのロケーターを返す
+     * @param {string[]} texts - 一致候補テキストの配列
+     * @returns {Object} CodeceptJS ロケーター（XPath）
+     */
     buttonByTexts(texts) {
       const textExpr = texts.map((text) => `contains(normalize-space(.), '${text}')`).join(' or ');
       const valueExpr = texts.map((text) => `contains(@value, '${text}')`).join(' or ');
@@ -289,7 +387,15 @@ function createMenuNavigationMixin(prefix) {
   };
 }
 
+/**
+ * ページ遷移時に呼び出すコールバックを登録する（lang_check_test から使用）
+ * @param {function(string): Promise.<void>} fn - ページ名を受け取る非同期コールバック
+ */
 createMenuNavigationMixin.setPageLoadedCallback = (fn) => { _onPageLoaded = fn; };
+
+/**
+ * ページ遷移コールバックをクリアする
+ */
 createMenuNavigationMixin.clearPageLoadedCallback = () => { _onPageLoaded = null; };
 
 module.exports = createMenuNavigationMixin;

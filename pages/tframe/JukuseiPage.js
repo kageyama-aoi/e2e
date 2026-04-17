@@ -1,18 +1,31 @@
+/**
+ * @fileoverview tframe 受講生画面 Page Object
+ */
+
 const { I } = inject();
 const createMenuNavigationMixin = require('./MenuNavigationMixin');
 
 module.exports = {
+  /** 受講生アイコンのセレクタ（日英） */
   locators: {
     studentIconJa: 'a:has-text("受講生")',
     studentIconEn: 'a:has-text("Student")',
   },
 
+  /**
+   * メインメニューの受講生アイコンをクリックする
+   */
   clickJukuseiIcon() {
     I.say('【メインメニュー】受講生アイコンをクリック');
     I.waitForElement(this.studentIconLocator(), 10);
     I.click(this.studentIconLocator());
   },
 
+  /**
+   * メニュー定義に従い全メニュー項目を順番に押下・検証する
+   * @param {{groups: Array.<{items: Array.<{name: string, href: string, altName: string}>}>}} menuDefinition - メニュー定義
+   * @returns {Promise.<void>}
+   */
   async verifyMenuNavigation(menuDefinition) {
     for (const group of menuDefinition.groups) {
       for (const item of group.items) {
@@ -21,6 +34,11 @@ module.exports = {
     }
   },
 
+  /**
+   * 1つのメニュー項目を押下し、URL遷移・スクリーンショットを検証する
+   * @param {{name: string, href: string, altName: string}} item - メニュー項目
+   * @returns {Promise.<void>}
+   */
   async clickMenuItemAndVerify(item) {
     const itemName = item.name;
     const expectedHref = item.href;
@@ -43,6 +61,10 @@ module.exports = {
     await this.clickSearchIfPresentAndCapture(itemName);
   },
 
+  /**
+   * 指定 href のリンクが画面内に表示されるようスクロールする
+   * @param {string} href - スクロール先リンクの href
+   */
   scrollToHref(href) {
     I.executeScript(
       ({ targetHref }) => {
@@ -55,6 +77,10 @@ module.exports = {
     );
   },
 
+  /**
+   * 複数テキストのいずれかに一致するリンクが画面内に表示されるようスクロールする
+   * @param {Array.<string>} texts - 候補テキストの配列
+   */
   scrollMenuToTexts(texts) {
     I.executeScript(
       ({ targetTexts }) => {
@@ -71,6 +97,10 @@ module.exports = {
     );
   },
 
+  /**
+   * 指定 href のリンクをクリックする
+   * @param {string} href - クリックするリンクの href
+   */
   clickLinkByHref(href) {
     I.executeScript(
       ({ targetHref }) => {
@@ -84,6 +114,10 @@ module.exports = {
     );
   },
 
+  /**
+   * 複数テキストのいずれかに一致するリンクをクリックする
+   * @param {Array.<string>} texts - 候補テキストの配列
+   */
   clickLinkByTexts(texts) {
     I.executeScript(
       ({ targetTexts }) => {
@@ -100,6 +134,11 @@ module.exports = {
     );
   },
 
+  /**
+   * 複数テキストのいずれかに一致するリンクの href を取得する
+   * @param {Array.<string>} texts - 候補テキストの配列
+   * @returns {Promise.<string|null>} href 属性値（見つからない場合 null）
+   */
   async grabHrefByTexts(texts) {
     return I.executeScript(
       ({ targetTexts }) => {
@@ -113,21 +152,21 @@ module.exports = {
     );
   },
 
+  /**
+   * 現在の言語設定に合わせた受講生アイコンのロケーターを返す
+   * @returns {string} セレクタ文字列
+   */
   studentIconLocator() {
     return this.isEnglish() ? this.locators.studentIconEn : this.locators.studentIconJa;
   },
 
+  /**
+   * 言語設定が英語かどうかを返す
+   * @returns {boolean} 英語の場合 true
+   */
   isEnglish() {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
   },
 
   ...createMenuNavigationMixin('tframe_student'),
 };
-
-
-
-
-
-
-
-

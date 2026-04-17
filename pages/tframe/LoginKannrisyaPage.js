@@ -1,7 +1,11 @@
+/**
+ * @fileoverview tframe 管理者ログインページ
+ */
+
 const { I } = inject();
 
 module.exports = {
-  // ログインページの要素（セレクタ）を定義します
+  /** ログインページの各入力要素セレクタ */
   locators: {
     usernameField: 'input[id="loginmodel-username"]',
     passwordField: 'input[id="loginmodel-password"]',
@@ -11,7 +15,7 @@ module.exports = {
   },
 
   /**
-   * ログイン処理を実行します
+   * ログイン処理を実行する
    * @param {string} username - ユーザー名
    * @param {string} password - パスワード
    */
@@ -24,6 +28,10 @@ module.exports = {
     I.click(this.locators.loginButton);
   },
 
+  /**
+   * 表示言語を選択する（TFRAME_LANGUAGE 未指定時はスキップ）
+   * @param {string} language - 言語コードまたは言語名（例: 'ja' / 'en'）
+   */
   selectLanguage(language) {
     if (!language) {
       I.say('【言語選択スキップ】TFRAME_LANGUAGE 未指定');
@@ -36,6 +44,11 @@ module.exports = {
     I.selectOption(this.locators.languageSelect, normalizedLanguage);
   },
 
+  /**
+   * 言語指定文字列を正規化する（'ja' / 'en' に統一）
+   * @param {string} language - 入力言語文字列
+   * @returns {string} 正規化済み言語コード
+   */
   normalizeLanguage(language) {
     const normalized = String(language).trim().toLowerCase();
     if (normalized === 'ja' || normalized === '日本語') {
@@ -47,7 +60,9 @@ module.exports = {
     return normalized;
   },
 
-  // ログイン成功後の状態（ログアウトボタンの表示）を確認します
+  /**
+   * ログアウトリンクが表示されていることを確認する（ログイン成功の検証）
+   */
   seeLogout() {
     I.waitForElement(this.locators.logoutLink, 10);
   }

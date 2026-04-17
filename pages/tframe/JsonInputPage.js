@@ -1,17 +1,21 @@
+/**
+ * @fileoverview tframe JSON入力ページ Page Object
+ */
+
 const { I } = inject();
 
 module.exports = {
-  // === LOCATORS ===
+  /** JSON入力ページの各要素セレクタ */
   locators: {
     jsonInputMenuLink: 'JSON入力',
     jsonTextarea: '#apiParams',
     executeButton: '実行',
-    responseArea: 'pre', // Assuming the response appears in a <pre> tag
-    responseLabel: 'レスポンス', // Assuming a label appears before the response
+    responseArea: 'pre',
+    responseLabel: 'レスポンス',
   },
 
   /**
-   * Navigates to the JSON Input page.
+   * JSON入力ページへ遷移する
    */
   navigateToPage() {
     I.say('「JSON入力」ページへ遷移します。');
@@ -20,19 +24,13 @@ module.exports = {
   },
 
   /**
-   * Fills the JSON textarea with the given parameters and executes the API call.
-   * @param {object} apiParams - The JSON object to be sent as the request payload.
+   * JSON テキストエリアにパラメータを入力してAPIを実行する
+   * @param {object} apiParams - リクエストボディとして送信する JSON オブジェクト
    */
   executeApi(apiParams) {
     I.say('APIを実行します。');
-
-    // Fill the textarea with the formatted JSON string
     I.fillField(this.locators.jsonTextarea, JSON.stringify(apiParams, null, 2));
-
-    // Execute the API call
     I.click(this.locators.executeButton);
-
-    // Wait for the response to appear
     I.waitForText(this.locators.responseLabel, 10);
     I.seeElement(this.locators.responseArea);
   },

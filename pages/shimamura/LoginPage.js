@@ -1,3 +1,7 @@
+/**
+ * @fileoverview しまむら ログインページ Page Object
+ */
+
 const { I } = inject();
 
 const locators_2 = {
@@ -18,10 +22,9 @@ const promt = {
 module.exports = {
   locators_2,
   messages_2,
+
   /**
-   * ログイン処理を実行します
-   * @param {string} username - ユーザー名
-   * @param {string} password - パスワード
+   * 環境変数のユーザー情報でログインする
    */
   login() {
     I.say('=== ログイン 開始 ===');
@@ -36,15 +39,18 @@ module.exports = {
     I.say('=== ログイン 終了 ===');
   },
 
-  // ログイン済みかの簡易チェック
+  /**
+   * ログイン済みかどうかを簡易チェックする（メインメニューキーワードの存在確認）
+   */
   seeLoggedIn() {
     I.amOnPage('/');
     I.see(messages_2.mainMenuKeyword, 'tbody');
   },
 
   /**
-   * 担当者番号を入力してメインメニューへ進みます。
+   * 担当者番号を入力してメインメニューへ進む
    * @param {string} tantousyaNumber - 担当者番号
+   * @returns {Promise.<void>}
    */
   async enterTantousyaNumberAndProceed(tantousyaNumber) {
     I.say('=== 担当者番号入力 開始 ===');
@@ -59,7 +65,7 @@ module.exports = {
     }
 
     I.say(`【担当者番号入力】[${tantousyaNumber}] を入力してメインメニューへ`);
-    I.waitForText(promt.tantousyaNumberPromptText, 5); // 画面が変わるのを待つ
+    I.waitForText(promt.tantousyaNumberPromptText, 5);
     I.fillField(locators_2.tantousyaNumberField, String(tantousyaNumber));
     I.say('【メインメニュー】遷移');
     I.click('メインメニュー');
