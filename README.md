@@ -232,7 +232,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-04-17 14:54:51
+Last updated: 2026-04-17 17:21:08
 
 ```text
 e2e/
@@ -293,6 +293,8 @@ e2e/
 │       ├── teacherPaymentReportParams.js
 │       └── teacherSideMenu.js
 ├── env/ 
+│   ├── .env.shimamura.MySQL84_dev
+│   ├── .env.shimamura.smbcpos_training
 │   ├── .env.shimamura.template
 │   ├── .env.shimamura.testgcp
 │   ├── .env.shimamura.testgcp2
@@ -334,6 +336,7 @@ e2e/
 │   │   ├── tframe_run_nav_all.ps1
 │   │   └── view_allure.ps1
 │   ├── shimamura_run_syokai.bat
+│   ├── shimamura_run_syokai_gui.bat
 │   ├── shimamura_run_syokai_gui.py
 │   ├── tframe_run_dropdown_check.bat
 │   ├── tframe_run_lang_check.bat
@@ -343,6 +346,8 @@ e2e/
 ├── scripts/ 
 │   ├── allure/ 
 │   │   └── archive_allure_results.py
+│   ├── cleanup/ 
+│   │   └── cleanup_output_logs.py
 │   ├── html/ 
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py

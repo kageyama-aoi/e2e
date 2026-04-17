@@ -25,6 +25,12 @@
     "allure:clean":   "rimraf allure-results/default allure-results/tframe.* allure-results/shimamura.* allure-results/taskreport.*",
     "allure:archive": "python scripts/allure/archive_allure_results.py",
 
+    "--- CLEANUP ---": "echo '--- CLEANUP ---'",
+    "cleanup":         "python scripts/cleanup/cleanup_output_logs.py",
+    "cleanup:dry":     "python scripts/cleanup/cleanup_output_logs.py --dry-run",
+    "cleanup:output":  "python scripts/cleanup/cleanup_output_logs.py --target output",
+    "cleanup:logs":    "python scripts/cleanup/cleanup_output_logs.py --target logs",
+
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
     "docs:shimamura": "jsdoc -c jsdoc.json",
     "docs:shimamura_shisaku": "npx jsdoc tests/shimamura -r -d docs/generated/html  -t node_modules/docdash",
