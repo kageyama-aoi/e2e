@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>shimamura_class_member_registration_test.js - Documentation</title>
+    <title>shimamura_class_existence_check_test.js - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -35,7 +35,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">shimamura_class_member_registration_test.js</h1>
+    <h1 class="page-title">shimamura_class_existence_check_test.js</h1>
     
 
     
@@ -46,32 +46,43 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview しまむら：クラス受講生登録のE2Eテスト
+ * @fileoverview しまむら：クラス存在チェックのE2Eテスト
+ *
+ * `syokai_touroku_data.csv`（または `--profile` に応じたCSV）に含まれる `className` が
+ * 事前に「クラス一覧」から検索できることを確認します。
+ *
+ * 受講生登録フローの途中で「クラスが無い」ことに気付くのを避けるための事前検知用テストです。
  *
  * **処理フロー**
  * - 1. 担当者アカウントでログイン（autoLogin）
- * - 2. 管理 > コース > コース一覧 へ遷移
- * - 3. クラス一覧へ移動し検索条件を入力
- * - 4. クラス詳細の受講生タブで受講生登録操作へ進む
+ * - 2. 管理 > コース > クラス一覧へ遷移
+ * - 3. CSVの `className` を検索して、検索結果に表示されることを確認
  *
  * **前提条件**
- * - 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること
+ * - 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
+ * - `data/shimamura/syokai_touroku_data.csv` が存在すること
  * - 実行時に `--profile` を指定する場合は `env/.env.&lt;profile>` が存在すること
  *
  * **最終更新日**
  * - 2026-01-27
  */
+const { loadCsvWithProfile } = require('../../support/utils');
 const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../support/shimamura/constants');
+
+const csvData = loadCsvWithProfile('syokai_touroku_data');
+
+// className の重複チェックを避ける（同名クラスの繰り返し確認をしない）
+const uniqueClassRows = Array.from(
+  new Map(
+    csvData
+      .filter((row) => row &amp;&amp; row.className)
+      .map((row) => [row.className, row])
+  ).values()
+);
 
 Feature('Dev sandbox (@dev)');
 
-/**
- * テスト実行前のセットアップ
- * 各シナリオの前にログイン処理と担当者番号入力を共通で行う
- * @param {object} args - CodeceptJSのDI引数
- * @param {CodeceptJS.I} args.I - Iオブジェクト
- * @param {object} args.loginPageShimamura - ログインページオブジェクト
- */
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
   await login('user');
@@ -79,103 +90,77 @@ Before(async ({ login, loginPageShimamura }) => {
 });
 
 const S = {
-  search: {
-    fields: {
-      name: 'name',
-      display: 'display_hyouji',
-      status: 'contact_status',
-      area: 'area_id',
-      school: 'school_id',
-      courseCategory: 'course_category',
-    },
-    options: {
-      display: 'すべて',
-      status: '下記の項目のすべて',
-      area: 'すべて',
-      school: 'すべて',
-      courseCategory: '発表会',
-    },
+  classList: {
+    screenTitle: 'クラス一覧',
     buttons: {
       search: '検索',
     },
-    results: {
-      row: '.listViewTdLinkS1',
-      link: 'a.listViewTdLinkS1',
-      linkIndex: 2,
+    // しまむら画面の実装差分に備えて「クラス名」の入力候補を複数用意
+    fields: {
+      classNameCandidates: [
+        '#course_name', // クラス選択POP_UPで使われている想定
+        'input[name="course_name"]',
+        'input[name="name"]', // 既存テストで使用されている想定（実画面により異なる）
+        'name',
+      ],
     },
-  },
-  tabs: {
-    studentTabLink: '#tab_link_student_tab',
-    studentTabActive: '#tab_li_student_tab.active',
-  },
-  selection: {
-    coursePulldown: '#cs_course_seletion_pulldown',
-    selectButton: '発表会選択',
+    results: {
+      link: 'a.listViewTdLinkS1',
+    },
   },
 };
 
-/**
- * クラス一覧画面にて検索条件を入力し、結果のリンクをクリックして詳細へ移動する
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @returns {Promise&lt;string>} 選択したコース名
- */
-async function selectClassFromList(I) {
-  I.fillField(S.search.fields.name, '鈴木');
-  I.selectOption(S.search.fields.display, S.search.options.display);
-  I.selectOption(S.search.fields.status, S.search.options.status);
-  I.selectOption(S.search.fields.area, S.search.options.area);
-  I.selectOption(S.search.fields.school, S.search.options.school);
-  I.selectOption(S.search.fields.courseCategory, S.search.options.courseCategory);
-  I.click(S.search.buttons.search);
-  I.say(`Search Result Page\nURL: ${await I.grabCurrentUrl()}`);
-  I.waitForElement(S.search.results.row, 10);
-  const courseName = await I.grabTextFrom(S.search.results.link);
-  I.say(`リンクラベル: ${courseName}`);
-  I.click(locate(S.search.results.row).at(S.search.results.linkIndex));
-  I.say(`Course Detail Page\nURL: ${await I.grabCurrentUrl()}`);
-  return courseName;
+async function fillFirstVisibleField(I, candidates, value) {
+  for (const locator of candidates) {
+    try {
+      const count = await I.grabNumberOfVisibleElements(locator);
+      if (count > 0) {
+        I.fillField(locator, value);
+        return locator;
+      }
+    } catch (_) {
+      // ignore invalid selector types in some drivers and continue
+    }
+  }
+  throw new Error(`クラス名入力欄が見つかりませんでした（候補: ${candidates.join(', ')}）`);
 }
 
-/**
- * クラス詳細画面でのタブ操作とコース選択を行う
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {string} courseName - 選択したコース名
- */
-async function openStudentTabAndSelectCourse(I, courseName) {
-  I.waitForElement(S.tabs.studentTabLink, 10);
-  I.click(S.tabs.studentTabLink);
-  I.say(`Student Tab Page\nURL: ${await I.grabCurrentUrl()}`);
-  I.seeElement(S.tabs.studentTabActive);
-  I.selectOption(S.selection.coursePulldown, courseName);
-  I.click(S.selection.selectButton);
-  I.say(`Presentation Selection Page\nURL: ${await I.grabCurrentUrl()}`);
+async function assertClassExistsOnClassList(I, className) {
+  I.waitForElement(locate('body').withText(S.classList.screenTitle), TIMEOUTS.ELEMENT);
+
+  const usedLocator = await fillFirstVisibleField(I, S.classList.fields.classNameCandidates, className);
+  I.say(`クラス名入力欄: ${usedLocator}`);
+
+  I.click(S.classList.buttons.search);
+
+  // 何かしら結果が出るまで待つ。見つからなければ明示エラー。
+  try {
+    I.waitForElement(S.classList.results.link, TIMEOUTS.RESULT);
+  } catch (err) {
+    I.saveScreenshotWithTimestamp(`CLASS_EXISTENCE_NOT_FOUND_${className}.png`);
+    throw new Error(`❌ クラス一覧で検索結果が見つかりませんでした: ${className}`);
+  }
+
+  const texts = await I.grabTextFromAll(S.classList.results.link);
+  const found = texts.some((t) => String(t).includes(className));
+  if (!found) {
+    I.saveScreenshotWithTimestamp(`CLASS_EXISTENCE_MISMATCH_${className}.png`);
+    throw new Error(`❌ 検索結果に className が含まれませんでした: ${className}`);
+  }
 }
 
-/**
- * クラス受講生登録のテストシナリオ
- */
-Scenario('クラス受講生の新規登録ができる @dev', async ({ I, classMemberPageShimamura }) => {
-  I.say('--- テスト開始: クラス受講生登録 ---');
+Data(uniqueClassRows).Scenario('クラス存在チェック（事前検知） @dev', async ({ I, classMemberPageShimamura, current }) => {
+  const className = current.className;
+  I.say(`--- クラス存在チェック開始: ${className} ---`);
 
-  // メインメニューからコース管理ページへ遷移。
   await classMemberPageShimamura.navigateToAdminTab(I, 'コース', 'コース一覧');
-  I.say(`Course List Page\nURL: ${await I.grabCurrentUrl()}`);
-
-  // コースTabの中のクラス一覧画面に遷移
   classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
-  I.say(`Class List Page\nURL: ${await I.grabCurrentUrl()}`);
 
-  const courseName = await selectClassFromList(I);
-  await openStudentTabAndSelectCourse(I, courseName);
+  await assertClassExistsOnClassList(I, className);
 
-  // クラス受講生登録画面　操作
-  pause(); // ←ここでインタラクティブシェルへ
-
-  // 最終確認のスクリーンショット
-  I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
-
-  I.say('--- テスト正常終了: クラス受講生登録 ---');
+  I.say(`✅ クラス存在OK: ${className}`);
 });
+
 </code></pre>
         </article>
     </section>

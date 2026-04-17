@@ -29,7 +29,7 @@
 <nav >
     
     
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ShouldBeOnKeirisyoriScreenA">ShouldBeOnKeirisyoriScreenA</a></li><li><a href="global.html#ShouldBeOnKeirisyoriScreenB">ShouldBeOnKeirisyoriScreenB</a></li><li><a href="global.html#ShouldBeOnKeirisyoriScreenE">ShouldBeOnKeirisyoriScreenE</a></li><li><a href="global.html#ShouldBeOnKouhoseiList">ShouldBeOnKouhoseiList</a></li><li><a href="global.html#ShouldBeOnKouhouseiDetail">ShouldBeOnKouhouseiDetail</a></li><li><a href="global.html#ShouldBeOnStudentGroup">ShouldBeOnStudentGroup</a></li><li><a href="global.html#ShouldBeOnTaikai">ShouldBeOnTaikai</a></li><li><a href="global.html#ShouldBeOnZyukouseiList">ShouldBeOnZyukouseiList</a></li><li><a href="global.html#ShouldBoOnClassSelectPopup">ShouldBoOnClassSelectPopup</a></li><li><a href="global.html#fillAccountingDates">fillAccountingDates</a></li><li><a href="global.html#fillClassSearchForm">fillClassSearchForm</a></li><li><a href="global.html#getProfileFromArgs">getProfileFromArgs</a></li><li><a href="global.html#loadTaikaiTestDataFromCsv">loadTaikaiTestDataFromCsv</a></li><li><a href="global.html#navigateToTaikaiScreen">navigateToTaikaiScreen</a></li><li><a href="global.html#readCsv">readCsv</a></li><li><a href="global.html#runTaikaiFlow">runTaikaiFlow</a></li><li><a href="global.html#toggleGroupmenu">toggleGroupmenu</a></li><li><a href="global.html#verifyNavigationByUrlChange">verifyNavigationByUrlChange</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ShouldBeOnClassSelectPopup">ShouldBeOnClassSelectPopup</a></li><li><a href="global.html#ShouldBeOnKeiriMenuAndOpenRefundList">ShouldBeOnKeiriMenuAndOpenRefundList</a></li><li><a href="global.html#ShouldBeOnKeirisyoriScreenA">ShouldBeOnKeirisyoriScreenA</a></li><li><a href="global.html#ShouldBeOnKeirisyoriScreenB">ShouldBeOnKeirisyoriScreenB</a></li><li><a href="global.html#ShouldBeOnKeirisyoriScreenE">ShouldBeOnKeirisyoriScreenE</a></li><li><a href="global.html#ShouldBeOnKouhoseiList">ShouldBeOnKouhoseiList</a></li><li><a href="global.html#ShouldBeOnKouhouseiDetail">ShouldBeOnKouhouseiDetail</a></li><li><a href="global.html#ShouldBeOnStudentGroup">ShouldBeOnStudentGroup</a></li><li><a href="global.html#ShouldBeOnTaikai">ShouldBeOnTaikai</a></li><li><a href="global.html#ShouldBeOnZyukouseiList">ShouldBeOnZyukouseiList</a></li><li><a href="global.html#buildExecutionPlan">buildExecutionPlan</a></li><li><a href="global.html#createActionExecutor">createActionExecutor</a></li><li><a href="global.html#fillAccountingDates">fillAccountingDates</a></li><li><a href="global.html#fillBatchCreateForm">fillBatchCreateForm</a></li><li><a href="global.html#fillClassSearchForm">fillClassSearchForm</a></li><li><a href="global.html#getSkipStepsForBreakTarget">getSkipStepsForBreakTarget</a></li><li><a href="global.html#isSkipValue">isSkipValue</a></li><li><a href="global.html#loadTaikaiTestDataFromCsv">loadTaikaiTestDataFromCsv</a></li><li><a href="global.html#navigateToTaikaiScreen">navigateToTaikaiScreen</a></li><li><a href="global.html#normalizeBreakSpec">normalizeBreakSpec</a></li><li><a href="global.html#openStudentTabAndSelectCourse">openStudentTabAndSelectCourse</a></li><li><a href="global.html#prepareInput">prepareInput</a></li><li><a href="global.html#runRegistrationFlow">runRegistrationFlow</a></li><li><a href="global.html#runTaikaiFlow">runTaikaiFlow</a></li><li><a href="global.html#selectClassFromList">selectClassFromList</a></li></ul>
     
 </nav>
 
@@ -73,6 +73,290 @@
     
         <h2>
         
+            keiri_hennkin_syori_test.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：経理 返金処理（ひな形）E2Eテスト
+
+**処理フロー（ひな形）**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > 経理（機能一覧）へ遷移
+- 3. 月謝一括作成へ遷移
+- 4. 返金処理の条件入力（仮）
+- 5. 作成・確認・確定（仮）
+
+**データソース**
+- `keiri_hennkin_syori_data.csv`（または `--profile` に応じたファイル）
+
+**異常系の指定（CSV）**
+- `expectedErrors`: `|` 区切りの期待エラー文言
+
+**前提条件**
+- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-02-04</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="keiri_hennkin_syori_test.js.html">keiri_hennkin_syori_test.js</a>, <a href="keiri_hennkin_syori_test.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">しまむら：経理 返金処理（ひな形）E2Eテスト
+
+**処理フロー（ひな形）**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > 経理（機能一覧）へ遷移
+- 3. 月謝一括作成へ遷移
+- 4. 返金処理の条件入力（仮）
+- 5. 作成・確認・確定（仮）
+
+**データソース**
+- `keiri_hennkin_syori_data.csv`（または `--profile` に応じたファイル）
+
+**異常系の指定（CSV）**
+- `expectedErrors`: `|` 区切りの期待エラー文言
+
+**前提条件**
+- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-02-04</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+            shimamura_class_existence_check_test.js
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：クラス存在チェックのE2Eテスト
+
+`syokai_touroku_data.csv`（または `--profile` に応じたCSV）に含まれる `className` が
+事前に「クラス一覧」から検索できることを確認します。
+
+受講生登録フローの途中で「クラスが無い」ことに気付くのを避けるための事前検知用テストです。
+
+**処理フロー**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > コース > クラス一覧へ遷移
+- 3. CSVの `className` を検索して、検索結果に表示されることを確認
+
+**前提条件**
+- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
+- `data/shimamura/syokai_touroku_data.csv` が存在すること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="shimamura_class_existence_check_test.js.html">shimamura_class_existence_check_test.js</a>, <a href="shimamura_class_existence_check_test.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+                <div class="description usertext">しまむら：クラス存在チェックのE2Eテスト
+
+`syokai_touroku_data.csv`（または `--profile` に応じたCSV）に含まれる `className` が
+事前に「クラス一覧」から検索できることを確認します。
+
+受講生登録フローの途中で「クラスが無い」ことに気付くのを避けるための事前検知用テストです。
+
+**処理フロー**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > コース > クラス一覧へ遷移
+- 3. CSVの `className` を検索して、検索結果に表示されることを確認
+
+**前提条件**
+- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
+- `data/shimamura/syokai_touroku_data.csv` が存在すること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</div>
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
             shimamura_class_member_registration_test.js
         
         </h2>
@@ -89,7 +373,20 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li>クラス受講生登録機能のE2Eテスト**処理フロー**- 1. 担当者アカウントでログイン- 2. コース管理 > コース一覧 > クラス一覧 へ遷移- 3. クラス一覧で条件検索し、クラスを選択- 4. クラス詳細画面で受講生タブを選択し、受講生登録操作を行う**前提条件**- 環境変数 `TESTGCP_SHIMAMURA_USER`, `TESTGCP_SHIMAMURA_PASSWORD`, `TESTGCP_SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：クラス受講生登録のE2Eテスト
+
+**処理フロー**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > コース > コース一覧 へ遷移
+- 3. クラス一覧へ移動し検索条件を入力
+- 4. クラス詳細の受講生タブで受講生登録操作へ進む
+
+**前提条件**
+- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</li></ul></dd>
     
 
     
@@ -134,7 +431,20 @@
 
 
             
-                <div class="description usertext">クラス受講生登録機能のE2Eテスト**処理フロー**- 1. 担当者アカウントでログイン- 2. コース管理 > コース一覧 > クラス一覧 へ遷移- 3. クラス一覧で条件検索し、クラスを選択- 4. クラス詳細画面で受講生タブを選択し、受講生登録操作を行う**前提条件**- 環境変数 `TESTGCP_SHIMAMURA_USER`, `TESTGCP_SHIMAMURA_PASSWORD`, `TESTGCP_SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</div>
+                <div class="description usertext">しまむら：クラス受講生登録のE2Eテスト
+
+**処理フロー**
+- 1. 担当者アカウントでログイン（autoLogin）
+- 2. 管理 > コース > コース一覧 へ遷移
+- 3. クラス一覧へ移動し検索条件を入力
+- 4. クラス詳細の受講生タブで受講生登録操作へ進む
+
+**前提条件**
+- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</div>
             
 
             
@@ -193,7 +503,17 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li>しまむら環境のログイン機能テスト**テスト内容**- 正しいユーザーID、パスワード、担当者番号を用いてログインできるか検証する- 正常系フローのみを確認する基本的なスモークテスト**前提条件**- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：ログイン機能のスモークテスト
+
+**テスト内容**
+- 正しいユーザーID/パスワード/担当者番号でログインできることを確認する
+
+**前提条件**
+- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</li></ul></dd>
     
 
     
@@ -238,7 +558,17 @@
 
 
             
-                <div class="description usertext">しまむら環境のログイン機能テスト**テスト内容**- 正しいユーザーID、パスワード、担当者番号を用いてログインできるか検証する- 正常系フローのみを確認する基本的なスモークテスト**前提条件**- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること**最終更新日**- 2026-01-17</div>
+                <div class="description usertext">しまむら：ログイン機能のスモークテスト
+
+**テスト内容**
+- 正しいユーザーID/パスワード/担当者番号でログインできることを確認する
+
+**前提条件**
+- 環境変数 `SHIMAMURA_USER`, `SHIMAMURA_PASSWORD`, `SHIMAMURA_TANTOUSYA` が設定されていること
+- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
+
+**最終更新日**
+- 2026-01-27</div>
             
 
             
@@ -281,7 +611,7 @@
     
         <h2>
         
-            syokai_touroku.js
+            syokai_touroku_test.js
         
         </h2>
         
@@ -297,13 +627,13 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li>新規受講生登録および経理処理の自動化テストデータ駆動（Data Driven）テストとして実装されており、CSVファイルからテストデータを読み込んで実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv` (または `--profile` オプションに応じたファイル)**最終更新日**- 2026-01-17</li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：新規受講生登録と経理処理のE2Eテストデータ駆動（Data Driven）でCSVからテストデータを読み込み実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv`（または `--profile` に応じたファイル）**異常系の指定（CSV）**- `breakTarget`: 業務的な破壊ポイント（例: `class_select`, `class_apply`, `course_set`, `transaction`, `contract_date`, `start_date`）- `breakValue`: 上書き値 または `SKIP` / `__SKIP__`（操作スキップ）- `expectedErrors`: `|` 区切りの期待エラー文言**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること**最終更新日**- 2026-01-28</li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="syokai_touroku.js.html">syokai_touroku.js</a>, <a href="syokai_touroku.js.html#line1">line 1</a>
+        <a href="syokai_touroku_test.js.html">syokai_touroku_test.js</a>, <a href="syokai_touroku_test.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -342,7 +672,7 @@
 
 
             
-                <div class="description usertext">新規受講生登録および経理処理の自動化テストデータ駆動（Data Driven）テストとして実装されており、CSVファイルからテストデータを読み込んで実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv` (または `--profile` オプションに応じたファイル)**最終更新日**- 2026-01-17</div>
+                <div class="description usertext">しまむら：新規受講生登録と経理処理のE2Eテストデータ駆動（Data Driven）でCSVからテストデータを読み込み実行します。**処理フロー**- 1. 候補生検索- 2. 候補生詳細から「受講生へ移動」- 3. 受講生登録・経理ビュー（個人）へ遷移- 4. クラス追加/更新、クラス選択、経理日付入力、売上計上- 5. 確認完了後、退会処理画面へ遷移**データソース**- `syokai_touroku_data.csv`（または `--profile` に応じたファイル）**異常系の指定（CSV）**- `breakTarget`: 業務的な破壊ポイント（例: `class_select`, `class_apply`, `course_set`, `transaction`, `contract_date`, `start_date`）- `breakValue`: 上書き値 または `SKIP` / `__SKIP__`（操作スキップ）- `expectedErrors`: `|` 区切りの期待エラー文言**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること**最終更新日**- 2026-01-28</div>
             
 
             
@@ -385,7 +715,7 @@
     
         <h2>
         
-            taikai.js
+            taikai_test.js
         
         </h2>
         
@@ -401,13 +731,13 @@
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li>受講生退会処理のE2Eテストシナリオこのファイルは、CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン (Beforeフック)- 2. `taikai_testdata.csv` からテストデータを読み込み- 3. 各レコードに対して以下の処理を繰り返し実行:  - a. 受講生検索画面でID検索  - b. 受講生詳細画面へ遷移  - c. 「閲覧/登録・経理ビュー」>「個人情報1」>「退会処理」へ遷移  - d. 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること**最終更新日**- 2026-01-17</li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li>しまむら：受講生退会処理のE2EテストCSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン（autoLogin）- 2. `taikai_testdata.csv` を読み込み- 3. 各レコードで受講生検索 → 退会処理画面 → 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること**最終更新日**- 2026-01-27</li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="taikai.js.html">taikai.js</a>, <a href="taikai.js.html#line1">line 1</a>
+        <a href="taikai_test.js.html">taikai_test.js</a>, <a href="taikai_test.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -446,7 +776,7 @@
 
 
             
-                <div class="description usertext">受講生退会処理のE2Eテストシナリオこのファイルは、CSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン (Beforeフック)- 2. `taikai_testdata.csv` からテストデータを読み込み- 3. 各レコードに対して以下の処理を繰り返し実行:  - a. 受講生検索画面でID検索  - b. 受講生詳細画面へ遷移  - c. 「閲覧/登録・経理ビュー」>「個人情報1」>「退会処理」へ遷移  - d. 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること**最終更新日**- 2026-01-17</div>
+                <div class="description usertext">しまむら：受講生退会処理のE2EテストCSVデータに基づいて複数の受講生に対する退会処理を自動実行します。**処理フロー**- 1. 担当者アカウントでログイン（autoLogin）- 2. `taikai_testdata.csv` を読み込み- 3. 各レコードで受講生検索 → 退会処理画面 → 最終在籍年月を入力して更新**前提条件**- 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること- `data/shimamura/taikai_testdata.csv` が存在すること- 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること**最終更新日**- 2026-01-27</div>
             
 
             
@@ -487,7 +817,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jan 19 2026 10:50:47 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Apr 13 2026 15:27:40 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
