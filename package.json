@@ -18,6 +18,13 @@
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
     "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport",
     
+    "--- ALLURE ---": "echo '--- ALLURE ---'",
+    "allure:serve":   "npx allure serve allure-results",
+    "allure:report":  "npx allure generate allure-results --clean -o allure-report",
+    "allure:open":    "npx allure open allure-report",
+    "allure:clean":   "rimraf allure-results/default allure-results/tframe.* allure-results/shimamura.* allure-results/taskreport.*",
+    "allure:archive": "python scripts/archive_allure_results.py",
+
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
     "docs:shimamura": "jsdoc -c jsdoc.json",
     "docs:shimamura_shisaku": "npx jsdoc tests/shimamura -r -d docs/generated/html  -t node_modules/docdash",
