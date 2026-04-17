@@ -1,7 +1,9 @@
 node_modules/
 output/
+.output/
 allure-results/
 allure-report/
+scripts/__pycache__/
 
 # Environment variables
 .env
