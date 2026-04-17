@@ -20,8 +20,17 @@ echo Output    : %REPORT_DIR%
 echo ========================================
 
 if not exist "%RESULT_ROOT%" (
-  echo [ERROR] Result directory not found: %RESULT_ROOT%
-  exit /b 1
+  echo.
+  echo [NOTICE] Test results not found for profile: %PROFILE%
+  echo.
+  echo   Expected location: %RESULT_ROOT%
+  echo.
+  echo   This folder does not exist yet.
+  echo   Please run the test first:
+  echo     bat\tframe_run_icons.bat   (or other tframe bat)
+  echo.
+  pause
+  exit /b 0
 )
 
 set "DIR_ARGS="
@@ -38,8 +47,20 @@ for /f "usebackq delims=" %%D in (`dir /b /ad /o-n "%RESULT_ROOT%"`) do (
 )
 
 if not defined DIR_ARGS (
-  echo [ERROR] No run directories found under: %RESULT_ROOT%
-  exit /b 1
+  echo.
+  echo [NOTICE] No test run directories found for profile: %PROFILE%
+  echo.
+  echo   Checked location: %RESULT_ROOT%
+  echo.
+  echo   The folder exists but contains no test results.
+  echo   Please run the test first:
+  echo     bat\tframe_run_icons.bat   (or other tframe bat)
+  echo.
+  echo   If you recently ran allure:archive, results may have been
+  echo   moved to: allure-results\archive\%PROFILE%\
+  echo.
+  pause
+  exit /b 0
 )
 
 echo.
