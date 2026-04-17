@@ -64,6 +64,9 @@
   powershell -ExecutionPolicy Bypass -NoProfile -File "%~dp0ps\xxx.ps1" %*
   ```
 - .ps1 内のリポジトリルート取得: `Split-Path (Split-Path $PSScriptRoot -Parent) -Parent`
+- .py 内のリポジトリルート取得: `os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))`
+- **ファイルを別ディレクトリに移動したときは、必ずリポジトリルートの取得パスを見直すこと。**
+  `__file__` や `$PSScriptRoot` はファイルの現在地を基準にするため、移動すると壊れる。
 - 命名: `{product}_run_{機能}.bat`（例: `tframe_run_login.bat`, `shimamura_run_syokai.bat`）
 - 汎用ツール（特定プロダクトに依存しないもの）は product prefix なし（例: `view_allure.bat`）
 - テストを GUI で起動するスクリプトも run/ に置く（例: `shimamura_run_syokai_gui.py`）
