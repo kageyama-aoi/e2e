@@ -232,7 +232,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-04-17 14:34:23
+Last updated: 2026-04-17 14:39:28
 
 ```text
 e2e/
@@ -341,15 +341,15 @@ e2e/
 │       ├── MenuNavigationMixin.js
 │       └── ReportPage.js
 ├── scripts/ 
-│   ├── input/ 
-│   │   └── side_menu_extract/ 
-│   │       └── source.html
-│   ├── archive_allure_results.py
-│   ├── extract_body_only_fields.py
-│   ├── extract_side_menu_groups.py
-│   ├── extract_submenus.py
-│   ├── generate_prompt_index.py
-│   └── tree_generator.py
+│   ├── allure/ 
+│   │   └── archive_allure_results.py
+│   ├── html/ 
+│   │   ├── extract_body_only_fields.py
+│   │   ├── extract_side_menu_groups.py
+│   │   └── extract_submenus.py
+│   └── input/ 
+│       └── side_menu_extract/ 
+│           └── source.html
 ├── support/ 
 │   ├── shimamura/ 
 │   │   ├── constants.js

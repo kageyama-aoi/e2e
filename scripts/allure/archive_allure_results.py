@@ -41,7 +41,7 @@ import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
-ALLURE_RESULTS_DIR = Path(__file__).parent.parent / "allure-results"
+ALLURE_RESULTS_DIR = Path(__file__).parent.parent.parent / "allure-results"
 ARCHIVE_DIR = ALLURE_RESULTS_DIR / "archive"
 
 # タイムスタンプ形式: YYYYMMDD_HHMMSS or YYYYMMDD_HHMMSS_testname
