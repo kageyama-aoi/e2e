@@ -25,11 +25,15 @@ if not exist "%RESULT_ROOT%" (
 )
 
 set "DIR_ARGS="
-for /f "usebackq delims=" %%D in (`powershell -NoProfile -Command "Get-ChildItem -Directory '%RESULT_ROOT%' | Sort-Object Name -Descending | Select-Object -First %TAKE_COUNT% -ExpandProperty FullName"`) do (
-  if defined DIR_ARGS (
-    set "DIR_ARGS=!DIR_ARGS! \"%%D\""
-  ) else (
-    set "DIR_ARGS=\"%%D\""
+set "COUNT=0"
+for /f "usebackq delims=" %%D in (`dir /b /ad /o-n "%RESULT_ROOT%"`) do (
+  if !COUNT! lss %TAKE_COUNT% (
+    if defined DIR_ARGS (
+      set "DIR_ARGS=!DIR_ARGS! "%RESULT_ROOT%\%%D""
+    ) else (
+      set "DIR_ARGS="%RESULT_ROOT%\%%D""
+    )
+    set /a COUNT+=1
   )
 )
 
@@ -39,7 +43,7 @@ if not defined DIR_ARGS (
 )
 
 echo.
-echo [INFO] Generating report...
+echo [INFO] Generating report from %COUNT% directories...
 call npx allure generate %DIR_ARGS% --clean -o "%REPORT_DIR%"
 if errorlevel 1 (
   echo [ERROR] Failed to generate report.
@@ -49,4 +53,3 @@ if errorlevel 1 (
 echo [INFO] Opening report...
 call npx allure open "%REPORT_DIR%"
 exit /b %errorlevel%
-
