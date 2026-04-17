@@ -29,7 +29,7 @@
 - `npm run allure:archive` 古い実行結果を zip アーカイブ・削除。
 
 ### ドキュメント
-- `npm run docs:shimamura` JSDoc 生成。
+- `npm run docs:jsdoc` JSDoc 生成（tests/ pages/ support/ 全対象）。
 - `npm run docs:update-readme-map` README のディレクトリツリーを自動更新。
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
 

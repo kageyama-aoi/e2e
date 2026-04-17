@@ -32,8 +32,7 @@
     "cleanup:logs":    "python scripts/cleanup/cleanup_output_logs.py --target logs",
 
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
-    "docs:shimamura": "jsdoc -c jsdoc.json",
-    "docs:shimamura_shisaku": "npx jsdoc tests/shimamura -r -d docs/generated/html  -t node_modules/docdash",
+    "docs:jsdoc": "jsdoc -c jsdoc.json",
     "docs:update-readme-map": "python scripts/docs/tree_generator.py -u",
     "docs:tree:file": "python scripts/docs/tree_generator.py -o docs/tree.md"
   },

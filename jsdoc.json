@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["tests/shimamura"],
+    "include": ["tests", "pages", "support"],
     "includePattern": ".+\\.js$"
   },
   "opts": {
