@@ -11,7 +11,8 @@ set "FAILED=0"
 set "FAILED_LIST="
 set "RUN_OUTPUTS="
 
-for /f "delims=" %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd_HH:mm:ss"') do set "START_AT=%%I"
+for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value 2^>nul') do set "DT=%%I"
+set "START_AT=%DT:~0,4%-%DT:~4,2%-%DT:~6,2%_%DT:~8,2%:%DT:~10,2%:%DT:~12,2%"
 
 echo ========================================
 echo TFRAME icon tests (profile: %PROFILE%)
@@ -46,7 +47,9 @@ for %%T in (
   )
 
   set "LAST_DIR="
-  for /f "delims=" %%D in ('powershell -NoProfile -Command "$p = '%OUTPUT_ROOT%'; $n = '%%~nT'; if (Test-Path $p) { Get-ChildItem -Directory $p -Filter ('*_' + $n) | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName }"') do set "LAST_DIR=%%D"
+  for /f "usebackq delims=" %%D in (`dir /b /ad /o-n "%OUTPUT_ROOT%\*_%%~nT" 2^>nul`) do (
+    if not defined LAST_DIR set "LAST_DIR=%OUTPUT_ROOT%\%%D"
+  )
   if defined LAST_DIR (
     echo [OUT] !LAST_DIR!
     if defined RUN_OUTPUTS (
@@ -57,7 +60,8 @@ for %%T in (
   )
 )
 
-for /f "delims=" %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd_HH:mm:ss"') do set "END_AT=%%I"
+for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value 2^>nul') do set "DT=%%I"
+set "END_AT=%DT:~0,4%-%DT:~4,2%-%DT:~6,2%_%DT:~8,2%:%DT:~10,2%:%DT:~12,2%"
 
 echo.
 echo ========================================
