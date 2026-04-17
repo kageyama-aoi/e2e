@@ -22,22 +22,35 @@ npm install
 
 ### 利用可能な環境設定ファイル (env/ 配下)
 
+**しまむら**
 - `env/.env.shimamura.template` (テンプレート)
 - `env/.env.shimamura.testgcp`
 - `env/.env.shimamura.testgcp2`
 - `env/.env.shimamura.traininggcp`
+
+**T-Frame**
+- `env/.env.tframe.juku_test`
+- `env/.env.tframe.juku_admin`
+- `env/.env.tframe.juku_student`
+- `env/.env.tframe.culture_beta`
+
+**その他**
 - `env/.env.taskreport`
 
 ## テストの実行方法
 
-### 1. 推奨: バッチファイルでの実行 (しまむら環境)
+### 1. バッチファイルでの実行
 
-プロジェクトルートにある `Run_Shimamura_Syokai_Test.bat` を使用すると、対話形式でプロファイルを選択して初回登録テストを実行できます。補助スクリプト（`extract_submenus.py` 等）は `scripts/` に配置しています。
+バッチファイルは `bat/` ディレクトリに配置されています。
 
-1. `Run_Shimamura_Syokai_Test.bat` をダブルクリック。
-2. `Enter profile name:` と表示されたら、プロファイル名を入力します。
-   - `shimamura.testgcp` 等
-   - 何も入力せずに Enter を押すと `shimamura` が選択されます。
+| ファイル | 内容 |
+| :--- | :--- |
+| `bat/shimamura_run_syokai.bat` | しまむら 初回登録テスト |
+| `bat/tframe_run_login.bat` | T-Frame ログインテスト |
+| `bat/tframe_run_icons.bat` | T-Frame 各アイコンメニューテスト |
+| `bat/tframe_run_lang_check.bat` | T-Frame 言語チェックテスト |
+| `bat/tframe_run_dropdown_check.bat` | T-Frame プルダウン確認テスト |
+| `bat/tframe_view_allure.bat` | Allure レポートをブラウザで表示 |
 
 ### 2. コマンドラインでの実行
 
@@ -56,12 +69,34 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 
 ### 3. npm コマンドでの実行
 
+**テスト実行**
+
 | コマンド | 内容 |
 | :--- | :--- |
 | `npm test` | 全テスト実行 |
-| `npm run test_s` | しまむら (`shimamura`) のテスト実行 |
-| `npm run test_t` | T-Frame (`tframe`) のテスト実行 |
-| `npm run test_taskreport` | Task Report (`taskreport`) のテスト実行 |
+| `npm run test_s` | しまむら全テスト (`shimamura.testgcp`) |
+| `npm run test_t` | T-Frame 全テスト |
+| `npm run test_taskreport` | Task Report テスト |
+| `npm run test:shimamura:syokai` | しまむら 初回登録テストのみ |
+| `npm run test:shimamura:syokai:normal` | 初回登録テスト `@normal` タグのみ |
+| `npm run test:shimamura:syokai:error` | 初回登録テスト `@error` タグのみ |
+
+**Allure レポート**
+
+| コマンド | 内容 |
+| :--- | :--- |
+| `npm run allure:serve` | 最新結果をブラウザで表示 |
+| `npm run allure:report` | 静的レポートを生成 (`allure-report/`) |
+| `npm run allure:open` | 生成済みレポートを開く |
+| `npm run allure:archive` | 古い結果をzipアーカイブ・削除（デフォルト30日以上） |
+| `npm run allure:clean` | 全テスト結果ディレクトリを削除 |
+
+**ドキュメント**
+
+| コマンド | 内容 |
+| :--- | :--- |
+| `npm run docs:shimamura` | JSDoc HTML生成 |
+| `npm run docs:update-readme-map` | READMEのディレクトリツリーを更新 |
 
 ## 学習リソース (Learning Resources)
 
@@ -83,6 +118,24 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 - 手元で一時停止したい場合は `pause();` を使用してください。
 
 ## 補助ツール
+
+### Allure 結果アーカイブ
+`scripts/archive_allure_results.py` は、`allure-results/<profile>/<実行ディレクトリ>/` 単位で
+古いテスト結果をzip圧縮してアーカイブし、N日以上古いものを削除します。
+
+```bash
+# 30日以上古いものをアーカイブ（既定）
+npm run allure:archive
+
+# 7日以上古いものを対象にする
+python scripts/archive_allure_results.py --days 7
+
+# 削除せずに対象一覧だけ確認（dry-run）
+python scripts/archive_allure_results.py --dry-run
+```
+
+- **IN**: `allure-results/<profile>/<timestamp_rundir>/`
+- **OUT**: `allure-results/archive/<profile>/<timestamp_rundir>.zip`
 
 ### サブメニュー抽出
 `scripts/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
@@ -179,13 +232,52 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-03-31 17:00:00
+Last updated: 2026-04-17 13:40:12
 
 ```text
 e2e/
+├── .agent/ 
+│   ├── handoff/ 
+│   │   ├── 2026-04-07-0937.md
+│   │   ├── 2026-04-07-1313.md
+│   │   └── HANDOFF.md
+│   ├── memory/ 
+│   │   ├── docs_reorganization_plan.md
+│   │   ├── MEMORY.md
+│   │   └── tframe_refactor_resume_2026-04-03.md
+│   ├── skills/ 
+│   │   └── make_project/ 
+│   │       └── SKILL.md
+│   └── workflows/ 
+│       ├── handoff.md
+│       └── newplan.md
+├── .claude/ 
+│   ├── agents/ 
+│   │   ├── explorer.md
+│   │   ├── planner.md
+│   │   └── worker.md
+│   ├── commands/ 
+│   │   ├── handoff.md
+│   │   └── newplan.md
+│   └── settings.local.json
 ├── .github/ 
 │   └── workflows/ 
 │       └── documentation_update.yaml
+├── .output/ 
+│   └── mermaid-tframe-and-more.md
+├── .references/ 
+├── .spec/ 
+│   ├── KNOWLEDGE.md
+│   ├── PLAN.md
+│   ├── SPEC.md
+│   └── TODO.md
+├── bat/ 
+│   ├── shimamura_run_syokai.bat
+│   ├── tframe_run_dropdown_check.bat
+│   ├── tframe_run_icons.bat
+│   ├── tframe_run_lang_check.bat
+│   ├── tframe_run_login.bat
+│   └── tframe_view_allure.bat
 ├── data/ 
 │   ├── shimamura/ 
 │   │   ├── keiri_hennkin_syori_data.csv
@@ -197,26 +289,26 @@ e2e/
 │   │   ├── syokai_touroku_validation_errors.csv
 │   │   └── taikai_testdata.csv
 │   └── tframe/ 
-│       └── teacherPaymentReportParams.js
-├── docs/ 
-│   ├── prompts/                          # AI向けプロンプト・作業指示メモ
-│   ├── generated/                        # 自動生成ドキュメント（gitignore推奨）
-│   ├── codeceptjs_e2e_tech_explanation.md
-│   ├── codeceptjs_learning_guide.md
-│   ├── mermaid_code_relationships.md
-│   ├── project_architecture_guide.md
-│   ├── read_allure.html
-│   ├── shimamura_coding_guidelines.md
-│   ├── technical_overview.md
-│   └── tree.md
+│       ├── accountingSideMenu.js
+│       ├── calendarSideMenu.js
+│       ├── courseSideMenu.js
+│       ├── emailSideMenu.js
+│       ├── helpSideMenu.js
+│       ├── masterSideMenu.js
+│       ├── reportSideMenu.js
+│       ├── studentSideMenu.js
+│       ├── teacherPaymentReportParams.js
+│       └── teacherSideMenu.js
 ├── env/ 
 │   ├── .env.shimamura.template
 │   ├── .env.shimamura.testgcp
 │   ├── .env.shimamura.testgcp2
 │   ├── .env.shimamura.traininggcp
-│   └── .env.taskreport
-├── output/                               # テスト生成物（スクリーンショット等）
-│   └── taskreport/                       # Taskreport テストの出力
+│   ├── .env.taskreport
+│   ├── .env.tframe.culture_beta
+│   ├── .env.tframe.juku_admin
+│   ├── .env.tframe.juku_student
+│   └── .env.tframe.juku_test
 ├── pages/ 
 │   ├── shimamura/ 
 │   │   ├── ClassMemberPage.js
@@ -226,16 +318,33 @@ e2e/
 │   └── tframe/ 
 │       ├── ApiCommonLoginPage.js
 │       ├── ApiTeacherInfoGetPage.js
+│       ├── CalendarPage.js
+│       ├── CoursePage.js
+│       ├── EmailPage.js
+│       ├── HelpPage.js
+│       ├── HomePage.js
 │       ├── JsonInputPage.js
+│       ├── JukuseiPage.js
+│       ├── KeiryoMasterPage.js
+│       ├── KoshiPage.js
 │       ├── LoginKannrisyaPage.js
-│       └── LoginMyPage.js
+│       ├── LoginMyPage.js
+│       ├── MasterMenuPage.js
+│       ├── MenuNavigationMixin.js
+│       └── ReportPage.js
 ├── scripts/ 
+│   ├── input/ 
+│   │   └── side_menu_extract/ 
+│   │       └── source.html
+│   ├── archive_allure_results.py
 │   ├── extract_body_only_fields.py
+│   ├── extract_side_menu_groups.py
 │   ├── extract_submenus.py
+│   ├── generate_prompt_index.py
 │   ├── run_shimamura_test_gui.py
 │   └── tree_generator.py
 ├── support/ 
-│   ├── shimamura/                        # しまむら固有ユーティリティ・定数
+│   ├── shimamura/ 
 │   │   ├── constants.js
 │   │   └── utils.js
 │   ├── envLoader.js
@@ -255,20 +364,35 @@ e2e/
 │   │   └── taskreport_sample_test.js
 │   └── tframe/ 
 │       ├── 96-60_teacher_payment_report_test.js
+│       ├── calendar_test.js
+│       ├── course_test.js
+│       ├── dropdown_check_test.js
+│       ├── email_test.js
 │       ├── get_personal_info_api_test.js
+│       ├── help_test.js
+│       ├── home_test.js
+│       ├── jukusei_test.js
+│       ├── keiryo_master_test.js
+│       ├── koshi_test.js
+│       ├── lang_check_test.js
 │       ├── login_test.js
+│       ├── master_menu_test.js
 │       ├── mypage_login_test.js
 │       ├── navigation_after_login_student_test.js
 │       ├── navigation_after_login_test.js
+│       ├── report_test.js
 │       └── token_usage_test.js
+├── .env
 ├── .gitignore
+├── AGENTS.md
+├── CLAUDE.md
 ├── codecept.conf.js
+├── GEMINI.md
 ├── jsconfig.json
 ├── jsdoc.json
 ├── package-lock.json
 ├── package.json
 ├── README.md
-├── Run_Shimamura_Syokai_Test.bat
 └── steps.d.ts
 ```
 <!-- TREE_END -->
@@ -295,15 +419,30 @@ VS Code 等のエディタで、JavaScript のコード補完やインテリセ�
 
 テスト結果の可視化には **Allure Report** を使用しています。
 
-### 1. レポートの表示
-テスト実行後、以下のコマンドでレポートをブラウザで表示します。
-```bash
-npx allure serve allure-results
+### 結果ディレクトリの構造
+
+テスト実行ごとに以下の形式で自動保存されます：
+
+```
+allure-results/
+├── tframe.juku_test/
+│   ├── 20260417_103045_login_test/   ← 実行1回分
+│   └── 20260417_140000_course_test/
+└── shimamura.testgcp/
+    └── 20260417_120000_syokai_test/
 ```
 
-### 2. レポートの静的生成
+### コマンド
+
 ```bash
-npx allure generate allure-results --clean -o allure-report
+# ブラウザでレポートを表示
+npm run allure:serve
+
+# 静的レポートを生成
+npm run allure:report
+
+# 古い結果をアーカイブ・削除（30日以上）
+npm run allure:archive
 ```
 
 ### 関連リンク
