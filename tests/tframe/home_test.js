@@ -2,10 +2,10 @@
  * @fileoverview ホームメニューテスト
  *
  * **テスト内容**
- * - 管理者ログイン後、ホームアイコンをクリック
+ * - 管理者ログイン後、ホームアイコンをクリックしてホーム画面へ遷移確認
  *
  * **最終更新日**
- * - 2026-03-31
+ * - 2026-04-17
  */
 
 Feature('ホームメニュー');
@@ -15,8 +15,5 @@ Scenario('管理者ログイン後にホームアイコンを開ける @admin', 
   loginKannrisyaPage.seeLogout();
 
   homePage.clickHomeIcon();
-
-  pause();
-
-  // TODO: サブメニュー選択・画面検証を追加
+  homePage.verifyHomeLoaded();
 });
