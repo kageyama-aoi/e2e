@@ -149,7 +149,7 @@ function prepareInput(input) {
  * @param {string} [input.breakTarget] - 破壊対象
  * @param {string} [input.breakValue] - 上書き値 または SKIP
  * @param {string[]} [input.expectedErrors] - 期待エラー
- * @returns {{ plan: Array<{step: string, expect?: string}> }} 実行計画
+ * @returns {{plan: Array.<{step: string, expect: string}>}} 実行計画
  */
 function buildExecutionPlan(input) {
   const breakSpec = normalizeBreakSpec(input.breakTarget, input.breakValue);
@@ -185,7 +185,7 @@ function buildExecutionPlan(input) {
  * @param {Object} locators - 画面ロケーター
  * @param {Object} input - 実行用入力データ
  * @param {string[]} expectedErrors - 期待エラー
- * @returns {{ execute: (planItem: {step: string, expect?: string}) => Promise<void> }}
+ * @returns {{execute: function({step: string, expect: string}): Promise.<void>}}
  */
 function createActionExecutor(I, locators, input, expectedErrors) {
   const actions = {
