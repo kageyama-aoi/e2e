@@ -19,7 +19,7 @@ module.exports = {
    * @param {string} password - パスワード
    */
   login(username, password) {
-    I.amOnPage(process.env.LOGIN_MYPAGE_URL);
+    I.amOnPage(process.env.LOGIN_MYPAGE_URL_TEACHER);
     I.waitForElement(this.locators.usernameField, 5);
     I.fillField(this.locators.usernameField, username);
     I.fillField(this.locators.passwordField, secret(password));
