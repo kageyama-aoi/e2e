@@ -1,28 +1,28 @@
 /**
- * @fileoverview マイページ（講師/生徒用）ログイン機能のテスト
- * 
+ * @fileoverview マイページ（講師/受講生）ログイン機能のテスト
+ *
  * **テスト内容**
- * - 一般ユーザー (TEST_USER_TEACHER) でのログイン成功確認
- * - ログイン後にログアウトボタンが表示されることを検証
- * 
+ * - 講師マイページ: TEST_USER_TEACHER でのログイン成功・メニュー一覧抽出
+ * - 受講生マイページ: TEST_USER_STUDENT でのログイン成功・メニュー一覧抽出
+ *
  * **作成日**
  * - 2025-12-20
- * 
+ *
  * **最終更新日**
- * - 2026-01-17
+ * - 2026-04-20
  */
 Feature('マイページ ログイン機能');
 
-// `loginMyPageTeacher` Page Objectをインジェクトします
-Scenario('正しい認証情報でマイページにログインできる', async ({ I, loginMyPageTeacher }) => {
-  // .envファイルに定義したマイページ用のユーザー情報を使用します
-  // TODO: .envファイルに MYPAGE_USER と MYPAGE_PASSWORD を定義してください
-  const username = process.env.TEST_USER_TEACHER;
-  const password = process.env.TEST_PASSWORD_TEACHER;
-
-  // Page Objectのメソッドを呼び出してログイン処理を実行します
-  loginMyPageTeacher.login(username, password);
+Scenario('講師マイページにログインしてメニューを確認できる', async ({ I, loginMyPageTeacher }) => {
+  loginMyPageTeacher.login(process.env.TEST_USER_TEACHER, process.env.TEST_PASSWORD_TEACHER);
   loginMyPageTeacher.seeLogout();
   await loginMyPageTeacher.logMenuItems();
   I.saveScreenshotWithTimestamp('LOGIN_Mypage_Teacher.png');
+});
+
+Scenario('受講生マイページにログインしてメニューを確認できる', async ({ I, loginMyPageStudent }) => {
+  loginMyPageStudent.login(process.env.TEST_USER_STUDENT, process.env.TEST_PASSWORD_STUDENT);
+  loginMyPageStudent.seeLogout();
+  await loginMyPageStudent.logMenuItems();
+  I.saveScreenshotWithTimestamp('LOGIN_Mypage_Student.png');
 });
