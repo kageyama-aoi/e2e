@@ -32,5 +32,18 @@ module.exports = {
   seeLogout() {
     I.waitForText(this.locators.logoutText, 10);
     I.see(this.locators.logoutText);
+  },
+
+  /**
+   * マイページメニューのリンク一覧を抽出してログに出力する
+   */
+  async logMenuItems() {
+    I.waitForElement('ul.menu li a', 5);
+    const labels = await I.grabTextFromAll('ul.menu li a');
+    const hrefs  = await I.grabAttributeFromAll('ul.menu li a', 'href');
+    I.say('=== 受講生マイページ メニュー一覧 ===');
+    labels.forEach((label, i) => {
+      I.say(`[${i + 1}] ${label} → ${hrefs[i]}`);
+    });
   }
 };

@@ -14,7 +14,7 @@
 Feature('マイページ ログイン機能');
 
 // `loginMyPageTeacher` Page Objectをインジェクトします
-Scenario('正しい認証情報でマイページにログインできる', ({ I, loginMyPageTeacher }) => {
+Scenario('正しい認証情報でマイページにログインできる', async ({ I, loginMyPageTeacher }) => {
   // .envファイルに定義したマイページ用のユーザー情報を使用します
   // TODO: .envファイルに MYPAGE_USER と MYPAGE_PASSWORD を定義してください
   const username = process.env.TEST_USER_TEACHER;
@@ -22,11 +22,7 @@ Scenario('正しい認証情報でマイページにログインできる', ({ I
 
   // Page Objectのメソッドを呼び出してログイン処理を実行します
   loginMyPageTeacher.login(username, password);
-  pause();
-  // ログイン後の成功を検証します
   loginMyPageTeacher.seeLogout();
-
-
-  // タイムスタンプ付きでスクリーンショットを保存するカスタムステップを呼び出します
-  I.saveScreenshotWithTimestamp('LOGIN_Mypage.png');
+  await loginMyPageTeacher.logMenuItems();
+  I.saveScreenshotWithTimestamp('LOGIN_Mypage_Teacher.png');
 });
