@@ -5,7 +5,7 @@
  * - 管理者ログイン後、経理配下のサブメニューを押下して遷移確認
  *
  * **前提条件**
- * - 環境変数 LOGIN_TFRAME_URL / ADMIN_USER / ADMIN_PASSWORD が設定されていること
+ * - 環境変数 BASE_URL / ADMIN_USER / ADMIN_PASSWORD が設定されていること
  *
  * **最終更新日**
  * - 2026-04-01

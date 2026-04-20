@@ -20,7 +20,7 @@ module.exports = {
    * @param {string} password - パスワード
    */
   login(username, password) {
-    I.amOnPage(process.env.LOGIN_TFRAME_URL);
+    I.amOnPage(process.env.BASE_URL);
     I.waitForElement(this.locators.usernameField, 5);
     this.selectLanguage(process.env.TFRAME_LANGUAGE);
     I.fillField(this.locators.usernameField, username);
