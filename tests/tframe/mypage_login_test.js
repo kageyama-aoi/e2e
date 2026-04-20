@@ -26,3 +26,15 @@ Scenario('受講生マイページにログインしてメニューを確認で�
   await loginMyPageStudent.logMenuItems();
   I.saveScreenshotWithTimestamp('LOGIN_Mypage_Student.png');
 });
+
+Scenario('講師マイページのメニューを全項目押下してスクショを撮る', async ({ I, loginMyPageTeacher }) => {
+  loginMyPageTeacher.login(process.env.TEST_USER_TEACHER, process.env.TEST_PASSWORD_TEACHER);
+  loginMyPageTeacher.seeLogout();
+  await loginMyPageTeacher.clickAllMenuItems();
+});
+
+Scenario('受講生マイページのメニューを全項目押下してスクショを撮る', async ({ I, loginMyPageStudent }) => {
+  loginMyPageStudent.login(process.env.TEST_USER_STUDENT, process.env.TEST_PASSWORD_STUDENT);
+  loginMyPageStudent.seeLogout();
+  await loginMyPageStudent.clickAllMenuItems();
+});

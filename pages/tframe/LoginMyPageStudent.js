@@ -45,5 +45,25 @@ module.exports = {
     labels.forEach((label, i) => {
       I.say(`[${i + 1}] ${label} → ${hrefs[i]}`);
     });
+  },
+
+  /**
+   * メニューを順番に押下してスクショを撮る（ログアウトは最後）
+   */
+  async clickAllMenuItems() {
+    I.waitForElement('ul.menu li a', 5);
+    const labels = await I.grabTextFromAll('ul.menu li a');
+    const nonLogout = labels.filter(l => l !== 'ログアウト');
+
+    for (const label of nonLogout) {
+      I.amOnPage(process.env.LOGIN_MYPAGE_URL_STUDENT);
+      I.waitForElement('ul.menu li a', 5);
+      I.click(locate('ul.menu li a').withText(label));
+      I.waitForElement('body', 5);
+      I.saveScreenshotWithTimestamp(`Student_Menu_${label}.png`);
+    }
+    I.amOnPage(process.env.LOGIN_MYPAGE_URL_STUDENT);
+    I.waitForElement('ul.menu li a', 5);
+    I.click(locate('ul.menu li a').withText('ログアウト'));
   }
 };
