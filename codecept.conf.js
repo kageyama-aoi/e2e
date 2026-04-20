@@ -155,7 +155,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
     apiCommonLoginPage: './pages/tframe/ApiCommonLoginPage.js',
     apiTeacherInfoGetPage: './pages/tframe/ApiTeacherInfoGetPage.js',
     jsonInputPage: './pages/tframe/JsonInputPage.js',
-    loginMyPage: './pages/tframe/LoginMyPage.js',
+    loginMyPageTeacher: './pages/tframe/LoginMyPageTeacher.js',
     
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
