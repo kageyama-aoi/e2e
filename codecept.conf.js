@@ -108,7 +108,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
       files: './tests/shimamura/*_test.js'
     },
     tframe: {
-      files: './tests/tframe/*_test.js' // Use the correct glob pattern
+      files: './tests/tframe/**/*_test.js'
     },
     taskreport: {
       files: './tests/taskreport/*_test.js'

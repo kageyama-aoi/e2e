@@ -12,8 +12,8 @@
     "test:shimamura:syokai:error": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --grep \"@error\"",
     
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
-    "test_t": "npx codeceptjs run ./tests/tframe/*_test.js",
-    "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/navigation_after_login_student_test.js",
+    "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js",
+    "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/flow/navigation_after_login_student_test.js",
     
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
     "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport",

@@ -37,6 +37,6 @@ Write-Host "Profile : $profileName"
 Write-Host ""
 
 Set-Location $repoRoot
-& npx codeceptjs run ./tests/tframe/lang_check_test.js --profile $profileName --steps
+& npx codeceptjs run ./tests/tframe/check/lang_check_test.js --profile $profileName --steps
 
 Read-Host "Press Enter to exit"

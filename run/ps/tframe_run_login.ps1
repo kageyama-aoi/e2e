@@ -51,22 +51,22 @@ switch ($scenario) {
     "1" {
         Write-Host "Scenario : All"
         Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --steps
+        & npx codeceptjs run ./tests/tframe/auth/login_test.js --profile $profileName --steps
     }
     "2" {
         Write-Host "Scenario : Admin only"
         Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --grep "@admin" --steps
+        & npx codeceptjs run ./tests/tframe/auth/login_test.js --profile $profileName --grep "@admin" --steps
     }
     "3" {
         Write-Host "Scenario : Student only"
         Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --grep "@student" --steps
+        & npx codeceptjs run ./tests/tframe/auth/login_test.js --profile $profileName --grep "@student" --steps
     }
     default {
         Write-Host "Scenario : All"
         Write-Host ""
-        & npx codeceptjs run ./tests/tframe/login_test.js --profile $profileName --steps
+        & npx codeceptjs run ./tests/tframe/auth/login_test.js --profile $profileName --steps
     }
 }
 

@@ -37,6 +37,6 @@ Write-Host "Profile : $profileName"
 Write-Host ""
 
 Set-Location $repoRoot
-& npx codeceptjs run ./tests/tframe/dropdown_check_test.js --profile $profileName --steps
+& npx codeceptjs run ./tests/tframe/check/dropdown_check_test.js --profile $profileName --steps
 
 Read-Host "Press Enter to exit"

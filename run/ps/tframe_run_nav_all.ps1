@@ -18,15 +18,15 @@ Write-Host "Output root: $outputRoot"
 Write-Host "========================================"
 
 $tests = @(
-    "jukusei_test.js"
-    "course_test.js"
-    "koshi_test.js"
-    "master_menu_test.js"
-    "calendar_test.js"
-    "email_test.js"
-    "report_test.js"
-    "home_test.js"
-    "help_test.js"
+    "page/jukusei_test.js"
+    "page/course_test.js"
+    "page/koshi_test.js"
+    "page/master_menu_test.js"
+    "page/calendar_test.js"
+    "page/email_test.js"
+    "page/report_test.js"
+    "page/home_test.js"
+    "page/help_test.js"
 )
 
 Set-Location $repoRoot
