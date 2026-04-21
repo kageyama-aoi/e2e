@@ -46,6 +46,17 @@
 - CSV の読み込みは共通ユーティリティに統一。
 - Allure 結果の構造: `allure-results/<profile>/<YYYYMMDD_HHMMSS_testname>/`。
 
+### tframe テストのフォルダ分類
+`tests/tframe/` 配下は性質別サブフォルダで管理する。新規テスト追加時は以下の基準で配置先を決めること。
+
+| フォルダ | 対象 | 例 |
+|---|---|---|
+| `auth/` | ログイン・認証系 | login_test, mypage_login_test |
+| `page/` | 画面単体の操作・表示確認 | calendar_test, home_test |
+| `flow/` | 複数画面をまたぐ遷移・シナリオ | navigation_after_login_test |
+| `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
+| `api/` | API系 | get_personal_info_api_test |
+
 ## コミット・PR ガイドライン
 - Conventional Commits 形式を使用: `<type>(<scope>): <summary> #<issue>`
   - type: `fix` / `feat` / `refactor` / `docs` / `test` / `chore`

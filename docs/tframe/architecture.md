@@ -18,7 +18,7 @@
 
 1. `codecept.conf.js` が読み込まれる
 2. `support/envLoader.js` が `.env` と `env/.env.<profile>` を読み込む
-3. `tests/tframe/*_test.js` がスイートとして実行される
+3. `tests/tframe/**/*_test.js` がスイートとして実行される
 4. テストから `pages/tframe/*Page.js` の Page Object を呼ぶ
 5. Page Object が `data/tframe/*SideMenu.js` の定義を使って画面遷移や検証を行う
 
@@ -41,14 +41,14 @@ flowchart TD
 ### 代表的な実行コマンド
 
 - `npm run test_t`
-- `npx codeceptjs run ./tests/tframe/*_test.js`
-- 個別実行例: `npx codeceptjs run ./tests/tframe/email_test.js --profile tframe`
+- `npx codeceptjs run ./tests/tframe/**/*_test.js`
+- 個別実行例: `npx codeceptjs run ./tests/tframe/page/email_test.js --profile tframe`
 
 ### スイート定義
 
-`codecept.conf.js` の `suites.tframe` が `./tests/tframe/*_test.js` を拾います。
+`codecept.conf.js` の `suites.tframe` が `./tests/tframe/**/*_test.js` を拾います。
 
-つまり、`tests/tframe` 配下の `*_test.js` が T-Frame の実行対象です。
+つまり、`tests/tframe` 配下のサブフォルダを含む全 `*_test.js` が T-Frame の実行対象です。
 
 ---
 
@@ -95,7 +95,8 @@ T-Frame で重要なのは次の 2 点です。
 - `apiCommonLoginPage`
 - `apiTeacherInfoGetPage`
 - `jsonInputPage`
-- `loginMyPage`
+- `loginMyPageTeacher`
+- `loginMyPageStudent`
 - `keiryoMasterPage`
 - `jukuseiPage`
 - `coursePage`
@@ -109,9 +110,25 @@ T-Frame で重要なのは次の 2 点です。
 
 ---
 
+## テストフォルダの構成
+
+`tests/tframe/` 配下は性質別サブフォルダで管理しています。
+
+| フォルダ | 役割 | 主なファイル |
+|---|---|---|
+| `auth/` | ログイン・認証系 | login_test, mypage_login_test |
+| `page/` | 画面単体の操作・表示確認 | calendar_test, home_test, email_test など |
+| `flow/` | 複数画面をまたぐ遷移・シナリオ | navigation_after_login_test |
+| `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
+| `api/` | API系 | get_personal_info_api_test |
+
+新規テストを追加するときは、上記の基準で配置先を選んでください。
+
+---
+
 ## テストの基本構造
 
-`tests/tframe/*_test.js` は、だいたい次の形です。
+`tests/tframe/**/*_test.js` は、だいたい次の形です。
 
 1. `Feature(...)` で機能単位のまとまりを作る
 2. `Scenario(...)` で 1 フローを定義する
@@ -122,15 +139,15 @@ T-Frame で重要なのは次の 2 点です。
 
 例:
 
-- `tests/tframe/email_test.js`
-- `tests/tframe/course_test.js`
-- `tests/tframe/calendar_test.js`
-- `tests/tframe/help_test.js`
-- `tests/tframe/jukusei_test.js`
-- `tests/tframe/keiryo_master_test.js`
-- `tests/tframe/koshi_test.js`
-- `tests/tframe/master_menu_test.js`
-- `tests/tframe/report_test.js`
+- `tests/tframe/page/email_test.js`
+- `tests/tframe/page/course_test.js`
+- `tests/tframe/page/calendar_test.js`
+- `tests/tframe/page/help_test.js`
+- `tests/tframe/page/jukusei_test.js`
+- `tests/tframe/page/keiryo_master_test.js`
+- `tests/tframe/page/koshi_test.js`
+- `tests/tframe/page/master_menu_test.js`
+- `tests/tframe/page/report_test.js`
 
 各テストは、メニューごとに対応する Page Object と data ファイルを組み合わせています。
 
@@ -214,31 +231,31 @@ module.exports = {
 
 ### 代表的な対応関係
 
-- `tests/tframe/email_test.js`
+- `tests/tframe/page/email_test.js`
   - `pages/tframe/EmailPage.js`
   - `data/tframe/emailSideMenu.js`
-- `tests/tframe/course_test.js`
+- `tests/tframe/page/course_test.js`
   - `pages/tframe/CoursePage.js`
   - `data/tframe/courseSideMenu.js`
-- `tests/tframe/calendar_test.js`
+- `tests/tframe/page/calendar_test.js`
   - `pages/tframe/CalendarPage.js`
   - `data/tframe/calendarSideMenu.js`
-- `tests/tframe/help_test.js`
+- `tests/tframe/page/help_test.js`
   - `pages/tframe/HelpPage.js`
   - `data/tframe/helpSideMenu.js`
-- `tests/tframe/jukusei_test.js`
+- `tests/tframe/page/jukusei_test.js`
   - `pages/tframe/JukuseiPage.js`
   - `data/tframe/studentSideMenu.js`
-- `tests/tframe/keiryo_master_test.js`
+- `tests/tframe/page/keiryo_master_test.js`
   - `pages/tframe/KeiryoMasterPage.js`
   - `data/tframe/accountingSideMenu.js`
-- `tests/tframe/koshi_test.js`
+- `tests/tframe/page/koshi_test.js`
   - `pages/tframe/KoshiPage.js`
   - `data/tframe/teacherSideMenu.js`
-- `tests/tframe/master_menu_test.js`
+- `tests/tframe/page/master_menu_test.js`
   - `pages/tframe/MasterMenuPage.js`
   - `data/tframe/masterSideMenu.js`
-- `tests/tframe/report_test.js`
+- `tests/tframe/page/report_test.js`
   - `pages/tframe/ReportPage.js`
   - `data/tframe/reportSideMenu.js`
 
@@ -252,7 +269,7 @@ module.exports = {
 
 この Page Object は次を担当します。
 
-- `LOGIN_TFRAME_URL` へ移動する
+- `BASE_URL` へ移動する
 - 言語を必要に応じて選ぶ
 - 管理者 ID / パスワードを入力する
 - ログインボタンを押す
@@ -262,9 +279,9 @@ module.exports = {
 
 ### マイページログイン
 
-`pages/tframe/LoginMyPage.js` は、管理者画面とは別のログイン導線です。
+`pages/tframe/LoginMyPageTeacher.js` と `pages/tframe/LoginMyPageStudent.js` は、管理者画面とは別のログイン導線です。
 
-`tests/tframe/mypage_login_test.js` で使われ、講師/生徒用の画面ログインを確認します。
+`tests/tframe/auth/mypage_login_test.js` で使われ、講師・受講生それぞれのマイページログインとメニュー確認を行います。
 
 ### API 補助フロー
 
