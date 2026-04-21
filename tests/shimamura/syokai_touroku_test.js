@@ -247,7 +247,7 @@ async function ShouldBeOnStudentGroup(I, classMemberPageShimamura) {
     icon_id: 'submenu__candidates_grp_sub',
     menuname: '候補生'
   });
-  classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
+  await classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
   await logScreenUrl(I, S.screen.name);
 }
 
@@ -327,7 +327,7 @@ async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura) {
     menuname: S.submenu.groupName
   });
 
-  classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
+  await classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
   await logScreenUrl(I, S.screen.name);
   I.waitForElement(locate('body').withText(S.button.addUpdateClass), TIMEOUTS.SCREEN);
   I.click(S.button.addUpdateClass)
@@ -514,7 +514,7 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
     icon_id: 'submenu__detailviews_sub',
     menuname: '閲覧/登録・経理ビュー'
   });
-  classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
+  await classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
   I.click('退会処理');
   await logScreenUrl(I, S.screen.name);
   I.fillField('#final_enrollment_year', taikaiYear);

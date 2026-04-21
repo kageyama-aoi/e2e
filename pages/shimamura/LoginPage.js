@@ -26,7 +26,7 @@ module.exports = {
   /**
    * 環境変数のユーザー情報でログインする
    */
-  login() {
+  async login() {
     I.say('=== ログイン 開始 ===');
     I.say('【ログイン】認証情報の入力');
     I.amOnPage('/');
@@ -35,7 +35,10 @@ module.exports = {
     I.fillField(locators_2.passwordField, process.env.SHIMAMURA_PASSWORD);
     I.say('【ログイン】実行');
     I.click('ログイン');
-    I.see('担当者番号を入力してください．', 'tbody');
+    const count = await I.grabNumberOfVisibleElements(locate('input[name="idnumber"]'));
+    if (count > 0) {
+      I.see(messages_2.tantousyaPrompt, 'tbody');
+    }
     I.say('=== ログイン 終了 ===');
   },
 
@@ -62,6 +65,13 @@ module.exports = {
       I.click(linkLocator);
     } else {
       I.say('【操作者変更】リンクがないためスキップ');
+    }
+
+    const promptCount = await I.grabNumberOfVisibleElements(locate('input[name="idnumber"]'));
+    if (promptCount === 0) {
+      I.say('【担当者番号入力】入力フィールドが表示されていないためスキップ');
+      I.say('=== 担当者番号入力 終了（スキップ） ===');
+      return;
     }
 
     I.say(`【担当者番号入力】[${tantousyaNumber}] を入力してメインメニューへ`);

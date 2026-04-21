@@ -73,12 +73,12 @@ module.exports = {
    * @param {string} linkText - クリックするリンクのテキスト（例: 'クラス一覧'）
    * @param {string} [expectedTitle] - (任意) 表示されるべきヘッダーのテキスト（例: 'クラス登録'）
    */
-  clickSubMenuLink(linkText, expectedTitle) {
+  async clickSubMenuLink(linkText, expectedTitle) {
     const linkSelector = this.locators.subMenuLink(linkText);
     I.waitForElement(linkSelector, 10);
     if (this.isNavScreenshotEnabled()) {
       const baseName = this.buildNavScreenshotName(linkText);
-      const fileName = I.saveScreenshotWithTimestamp(`NAV_before_${baseName}.png`);
+      const fileName = await I.saveScreenshotWithTimestamp(`NAV_before_${baseName}.png`);
       attachScreenshotFromOutput(fileName, '画面遷移_前');
     }
     I.click(linkSelector);
@@ -87,7 +87,7 @@ module.exports = {
     }
     if (this.isNavScreenshotEnabled()) {
       const baseName = this.buildNavScreenshotName(expectedTitle || linkText);
-      const fileName = I.saveScreenshotWithTimestamp(`NAV_after_${baseName}.png`);
+      const fileName = await I.saveScreenshotWithTimestamp(`NAV_after_${baseName}.png`);
       attachScreenshotFromOutput(fileName, '画面遷移_後');
     }
   },
