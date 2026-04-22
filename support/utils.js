@@ -169,6 +169,34 @@ async function logScreenUrl(I, screenName) {
   I.say(`${screenName}\nURL: ${await I.grabCurrentUrl()}`);
 }
 
+/**
+ * テキスト系フォームフィールドをまとめて入力する
+ *
+ * FORM_FILL_FAST=true  → I.executeScript で一括セット（速い・inputイベント未発火）
+ * FORM_FILL_FAST=false → I.fillField で1フィールドずつ（安全・デフォルト）
+ *
+ * ドロップダウン・チェックボックスなど、イベントが必要なフィールドは
+ * このユーティリティを使わず I.selectOption / I.checkOption を個別に呼ぶこと。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {Object.<string, string|undefined>} fieldMap - { fieldId: value } の形式
+ */
+function fillTextFields(I, fieldMap) {
+  const entries = Object.entries(fieldMap).filter(([, v]) => v);
+  if (entries.length === 0) return;
+
+  if (process.env.FORM_FILL_FAST === 'true') {
+    I.executeScript((fields) => {
+      fields.forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+      });
+    }, entries);
+  } else {
+    entries.forEach(([id, value]) => I.fillField(`#${id}`, value));
+  }
+}
+
 module.exports = {
   readCsv,
   getProfileFromArgs,
@@ -177,6 +205,7 @@ module.exports = {
   withScenarioLabel,
   parseExpectedErrors,
   logScreenUrl,
+  fillTextFields,
   withAllure,
   setBusinessLabels,
   attachBusinessContext,

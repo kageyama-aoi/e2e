@@ -3,6 +3,7 @@
  */
 
 const { I } = inject();
+const { fillTextFields } = require('../../support/utils');
 
 module.exports = {
 
@@ -31,17 +32,20 @@ module.exports = {
    */
   fillGeneralInfo(data) {
     I.say('【法人・団体登録】全体設定 を入力');
-    if (data.idnumber)           I.fillField('#idnumber', data.idnumber);
+    fillTextFields(I, {
+      idnumber:       data.idnumber,
+      name:           data.name,
+      nameFurigana:   data.nameFurigana,
+      phone1Number:   data.phone1Number,
+      houjinTantosha: data.houjinTantosha,
+      shareiMeisaiNo: data.shareiMeisaiNo,
+    });
+    // ドロップダウンはAJAX連動があるため個別処理
     if (data.branchId_area_id) {
       I.selectOption('#branchId_area_id', data.branchId_area_id);
-      I.wait(1); // エリア変更後のAJAXリロードを待機
+      I.wait(1);
     }
     if (data.branchId_branch_id) I.selectOption('#branchId_branch_id', data.branchId_branch_id);
-    if (data.name)               I.fillField('#name', data.name);               // *必須
-    if (data.nameFurigana)       I.fillField('#nameFurigana', data.nameFurigana); // *必須
-    if (data.phone1Number)       I.fillField('#phone1Number', data.phone1Number);
-    if (data.houjinTantosha)     I.fillField('#houjinTantosha', data.houjinTantosha);
-    if (data.shareiMeisaiNo)     I.fillField('#shareiMeisaiNo', data.shareiMeisaiNo);
   },
 
   /**
@@ -50,11 +54,13 @@ module.exports = {
    */
   fillAddressInfo(data) {
     I.say('【法人・団体登録】住所情報 を入力');
-    if (data.primaryAddressPostalcode) I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
-    if (data.primaryAddressState)      I.fillField('#primaryAddressState', data.primaryAddressState);
-    if (data.primaryAddressCity)       I.fillField('#primaryAddressCity', data.primaryAddressCity);
-    if (data.primaryAddressStreet)     I.fillField('#primaryAddressStreet', data.primaryAddressStreet);
-    if (data.primaryAddressKana)       I.fillField('#primaryAddressKana', data.primaryAddressKana);
+    fillTextFields(I, {
+      primaryAddressPostalcode: data.primaryAddressPostalcode,
+      primaryAddressState:      data.primaryAddressState,
+      primaryAddressCity:       data.primaryAddressCity,
+      primaryAddressStreet:     data.primaryAddressStreet,
+      primaryAddressKana:       data.primaryAddressKana,
+    });
   },
 
   /**
@@ -64,7 +70,7 @@ module.exports = {
   fillMemoInfo(data) {
     if (!data.description) return;
     I.say('【法人・団体登録】メモ情報 を入力');
-    I.fillField('#description', data.description);
+    fillTextFields(I, { description: data.description });
   },
 
   /**

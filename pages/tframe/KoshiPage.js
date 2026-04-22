@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const { fillTextFields } = require('../../support/utils');
 
 module.exports = {
   /** 講師アイコンのセレクタ（日英） */
@@ -195,18 +196,21 @@ module.exports = {
    */
   fillPersonalInfo1(data) {
     I.say('【講師登録】個人情報1 を入力');
-    if (data.lastName)           I.fillField('#lastName', data.lastName);
-    if (data.firstName)          I.fillField('#firstName', data.firstName);
-    if (data.lastNameFurigana)   I.fillField('#lastNameFurigana', data.lastNameFurigana);
-    if (data.firstNameFurigana)  I.fillField('#firstNameFurigana', data.firstNameFurigana);
-    if (data.phone1Number)       I.fillField('#phone1Number', data.phone1Number);
-    if (data.phone2Number)       I.fillField('#phone2Number', data.phone2Number);
-    if (data.gender)             I.selectOption('#gender', data.gender);
-    if (data.birthdateYear)      I.selectOption('#birthdateYear', data.birthdateYear);
-    if (data.birthdateMonth)     I.selectOption('#birthdateMonth', data.birthdateMonth);
-    if (data.birthdateDay)       I.selectOption('#birthdateDay', data.birthdateDay);
-    if (data.email1)             I.fillField('#email1', data.email1);
-    if (data.email2)             I.fillField('#email2', data.email2);
+    fillTextFields(I, {
+      lastName:          data.lastName,
+      firstName:         data.firstName,
+      lastNameFurigana:  data.lastNameFurigana,
+      firstNameFurigana: data.firstNameFurigana,
+      phone1Number:      data.phone1Number,
+      phone2Number:      data.phone2Number,
+      email1:            data.email1,
+      email2:            data.email2,
+    });
+    // ドロップダウンは個別処理
+    if (data.gender)        I.selectOption('#gender', data.gender);
+    if (data.birthdateYear)  I.selectOption('#birthdateYear', data.birthdateYear);
+    if (data.birthdateMonth) I.selectOption('#birthdateMonth', data.birthdateMonth);
+    if (data.birthdateDay)   I.selectOption('#birthdateDay', data.birthdateDay);
   },
 
   /**
@@ -215,15 +219,18 @@ module.exports = {
    */
   fillPersonalInfo2(data) {
     I.say('【講師登録】個人情報2 を入力');
-    if (data.idnumber)      I.fillField('#idnumber', data.idnumber);
-    if (data.personStatus)  I.selectOption('#personStatus', data.personStatus);
+    fillTextFields(I, {
+      idnumber:   data.idnumber,
+      enrollDate: data.enrollDate,
+      leaveDate:  data.leaveDate,
+    });
+    // ドロップダウン・AJAX連動フィールドは個別処理
+    if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
     if (data.schoolAreaId) {
       I.selectOption('#school_area_id', data.schoolAreaId);
-      I.wait(1); // エリア変更後のAJAXリロードを待機
+      I.wait(1);
     }
     if (data.schoolBranchId) I.selectOption('#school_branch_id', data.schoolBranchId);
-    if (data.enrollDate)     I.fillField('#enrollDate', data.enrollDate);
-    if (data.leaveDate)      I.fillField('#leaveDate', data.leaveDate);
   },
 
   /**
@@ -232,21 +239,25 @@ module.exports = {
    */
   fillPaymentInfo(data) {
     I.say('【講師登録】支払規定等 を入力');
+    // ドロップダウンは個別処理
     if (data.zeiKubun)        I.selectOption('#zeiKubun', data.zeiKubun);
     if (data.bankPaymentType) I.selectOption('#bankPaymentType', data.bankPaymentType);
     if (data.bankAccountType) I.selectOption('#bankAccountType', data.bankAccountType);
+    // AJAX補完フィールドは wait が必要なため個別処理
     if (data.bankCode) {
       I.fillField('#bankCode', data.bankCode);
-      I.wait(1); // 金融機関コードのAJAX補完を待機
+      I.wait(1);
     }
     if (data.bankBranchCode) {
       I.fillField('#bankBranchCode', data.bankBranchCode);
-      I.wait(1); // 支店コードのAJAX補完を待機
+      I.wait(1);
     }
-    if (data.bankAccountNo)   I.fillField('#bankAccountNo', data.bankAccountNo);
-    if (data.bankName)        I.fillField('#bankName', data.bankName);
-    if (data.bankBranchName)  I.fillField('#bankBranchName', data.bankBranchName);
-    if (data.bankAccountName) I.fillField('#bankAccountName', data.bankAccountName);
+    fillTextFields(I, {
+      bankAccountNo:   data.bankAccountNo,
+      bankName:        data.bankName,
+      bankBranchName:  data.bankBranchName,
+      bankAccountName: data.bankAccountName,
+    });
   },
 
   /**
@@ -255,11 +266,13 @@ module.exports = {
    */
   fillAddressInfo(data) {
     I.say('【講師登録】住所情報 を入力');
-    if (data.primaryAddressPostalcode) I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
-    if (data.primaryAddressState)      I.fillField('#primaryAddressState', data.primaryAddressState);
-    if (data.primaryAddressCity)       I.fillField('#primaryAddressCity', data.primaryAddressCity);
-    if (data.primaryAddressStreet)     I.fillField('#primaryAddressStreet', data.primaryAddressStreet);
-    if (data.primaryAddressKana)       I.fillField('#primaryAddressKana', data.primaryAddressKana);
+    fillTextFields(I, {
+      primaryAddressPostalcode: data.primaryAddressPostalcode,
+      primaryAddressState:      data.primaryAddressState,
+      primaryAddressCity:       data.primaryAddressCity,
+      primaryAddressStreet:     data.primaryAddressStreet,
+      primaryAddressKana:       data.primaryAddressKana,
+    });
   },
 
   /**
@@ -269,7 +282,7 @@ module.exports = {
   fillMemoInfo(data) {
     if (!data.description) return;
     I.say('【講師登録】メモ情報 を入力');
-    I.fillField('#description', data.description);
+    fillTextFields(I, { description: data.description });
   },
 
   /**
