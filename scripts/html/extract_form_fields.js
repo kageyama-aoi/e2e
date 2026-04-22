@@ -6,13 +6,17 @@
  * テストデータテンプレートと Page Object fillメソッドを自動生成する。
  *
  * 使い方:
- *   node scripts/html/extract_form_fields.js input.html
- *   node scripts/html/extract_form_fields.js < input.html
+ *   node scripts/html/extract_form_fields.js            # input/input.html を読み込む（デフォルト）
+ *   node scripts/html/extract_form_fields.js [file.html] # 任意のHTMLファイルを指定
  *
  * 手順:
  *   1. ブラウザ DevTools で登録画面の #rootWidget を右クリック → 「outerHTMLをコピー」
- *   2. テキストファイルに貼り付けて保存（例: input.html）
- *   3. 上記コマンドで実行
+ *   2. scripts/html/input/input.html に貼り付けて保存
+ *   3. node scripts/html/extract_form_fields.js を実行
+ *   4. output/extract_result.js を参照（実行のたびに上書き）
+ *
+ * サンプル:
+ *   input/sample_teacher_registration.html（講師登録画面の代表的なフィールド構成）
  */
 
 'use strict';
@@ -22,10 +26,12 @@ const path = require('path');
 
 // ── 入力 ─────────────────────────────────────────────────────
 
+const DEFAULT_INPUT  = path.join(__dirname, 'input', 'input.html');
+const OUTPUT_FILE    = path.join(__dirname, 'output', 'extract_result.js');
+
 function readInput() {
-  const file = process.argv[2];
-  if (file) return fs.readFileSync(file, 'utf8');
-  return fs.readFileSync(0, 'utf8'); // stdin
+  const file = process.argv[2] || DEFAULT_INPUT;
+  return fs.readFileSync(file, 'utf8');
 }
 
 // ── セクション分割 ────────────────────────────────────────────
@@ -241,23 +247,9 @@ function generateOutput(sections) {
  * @returns {string} 保存したファイルの絶対パス
  */
 function saveToFile(content) {
-  const outputDir = path.join(__dirname, 'output');
-  fs.mkdirSync(outputDir, { recursive: true });
-
-  const now = new Date();
-  const ts = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0'),
-    '_',
-    String(now.getHours()).padStart(2, '0'),
-    String(now.getMinutes()).padStart(2, '0'),
-    String(now.getSeconds()).padStart(2, '0'),
-  ].join('');
-
-  const filePath = path.join(outputDir, `extract_result_${ts}.js`);
-  fs.writeFileSync(filePath, content, 'utf8');
-  return filePath;
+  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
+  fs.writeFileSync(OUTPUT_FILE, content, 'utf8');
+  return OUTPUT_FILE;
 }
 
 // ── メイン ────────────────────────────────────────────────────
@@ -267,8 +259,9 @@ function saveToFile(content) {
   try {
     html = readInput();
   } catch (e) {
-    console.error('エラー: HTMLの読み込みに失敗しました。');
-    console.error('使い方: node scripts/html/extract_form_fields.js input.html');
+    console.error(`エラー: HTMLの読み込みに失敗しました。`);
+    console.error(`  デフォルト入力: ${DEFAULT_INPUT}`);
+    console.error(`  ブラウザ DevTools で登録画面の #rootWidget をコピーして input/input.html に貼り付けてください。`);
     process.exit(1);
   }
 
