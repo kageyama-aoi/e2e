@@ -19,7 +19,7 @@
  * - 2026-01-17
  */
 // const { secret } = require('codeceptjs'); // secret is globally available
-const getTeacherPaymentReportParams = require('../../data/tframe/teacherPaymentReportParams');
+const getTeacherPaymentReportParams = require('../../../data/tframe/teacherPaymentReportParams');
 
 Feature('講師支払調書APIテスト');
 

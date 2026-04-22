@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const emailSideMenu = require('../../data/tframe/emailSideMenu');
+const emailSideMenu = require('../../../data/tframe/emailSideMenu');
 
 Feature('Eメールメニュー');
 

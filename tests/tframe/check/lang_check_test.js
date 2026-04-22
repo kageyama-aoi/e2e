@@ -28,14 +28,14 @@
 // TEMPORARY
 
 const createMenuNavigationMixin = require('../../pages/tframe/MenuNavigationMixin');
-const studentSideMenu  = require('../../data/tframe/studentSideMenu');
-const courseSideMenu   = require('../../data/tframe/courseSideMenu');
-const teacherSideMenu  = require('../../data/tframe/teacherSideMenu');
-const masterSideMenu   = require('../../data/tframe/masterSideMenu');
-const calendarSideMenu = require('../../data/tframe/calendarSideMenu');
-const emailSideMenu    = require('../../data/tframe/emailSideMenu');
-const reportSideMenu   = require('../../data/tframe/reportSideMenu');
-const helpSideMenu     = require('../../data/tframe/helpSideMenu');
+const studentSideMenu  = require('../../../data/tframe/studentSideMenu');
+const courseSideMenu   = require('../../../data/tframe/courseSideMenu');
+const teacherSideMenu  = require('../../../data/tframe/teacherSideMenu');
+const masterSideMenu   = require('../../../data/tframe/masterSideMenu');
+const calendarSideMenu = require('../../../data/tframe/calendarSideMenu');
+const emailSideMenu    = require('../../../data/tframe/emailSideMenu');
+const reportSideMenu   = require('../../../data/tframe/reportSideMenu');
+const helpSideMenu     = require('../../../data/tframe/helpSideMenu');
 
 Feature('言語整合性チェック');
 

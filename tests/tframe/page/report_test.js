@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const reportSideMenu = require('../../data/tframe/reportSideMenu');
+const reportSideMenu = require('../../../data/tframe/reportSideMenu');
 
 Feature('レポートメニュー');
 

@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const studentSideMenu = require('../../data/tframe/studentSideMenu');
+const studentSideMenu = require('../../../data/tframe/studentSideMenu');
 
 Feature('受講生メニュー');
 

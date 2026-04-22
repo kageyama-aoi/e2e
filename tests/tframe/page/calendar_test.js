@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const calendarSideMenu = require('../../data/tframe/calendarSideMenu');
+const calendarSideMenu = require('../../../data/tframe/calendarSideMenu');
 
 Feature('カレンダーメニュー');
 

@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const teacherSideMenu = require('../../data/tframe/teacherSideMenu');
+const teacherSideMenu = require('../../../data/tframe/teacherSideMenu');
 
 Feature('講師メニュー');
 

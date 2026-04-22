@@ -11,7 +11,7 @@
  * - 2026-04-01
  */
 
-const accountingSideMenu = require('../../data/tframe/accountingSideMenu');
+const accountingSideMenu = require('../../../data/tframe/accountingSideMenu');
 
 Feature('経理メニュー');
 

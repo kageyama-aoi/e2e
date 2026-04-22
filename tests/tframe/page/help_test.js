@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const helpSideMenu = require('../../data/tframe/helpSideMenu');
+const helpSideMenu = require('../../../data/tframe/helpSideMenu');
 
 Feature('ヘルプメニュー');
 

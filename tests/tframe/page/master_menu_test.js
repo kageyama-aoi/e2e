@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const masterSideMenu = require('../../data/tframe/masterSideMenu');
+const masterSideMenu = require('../../../data/tframe/masterSideMenu');
 
 Feature('マスターメニュー');
 
