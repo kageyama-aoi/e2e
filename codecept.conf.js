@@ -173,7 +173,8 @@ AllureResultsDir=${runtimeAllureResultsDir}
     emailPage:     './pages/tframe/EmailPage.js',
     reportPage:    './pages/tframe/ReportPage.js',
     homePage:      './pages/tframe/HomePage.js',
-    helpPage:      './pages/tframe/HelpPage.js'
+    helpPage:      './pages/tframe/HelpPage.js',
+    accountPage:   './pages/tframe/AccountPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
