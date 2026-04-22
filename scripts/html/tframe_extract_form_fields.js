@@ -49,9 +49,8 @@ const path = require('path');
 // 毎回このファイルを上書きして使い回す運用を想定。
 const DEFAULT_INPUT = path.join(__dirname, 'input', 'input.html');
 
-// 実行のたびに上書きされる固定の出力先。
-// タイムスタンプを付けないことでファイルが溜まらないようにしている。
-const OUTPUT_FILE = path.join(__dirname, 'output', 'extract_result.js');
+// 出力先ディレクトリ。実行のたびにタイムスタンプ付きファイルを生成する。
+const OUTPUT_DIR = path.join(__dirname, 'output');
 
 // ── 入力読み込み ──────────────────────────────────────────────
 
@@ -330,16 +329,27 @@ function generateOutput(sections) {
 // ── ファイル保存 ──────────────────────────────────────────────
 
 /**
- * 出力内容を OUTPUT_FILE に上書き保存する。
+ * 出力内容をタイムスタンプ付きファイルに保存する。
  * output/ ディレクトリが存在しない場合は自動作成する。
  *
  * @param {string} content 保存するテキスト
  * @returns {string} 保存したファイルの絶対パス
  */
 function saveToFile(content) {
-  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, content, 'utf8');
-  return OUTPUT_FILE;
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  const now = new Date();
+  const ts = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+    '_',
+    String(now.getHours()).padStart(2, '0'),
+    String(now.getMinutes()).padStart(2, '0'),
+    String(now.getSeconds()).padStart(2, '0'),
+  ].join('');
+  const filePath = path.join(OUTPUT_DIR, `extract_result_${ts}.js`);
+  fs.writeFileSync(filePath, content, 'utf8');
+  return filePath;
 }
 
 // ── メイン ────────────────────────────────────────────────────
