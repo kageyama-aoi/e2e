@@ -170,6 +170,15 @@ async function logScreenUrl(I, screenName) {
 }
 
 /**
+ * tframe の表示言語が英語かどうかを返す
+ * juku 環境のみ TFRAME_LANGUAGE=en が設定される。culture は常に日本語。
+ * @returns {boolean}
+ */
+function isEnglish() {
+  return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+}
+
+/**
  * tframe 登録フォームを保存し、バリデーションエラーを検出する
  *
  * 保存ボタン押下後に #tf-message-summary にエラーテキストが出ていればテスト失敗にする。
@@ -227,6 +236,7 @@ module.exports = {
   withScenarioLabel,
   parseExpectedErrors,
   logScreenUrl,
+  isEnglish,
   submitTframeFormAndVerify,
   fillTextFields,
   withAllure,

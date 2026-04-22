@@ -4,7 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('./MenuNavigationMixin');
-const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
+const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../support/utils');
 
 module.exports = {
   /** 講師アイコンのセレクタ（日英） */
@@ -166,7 +166,7 @@ module.exports = {
    * @returns {boolean} 英語の場合 true
    */
   isEnglish() {
-    return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+    return isEnglish();
   },
 
   /**
@@ -174,7 +174,15 @@ module.exports = {
    */
   navigateToRegisterPage() {
     I.say('【講師登録】登録画面へ遷移');
-    I.amOnPage(process.env.BASE_URL + 'index.php?r=teacher%2Few%2F_default');
+    if (process.env.USE_MENU_NAV === 'true') {
+      // 講師メニュー → 講師登録（href で判別するため言語不変）
+      const teacherText = this.isEnglish() ? 'Teacher' : '講師';
+      I.click('a:has-text("' + teacherText + '")');
+      I.waitForElement('a[href*="teacher%2Few"]', 10);
+      I.click('a[href*="teacher%2Few"]');
+    } else {
+      I.amOnPage(process.env.BASE_URL + 'index.php?r=teacher%2Few%2F_default');
+    }
     I.waitForElement('#ewSaveButton', 10);
   },
 

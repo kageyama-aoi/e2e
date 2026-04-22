@@ -1,3 +1,3 @@
 lastName,firstName,lastNameFurigana,firstNameFurigana,phone1Number,gender,birthdateYear,birthdateMonth,birthdateDay,email1,idnumber,personStatus,enrollDate,zeiKubun,bankPaymentType,bankAccountType,bankAccountNo,bankName,bankBranchName,bankAccountName,primaryAddressPostalcode,primaryAddressState,primaryAddressCity,primaryAddressStreet,primaryAddressKana,description
-テスト,講師A,てすと,こうしA,09011111111,male,1990,01,15,test.teacher.a@example.com,TA001,11,2024/04/01,2,2,1,1234567,テスト銀行,テスト支店,テストコウシエー,1000001,東京都,千代田区,千代田1-1,トウキョウトチヨダク,テスト登録A（自動テスト）
-テスト,講師B,てすと,こうしB,09022222222,female,1985,06,20,test.teacher.b@example.com,TB002,12,2023/10/01,2,2,1,7654321,テスト銀行,テスト支店,テストコウシビー,1500001,東京都,渋谷区,渋谷1-1,トウキョウトシブヤク,テスト登録B（自動テスト）
+テスト,講師A,てすと,こうしA,09011111111,male,1990,01,15,test.teacher.a@example.com,TA001,11,2024/04/01,2,1,,,,,, 1000001,東京都,千代田区,千代田1-1,トウキョウトチヨダク,テスト登録A（自動テスト）
+テスト,講師B,てすと,こうしB,09022222222,female,1985,06,20,test.teacher.b@example.com,TB002,12,2023/10/01,2,1,,,,,,1500001,東京都,渋谷区,渋谷1-1,トウキョウトシブヤク,テスト登録B（自動テスト）

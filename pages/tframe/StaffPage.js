@@ -3,7 +3,7 @@
  */
 
 const { I } = inject();
-const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
+const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../support/utils');
 
 module.exports = {
 
@@ -12,7 +12,14 @@ module.exports = {
    */
   navigateToRegisterPage() {
     I.say('【スタッフ登録】登録画面へ遷移');
-    I.amOnPage(process.env.BASE_URL + 'index.php?r=staff%2Few%2F_default');
+    if (process.env.USE_MENU_NAV === 'true') {
+      // マスターメニュー → スタッフ登録（サイドバーリンクは href で判別するため言語不変）
+      I.click(`a:has-text("${isEnglish() ? 'Master' : 'マスター'}")`);
+      I.waitForElement('a[href*="staff%2Few"]', 10);
+      I.click('a[href*="staff%2Few"]');
+    } else {
+      I.amOnPage(process.env.BASE_URL + 'index.php?r=staff%2Few%2F_default');
+    }
     I.waitForElement('#ewSaveButton', 10);
   },
 
