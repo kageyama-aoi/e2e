@@ -57,6 +57,24 @@
 | `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
 | `api/` | API系 | get_personal_info_api_test |
 
+### tframe 登録テストの共通パターン
+新規登録テストを作るときは `pages/tframe/KoshiPage.js`（Page Object）と `tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
+シンプルな Page Object（MenuNav なし）は `AccountPage.js` / `StaffPage.js` を参照。
+
+共通ユーティリティ（`support/utils.js`）：
+- `fillTextFields(I, fieldMap)` — `FORM_FILL_FAST` ENV で高速/安全を自動切替するフィールド一括入力
+- `submitTframeFormAndVerify(I, expectedName)` — 保存後に `#tf-message-summary` でバリデーションエラーを検出
+- `isEnglish()` — `TFRAME_LANGUAGE=en` 判定（juku プロファイルのみ英語あり、culture は常に ja）
+- `loadCsvWithProfile(baseName, dataDir)` — プロファイル対応の CSV 読み込み
+- `withScenarioLabel(fn)` — Data Scenario の表示名付与
+
+特殊フィールドの操作：
+- 郵便番号 → `I.click('#zipCodeBtn')` + `I.wait(1)` で都道府県・市区町村を自動入力（番地・カナは手動）
+- 銀行コード → `I.fillField('#bankCode', val)` + `I.wait(1)` で銀行名を AJAX 自動補完（bankName 列は CSV 不要）
+- AJAX 連動ドロップダウン（エリア→校舎）→ エリア選択後に `I.wait(1)` してから校舎を選択
+
+詳細な手順は `/tframe-registration-dev` スキルを参照。
+
 ## コミット・PR ガイドライン
 - Conventional Commits 形式を使用: `<type>(<scope>): <summary> #<issue>`
   - type: `fix` / `feat` / `refactor` / `docs` / `test` / `chore`
