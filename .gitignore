@@ -9,3 +9,4 @@ scripts/__pycache__/
 .env
 env/.env.*
 !env/.env.shimamura.template
+!env/.env.tframe.template
