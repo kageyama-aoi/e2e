@@ -168,5 +168,119 @@ module.exports = {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
   },
 
+  /**
+   * 講師登録画面に直接遷移する
+   */
+  navigateToRegisterPage() {
+    I.say('【講師登録】登録画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=teacher%2Few%2F_default');
+    I.waitForElement('#ewSaveButton', 10);
+  },
+
+  /**
+   * 講師登録フォームの全セクションを入力する
+   * @param {object} data - teacherRegisterData.generateTestTeacher() の戻り値
+   */
+  fillRegistrationForm(data) {
+    this.fillPersonalInfo1(data);
+    this.fillPersonalInfo2(data);
+    this.fillPaymentInfo(data);
+    this.fillAddressInfo(data);
+    this.fillMemoInfo(data);
+  },
+
+  /**
+   * 個人情報 1 を入力する（姓・名・ふりがな・電話・性別・生年月日・メール）
+   * @param {object} data
+   */
+  fillPersonalInfo1(data) {
+    I.say('【講師登録】個人情報1 を入力');
+    if (data.lastName)           I.fillField('#lastName', data.lastName);
+    if (data.firstName)          I.fillField('#firstName', data.firstName);
+    if (data.lastNameFurigana)   I.fillField('#lastNameFurigana', data.lastNameFurigana);
+    if (data.firstNameFurigana)  I.fillField('#firstNameFurigana', data.firstNameFurigana);
+    if (data.phone1Number)       I.fillField('#phone1Number', data.phone1Number);
+    if (data.phone2Number)       I.fillField('#phone2Number', data.phone2Number);
+    if (data.gender)             I.selectOption('#gender', data.gender);
+    if (data.birthdateYear)      I.selectOption('#birthdateYear', data.birthdateYear);
+    if (data.birthdateMonth)     I.selectOption('#birthdateMonth', data.birthdateMonth);
+    if (data.birthdateDay)       I.selectOption('#birthdateDay', data.birthdateDay);
+    if (data.email1)             I.fillField('#email1', data.email1);
+    if (data.email2)             I.fillField('#email2', data.email2);
+  },
+
+  /**
+   * 個人情報 2 を入力する（ID番号・ステイタス・校舎・入社日）
+   * @param {object} data
+   */
+  fillPersonalInfo2(data) {
+    I.say('【講師登録】個人情報2 を入力');
+    if (data.idnumber)      I.fillField('#idnumber', data.idnumber);
+    if (data.personStatus)  I.selectOption('#personStatus', data.personStatus);
+    if (data.schoolAreaId) {
+      I.selectOption('#school_area_id', data.schoolAreaId);
+      I.wait(1); // エリア変更後のAJAXリロードを待機
+    }
+    if (data.schoolBranchId) I.selectOption('#school_branch_id', data.schoolBranchId);
+    if (data.enrollDate)     I.fillField('#enrollDate', data.enrollDate);
+    if (data.leaveDate)      I.fillField('#leaveDate', data.leaveDate);
+  },
+
+  /**
+   * 支払規定等を入力する（契約形態・支払方法・口座情報）
+   * @param {object} data
+   */
+  fillPaymentInfo(data) {
+    I.say('【講師登録】支払規定等 を入力');
+    if (data.zeiKubun)        I.selectOption('#zeiKubun', data.zeiKubun);
+    if (data.bankPaymentType) I.selectOption('#bankPaymentType', data.bankPaymentType);
+    if (data.bankAccountType) I.selectOption('#bankAccountType', data.bankAccountType);
+    if (data.bankCode) {
+      I.fillField('#bankCode', data.bankCode);
+      I.wait(1); // 金融機関コードのAJAX補完を待機
+    }
+    if (data.bankBranchCode) {
+      I.fillField('#bankBranchCode', data.bankBranchCode);
+      I.wait(1); // 支店コードのAJAX補完を待機
+    }
+    if (data.bankAccountNo)   I.fillField('#bankAccountNo', data.bankAccountNo);
+    if (data.bankName)        I.fillField('#bankName', data.bankName);
+    if (data.bankBranchName)  I.fillField('#bankBranchName', data.bankBranchName);
+    if (data.bankAccountName) I.fillField('#bankAccountName', data.bankAccountName);
+  },
+
+  /**
+   * 住所情報を入力する（郵便番号・都道府県・市区町村・番地・住所カナ）
+   * @param {object} data
+   */
+  fillAddressInfo(data) {
+    I.say('【講師登録】住所情報 を入力');
+    if (data.primaryAddressPostalcode) I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
+    if (data.primaryAddressState)      I.fillField('#primaryAddressState', data.primaryAddressState);
+    if (data.primaryAddressCity)       I.fillField('#primaryAddressCity', data.primaryAddressCity);
+    if (data.primaryAddressStreet)     I.fillField('#primaryAddressStreet', data.primaryAddressStreet);
+    if (data.primaryAddressKana)       I.fillField('#primaryAddressKana', data.primaryAddressKana);
+  },
+
+  /**
+   * メモ情報を入力する
+   * @param {object} data
+   */
+  fillMemoInfo(data) {
+    if (!data.description) return;
+    I.say('【講師登録】メモ情報 を入力');
+    I.fillField('#description', data.description);
+  },
+
+  /**
+   * 保存ボタンをクリックして登録を実行し、保存後の画面に講師名が表示されることを確認する
+   * @param {string} expectedName - 保存後の確認に使用する講師名（姓）
+   */
+  async submitAndVerifyRegistration(expectedName) {
+    I.say('【講師登録】保存ボタンをクリック');
+    I.click('#ewSaveButton');
+    I.waitForText(expectedName, 10);
+  },
+
   ...createMenuNavigationMixin('tframe_teacher'),
 };
