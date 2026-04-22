@@ -3,7 +3,7 @@
  */
 
 const { I } = inject();
-const { fillTextFields } = require('../../support/utils');
+const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
 
 module.exports = {
 
@@ -79,7 +79,6 @@ module.exports = {
    */
   async submitAndVerifyRegistration(expectedName) {
     I.say('【法人・団体登録】保存ボタンをクリック');
-    I.click('#ewSaveButton');
-    I.waitForText(expectedName, 10);
+    await submitTframeFormAndVerify(I, expectedName);
   },
 };

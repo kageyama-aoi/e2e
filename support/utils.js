@@ -170,6 +170,28 @@ async function logScreenUrl(I, screenName) {
 }
 
 /**
+ * tframe 登録フォームを保存し、バリデーションエラーを検出する
+ *
+ * 保存ボタン押下後に #tf-message-summary にエラーテキストが出ていればテスト失敗にする。
+ * エラーがなければ expectedName が画面に表示されるまで待機して成功とする。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {string} expectedName - 保存後の画面に表示されるはずの名称
+ */
+async function submitTframeFormAndVerify(I, expectedName) {
+  I.click('#ewSaveButton');
+  I.wait(2); // 保存レスポンスを待機（サーバーサイドバリデーション）
+
+  const errorText = await I.executeScript(() => {
+    const el = document.getElementById('tf-message-summary');
+    return el ? el.innerText.trim() : '';
+  });
+  if (errorText) throw new Error(`登録バリデーションエラー:\n${errorText}`);
+
+  I.waitForText(expectedName, 10);
+}
+
+/**
  * テキスト系フォームフィールドをまとめて入力する
  *
  * FORM_FILL_FAST=true  → I.executeScript で一括セット（速い・inputイベント未発火）
@@ -205,6 +227,7 @@ module.exports = {
   withScenarioLabel,
   parseExpectedErrors,
   logScreenUrl,
+  submitTframeFormAndVerify,
   fillTextFields,
   withAllure,
   setBusinessLabels,

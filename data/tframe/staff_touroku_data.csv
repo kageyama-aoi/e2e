@@ -1,3 +1,3 @@
 lastName,firstName,lastNameFurigana,firstNameFurigana,phone1Number,phone2Number,phone3Number,gender,birthdateYear,birthdateMonth,birthdateDay,email1,email2,idnumber,personStatus,branchId_area_id,branchId_branch_id,title,department,primaryAddressPostalcode,primaryAddressState,primaryAddressCity,primaryAddressStreet,primaryAddressKana,sendDocumentHome,description
-テスト,スタッフA,てすと,すたっふA,09011111111,0311111111,,male,1990,01,15,test.staff.a@example.com,,SA001,11,,,主任,管理部,1000001,東京都,千代田区,千代田1-1,トウキョウトチヨダク,false,テスト登録A（自動テスト）
-テスト,スタッフB,てすと,すたっふB,09022222222,0322222222,,female,1985,06,20,test.staff.b@example.com,,SB002,12,,,スタッフ,営業部,1500001,東京都,渋谷区,渋谷1-1,トウキョウトシブヤク,false,テスト登録B（自動テスト）
+テスト,スタッフA,てすと,すたっふA,09011111111,0311111111,,male,1990,01,15,test.staff.a@example.com,,SA901,11,,,主任,管理部,1000001,東京都,千代田区,千代田1-1,トウキョウトチヨダク,false,テスト登録A（自動テスト）
+テスト,スタッフB,てすと,すたっふB,09022222222,0322222222,,female,1985,06,20,test.staff.b@example.com,,SB902,12,,,スタッフ,営業部,1500001,東京都,渋谷区,渋谷1-1,トウキョウトシブヤク,false,テスト登録B（自動テスト）
