@@ -18,6 +18,7 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 
 // ── 入力 ─────────────────────────────────────────────────────
 
@@ -232,6 +233,33 @@ function generateOutput(sections) {
   return lines.join('\n');
 }
 
+// ── ファイル保存 ──────────────────────────────────────────────
+
+/**
+ * 出力をタイムスタンプ付きファイルに保存する
+ * @param {string} content
+ * @returns {string} 保存したファイルの絶対パス
+ */
+function saveToFile(content) {
+  const outputDir = path.join(__dirname, 'output');
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  const now = new Date();
+  const ts = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+    '_',
+    String(now.getHours()).padStart(2, '0'),
+    String(now.getMinutes()).padStart(2, '0'),
+    String(now.getSeconds()).padStart(2, '0'),
+  ].join('');
+
+  const filePath = path.join(outputDir, `extract_result_${ts}.js`);
+  fs.writeFileSync(filePath, content, 'utf8');
+  return filePath;
+}
+
 // ── メイン ────────────────────────────────────────────────────
 
 (function main() {
@@ -251,5 +279,9 @@ function generateOutput(sections) {
     process.exit(1);
   }
 
-  console.log(generateOutput(sections));
+  const output = generateOutput(sections);
+  console.log(output);
+
+  const savedPath = saveToFile(output);
+  console.error(`\n保存しました: ${savedPath}`);
 })();
