@@ -1,3 +1,3 @@
-idnumber,branchId_area_id,branchId_branch_id,name,nameFurigana,phone1Number,houjinTantosha,shareiMeisaiNo,primaryAddressPostalcode,primaryAddressState,primaryAddressCity,primaryAddressStreet,primaryAddressKana,description
-AC001,,,テスト法人A,テストホウジンエー,0311111111,担当者A,SH001,1000001,東京都,千代田区,千代田1-1,トウキョウトチヨダク,テスト登録A（自動テスト）
-AC002,,,テスト法人B,テストホウジンビー,0322222222,担当者B,SH002,1500001,東京都,渋谷区,渋谷1-1,トウキョウトシブヤク,テスト登録B（自動テスト）
+idnumber,branchId_area_id,branchId_branch_id,name,nameFurigana,phone1Number,houjinTantosha,primaryAddressPostalcode,primaryAddressStreet,primaryAddressKana,description
+AC001,,,テスト法人A,テストホウジンエー,0311111111,担当者A,1000001,千代田1-1,トウキョウトチヨダク,テスト登録A（自動テスト）
+AC002,,,テスト法人B,テストホウジンビー,0322222222,担当者B,1500001,渋谷1-1,トウキョウトシブヤク,テスト登録B（自動テスト）

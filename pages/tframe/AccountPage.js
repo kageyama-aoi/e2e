@@ -45,7 +45,6 @@ module.exports = {
       nameFurigana:   data.nameFurigana,
       phone1Number:   data.phone1Number,
       houjinTantosha: data.houjinTantosha,
-      shareiMeisaiNo: data.shareiMeisaiNo,
     });
     // ドロップダウンはAJAX連動があるため個別処理
     if (data.branchId_area_id) {
@@ -61,12 +60,15 @@ module.exports = {
    */
   fillAddressInfo(data) {
     I.say('【法人・団体登録】住所情報 を入力');
+    if (data.primaryAddressPostalcode) {
+      I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
+      I.click('#zipCodeBtn'); // 〒ボタンで都道府県・市区町村を自動入力
+      I.wait(1);
+    }
+    // 番地・住所カナは自動入力されないため個別入力
     fillTextFields(I, {
-      primaryAddressPostalcode: data.primaryAddressPostalcode,
-      primaryAddressState:      data.primaryAddressState,
-      primaryAddressCity:       data.primaryAddressCity,
-      primaryAddressStreet:     data.primaryAddressStreet,
-      primaryAddressKana:       data.primaryAddressKana,
+      primaryAddressStreet: data.primaryAddressStreet,
+      primaryAddressKana:   data.primaryAddressKana,
     });
   },
 
