@@ -174,7 +174,8 @@ AllureResultsDir=${runtimeAllureResultsDir}
     reportPage:    './pages/tframe/ReportPage.js',
     homePage:      './pages/tframe/HomePage.js',
     helpPage:      './pages/tframe/HelpPage.js',
-    accountPage:   './pages/tframe/AccountPage.js'
+    accountPage:   './pages/tframe/AccountPage.js',
+    staffPage:     './pages/tframe/StaffPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
