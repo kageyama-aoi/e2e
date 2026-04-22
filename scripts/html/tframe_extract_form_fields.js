@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * @fileoverview tframe 登録画面フォームフィールド抽出ツール
+ * @fileoverview tframe 専用 登録画面フォームフィールド抽出ツール
  *
  * ブラウザの DevTools でコピーした登録画面 HTML から
  * テストデータテンプレートと Page Object fillメソッドを自動生成する。
  *
  * 【使い方】
- *   node scripts/html/extract_form_fields.js            # input/input.html を読み込む（デフォルト）
- *   node scripts/html/extract_form_fields.js [file.html] # 任意のHTMLファイルを指定
+ *   node scripts/html/tframe_extract_form_fields.js            # input/input.html を読み込む（デフォルト）
+ *   node scripts/html/tframe_extract_form_fields.js [file.html] # 任意のHTMLファイルを指定
  *
  * 【手順】
  *   1. ブラウザ DevTools で登録画面の #rootWidget を右クリック → 「outerHTMLをコピー」
  *   2. scripts/html/input/input.html に貼り付けて保存
- *   3. node scripts/html/extract_form_fields.js を実行
+ *   3. node scripts/html/tframe_extract_form_fields.js を実行
  *   4. output/extract_result.js を開いてコピペ（実行のたびに上書き）
  *
  * 【サンプル】
