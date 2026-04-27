@@ -208,6 +208,35 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
     return results
 
 
+class _Tooltip:
+    """ウィジェットにホバーしたときにポップアップテキストを表示する。"""
+    def __init__(self, widget, textvariable):
+        self._widget = widget
+        self._var = textvariable
+        self._tip = None
+        widget.bind('<Enter>', self._show)
+        widget.bind('<Leave>', self._hide)
+
+    def _show(self, _event):
+        text = self._var.get()
+        if not text:
+            return
+        x = self._widget.winfo_rootx() + 4
+        y = self._widget.winfo_rooty() + self._widget.winfo_height() + 4
+        self._tip = tk.Toplevel(self._widget)
+        self._tip.wm_overrideredirect(True)
+        self._tip.wm_geometry(f'+{x}+{y}')
+        tk.Label(
+            self._tip, text=text, background='#ffffe0', relief='solid',
+            borderwidth=1, font=('Segoe UI', 8), justify='left', padx=6, pady=3,
+        ).pack()
+
+    def _hide(self, _event):
+        if self._tip:
+            self._tip.destroy()
+            self._tip = None
+
+
 class RunnerApp(tk.Tk):
     def __init__(self, repo_root):
         super().__init__()
@@ -302,31 +331,31 @@ class RunnerApp(tk.Tk):
             foreground='#4a9eff', wraplength=300, justify='left',
         ).grid(row=10, column=0, columnspan=2, sticky='w')
 
-        # Buttons
+        # Buttons（2列グリッド）
         btn_frame = ttk.Frame(left)
         btn_frame.grid(row=11, column=0, columnspan=2, sticky='ew', pady=(8, 0))
+        btn_frame.columnconfigure(0, weight=1)
+        btn_frame.columnconfigure(1, weight=1)
+
         debug_cb = ttk.Checkbutton(
             btn_frame, text='デバッグモード (--steps --debug)',
             variable=self.debug_var, command=self._update_cmd_display,
         )
-        debug_cb.pack(anchor='w', pady=(0, 4))
+        debug_cb.grid(row=0, column=0, columnspan=2, sticky='w', pady=(0, 4))
+
         self.run_btn = ttk.Button(btn_frame, text='Run Test', command=self._on_run)
-        self.run_btn.pack(fill=tk.X, pady=2)
+        self.run_btn.grid(row=1, column=0, sticky='ew', padx=(0, 2), pady=2)
         self.stop_btn = ttk.Button(btn_frame, text='Stop', command=self._on_stop)
-        self.stop_btn.pack(fill=tk.X, pady=2)
+        self.stop_btn.grid(row=1, column=1, sticky='ew', padx=(2, 0), pady=2)
         self.stop_btn.state(['disabled'])
-        self.save_btn = ttk.Button(btn_frame, text='Save Log', command=self._show_save_dialog)
-        self.save_btn.pack(fill=tk.X, pady=2)
+
         self.allure_btn = ttk.Button(btn_frame, text='Open Allure', command=self._on_open_allure)
-        self.allure_btn.pack(fill=tk.X, pady=2)
+        self.allure_btn.grid(row=2, column=0, sticky='ew', padx=(0, 2), pady=2)
         self.csv_btn = ttk.Button(btn_frame, text='Open CSV', command=self._on_open_csv)
-        self.csv_btn.pack(fill=tk.X, pady=2)
+        self.csv_btn.grid(row=2, column=1, sticky='ew', padx=(2, 0), pady=2)
         self.csv_btn.state(['disabled'])
         self.csv_hint_var = tk.StringVar(value='')
-        ttk.Label(
-            btn_frame, textvariable=self.csv_hint_var,
-            foreground='#888888', wraplength=280, justify='left', font=('Segoe UI', 8),
-        ).pack(anchor='w')
+        _Tooltip(self.csv_btn, self.csv_hint_var)
 
         # ---- 右ペイン ----
         right = ttk.Frame(body)
@@ -340,6 +369,7 @@ class RunnerApp(tk.Tk):
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log_text.configure(state='disabled')
         self._configure_log_tags()
+        self._bind_log_context_menu()
 
         ttk.Label(self, textvariable=self.status_var, anchor='w').pack(fill=tk.X, padx=8, pady=(0, 4))
 
@@ -473,12 +503,10 @@ class RunnerApp(tk.Tk):
         if running:
             self.run_btn.state(['disabled'])
             self.stop_btn.state(['!disabled'])
-            self.save_btn.state(['disabled'])
             self.status_var.set('Running...')
         else:
             self.run_btn.state(['!disabled'])
             self.stop_btn.state(['disabled'])
-            self.save_btn.state(['!disabled'])
             self.status_var.set('Ready')
 
     def _configure_log_tags(self):
@@ -592,6 +620,23 @@ class RunnerApp(tk.Tk):
         cmd = build_command(test, profile, grep or None, debug)
         self.thread = threading.Thread(target=self._run_process, args=(cmd, debug), daemon=True)
         self.thread.start()
+
+    def _bind_log_context_menu(self):
+        self._log_menu = tk.Menu(self, tearoff=0)
+        self._log_menu.add_command(label='Save Log...', command=self._show_save_dialog)
+        self._log_menu.add_command(label='Clear Log', command=self._clear_log)
+        self.log_text.bind('<Button-3>', self._show_log_context_menu)
+
+    def _show_log_context_menu(self, event):
+        try:
+            self._log_menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            self._log_menu.grab_release()
+
+    def _clear_log(self):
+        self.log_text.configure(state='normal')
+        self.log_text.delete('1.0', tk.END)
+        self.log_text.configure(state='disabled')
 
     def _on_open_allure(self):
         profile = self.profile_var.get().strip()
