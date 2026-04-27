@@ -1,3 +1,3 @@
 name,productCode,branchId_area_id,branchId_branch_id,productCategory,courseValid,courseCount,courseTime,name1,feeSubcategory1,amountNotax1,dueType1,dueDay1,targetMonth1,description
-テスト商品A,PROD001,,,,,,,,,,,,テスト登録A（自動テスト）
-テスト商品B,PROD002,,,,,,,,,,,,テスト登録B（自動テスト）
+テスト商品A,PROD001,,,,,,,月謝A,2,5000,1,25,1,テスト登録A（自動テスト）
+テスト商品B,PROD002,,,,,,,月謝B,2,6000,1,25,1,テスト登録B（自動テスト）

@@ -32,6 +32,6 @@ Data(csvData).Scenario('管理者ログイン後に調整金を新規登録で�
   chosekinPage.fillRegistrationForm(current);
   I.saveScreenshotWithTimestamp('chosekin_touroku_input', true);
 
-  await chosekinPage.submitAndVerifyRegistration(current.houshugaku);
+  await chosekinPage.submitAndVerifyRegistration('調整金詳細');
   I.saveScreenshotWithTimestamp('chosekin_touroku_saved', true);
 });

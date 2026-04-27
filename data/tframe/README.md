@@ -18,7 +18,7 @@
 | `tests/tframe/page/account_touroku_test.js` | `account_touroku_data.csv` | `account_touroku_data_minimum.csv` | フルのみ実装済み、minimum は未組込 |
 | `tests/tframe/page/staff_touroku_test.js` | `staff_touroku_data.csv` | `staff_touroku_data_minimum.csv` | フルのみ実装済み、minimum は未組込 |
 | `tests/tframe/page/shohin_touroku_test.js` | `shohin_touroku_data.csv` | — | 実装済み |
-| `tests/tframe/page/chosekin_touroku_test.js` | `chosekin_touroku_data.csv` | — | 実装済み。school_area_id / school_branch_id / shareiKomoku は環境依存のため CSV に実値を要設定 |
+| `tests/tframe/page/chosekin_touroku_test.js` | `chosekin_touroku_data.csv` | — | 実装済み。school_area_id / school_branch_id / shareiKomoku は環境依存のため CSV に実値を要設定。personId は空欄時にポップアップから先頭の講師を自動選択 |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 
