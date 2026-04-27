@@ -30,8 +30,8 @@ npm install
 
 **T-Frame**
 - `env/.env.tframe.juku_test`
-- `env/.env.tframe.juku_admin`
-- `env/.env.tframe.juku_student`
+- `env/.env.tframe.juku_beta`
+- `env/.env.tframe.culture_test`
 - `env/.env.tframe.culture_beta`
 
 **その他**
@@ -39,18 +39,23 @@ npm install
 
 ## テストの実行方法
 
-### 1. ランチャーファイルでの実行
+### 1. GUI ランチャーでの実行（推奨）
 
-ランチャーファイルは `run/` ディレクトリに配置されています。
+`run/run_gui.bat` をダブルクリックして起動します。
+
+| 機能 | 説明 |
+| :--- | :--- |
+| Product → Test → Profile の3段階選択 | 組み合わせミスを防ぐフィルタリング |
+| Grep フィルタ | テストファイルに含まれる `@タグ` を自動検出してドロップダウン表示 |
+| デバッグモード | `--steps --debug` + `KEEP_BROWSER_OPEN=1` でブラウザを開いたまま詳細ログ出力 |
+| Open Allure ボタン | 選択プロファイルの最新結果をブラウザで表示 |
+| ログ自動保存 | 実行完了時に `logs/` へ自動保存・色付き表示 |
+
+特殊な連続実行のみ個別バッチを使います：
 
 | ファイル | 内容 |
 | :--- | :--- |
-| `run/shimamura_run_syokai.bat` | しまむら 初回登録テスト |
-| `run/tframe_run_login.bat` | T-Frame ログインテスト |
-| `run/tframe_run_nav_all.bat` | T-Frame ナビゲーション全テスト（メニュー・アイコン一括） |
-| `run/tframe_run_lang_check.bat` | T-Frame 言語チェックテスト |
-| `run/tframe_run_dropdown_check.bat` | T-Frame プルダウン確認テスト |
-| `run/view_allure.bat` | Allure レポートをブラウザで表示（全プロファイル対応・動的スキャン） |
+| `run/tframe_run_nav_all.bat` | T-Frame 全ページテストを順番に連続実行・集計 |
 
 ### 2. コマンドラインでの実行
 
@@ -73,19 +78,19 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 
 | コマンド | 内容 |
 | :--- | :--- |
+| `npm run gui` | GUI ランチャー起動（推奨） |
 | `npm test` | 全テスト実行 |
 | `npm run test_s` | しまむら全テスト (`shimamura.testgcp`) |
 | `npm run test_t` | T-Frame 全テスト |
 | `npm run test_taskreport` | Task Report テスト |
-| `npm run test:shimamura:syokai` | しまむら 初回登録テストのみ |
-| `npm run test:shimamura:syokai:normal` | 初回登録テスト `@normal` タグのみ |
-| `npm run test:shimamura:syokai:error` | 初回登録テスト `@error` タグのみ |
 
 **Allure レポート**
 
 | コマンド | 内容 |
 | :--- | :--- |
-| `npm run allure:serve` | 最新結果をブラウザで表示 |
+| GUI の `Open Allure` ボタン | 選択プロファイルの最新結果をブラウザ表示（推奨） |
+| `npm run allure:latest <profile>` | プロファイル指定で最新結果をサーブ |
+| `npm run allure:serve` | allure-results 全体をサーブ |
 | `npm run allure:report` | 静的レポートを生成 (`allure-report/`) |
 | `npm run allure:open` | 生成済みレポートを開く |
 | `npm run allure:archive` | 古い結果をzipアーカイブ・削除（デフォルト30日以上） |
@@ -95,7 +100,7 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 
 | コマンド | 内容 |
 | :--- | :--- |
-| `npm run docs:shimamura` | JSDoc HTML生成 |
+| `npm run docs:jsdoc` | JSDoc HTML生成（`docs/generated/` に出力） |
 | `npm run docs:update-readme-map` | READMEのディレクトリツリーを更新 |
 
 ## 学習リソース (Learning Resources)
@@ -232,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-04-17 17:21:08
+Last updated: 2026-04-27 11:59:40
 
 ```text
 e2e/
@@ -240,6 +245,9 @@ e2e/
 │   ├── handoff/ 
 │   │   ├── 2026-04-07-0937.md
 │   │   ├── 2026-04-07-1313.md
+│   │   ├── 2026-04-07-1438.md
+│   │   ├── 2026-04-22-1738.md
+│   │   ├── 2026-04-23-1319.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -258,14 +266,12 @@ e2e/
 │   │   └── worker.md
 │   ├── commands/ 
 │   │   ├── handoff.md
-│   │   └── newplan.md
+│   │   ├── newplan.md
+│   │   └── placement-gate.md
 │   └── settings.local.json
 ├── .github/ 
 │   └── workflows/ 
 │       └── documentation_update.yaml
-├── .output/ 
-│   └── mermaid-tframe-and-more.md
-├── .references/ 
 ├── .spec/ 
 │   ├── KNOWLEDGE.md
 │   ├── PLAN.md
@@ -282,16 +288,14 @@ e2e/
 │   │   ├── syokai_touroku_validation_errors.csv
 │   │   └── taikai_testdata.csv
 │   └── tframe/ 
-│       ├── accountingSideMenu.js
-│       ├── calendarSideMenu.js
-│       ├── courseSideMenu.js
-│       ├── emailSideMenu.js
-│       ├── helpSideMenu.js
-│       ├── masterSideMenu.js
-│       ├── reportSideMenu.js
-│       ├── studentSideMenu.js
-│       ├── teacherPaymentReportParams.js
-│       └── teacherSideMenu.js
+│       ├── account_touroku_data.csv
+│       ├── account_touroku_data_minimum.csv
+│       ├── koshi_touroku_data.csv
+│       ├── koshi_touroku_data_minimum.csv
+│       ├── README.md
+│       ├── staff_touroku_data.csv
+│       ├── staff_touroku_data_minimum.csv
+│       └── teacherPaymentReportParams.js
 ├── env/ 
 │   ├── .env.shimamura.MySQL84_dev
 │   ├── .env.shimamura.smbcpos_training
@@ -301,65 +305,78 @@ e2e/
 │   ├── .env.shimamura.traininggcp
 │   ├── .env.taskreport
 │   ├── .env.tframe.culture_beta
-│   ├── .env.tframe.juku_admin
-│   ├── .env.tframe.juku_student
-│   └── .env.tframe.juku_test
+│   ├── .env.tframe.culture_test
+│   ├── .env.tframe.juku_beta
+│   ├── .env.tframe.juku_test
+│   └── .env.tframe.template
 ├── pages/ 
 │   ├── shimamura/ 
 │   │   ├── ClassMemberPage.js
-│   │   └── LoginPage.js
+│   │   ├── LoginPage.js
+│   │   └── SyokaiFlowPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 
+│       ├── _urlPath.js
+│       ├── accountingSideMenu.js
+│       ├── AccountPage.js
 │       ├── ApiCommonLoginPage.js
 │       ├── ApiTeacherInfoGetPage.js
 │       ├── CalendarPage.js
+│       ├── calendarSideMenu.js
 │       ├── CoursePage.js
+│       ├── courseSideMenu.js
 │       ├── EmailPage.js
+│       ├── emailSideMenu.js
 │       ├── HelpPage.js
+│       ├── helpSideMenu.js
 │       ├── HomePage.js
 │       ├── JsonInputPage.js
 │       ├── JukuseiPage.js
 │       ├── KeiryoMasterPage.js
 │       ├── KoshiPage.js
 │       ├── LoginKannrisyaPage.js
-│       ├── LoginMyPage.js
+│       ├── LoginMyPageStudentPage.js
+│       ├── LoginMyPageTeacherPage.js
 │       ├── MasterMenuPage.js
+│       ├── masterSideMenu.js
 │       ├── MenuNavigationMixin.js
-│       └── ReportPage.js
+│       ├── ReportPage.js
+│       ├── reportSideMenu.js
+│       ├── StaffPage.js
+│       ├── studentSideMenu.js
+│       └── teacherSideMenu.js
 ├── run/ 
 │   ├── ps/ 
-│   │   ├── shimamura_run_syokai.ps1
-│   │   ├── tframe_run_dropdown_check.ps1
-│   │   ├── tframe_run_lang_check.ps1
-│   │   ├── tframe_run_login.ps1
-│   │   ├── tframe_run_nav_all.ps1
-│   │   └── view_allure.ps1
-│   ├── shimamura_run_syokai.bat
-│   ├── shimamura_run_syokai_gui.bat
-│   ├── shimamura_run_syokai_gui.py
-│   ├── tframe_run_dropdown_check.bat
-│   ├── tframe_run_lang_check.bat
-│   ├── tframe_run_login.bat
-│   ├── tframe_run_nav_all.bat
-│   └── view_allure.bat
+│   │   └── tframe_run_nav_all.ps1
+│   ├── run_gui.bat
+│   ├── run_gui.py
+│   ├── test_descriptions.json
+│   └── tframe_run_nav_all.bat
 ├── scripts/ 
 │   ├── allure/ 
-│   │   └── archive_allure_results.py
+│   │   ├── archive_allure_results.py
+│   │   └── serve_latest.js
 │   ├── cleanup/ 
 │   │   └── cleanup_output_logs.py
 │   ├── html/ 
+│   │   ├── input/ 
+│   │   │   ├── input.html
+│   │   │   └── sample_teacher_registration.html
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py
-│   │   └── extract_submenus.py
+│   │   ├── extract_submenus.py
+│   │   └── tframe_extract_form_fields.js
 │   └── input/ 
 │       └── side_menu_extract/ 
 │           └── source.html
 ├── support/ 
 │   ├── shimamura/ 
 │   │   ├── constants.js
+│   │   ├── syokai_helpers.js
 │   │   └── utils.js
 │   ├── envLoader.js
+│   ├── repoRoot.js
 │   ├── steps_file.js
 │   └── utils.js
 ├── tests/ 
@@ -375,28 +392,37 @@ e2e/
 │   ├── taskreport/ 
 │   │   └── taskreport_sample_test.js
 │   └── tframe/ 
-│       ├── 96-60_teacher_payment_report_test.js
-│       ├── calendar_test.js
-│       ├── course_test.js
-│       ├── dropdown_check_test.js
-│       ├── email_test.js
-│       ├── get_personal_info_api_test.js
-│       ├── help_test.js
-│       ├── home_test.js
-│       ├── jukusei_test.js
-│       ├── keiryo_master_test.js
-│       ├── koshi_test.js
-│       ├── lang_check_test.js
-│       ├── login_test.js
-│       ├── master_menu_test.js
-│       ├── mypage_login_test.js
-│       ├── navigation_after_login_student_test.js
-│       ├── navigation_after_login_test.js
-│       ├── report_test.js
-│       └── token_usage_test.js
+│       ├── api/ 
+│       │   └── get_personal_info_api_test.js
+│       ├── auth/ 
+│       │   ├── login_test.js
+│       │   └── mypage_login_test.js
+│       ├── check/ 
+│       │   ├── dropdown_check_test.js
+│       │   ├── lang_check_test.js
+│       │   └── token_usage_test.js
+│       ├── flow/ 
+│       │   ├── 96-60_teacher_payment_report_test.js
+│       │   ├── navigation_after_login_student_test.js
+│       │   └── navigation_after_login_test.js
+│       └── page/ 
+│           ├── account_touroku_test.js
+│           ├── calendar_test.js
+│           ├── course_test.js
+│           ├── email_test.js
+│           ├── help_test.js
+│           ├── home_test.js
+│           ├── jukusei_test.js
+│           ├── keiryo_master_test.js
+│           ├── koshi_test.js
+│           ├── koshi_touroku_test.js
+│           ├── master_menu_test.js
+│           ├── report_test.js
+│           └── staff_touroku_test.js
 ├── .env
 ├── .gitignore
 ├── AGENTS.md
+├── CHANGELOG.md
 ├── CLAUDE.md
 ├── codecept.conf.js
 ├── GEMINI.md
@@ -405,7 +431,8 @@ e2e/
 ├── package-lock.json
 ├── package.json
 ├── README.md
-└── steps.d.ts
+├── steps.d.ts
+└── ショートかっと暗記.png
 ```
 <!-- TREE_END -->
 
@@ -466,5 +493,5 @@ npm run allure:archive
 
 ```bash
 # ドキュメントの生成（設定は jsdoc.json を参照）
-npm run docs:shimamura
+npm run docs:jsdoc
 ```

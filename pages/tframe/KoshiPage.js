@@ -188,7 +188,7 @@ module.exports = {
 
   /**
    * 講師登録フォームの全セクションを入力する
-   * @param {object} data - teacherRegisterData.generateTestTeacher() の戻り値
+   * @param {object} data - 講師登録フォームの入力データ
    */
   fillRegistrationForm(data) {
     this.fillPersonalInfo1(data);

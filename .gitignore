@@ -3,6 +3,7 @@ output/
 .output/
 allure-results/
 allure-report/
+docs/generated/
 scripts/__pycache__/
 
 # Environment variables
