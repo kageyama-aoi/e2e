@@ -1,0 +1,3 @@
+name,feeSubcategory,gesshaKubun,amountNotax,dueType,dueDay,description
+テスト_月謝A_自動,2,1,10000,1,20,自動テスト登録A（受講料月謝）
+テスト_入会金B_自動,1,0,5000,1,20,自動テスト登録B（入会金）
