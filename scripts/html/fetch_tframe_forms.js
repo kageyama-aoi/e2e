@@ -31,9 +31,11 @@ const INPUT_DIR = path.join(__dirname, 'input');
 fs.mkdirSync(INPUT_DIR, { recursive: true });
 
 // ── 取得対象 ──────────────────────────────────────────────────
+// directUrl を指定するとリンク検索をスキップして直接アクセスする
 const TARGETS = [
   { name: 'shohin_touroku',    hint: '商品登録' },
   { name: 'chosekin_touroku',  hint: '調整金登録' },
+  { name: 'course_touroku',    hint: 'コース登録', directUrl: `${BASE_URL}index.php?r=course%2Few%2F_default` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────
@@ -121,15 +123,19 @@ async function getFormHtml(page, url) {
     // ターゲットページのHTML取得
     for (const target of TARGETS) {
       console.log(`\n▶ ${target.hint} を検索中...`);
-      const found = links.find(l =>
-        l.text === target.hint || l.text.includes(target.hint)
-      );
-      if (!found) {
-        console.warn(`  ⚠ "${target.hint}" のリンクが見つかりません。`);
-        continue;
+      let targetUrl = target.directUrl;
+      if (!targetUrl) {
+        const found = links.find(l =>
+          l.text === target.hint || l.text.includes(target.hint)
+        );
+        if (!found) {
+          console.warn(`  ⚠ "${target.hint}" のリンクが見つかりません。`);
+          continue;
+        }
+        targetUrl = found.href;
       }
-      console.log(`  URL: ${found.href}`);
-      const html = await getFormHtml(page, found.href);
+      console.log(`  URL: ${targetUrl}`);
+      const html = await getFormHtml(page, targetUrl);
       const outFile = path.join(INPUT_DIR, `${target.name}.html`);
       fs.writeFileSync(outFile, html, 'utf8');
       console.log(`  ✓ 保存: ${outFile} (${Math.round(html.length / 1024)} KB)`);

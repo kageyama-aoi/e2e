@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
@@ -145,6 +146,73 @@ module.exports = {
    */
   isEnglish() {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+  },
+
+  /**
+   * コース登録画面へ遷移する
+   */
+  navigateToRegisterPage() {
+    I.say('【コース登録】登録画面へ遷移');
+    if (process.env.USE_MENU_NAV === 'true') {
+      const courseText = this.isEnglish() ? 'Course' : 'コース';
+      I.click('a:has-text("' + courseText + '")');
+      I.waitForElement('a[href*="course%2Few"]', 10);
+      I.click('a[href*="course%2Few"]');
+    } else {
+      I.amOnPage(process.env.BASE_URL + 'index.php?r=course%2Few%2F_default');
+    }
+    I.waitForElement('#ewSaveButton', 10);
+  },
+
+  /**
+   * 登録フォームの全セクションを入力する
+   * @param {object} data - course_touroku_data.csv の1行分
+   */
+  fillRegistrationForm(data) {
+    this.fillCourseBasicInfo(data);
+    this.fillMemoInfo(data);
+  },
+
+  /**
+   * 基本情報を入力する（コース名・校舎・略称・カテゴリ・年度等）
+   * @param {object} data
+   */
+  fillCourseBasicInfo(data) {
+    I.say('【コース登録】基本情報 を入力');
+    fillTextFields(I, {
+      name:      data.name,
+      shortname: data.shortname,
+    });
+    if (data.school_area_id) {
+      I.selectOption('#school_area_id', data.school_area_id);
+      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
+    }
+    if (data.school_branch_id)     I.selectOption('#school_branch_id', data.school_branch_id);
+    if (data.calendarColorSetting) I.selectOption('#calendarColorSetting', data.calendarColorSetting);
+    if (data.subtype)              I.selectOption('#subtype', data.subtype);
+    if (data.courseCategory)       I.selectOption('#courseCategory', data.courseCategory);
+    if (data.nendoYear)            I.selectOption('#nendoYear', data.nendoYear);
+    if (data.gesshaEndYear)        I.selectOption('#gesshaEndYear', data.gesshaEndYear);
+    if (data.gesshaEndMonth)       I.selectOption('#gesshaEndMonth', data.gesshaEndMonth);
+  },
+
+  /**
+   * メモ情報を入力する
+   * @param {object} data
+   */
+  fillMemoInfo(data) {
+    if (!data.description) return;
+    I.say('【コース登録】メモ情報 を入力');
+    fillTextFields(I, { description: data.description });
+  },
+
+  /**
+   * 保存してコース名が表示されることを確認する
+   * @param {string} expectedName - 保存後の確認に使用するコース名
+   */
+  async submitAndVerifyRegistration(expectedName) {
+    I.say('【コース登録】保存ボタンをクリック');
+    await submitTframeFormAndVerify(I, expectedName);
   },
 
   ...createMenuNavigationMixin('tframe_course'),
