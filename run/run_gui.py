@@ -138,6 +138,7 @@ def find_csvs_for_test(repo_root, test_path, product):
     """テストファイルに対応する CSV ファイルのパス一覧を返す。
 
     命名規則: tests/{product}/**/{stem}_test.js → data/{product}/{stem}_data*.csv
+              または data/{product}/{stem}_*_data*.csv（一覧検索系など）
     """
     basename = os.path.basename(test_path)
     if not basename.endswith('_test.js'):
@@ -146,11 +147,11 @@ def find_csvs_for_test(repo_root, test_path, product):
     data_dir = os.path.join(repo_root, 'data', product)
     if not os.path.isdir(data_dir):
         return []
-    prefix = stem + '_data'
+    prefix = stem + '_'
     return sorted(
         os.path.join(data_dir, f)
         for f in os.listdir(data_dir)
-        if f.startswith(prefix) and f.endswith('.csv')
+        if f.startswith(prefix) and f.endswith('.csv') and '_data' in f
     )
 
 
