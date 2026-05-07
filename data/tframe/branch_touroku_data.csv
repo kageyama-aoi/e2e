@@ -1,0 +1,3 @@
+schoolName,area_area_id,schoolCode,schoolPhoneNumber,primaryAddressPostalcode,primaryAddressStreet,primaryAddressKana,description
+テスト_校舎A_自動,a2,TEST-A,0312345678,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録A
+テスト_校舎B_自動,a2,TEST-B,0612345678,5300001,梅田1-1,オオサカフオオサカシキタク,自動テスト登録B

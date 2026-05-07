@@ -39,6 +39,7 @@ const TARGETS = [
   { name: 'jukusei_touroku',  hint: '受講生登録',  directUrl: `${BASE_URL}index.php?r=student%2Few%2F_default` },
   { name: 'kyoshitsu_touroku',    hint: '教室登録',      directUrl: `${BASE_URL}index.php?r=classroom%2Few%2F_default` },
   { name: 'ryokin_master_touroku', hint: '料金マスタ作成', directUrl: `${BASE_URL}index.php?r=smsFeeMaster%2Few%2F_default` },
+  { name: 'branch_touroku',       hint: '校舎登録',      directUrl: `${BASE_URL}index.php?r=branch%2Few%2F_default` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────
