@@ -21,8 +21,9 @@
 - `npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
 
 ### Allure レポート
-- `run/view_allure.bat` ブラウザでレポート表示（対話式・推奨）。
-- `npm run allure:serve` allure-results をそのままサーブ。
+- `run/run_gui.py` → `Open Allure` ボタン（推奨）。選択中プロファイルの最新結果を自動検出してブラウザ表示。
+- `npm run allure:latest` プロファイル指定で最新結果をサーブ（`node scripts/allure/serve_latest.js <profile>`）。
+- `npm run allure:serve` allure-results 全体をサーブ。
 - `npm run allure:report` レポート生成（allure-report/ に出力）。
 - `npm run allure:open` 生成済みレポートを開く。
 - `npm run allure:clean` allure-results をクリア。
@@ -32,6 +33,78 @@
 - `npm run docs:jsdoc` JSDoc 生成（tests/ pages/ support/ 全対象）。
 - `npm run docs:update-readme-map` README のディレクトリツリーを自動更新。
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
+
+## ディレクトリ配置ルール
+
+### 各ディレクトリの「置いてよいもの／置いてはいけないもの」
+
+| ディレクトリ | 置いてよいもの | 置いてはいけないもの |
+|---|---|---|
+| `tests/` | テストシナリオ（`*_test.js`）のみ | Page Object、ユーティリティ、データ |
+| `pages/` | Page Object、メニュー定義（`*SideMenu.js`）、URL解決ヘルパー（`_urlPath.js`） | テスト入力データ、汎用ユーティリティ |
+| `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
+| `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
+| `scripts/` | 単体で起動する補助ツール（Python・Node） | テスト実行中に `require()` されるJS |
+| `run/` | ユーザーが直接起動するランチャー（`.bat` / `.py`） | テストロジック、Page Object |
+
+### 新ファイル作成時のルール（必須）
+
+新しいファイルを作る前に、以下を**必ず宣言してから**作成すること：
+
+1. **性質の分類**：テスト入力データ / アプリ構造定義 / ランタイムユーティリティ / 補助ツール / ランチャー
+2. **配置先とその理由**：「〇〇は△△の性質を持つため `pages/` に置く」
+3. **既存カテゴリに当てはまらない場合**：勝手に判断せず、ユーザーに確認してから配置先を決める
+
+### 新概念が生まれたときのフロー
+
+```
+新しいファイルの種類が出現
+    ↓
+「これは何者か？」を一言で言語化する
+    ↓
+既存カテゴリに当てはまる？
+  Yes → そのディレクトリに配置・実装
+  No  → AGENTS.md に配置ルールを追記してから実装（実装より先にルール化）
+    ↓
+実装後：配置ルールを変更・追記した場合は AGENTS.md の更新をコミットに含める
+```
+
+> `/placement-gate` スキルを使うと、上記フローを対話形式で実行できる。
+
+### ファイル移動時のプロトコル（必須）
+
+ファイルを別ディレクトリに移動したら、以下を**必ず確認**すること：
+
+1. **旧パスへの参照を grep で確認**
+   ```bash
+   # 例：data/tframe/teacherSideMenu を移動した場合
+   grep -r "data/tframe/teacherSideMenu" --include="*.js" .
+   ```
+   結果がゼロになるまで require パスを修正する。
+
+2. **ドキュメントの記述を更新**（下記「ドキュメント連動ルール」参照）
+
+3. **リポジトリルート取得パスの見直し**（`run/` や `scripts/` 内の `.py` / `.ps1` を移動した場合）
+
+### ドキュメント連動ルール
+
+変更内容に応じて、以下のドキュメントを**セットで更新**すること：
+
+| 変更内容 | 更新が必要なドキュメント |
+|---|---|
+| ディレクトリ構成の変更（追加・削除・移動） | `README.md`（`npm run docs:update-readme-map` で自動更新）、`docs/guides/project_architecture_guide.md` |
+| `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
+| 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
+| 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
+
+### 利用可能なスキル一覧
+
+| スキル | 用途 |
+|---|---|
+| `/placement-gate` | 新ファイル作成前に性質を分類し、配置先を確定するゲート |
+| `/tframe-registration-dev` | tframe 登録テストの新規作成・修正手順 |
+| `/handoff` | セッション終了時のハンドオフ文書作成 |
+| `/newplan` | 新しい開発サイクルの開始（`.spec/` のアーカイブ＆新規作成） |
 
 ## コーディング規約・命名
 - JavaScript は既存のスタイルに合わせる（強制フォーマッタなし）。
@@ -56,6 +129,29 @@
 | `flow/` | 複数画面をまたぐ遷移・シナリオ | navigation_after_login_test |
 | `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
 | `api/` | API系 | get_personal_info_api_test |
+
+### tframe 画面名 ↔ ファイル名 対照表
+
+特定画面のコードを探すときに使う。`Feature('教室一覧')` で grep しても見つかる。
+
+| 画面名（日本語） | テスト/CSV prefix | Page Object | URL module | 備考 |
+|---|---|---|---|---|
+| 受講生 | `jukusei_` | `JukuseiPage.js` | `student` | |
+| 講師 | `koshi_` | `KoshiPage.js` | `teacher` | |
+| コース | `course_` | `CoursePage.js` | `course` | |
+| アカウント（法人） | `account_` | `AccountPage.js` | `account` | |
+| スタッフ | `staff_` | `StaffPage.js` | `staff` | |
+| 教室 | `kyoshitsu_` | `ClassroomPage.js` | `classroom` | prefix と PO 名が不一致 |
+| 校舎 | `branch_` | `BranchPage.js` | `branch` | |
+| 商品 | `shohin_` | `ShohinPage.js` | `product` | |
+| 調整金（講師謝礼） | `chosekin_` | `ChosekinPage.js` | `shareiDetail` | |
+| 料金マスタ | `ryokin_master_` | `RyokinMasterPage.js` | `smsFeeMaster` | juku_test のみ |
+| 料金パッケージ | `ryokin_package_` | `RyokinPackagePage.js` | `smsFeeMasterPackage` | juku_test のみ |
+
+**ファイルの探し方（3点セット）**
+1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
+2. Page Object: `pages/tframe/{PageObject}` — テストファイルの inject 変数名からも辿れる
+3. CSV: `data/tframe/{prefix}touroku_data.csv` / `{prefix}ichiran_search_data.csv`
 
 ### tframe 登録テストの共通パターン
 新規登録テストを作るときは `pages/tframe/KoshiPage.js`（Page Object）と `tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
@@ -87,27 +183,44 @@
 
 ### run/（テスト実行ランチャー）
 - ユーザーが直接起動するファイル（.bat / .py GUI）を置く。
-- ロジックは `run/ps/*.ps1` に書き、.bat は1行 launcher にする。
-  ```bat
-  @echo off
-  powershell -ExecutionPolicy Bypass -NoProfile -File "%~dp0ps\xxx.ps1" %*
-  ```
-- .ps1 内のリポジトリルート取得: `Split-Path (Split-Path $PSScriptRoot -Parent) -Parent`
+- **主要ランチャーは `run/run_gui.py`（GUI）**。Product → Test → Profile の3段階選択でテストを実行できる。
+  - `--grep` フィルタ（タグ絞り込み）、`Open Allure`（レポート表示）も内蔵。
+  - 起動: `run/run_gui.bat` をダブルクリック。
+- 特殊な実行フロー（バッチ連続実行など）は `.bat` + `run/ps/*.ps1` で追加する。
+  - .bat は1行 launcher:
+    ```bat
+    @echo off
+    powershell -ExecutionPolicy Bypass -NoProfile -File "%~dp0ps\xxx.ps1" %*
+    ```
+  - .ps1 内のリポジトリルート取得: `Split-Path (Split-Path $PSScriptRoot -Parent) -Parent`
 - .py 内のリポジトリルート取得: `os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))`
 - **ファイルを別ディレクトリに移動したときは、必ずリポジトリルートの取得パスを見直すこと。**
-  `__file__` や `$PSScriptRoot` はファイルの現在地を基準にするため、移動すると壊れる。
-- 命名: `{product}_run_{機能}.bat`（例: `tframe_run_login.bat`, `shimamura_run_syokai.bat`）
-- 汎用ツール（特定プロダクトに依存しないもの）は product prefix なし（例: `view_allure.bat`）
-- テストを GUI で起動するスクリプトも run/ に置く（例: `shimamura_run_syokai_gui.py`）
+- 命名: `{product}_run_{機能}.bat`（例: `tframe_run_nav_all.bat`）
+- 汎用ツール（特定プロダクトに依存しないもの）は product prefix なし。
 
 ### scripts/（テスト支援ツール）
+> **⚠️ `support/` との混同注意**
+> `support/` はテスト実行中に CodeceptJS が `require()` する JS ファイル（runtime）。
+> `scripts/` はテストとは独立して単体で起動する補助ツール（Python・Node スクリプト）。
+> 「JS でテスト中に使うものは `support/`、単体で動かすツールは `scripts/`」と覚えること。
+
 - テストを直接実行しない補助スクリプトを置く。
 - サブフォルダはカテゴリで分ける:
   - `allure/`   : Allure 結果の管理・アーカイブ
   - `cleanup/`  : output/ と logs/ の古いファイル削除・アーカイブ
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
+  - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ等）
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。
+
+## パス解決のルール（JS テストファイル）
+- `tests/` 配下のファイルでリポジトリルート基準のパスを扱う場合は `support/repoRoot.js` を使うこと。
+  ```js
+  const repoRoot = require('../../../support/repoRoot'); // ..の数はファイルの深さに応じて調整
+  const dir = path.join(repoRoot, config.output);
+  ```
+- `__dirname` + 手動の `'..'` カウントはファイル移動時に壊れるため禁止。
+- `support/` 直下のファイルは `path.resolve(__dirname, '..')` が repo root と等しいので直接使ってよい。
 
 ## 環境・設定の注意点
 - `--profile <name>` でプロファイル指定。`env/.env.<profile>` を用意。
