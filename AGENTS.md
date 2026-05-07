@@ -96,6 +96,7 @@
 | `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
+| `tests/tframe/` に新テストファイルを追加 | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須） |
 
 ### 利用可能なスキル一覧
 
