@@ -177,7 +177,8 @@ AllureResultsDir=${runtimeAllureResultsDir}
     accountPage:   './pages/tframe/AccountPage.js',
     staffPage:     './pages/tframe/StaffPage.js',
     shohinPage:    './pages/tframe/ShohinPage.js',
-    chosekinPage:  './pages/tframe/ChosekinPage.js'
+    chosekinPage:   './pages/tframe/ChosekinPage.js',
+    classroomPage:  './pages/tframe/ClassroomPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定

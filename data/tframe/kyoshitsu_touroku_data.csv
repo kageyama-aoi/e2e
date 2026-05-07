@@ -1,0 +1,3 @@
+name,school_area_id,school_branch_id,shortname,capacity,description
+テスト_教室A_自動,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,テストA,20,自動テスト登録A
+テスト_教室B_自動,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,テストB,10,自動テスト登録B
