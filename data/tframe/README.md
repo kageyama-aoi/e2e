@@ -19,6 +19,19 @@
 | `tests/tframe/page/staff_touroku_test.js` | `staff_touroku_data.csv` | `staff_touroku_data_minimum.csv` | フルのみ実装済み、minimum は未組込 |
 | `tests/tframe/page/shohin_touroku_test.js` | `shohin_touroku_data.csv` | — | 実装済み |
 | `tests/tframe/page/chosekin_touroku_test.js` | `chosekin_touroku_data.csv` | — | 実装済み。school_area_id / school_branch_id / shareiKomoku は環境依存のため CSV に実値を要設定。personId は空欄時にポップアップから先頭の講師を自動選択 |
+| `tests/tframe/page/course_touroku_test.js` | `course_touroku_data.csv` | — | 実装済み |
+| `tests/tframe/page/jukusei_touroku_test.js` | `jukusei_touroku_data.csv` | — | 実装済み |
+| `tests/tframe/page/kyoshitsu_touroku_test.js` | `kyoshitsu_touroku_data.csv` | — | 実装済み |
+| `tests/tframe/page/ryokin_master_touroku_test.js` | `ryokin_master_touroku_data.csv` | — | 実装済み（juku_test のみ） |
+| `tests/tframe/page/branch_touroku_test.js` | `branch_touroku_data.csv` | — | 実装済み |
+| `tests/tframe/page/ryokin_package_touroku_test.js` | `ryokin_package_touroku_data.csv` | — | 実装済み（juku_test のみ） |
+
+## 一覧検索テスト — CSV対応表
+
+| テストファイル | CSV | 説明 |
+|---|---|---|
+| `tests/tframe/page/jukusei_ichiran_test.js` | `jukusei_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/course_ichiran_test.js` | `course_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→特定レコード確認 |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 

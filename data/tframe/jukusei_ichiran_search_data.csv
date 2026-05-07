@@ -1,0 +1,3 @@
+scenario,lastName,firstName,idnumber,personStatus,school_area_id,school_branch_id,expectedName
+空条件検索,,,,,,,
+姓で検索,テスト,,,,,,テスト
