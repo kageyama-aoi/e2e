@@ -1,0 +1,3 @@
+lastName,firstName,lastNameFurigana,firstNameFurigana,phone1Number,gender,birthdateYear,birthdateMonth,birthdateDay,email1,idnumber,personStatus,school_area_id,school_branch_id,enrollDate,primaryAddressPostalcode,primaryAddressStreet,primaryAddressKana,description
+テスト,受講生A,てすと,じゅこうせいA,09011111111,female,2010,04,01,test.student.a@example.com,JSA001,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026/05/01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録A
+テスト,受講生B,てすと,じゅこうせいB,09022222222,male,2012,08,15,test.student.b@example.com,JSB002,1,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026/05/01,1500001,渋谷1-1,トウキョウトシブヤク,自動テスト登録B

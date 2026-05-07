@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
 
 module.exports = {
   /** 受講生アイコンのセレクタ（日英） */
@@ -166,6 +167,109 @@ module.exports = {
    */
   isEnglish() {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+  },
+
+  /**
+   * 受講生登録画面へ遷移する
+   */
+  navigateToRegisterPage() {
+    I.say('【受講生登録】登録画面へ遷移');
+    if (process.env.USE_MENU_NAV === 'true') {
+      const studentText = this.isEnglish() ? 'Student' : '受講生';
+      I.click('a:has-text("' + studentText + '")');
+      I.waitForElement('a[href*="student%2Few%2F_default"]', 10);
+      I.click('a[href*="student%2Few%2F_default"]');
+    } else {
+      I.amOnPage(process.env.BASE_URL + 'index.php?r=student%2Few%2F_default');
+    }
+    I.waitForElement('#ewSaveButton', 10);
+  },
+
+  /**
+   * 登録フォームの全セクションを入力する
+   * @param {object} data - jukusei_touroku_data.csv の1行分
+   */
+  fillRegistrationForm(data) {
+    this.fillPersonalInfo1(data);
+    this.fillPersonalInfo2(data);
+    this.fillAddressInfo(data);
+    this.fillMemoInfo(data);
+  },
+
+  /**
+   * 個人情報1を入力する（姓・名・ふりがな・電話・性別・生年月日・メール）
+   * @param {object} data
+   */
+  fillPersonalInfo1(data) {
+    I.say('【受講生登録】個人情報1 を入力');
+    fillTextFields(I, {
+      lastName:          data.lastName,
+      firstName:         data.firstName,
+      lastNameFurigana:  data.lastNameFurigana,
+      firstNameFurigana: data.firstNameFurigana,
+      phone1Number:      data.phone1Number,
+      email1:            data.email1,
+    });
+    if (data.gender)         I.selectOption('#gender', data.gender);
+    if (data.birthdateYear)  I.selectOption('#birthdateYear', data.birthdateYear);
+    if (data.birthdateMonth) I.selectOption('#birthdateMonth', data.birthdateMonth);
+    if (data.birthdateDay)   I.selectOption('#birthdateDay', data.birthdateDay);
+  },
+
+  /**
+   * 個人情報2を入力する（ID番号・ステイタス・校舎・入学日など）
+   * @param {object} data
+   */
+  fillPersonalInfo2(data) {
+    I.say('【受講生登録】個人情報2 を入力');
+    fillTextFields(I, {
+      idnumber:    data.idnumber,
+      enrollDate:  data.enrollDate,
+    });
+    if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
+    if (data.school_area_id) {
+      I.selectOption('#school_area_id', data.school_area_id);
+      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
+    }
+    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    if (data.grade)            I.selectOption('#grade', data.grade);
+  },
+
+  /**
+   * 住所情報を入力する（郵便番号ボタンで都道府県・市区町村を自動入力）
+   * @param {object} data
+   */
+  fillAddressInfo(data) {
+    if (!data.primaryAddressPostalcode && !data.primaryAddressStreet) return;
+    I.say('【受講生登録】住所情報 を入力');
+    if (data.primaryAddressPostalcode) {
+      I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
+      I.click('#zipCodeBtn');
+      I.wait(1); // AJAX: 郵便番号から都道府県・市区町村を自動入力
+    }
+    fillTextFields(I, {
+      primaryAddressStreet: data.primaryAddressStreet,
+      primaryAddressKana:   data.primaryAddressKana,
+    });
+  },
+
+  /**
+   * メモ情報を入力する
+   * @param {object} data
+   */
+  fillMemoInfo(data) {
+    if (!data.description) return;
+    I.say('【受講生登録】メモ情報 を入力');
+    fillTextFields(I, { description: data.description });
+  },
+
+  /**
+   * 保存して受講生名が表示されることを確認する
+   * @param {string} expectedName - 保存後の確認に使用する受講生の姓
+   */
+  async submitAndVerifyRegistration(expectedName) {
+    I.say('【受講生登録】保存ボタンをクリック');
+    await submitTframeFormAndVerify(I, expectedName);
   },
 
   ...createMenuNavigationMixin('tframe_student'),

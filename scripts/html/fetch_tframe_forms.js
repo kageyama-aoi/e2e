@@ -35,7 +35,8 @@ fs.mkdirSync(INPUT_DIR, { recursive: true });
 const TARGETS = [
   { name: 'shohin_touroku',    hint: '商品登録' },
   { name: 'chosekin_touroku',  hint: '調整金登録' },
-  { name: 'course_touroku',    hint: 'コース登録', directUrl: `${BASE_URL}index.php?r=course%2Few%2F_default` },
+  { name: 'course_touroku',    hint: 'コース登録',  directUrl: `${BASE_URL}index.php?r=course%2Few%2F_default` },
+  { name: 'jukusei_touroku',  hint: '受講生登録', directUrl: `${BASE_URL}index.php?r=student%2Few%2F_default` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────
