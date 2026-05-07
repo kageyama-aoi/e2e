@@ -1,0 +1,3 @@
+scenario,keijouMonthYear,keijouMonthMonth,expectedName
+空条件検索,,,
+年度で検索,2026,,

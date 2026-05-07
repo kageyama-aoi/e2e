@@ -90,4 +90,53 @@ module.exports = {
     I.say('【法人・団体登録】保存ボタンをクリック');
     await submitTframeFormAndVerify(I, expectedName);
   },
+
+  // ----------------------------------------------------------------
+  //  アカウント一覧（SW）
+  // ----------------------------------------------------------------
+
+  /**
+   * アカウント一覧画面へ遷移する
+   */
+  navigateToListPage() {
+    I.say('【アカウント一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=account%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - account_ichiran_search_data.csv の1行分
+   */
+  fillSearchConditions(data) {
+    I.say('【アカウント一覧】検索条件を入力');
+    if (data.name)     I.fillField('#name', data.name);
+    if (data.idnumber) I.fillField('#idnumber', data.idnumber);
+  },
+
+  /**
+   * 検索ボタンをクリックし、結果行が表示されるまで待つ
+   */
+  clickSearchAndWait() {
+    I.say('【アカウント一覧】検索ボタンをクリック');
+    I.click('#swSearchButton');
+    I.waitForElement('.tf-group-body-search-result tr', 15);
+  },
+
+  /**
+   * 検索結果エリアに1件以上の行があることを確認する
+   */
+  verifyResultsExist() {
+    I.say('【アカウント一覧】検索結果が表示されることを確認');
+    I.seeElement('.tf-group-body-search-result tr');
+  },
+
+  /**
+   * 検索結果エリアに指定テキストが表示されることを確認する
+   * @param {string} expectedName - 結果一覧に表示されるべき文字列
+   */
+  verifyRecordInResults(expectedName) {
+    I.say(`【アカウント一覧】"${expectedName}" が結果に表示されることを確認`);
+    I.see(expectedName, '.tf-group-body-search-result');
+  },
 };

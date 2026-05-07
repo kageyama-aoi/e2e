@@ -74,4 +74,60 @@ module.exports = {
     I.say('【調整金登録】保存ボタンをクリック');
     await submitTframeFormAndVerify(I, expectedValue);
   },
+
+  // ----------------------------------------------------------------
+  //  調整金一覧（SW）
+  // ----------------------------------------------------------------
+
+  /**
+   * 調整金一覧画面へ遷移する
+   */
+  navigateToListPage() {
+    I.say('【調整金一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=shareiDetail%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - chosekin_ichiran_search_data.csv の1行分
+   */
+  fillSearchConditions(data) {
+    I.say('【調整金一覧】検索条件を入力');
+    if (data.keijouMonthYear)  I.selectOption('#keijouMonthYear', data.keijouMonthYear);
+    if (data.keijouMonthMonth) I.selectOption('#keijouMonthMonth', data.keijouMonthMonth);
+    if (data.school_area_id) {
+      I.selectOption('#school_area_id', data.school_area_id);
+      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
+    }
+    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    if (data.rewardItem) I.selectOption('#rewardItem', data.rewardItem);
+    if (data.calType)    I.selectOption('#calType', data.calType);
+  },
+
+  /**
+   * 検索ボタンをクリックし、結果行が表示されるまで待つ
+   */
+  clickSearchAndWait() {
+    I.say('【調整金一覧】検索ボタンをクリック');
+    I.click('#swSearchButton');
+    I.waitForElement('.tf-group-body-search-result tr', 15);
+  },
+
+  /**
+   * 検索結果エリアに1件以上の行があることを確認する
+   */
+  verifyResultsExist() {
+    I.say('【調整金一覧】検索結果が表示されることを確認');
+    I.seeElement('.tf-group-body-search-result tr');
+  },
+
+  /**
+   * 検索結果エリアに指定テキストが表示されることを確認する
+   * @param {string} expectedName - 結果一覧に表示されるべき文字列
+   */
+  verifyRecordInResults(expectedName) {
+    I.say(`【調整金一覧】"${expectedName}" が結果に表示されることを確認`);
+    I.see(expectedName, '.tf-group-body-search-result');
+  },
 };

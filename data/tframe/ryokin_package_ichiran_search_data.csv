@@ -1,0 +1,3 @@
+scenario,name,expectedName
+空条件検索,,
+名前で検索,テスト_パッケージA_自動,テスト_パッケージA_自動

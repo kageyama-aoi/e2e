@@ -33,13 +33,25 @@ fs.mkdirSync(INPUT_DIR, { recursive: true });
 // ── 取得対象 ──────────────────────────────────────────────────
 // directUrl を指定するとリンク検索をスキップして直接アクセスする
 const TARGETS = [
+  // ── 登録画面（EW）──
   { name: 'shohin_touroku',    hint: '商品登録' },
   { name: 'chosekin_touroku',  hint: '調整金登録' },
-  { name: 'course_touroku',    hint: 'コース登録',  directUrl: `${BASE_URL}index.php?r=course%2Few%2F_default` },
-  { name: 'jukusei_touroku',  hint: '受講生登録',  directUrl: `${BASE_URL}index.php?r=student%2Few%2F_default` },
-  { name: 'kyoshitsu_touroku',    hint: '教室登録',      directUrl: `${BASE_URL}index.php?r=classroom%2Few%2F_default` },
+  { name: 'course_touroku',    hint: 'コース登録',   directUrl: `${BASE_URL}index.php?r=course%2Few%2F_default` },
+  { name: 'jukusei_touroku',   hint: '受講生登録',   directUrl: `${BASE_URL}index.php?r=student%2Few%2F_default` },
+  { name: 'kyoshitsu_touroku', hint: '教室登録',     directUrl: `${BASE_URL}index.php?r=classroom%2Few%2F_default` },
   { name: 'ryokin_master_touroku', hint: '料金マスタ作成', directUrl: `${BASE_URL}index.php?r=smsFeeMaster%2Few%2F_default` },
-  { name: 'branch_touroku',       hint: '校舎登録',      directUrl: `${BASE_URL}index.php?r=branch%2Few%2F_default` },
+  { name: 'branch_touroku',    hint: '校舎登録',     directUrl: `${BASE_URL}index.php?r=branch%2Few%2F_default` },
+
+  // ── 一覧画面（SW）──
+  { name: 'teacher_list',      hint: '講師一覧',     directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2F_default` },
+  { name: 'shohin_list',       hint: '商品一覧',     directUrl: `${BASE_URL}index.php?r=product%2Fsw%2F_default` },
+  { name: 'chosekin_list',     hint: '調整金一覧',   directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2F_default` },
+  { name: 'account_list',      hint: 'アカウント一覧', directUrl: `${BASE_URL}index.php?r=account%2Fsw%2F_default` },
+  { name: 'staff_list',        hint: 'スタッフ一覧', directUrl: `${BASE_URL}index.php?r=staff%2Fsw%2F_default` },
+  { name: 'kyoshitsu_list',    hint: '教室一覧',     directUrl: `${BASE_URL}index.php?r=classroom%2Fsw%2F_default` },
+  { name: 'branch_list',       hint: '校舎一覧',     directUrl: `${BASE_URL}index.php?r=branch%2Fsw%2F_default` },
+  { name: 'ryokin_master_list',  hint: '料金マスタ一覧',   directUrl: `${BASE_URL}index.php?r=smsFeeMaster%2Fsw%2F_default` },
+  { name: 'ryokin_package_list', hint: '料金パッケージ一覧', directUrl: `${BASE_URL}index.php?r=smsFeeMasterPackage%2Fsw%2F_default` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

@@ -1,0 +1,3 @@
+scenario,name,expectedName
+空条件検索,,
+教室名で検索,テスト_教室A_自動,テスト_教室A_自動

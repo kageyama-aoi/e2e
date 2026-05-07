@@ -103,4 +103,59 @@ module.exports = {
     I.say('【商品登録】保存ボタンをクリック');
     await submitTframeFormAndVerify(I, expectedName);
   },
+
+  // ----------------------------------------------------------------
+  //  商品一覧（SW）
+  // ----------------------------------------------------------------
+
+  /**
+   * 商品一覧画面へ遷移する
+   */
+  navigateToListPage() {
+    I.say('【商品一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=product%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - shohin_ichiran_search_data.csv の1行分
+   */
+  fillSearchConditions(data) {
+    I.say('【商品一覧】検索条件を入力');
+    if (data.name) I.fillField('#name', data.name);
+    if (data.branchId_area_id) {
+      I.selectOption('#branchId_area_id', data.branchId_area_id);
+      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
+    }
+    if (data.branchId_branch_id) I.selectOption('#branchId_branch_id', data.branchId_branch_id);
+    if (data.productCategory) I.selectOption('#productCategory', data.productCategory);
+    if (data.courseValid)     I.selectOption('#courseValid', data.courseValid);
+  },
+
+  /**
+   * 検索ボタンをクリックし、結果行が表示されるまで待つ
+   */
+  clickSearchAndWait() {
+    I.say('【商品一覧】検索ボタンをクリック');
+    I.click('#swSearchButton');
+    I.waitForElement('.tf-group-body-search-result tr', 15);
+  },
+
+  /**
+   * 検索結果エリアに1件以上の行があることを確認する
+   */
+  verifyResultsExist() {
+    I.say('【商品一覧】検索結果が表示されることを確認');
+    I.seeElement('.tf-group-body-search-result tr');
+  },
+
+  /**
+   * 検索結果エリアに指定テキストが表示されることを確認する
+   * @param {string} expectedName - 結果一覧に表示されるべき文字列
+   */
+  verifyRecordInResults(expectedName) {
+    I.say(`【商品一覧】"${expectedName}" が結果に表示されることを確認`);
+    I.see(expectedName, '.tf-group-body-search-result');
+  },
 };

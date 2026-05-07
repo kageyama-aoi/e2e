@@ -1,0 +1,3 @@
+scenario,name,expectedName
+空条件検索,,
+法人名で検索,テスト法人A,テスト法人A

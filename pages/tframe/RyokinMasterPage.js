@@ -69,4 +69,55 @@ module.exports = {
     I.say('【料金マスタ作成】保存ボタンをクリック');
     await submitTframeFormAndVerify(I, expectedName);
   },
+
+  // ----------------------------------------------------------------
+  //  料金マスタ一覧（SW）
+  // ----------------------------------------------------------------
+
+  /**
+   * 料金マスタ一覧画面へ遷移する
+   */
+  navigateToListPage() {
+    I.say('【料金マスタ一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=smsFeeMaster%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - ryokin_master_ichiran_search_data.csv の1行分
+   */
+  fillSearchConditions(data) {
+    I.say('【料金マスタ一覧】検索条件を入力');
+    if (data.name)           I.fillField('#name', data.name);
+    if (data.feeSubcategory) I.selectOption('#feeSubcategory', data.feeSubcategory);
+    if (data.gesshaKubun)    I.selectOption('#gesshaKubun', data.gesshaKubun);
+    if (data.packageId)      I.selectOption('#packageId', data.packageId);
+  },
+
+  /**
+   * 検索ボタンをクリックし、結果行が表示されるまで待つ
+   */
+  clickSearchAndWait() {
+    I.say('【料金マスタ一覧】検索ボタンをクリック');
+    I.click('#swSearchButton');
+    I.waitForElement('.tf-group-body-search-result tr', 15);
+  },
+
+  /**
+   * 検索結果エリアに1件以上の行があることを確認する
+   */
+  verifyResultsExist() {
+    I.say('【料金マスタ一覧】検索結果が表示されることを確認');
+    I.seeElement('.tf-group-body-search-result tr');
+  },
+
+  /**
+   * 検索結果エリアに指定テキストが表示されることを確認する
+   * @param {string} expectedName - 結果一覧に表示されるべき文字列
+   */
+  verifyRecordInResults(expectedName) {
+    I.say(`【料金マスタ一覧】"${expectedName}" が結果に表示されることを確認`);
+    I.see(expectedName, '.tf-group-body-search-result');
+  },
 };

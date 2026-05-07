@@ -32,6 +32,15 @@
 |---|---|---|
 | `tests/tframe/page/jukusei_ichiran_test.js` | `jukusei_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
 | `tests/tframe/page/course_ichiran_test.js` | `course_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/koshi_ichiran_test.js` | `koshi_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/shohin_ichiran_test.js` | `shohin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/chosekin_ichiran_test.js` | `chosekin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 年度で絞り込み→結果あり確認（名前検索なし） |
+| `tests/tframe/page/account_ichiran_test.js` | `account_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 法人名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/staff_ichiran_test.js` | `staff_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/kyoshitsu_ichiran_test.js` | `kyoshitsu_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 教室名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 
