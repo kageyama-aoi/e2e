@@ -1,24 +1,24 @@
 /**
- * @fileoverview tframe マスター画面 Page Object
+ * @fileoverview tframe レポート画面 Page Object
  */
 
 const { I } = inject();
-const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 
 module.exports = {
-  /** マスターアイコンのセレクタ（日英） */
+  /** レポートアイコンのセレクタ（日英） */
   locators: {
-    masterIconJa: 'a:has-text("マスター")',
-    masterIconEn: 'a:has-text("Master")',
+    reportIconJa: 'a:has-text("レポート")',
+    reportIconEn: 'a:has-text("Report")',
   },
 
   /**
-   * メインメニューのマスターアイコンをクリックする
+   * メインメニューのレポートアイコンをクリックする
    */
-  clickMasterIcon() {
-    I.say('【メインメニュー】マスターアイコンをクリック');
-    I.waitForElement(this.masterIconLocator(), 10);
-    I.click(this.masterIconLocator());
+  clickReportIcon() {
+    I.say('【メインメニュー】レポートアイコンをクリック');
+    I.waitForElement(this.reportIconLocator(), 10);
+    I.click(this.reportIconLocator());
   },
 
   /**
@@ -72,11 +72,11 @@ module.exports = {
   },
 
   /**
-   * 現在の言語設定に合わせたマスターアイコンのロケーターを返す
+   * 現在の言語設定に合わせたレポートアイコンのロケーターを返す
    * @returns {string} セレクタ文字列
    */
-  masterIconLocator() {
-    return this.isEnglish() ? this.locators.masterIconEn : this.locators.masterIconJa;
+  reportIconLocator() {
+    return this.isEnglish() ? this.locators.reportIconEn : this.locators.reportIconJa;
   },
 
   /**
@@ -87,5 +87,5 @@ module.exports = {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
   },
 
-  ...createMenuNavigationMixin('tframe_master'),
+  ...createMenuNavigationMixin('tframe_report'),
 };

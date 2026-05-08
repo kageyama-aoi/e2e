@@ -51,15 +51,59 @@ function createMenuNavigationMixin(prefix) {
      * @param {{name: string, href: string}} item - メニュー項目
      */
     async clickMenuItemAndVerify(item) {
+      if (!item.href) {
+        I.say(`【スキップ】${item.name} (href 未設定)`);
+        return;
+      }
       I.say(`【子メニュー押下】${item.name}`);
       this.scrollToHref(item.href);
-      I.waitForElement(locate(`a[href="${item.href}"]`), 10);
+      try {
+        await I.waitForElement(locate(`a[href="${item.href}"]`), 10);
+      } catch {
+        const currentUrl = await I.grabCurrentUrl();
+        throw new Error(
+          `要素が見つかりません\n  期待 href : ${item.href}\n  現在 URL  : ${currentUrl}`
+        );
+      }
       this.clickLinkByHref(item.href);
       const currentUrl = await this.waitForCurrentUrlMatch(item.href, 10);
       this.assertCurrentUrlMatches(currentUrl, item.href);
       I.saveScreenshotWithTimestamp(this.buildScreenshotName(item.name), true);
       if (typeof _onPageLoaded === 'function') await _onPageLoaded(item.name);
       await this.clickSearchIfPresentAndCapture(item.name);
+    },
+
+    /**
+     * 指定 href のリンクが画面内に表示されるようスクロールする
+     * @param {string} href - スクロール先リンクの href
+     */
+    scrollToHref(href) {
+      I.executeScript(
+        ({ targetHref }) => {
+          const target = document.querySelector(`a[href="${targetHref}"]`);
+          if (!target) return false;
+          target.scrollIntoView({ block: 'center', inline: 'nearest' });
+          return true;
+        },
+        { targetHref: href }
+      );
+    },
+
+    /**
+     * 指定 href のリンクをクリックする
+     * @param {string} href - クリックするリンクの href
+     */
+    clickLinkByHref(href) {
+      I.executeScript(
+        ({ targetHref }) => {
+          const target = document.querySelector(`a[href="${targetHref}"]`);
+          if (!target) {
+            throw new Error(`link not found: ${targetHref}`);
+          }
+          target.click();
+        },
+        { targetHref: href }
+      );
     },
 
     /**

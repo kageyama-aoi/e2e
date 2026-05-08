@@ -72,9 +72,9 @@ Data(csvMinimum).Scenario('講師を新規登録できる（最小入力）', { 
 
 ## メニュー定義 — SideMenu 対応表
 
-> 旧 `*SideMenu.js` ファイルは `pages/tframe/sideMenus.js` に統合しました（#72）。
+> 旧 `*SideMenu.js` ファイルは `pages/tframe/_common/sideMenus.js` に統合しました（#72）。
 
-`pages/tframe/sideMenus.js` はキー別にメニュー定義をエクスポートしており、各テストが必要なキーだけ require します。
+`pages/tframe/_common/sideMenus.js` はキー別にメニュー定義をエクスポートしており、各テストが必要なキーだけ require します。
 
 | キー（`sideMenus.js` 内） | 参照テスト |
 |---|---|

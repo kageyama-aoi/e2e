@@ -27,8 +27,8 @@
 
 // TEMPORARY
 
-const createMenuNavigationMixin = require('../../../pages/tframe/MenuNavigationMixin');
-const sideMenus = require('../../../pages/tframe/sideMenus');
+const createMenuNavigationMixin = require('../../../pages/tframe/_common/MenuNavigationMixin');
+const sideMenus = require('../../../pages/tframe/_common/sideMenus');
 
 Feature('言語整合性チェック');
 

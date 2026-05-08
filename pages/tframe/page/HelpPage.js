@@ -3,7 +3,7 @@
  */
 
 const { I } = inject();
-const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 
 module.exports = {
   /** ヘルプアイコンのセレクタ（日英） */

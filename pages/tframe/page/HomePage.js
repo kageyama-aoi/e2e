@@ -1,24 +1,33 @@
 /**
- * @fileoverview tframe カレンダー画面 Page Object
+ * @fileoverview tframe ホーム画面 Page Object
  */
 
 const { I } = inject();
-const createMenuNavigationMixin = require('./MenuNavigationMixin');
+const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 
 module.exports = {
-  /** カレンダーアイコンのセレクタ（日英） */
+  /** ホームアイコンのセレクタ（日英） */
   locators: {
-    calendarIconJa: 'a:has-text("カレンダー")',
-    calendarIconEn: 'a:has-text("Calendar")',
+    homeIconJa: 'a:has-text("ホーム")',
+    homeIconEn: 'a:has-text("Home")',
   },
 
   /**
-   * メインメニューのカレンダーアイコンをクリックする
+   * メインメニューのホームアイコンをクリックする
    */
-  clickCalendarIcon() {
-    I.say('【メインメニュー】カレンダーアイコンをクリック');
-    I.waitForElement(this.calendarIconLocator(), 10);
-    I.click(this.calendarIconLocator());
+  clickHomeIcon() {
+    I.say('【メインメニュー】ホームアイコンをクリック');
+    I.waitForElement(this.homeIconLocator(), 10);
+    I.click(this.homeIconLocator());
+  },
+
+  /**
+   * ホーム画面が表示されていることを確認しスクリーンショットを撮影する
+   */
+  verifyHomeLoaded() {
+    I.say('【ホーム画面確認】ホーム画面が表示されていることを確認');
+    I.waitForElement(this.homeIconLocator(), 10);
+    I.saveScreenshotWithTimestamp('tframe_home.png', true);
   },
 
   /**
@@ -55,11 +64,11 @@ module.exports = {
   },
 
   /**
-   * 現在の言語設定に合わせたカレンダーアイコンのロケーターを返す
+   * 現在の言語設定に合わせたホームアイコンのロケーターを返す
    * @returns {string} セレクタ文字列
    */
-  calendarIconLocator() {
-    return this.isEnglish() ? this.locators.calendarIconEn : this.locators.calendarIconJa;
+  homeIconLocator() {
+    return this.isEnglish() ? this.locators.homeIconEn : this.locators.homeIconJa;
   },
 
   /**
@@ -70,5 +79,5 @@ module.exports = {
     return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
   },
 
-  ...createMenuNavigationMixin('tframe_calendar'),
+  ...createMenuNavigationMixin('tframe_home'),
 };

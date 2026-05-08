@@ -29,9 +29,9 @@
 const fs = require('fs');
 const path = require('path');
 const repoRoot = require('../../../support/repoRoot');
-const createMenuNavigationMixin = require('../../../pages/tframe/MenuNavigationMixin');
+const createMenuNavigationMixin = require('../../../pages/tframe/_common/MenuNavigationMixin');
 
-const sideMenus = require('../../../pages/tframe/sideMenus');
+const sideMenus = require('../../../pages/tframe/_common/sideMenus');
 
 Feature('プルダウン選択肢スキャン');
 

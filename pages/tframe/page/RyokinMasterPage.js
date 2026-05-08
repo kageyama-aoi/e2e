@@ -5,7 +5,7 @@
  */
 
 const { I } = inject();
-const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../support/utils');
+const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../../support/utils');
 
 module.exports = {
 

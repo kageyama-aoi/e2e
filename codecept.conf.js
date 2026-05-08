@@ -151,37 +151,37 @@ AllureResultsDir=${runtimeAllureResultsDir}
   include: {
     I: './support/steps_file.js',
 
-    loginKannrisyaPage: './pages/tframe/LoginKannrisyaPage.js',
-    apiCommonLoginPage: './pages/tframe/ApiCommonLoginPage.js',
-    apiTeacherInfoGetPage: './pages/tframe/ApiTeacherInfoGetPage.js',
-    jsonInputPage: './pages/tframe/JsonInputPage.js',
-    loginMyPageTeacher: './pages/tframe/LoginMyPageTeacherPage.js',
-    loginMyPageStudent: './pages/tframe/LoginMyPageStudentPage.js',
-    
+    loginKannrisyaPage:   './pages/tframe/auth/LoginKannrisyaPage.js',
+    loginMyPageTeacher:   './pages/tframe/auth/LoginMyPageTeacherPage.js',
+    loginMyPageStudent:   './pages/tframe/auth/LoginMyPageStudentPage.js',
+
+    apiCommonLoginPage:   './pages/tframe/api/ApiCommonLoginPage.js',
+    apiTeacherInfoGetPage:'./pages/tframe/api/ApiTeacherInfoGetPage.js',
+    jsonInputPage:        './pages/tframe/api/JsonInputPage.js',
+
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
-    
+
     taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
 
-    keiryoMasterPage: './pages/tframe/KeiryoMasterPage.js',
-
-    jukuseiPage:   './pages/tframe/JukuseiPage.js',
-    coursePage:    './pages/tframe/CoursePage.js',
-    koshiPage:     './pages/tframe/KoshiPage.js',
-    masterMenuPage:'./pages/tframe/MasterMenuPage.js',
-    calendarPage:  './pages/tframe/CalendarPage.js',
-    emailPage:     './pages/tframe/EmailPage.js',
-    reportPage:    './pages/tframe/ReportPage.js',
-    homePage:      './pages/tframe/HomePage.js',
-    helpPage:      './pages/tframe/HelpPage.js',
-    accountPage:   './pages/tframe/AccountPage.js',
-    staffPage:     './pages/tframe/StaffPage.js',
-    shohinPage:    './pages/tframe/ShohinPage.js',
-    chosekinPage:   './pages/tframe/ChosekinPage.js',
-    classroomPage:    './pages/tframe/ClassroomPage.js',
-    ryokinMasterPage: './pages/tframe/RyokinMasterPage.js',
-    branchPage:         './pages/tframe/BranchPage.js',
-    ryokinPackagePage:  './pages/tframe/RyokinPackagePage.js'
+    keiryoMasterPage:  './pages/tframe/page/KeiryoMasterPage.js',
+    jukuseiPage:       './pages/tframe/page/JukuseiPage.js',
+    coursePage:        './pages/tframe/page/CoursePage.js',
+    koshiPage:         './pages/tframe/page/KoshiPage.js',
+    masterMenuPage:    './pages/tframe/page/MasterMenuPage.js',
+    calendarPage:      './pages/tframe/page/CalendarPage.js',
+    emailPage:         './pages/tframe/page/EmailPage.js',
+    reportPage:        './pages/tframe/page/ReportPage.js',
+    homePage:          './pages/tframe/page/HomePage.js',
+    helpPage:          './pages/tframe/page/HelpPage.js',
+    accountPage:       './pages/tframe/page/AccountPage.js',
+    staffPage:         './pages/tframe/page/StaffPage.js',
+    shohinPage:        './pages/tframe/page/ShohinPage.js',
+    chosekinPage:      './pages/tframe/page/ChosekinPage.js',
+    classroomPage:     './pages/tframe/page/ClassroomPage.js',
+    ryokinMasterPage:  './pages/tframe/page/RyokinMasterPage.js',
+    branchPage:        './pages/tframe/page/BranchPage.js',
+    ryokinPackagePage: './pages/tframe/page/RyokinPackagePage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定

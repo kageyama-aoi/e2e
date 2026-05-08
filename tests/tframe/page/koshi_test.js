@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const sideMenus = require('../../../pages/tframe/sideMenus');
+const sideMenus = require('../../../pages/tframe/_common/sideMenus');
 
 Feature('講師メニュー');
 

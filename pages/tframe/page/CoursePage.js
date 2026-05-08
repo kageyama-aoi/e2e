@@ -3,8 +3,8 @@
  */
 
 const { I } = inject();
-const createMenuNavigationMixin = require('./MenuNavigationMixin');
-const { fillTextFields, submitTframeFormAndVerify } = require('../../support/utils');
+const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
+const { fillTextFields, submitTframeFormAndVerify } = require('../../../support/utils');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
