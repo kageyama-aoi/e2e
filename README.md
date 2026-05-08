@@ -237,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-04-27 11:59:40
+Last updated: 2026-05-08 15:13:50
 
 ```text
 e2e/
@@ -248,6 +248,12 @@ e2e/
 │   │   ├── 2026-04-07-1438.md
 │   │   ├── 2026-04-22-1738.md
 │   │   ├── 2026-04-23-1319.md
+│   │   ├── 2026-04-23-1729.md
+│   │   ├── 2026-04-28-1516.md
+│   │   ├── 2026-04-28-1730.md
+│   │   ├── 2026-05-07-1544.md
+│   │   ├── 2026-05-07-1701.md
+│   │   ├── 2026-05-08-1204.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -288,14 +294,36 @@ e2e/
 │   │   ├── syokai_touroku_validation_errors.csv
 │   │   └── taikai_testdata.csv
 │   └── tframe/ 
+│       ├── account_ichiran_search_data.csv
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
+│       ├── branch_ichiran_search_data.csv
+│       ├── branch_touroku_data.csv
+│       ├── chosekin_ichiran_search_data.csv
+│       ├── chosekin_touroku_data.csv
+│       ├── course_ichiran_search_data.csv
+│       ├── course_touroku_data.csv
+│       ├── courseBySt_ichiran_search_data.csv
+│       ├── jukusei_ichiran_search_data.csv
+│       ├── jukusei_touroku_data.csv
+│       ├── koshi_ichiran_search_data.csv
 │       ├── koshi_touroku_data.csv
 │       ├── koshi_touroku_data_minimum.csv
+│       ├── kyoshitsu_ichiran_search_data.csv
+│       ├── kyoshitsu_touroku_data.csv
 │       ├── README.md
+│       ├── ryokin_master_ichiran_search_data.csv
+│       ├── ryokin_master_touroku_data.csv
+│       ├── ryokin_package_ichiran_search_data.csv
+│       ├── ryokin_package_touroku_data.csv
+│       ├── shohin_ichiran_search_data.csv
+│       ├── shohin_touroku_data.csv
+│       ├── staff_ichiran_search_data.csv
 │       ├── staff_touroku_data.csv
 │       ├── staff_touroku_data_minimum.csv
-│       └── teacherPaymentReportParams.js
+│       ├── stByCourse_ichiran_search_data.csv
+│       ├── teacherPaymentReportParams.js
+│       └── teByStudent_ichiran_search_data.csv
 ├── env/ 
 │   ├── .env.shimamura.MySQL84_dev
 │   ├── .env.shimamura.smbcpos_training
@@ -317,38 +345,41 @@ e2e/
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 
-│       ├── _urlPath.js
-│       ├── accountingSideMenu.js
-│       ├── AccountPage.js
-│       ├── ApiCommonLoginPage.js
-│       ├── ApiTeacherInfoGetPage.js
-│       ├── CalendarPage.js
-│       ├── calendarSideMenu.js
-│       ├── CoursePage.js
-│       ├── courseSideMenu.js
-│       ├── EmailPage.js
-│       ├── emailSideMenu.js
-│       ├── HelpPage.js
-│       ├── helpSideMenu.js
-│       ├── HomePage.js
-│       ├── JsonInputPage.js
-│       ├── JukuseiPage.js
-│       ├── KeiryoMasterPage.js
-│       ├── KoshiPage.js
-│       ├── LoginKannrisyaPage.js
-│       ├── LoginMyPageStudentPage.js
-│       ├── LoginMyPageTeacherPage.js
-│       ├── MasterMenuPage.js
-│       ├── masterSideMenu.js
-│       ├── MenuNavigationMixin.js
-│       ├── ReportPage.js
-│       ├── reportSideMenu.js
-│       ├── StaffPage.js
-│       ├── studentSideMenu.js
-│       └── teacherSideMenu.js
+│       ├── _common/ 
+│       │   ├── _urlPath.js
+│       │   ├── MenuNavigationMixin.js
+│       │   └── sideMenus.js
+│       ├── api/ 
+│       │   ├── ApiCommonLoginPage.js
+│       │   ├── ApiTeacherInfoGetPage.js
+│       │   └── JsonInputPage.js
+│       ├── auth/ 
+│       │   ├── LoginKannrisyaPage.js
+│       │   ├── LoginMyPageStudentPage.js
+│       │   └── LoginMyPageTeacherPage.js
+│       └── screens/ 
+│           ├── AccountPage.js
+│           ├── BranchPage.js
+│           ├── CalendarPage.js
+│           ├── ChosekinPage.js
+│           ├── ClassroomPage.js
+│           ├── CoursePage.js
+│           ├── EmailPage.js
+│           ├── HelpPage.js
+│           ├── HomePage.js
+│           ├── JukuseiPage.js
+│           ├── KeiryoMasterPage.js
+│           ├── KoshiPage.js
+│           ├── MasterMenuPage.js
+│           ├── ReportPage.js
+│           ├── RyokinMasterPage.js
+│           ├── RyokinPackagePage.js
+│           ├── ShohinPage.js
+│           └── StaffPage.js
 ├── run/ 
 │   ├── ps/ 
 │   │   └── tframe_run_nav_all.ps1
+│   ├── README.md
 │   ├── run_gui.bat
 │   ├── run_gui.py
 │   ├── test_descriptions.json
@@ -359,13 +390,49 @@ e2e/
 │   │   └── serve_latest.js
 │   ├── cleanup/ 
 │   │   └── cleanup_output_logs.py
+│   ├── hooks/ 
+│   │   ├── archive_allure.py
+│   │   ├── check_placement.py
+│   │   └── log_bash.py
 │   ├── html/ 
 │   │   ├── input/ 
+│   │   │   ├── account_list.html
+│   │   │   ├── after_login.png
+│   │   │   ├── all_links.json
+│   │   │   ├── branch_list.html
+│   │   │   ├── branch_touroku.html
+│   │   │   ├── chosekin_list.html
+│   │   │   ├── chosekin_person_popup.html
+│   │   │   ├── chosekin_popup.png
+│   │   │   ├── chosekin_touroku.html
+│   │   │   ├── course_list.html
+│   │   │   ├── course_touroku.html
+│   │   │   ├── courseBySt_list.html
+│   │   │   ├── error_screenshot.png
 │   │   │   ├── input.html
-│   │   │   └── sample_teacher_registration.html
+│   │   │   ├── jukusei_touroku.html
+│   │   │   ├── keiri_page.png
+│   │   │   ├── kyoshitsu_list.html
+│   │   │   ├── kyoshitsu_touroku.html
+│   │   │   ├── ryokin_master_list.html
+│   │   │   ├── ryokin_master_touroku.html
+│   │   │   ├── ryokin_package_list.html
+│   │   │   ├── ryokin_package_touroku.html
+│   │   │   ├── sample_teacher_registration.html
+│   │   │   ├── shohin_list.html
+│   │   │   ├── shohin_touroku.html
+│   │   │   ├── staff_list.html
+│   │   │   ├── stByCourse_list.html
+│   │   │   ├── student_list.html
+│   │   │   ├── teacher_list.html
+│   │   │   └── teByStudent_list.html
+│   │   ├── _fetch_juku_lists.js
+│   │   ├── compare_nav.js
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py
 │   │   ├── extract_submenus.py
+│   │   ├── fetch_chosekin_person_id.js
+│   │   ├── fetch_tframe_forms.js
 │   │   └── tframe_extract_form_fields.js
 │   └── input/ 
 │       └── side_menu_extract/ 
@@ -406,19 +473,41 @@ e2e/
 │       │   ├── navigation_after_login_student_test.js
 │       │   └── navigation_after_login_test.js
 │       └── page/ 
+│           ├── account_ichiran_test.js
 │           ├── account_touroku_test.js
+│           ├── branch_ichiran_test.js
+│           ├── branch_touroku_test.js
 │           ├── calendar_test.js
+│           ├── chosekin_ichiran_test.js
+│           ├── chosekin_touroku_test.js
+│           ├── course_ichiran_test.js
 │           ├── course_test.js
+│           ├── course_touroku_test.js
+│           ├── courseBySt_ichiran_test.js
 │           ├── email_test.js
 │           ├── help_test.js
 │           ├── home_test.js
+│           ├── jukusei_ichiran_test.js
 │           ├── jukusei_test.js
+│           ├── jukusei_touroku_test.js
 │           ├── keiryo_master_test.js
+│           ├── koshi_ichiran_test.js
 │           ├── koshi_test.js
 │           ├── koshi_touroku_test.js
+│           ├── kyoshitsu_ichiran_test.js
+│           ├── kyoshitsu_touroku_test.js
 │           ├── master_menu_test.js
 │           ├── report_test.js
-│           └── staff_touroku_test.js
+│           ├── ryokin_master_ichiran_test.js
+│           ├── ryokin_master_touroku_test.js
+│           ├── ryokin_package_ichiran_test.js
+│           ├── ryokin_package_touroku_test.js
+│           ├── shohin_ichiran_test.js
+│           ├── shohin_touroku_test.js
+│           ├── staff_ichiran_test.js
+│           ├── staff_touroku_test.js
+│           ├── stByCourse_ichiran_test.js
+│           └── teByStudent_ichiran_test.js
 ├── .env
 ├── .gitignore
 ├── AGENTS.md
