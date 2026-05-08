@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const courseSideMenu = require('../../../data/tframe/courseSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('コースメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にコースメニュー配下を押下確認�
   loginKannrisyaPage.seeLogout();
 
   coursePage.clickCourseIcon();
-  await coursePage.verifyMenuNavigation(courseSideMenu);
+  await coursePage.verifyMenuNavigation(sideMenus.course);
 });

@@ -11,7 +11,7 @@
  * - 2026-04-01
  */
 
-const accountingSideMenu = require('../../../data/tframe/accountingSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('経理メニュー');
 
@@ -20,5 +20,5 @@ Scenario('管理者ログイン後に経理メニュー配下を押下確認で�
   loginKannrisyaPage.seeLogout();
 
   keiryoMasterPage.clickKeiryoIcon();
-  await keiryoMasterPage.verifyMenuNavigation(accountingSideMenu);
+  await keiryoMasterPage.verifyMenuNavigation(sideMenus.accounting);
 });

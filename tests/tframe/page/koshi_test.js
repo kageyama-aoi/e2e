@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const teacherSideMenu = require('../../../data/tframe/teacherSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('講師メニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後に講師メニュー配下を押下確認で�
   loginKannrisyaPage.seeLogout();
 
   koshiPage.clickKoshiIcon();
-  await koshiPage.verifyMenuNavigation(teacherSideMenu);
+  await koshiPage.verifyMenuNavigation(sideMenus.teacher);
 });

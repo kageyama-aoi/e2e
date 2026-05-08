@@ -28,16 +28,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const createMenuNavigationMixin = require('../../pages/tframe/MenuNavigationMixin');
+const repoRoot = require('../../../support/repoRoot');
+const createMenuNavigationMixin = require('../../../pages/tframe/MenuNavigationMixin');
 
-const studentSideMenu  = require('../../../data/tframe/studentSideMenu');
-const courseSideMenu   = require('../../../data/tframe/courseSideMenu');
-const teacherSideMenu  = require('../../../data/tframe/teacherSideMenu');
-const masterSideMenu   = require('../../../data/tframe/masterSideMenu');
-const calendarSideMenu = require('../../../data/tframe/calendarSideMenu');
-const emailSideMenu    = require('../../../data/tframe/emailSideMenu');
-const reportSideMenu   = require('../../../data/tframe/reportSideMenu');
-const helpSideMenu     = require('../../../data/tframe/helpSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('プルダウン選択肢スキャン');
 
@@ -45,8 +39,8 @@ Feature('プルダウン選択肢スキャン');
  * 出力ディレクトリのパスを取得する。
  */
 function getOutputDir() {
-  const { config } = require('../../codecept.conf.js');
-  return path.resolve(__dirname, '..', '..', config.output);
+  const { config } = require('../../../codecept.conf.js');
+  return path.join(repoRoot, config.output);
 }
 
 /**
@@ -195,35 +189,35 @@ Scenario(
 
     // 受講生メニュー
     jukuseiPage.clickJukuseiIcon();
-    await jukuseiPage.verifyMenuNavigation(studentSideMenu);
+    await jukuseiPage.verifyMenuNavigation(sideMenus.student);
 
     // コースメニュー
     coursePage.clickCourseIcon();
-    await coursePage.verifyMenuNavigation(courseSideMenu);
+    await coursePage.verifyMenuNavigation(sideMenus.course);
 
     // 講師メニュー
     koshiPage.clickKoshiIcon();
-    await koshiPage.verifyMenuNavigation(teacherSideMenu);
+    await koshiPage.verifyMenuNavigation(sideMenus.teacher);
 
     // マスターメニュー
     masterMenuPage.clickMasterIcon();
-    await masterMenuPage.verifyMenuNavigation(masterSideMenu);
+    await masterMenuPage.verifyMenuNavigation(sideMenus.master);
 
     // カレンダーメニュー
     calendarPage.clickCalendarIcon();
-    await calendarPage.verifyMenuNavigation(calendarSideMenu);
+    await calendarPage.verifyMenuNavigation(sideMenus.calendar);
 
     // Eメールメニュー
     emailPage.clickEmailIcon();
-    await emailPage.verifyMenuNavigation(emailSideMenu);
+    await emailPage.verifyMenuNavigation(sideMenus.email);
 
     // レポートメニュー
     reportPage.clickReportIcon();
-    await reportPage.verifyMenuNavigation(reportSideMenu);
+    await reportPage.verifyMenuNavigation(sideMenus.report);
 
     // ヘルプメニュー
     helpPage.clickHelpIcon();
-    await helpPage.verifyMenuNavigation(helpSideMenu);
+    await helpPage.verifyMenuNavigation(sideMenus.help);
 
     createMenuNavigationMixin.clearPageLoadedCallback();
 

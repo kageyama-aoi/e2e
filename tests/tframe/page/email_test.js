@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const emailSideMenu = require('../../../data/tframe/emailSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('Eメールメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にEメールメニュー配下を押下確認
   loginKannrisyaPage.seeLogout();
 
   emailPage.clickEmailIcon();
-  await emailPage.verifyMenuNavigation(emailSideMenu);
+  await emailPage.verifyMenuNavigation(sideMenus.email);
 });

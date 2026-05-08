@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const reportSideMenu = require('../../../data/tframe/reportSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('レポートメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にレポートメニュー配下を押下確�
   loginKannrisyaPage.seeLogout();
 
   reportPage.clickReportIcon();
-  await reportPage.verifyMenuNavigation(reportSideMenu);
+  await reportPage.verifyMenuNavigation(sideMenus.report);
 });

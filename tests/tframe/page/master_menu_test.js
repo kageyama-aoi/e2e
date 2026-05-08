@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const masterSideMenu = require('../../../data/tframe/masterSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('マスターメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にマスターメニュー配下を押下確�
   loginKannrisyaPage.seeLogout();
 
   masterMenuPage.clickMasterIcon();
-  await masterMenuPage.verifyMenuNavigation(masterSideMenu);
+  await masterMenuPage.verifyMenuNavigation(sideMenus.master);
 });

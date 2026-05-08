@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const studentSideMenu = require('../../../data/tframe/studentSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('受講生メニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後に受講生メニュー配下を押下確認�
   loginKannrisyaPage.seeLogout();
 
   jukuseiPage.clickJukuseiIcon();
-  await jukuseiPage.verifyMenuNavigation(studentSideMenu);
+  await jukuseiPage.verifyMenuNavigation(sideMenus.student);
 });

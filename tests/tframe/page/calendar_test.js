@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const calendarSideMenu = require('../../../data/tframe/calendarSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('カレンダーメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にカレンダーメニュー配下を押下�
   loginKannrisyaPage.seeLogout();
 
   calendarPage.clickCalendarIcon();
-  await calendarPage.verifyMenuNavigation(calendarSideMenu);
+  await calendarPage.verifyMenuNavigation(sideMenus.calendar);
 });

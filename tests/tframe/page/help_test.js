@@ -8,7 +8,7 @@
  * - 2026-04-01
  */
 
-const helpSideMenu = require('../../../data/tframe/helpSideMenu');
+const sideMenus = require('../../../pages/tframe/sideMenus');
 
 Feature('ヘルプメニュー');
 
@@ -17,5 +17,5 @@ Scenario('管理者ログイン後にヘルプメニュー配下を押下確認�
   loginKannrisyaPage.seeLogout();
 
   helpPage.clickHelpIcon();
-  await helpPage.verifyMenuNavigation(helpSideMenu);
+  await helpPage.verifyMenuNavigation(sideMenus.help);
 });
