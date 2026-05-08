@@ -154,12 +154,12 @@
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
-2. Page Object: `pages/tframe/page/{PageObject}`（ログイン系は `auth/`、API系は `api/`、共通は `_common/`）— テストファイルの inject 変数名からも辿れる
+2. Page Object: `pages/tframe/screens/{PageObject}`（ログイン系は `auth/`、API系は `api/`、共通は `_common/`）— テストファイルの inject 変数名からも辿れる
 3. CSV: `data/tframe/{prefix}touroku_data.csv` / `{prefix}ichiran_search_data.csv`
 
 ### tframe 登録テストの共通パターン
-新規登録テストを作るときは `pages/tframe/page/KoshiPage.js`（Page Object）と `tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
-シンプルな Page Object（MenuNav なし）は `pages/tframe/page/AccountPage.js` / `pages/tframe/page/StaffPage.js` を参照。
+新規登録テストを作るときは `pages/tframe/screens/KoshiPage.js`（Page Object）と `tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
+シンプルな Page Object（MenuNav なし）は `pages/tframe/screens/AccountPage.js` / `pages/tframe/screens/StaffPage.js` を参照。
 
 共通ユーティリティ（`support/utils.js`）：
 - `fillTextFields(I, fieldMap)` — `FORM_FILL_FAST` ENV で高速/安全を自動切替するフィールド一括入力
