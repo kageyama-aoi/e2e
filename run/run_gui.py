@@ -209,6 +209,37 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
     return results
 
 
+def _cleanup_old_learning_logs(learning_dir, days=LOG_CLEANUP_DAYS):
+    """docs/learning/ 配下の bash_YYYYMMDD.md を days 日以上古ければ削除する。"""
+    DATE_RE = re.compile(r'^bash_(\d{8})\.md$')
+    threshold = datetime.now() - timedelta(days=days)
+    results = []
+
+    if not os.path.isdir(learning_dir):
+        return results
+
+    for fname in sorted(os.listdir(learning_dir)):
+        m = DATE_RE.match(fname)
+        if not m:
+            continue
+        try:
+            dt = datetime.strptime(m.group(1), '%Y%m%d')
+        except ValueError:
+            continue
+        if dt >= threshold:
+            continue
+
+        fpath = os.path.join(learning_dir, fname)
+        try:
+            os.remove(fpath)
+            age = (datetime.now() - dt).days
+            results.append(f'  deleted (learning): {fname} ({age}日前)')
+        except Exception as exc:
+            results.append(f'  error: {fname} -> {exc}')
+
+    return results
+
+
 class _Tooltip:
     """ウィジェットにホバーしたときにポップアップテキストを表示する。"""
     def __init__(self, widget, textvariable):
@@ -554,6 +585,9 @@ class RunnerApp(tk.Tk):
         """起動時に LOG_CLEANUP_DAYS 日以上古いログを自動アーカイブ・削除する。"""
         def run():
             results = cleanup_old_logs(self.logs_dir)
+            results += _cleanup_old_learning_logs(
+                os.path.join(REPO_ROOT, 'docs', 'learning'), LOG_CLEANUP_DAYS
+            )
             if results:
                 self.log_queue.put(f'=== 自動クリーンアップ（{LOG_CLEANUP_DAYS}日以上古いログ）===\n')
                 for r in results:

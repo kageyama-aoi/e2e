@@ -40,7 +40,73 @@
       "Bash(mv docs/read_allure.html docs/tools/)",
       "Bash(mv docs/index_promt.html docs/tools/index_prompt.html)",
       "Bash(find allure-results/ -maxdepth 1 -type f -delete)",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(cmd *)",
+      "Bash(powershell *)",
+      "Bash(grep *)",
+      "Bash(npx allure *)",
+      "Bash(node scripts/allure/serve_latest.js tframe.culture_test)",
+      "Bash(sed -i 's|./tests/tframe/dropdown_check_test.js|./tests/tframe/check/dropdown_check_test.js|g' C:/Users/kageyama/Tools/testcode/e2e/run/ps/tframe_run_dropdown_check.ps1)",
+      "Bash(sed -i 's|./tests/tframe/lang_check_test.js|./tests/tframe/check/lang_check_test.js|g' C:/Users/kageyama/Tools/testcode/e2e/run/ps/tframe_run_lang_check.ps1)",
+      "Read(//c/Users/kageyama/Tools/.github/**)",
+      "Read(//c/Users/kageyama/.github/**)",
+      "Bash(node *)",
+      "Bash(git mv *)",
+      "Bash(cp data/tframe/koshi_touroku_data_minimum.csv data/tframe/koshi_touroku_data.csv.bak)",
+      "Bash(cp data/tframe/koshi_touroku_data_minimum.csv data/tframe/koshi_touroku_data.csv)",
+      "Bash(cp data/tframe/koshi_touroku_data.csv.bak data/tframe/koshi_touroku_data.csv)",
+      "Bash(rm data/tframe/koshi_touroku_data.csv.bak)",
+      "Bash(git checkout *)",
+      "Bash(xargs head *)",
+      "Bash(git check-ignore *)",
+      "Bash(xargs -I{} ls \"C:/Users/kageyama/Tools/testcode/e2e/output/tframe.culture_beta/{}\")",
+      "Bash(git rm *)",
+      "Skill(update-config)",
+      "Bash(bash -c 'TODAY=$\\(date +%Y-%m-%d\\); ls \".agent/handoff/${TODAY}-\"*.md 2>/dev/null | grep -q . || echo \"{\\\\\"systemMessage\\\\\": \\\\\"[HANDOFF未作成] 今日分のハンドオフがありません → /handoff を実行してください\\\\\"}\"')",
+      "PowerShell($json = Get-Content \"C:\\\\Users\\\\kageyama\\\\Tools\\\\testcode\\\\e2e\\\\.claude\\\\settings.local.json\" -Raw | ConvertFrom-Json; $json.hooks.Stop[0].hooks[0].command)",
+      "PowerShell(Get-Item *)",
+      "PowerShell(Rename-Item *)",
+      "PowerShell(python -c \"import json; data=json.load\\(open\\('C:/Users/kageyama/Tools/testcode/e2e/run/test_descriptions.json', encoding='utf-8'\\)\\); print\\('OK, tframe entries:', len\\(data['tframe']\\)\\)\")"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "TODAY=$(date +%Y-%m-%d); ls \".agent/handoff/${TODAY}-\"*.md 2>/dev/null | grep -q . || echo \"{\\\"systemMessage\\\": \\\"[HANDOFF未作成] 今日分のハンドオフがありません → /handoff を実行してください\\\"}\"",
+            "statusMessage": "ハンドオフ確認中..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/hooks/check_placement.py 2>/dev/null || true",
+            "statusMessage": "配置ルール確認中..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/hooks/archive_allure.py 2>/dev/null || true",
+            "statusMessage": "Allure アーカイブ中..."
+          },
+          {
+            "type": "command",
+            "command": "python scripts/hooks/log_bash.py 2>/dev/null || true",
+            "statusMessage": "コマンドログ記録中..."
+          }
+        ]
+      }
     ]
   }
 }

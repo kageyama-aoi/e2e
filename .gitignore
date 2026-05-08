@@ -4,6 +4,7 @@ output/
 allure-results/
 allure-report/
 docs/generated/
+docs/learning/bash_*.md
 scripts/__pycache__/
 
 # Environment variables
