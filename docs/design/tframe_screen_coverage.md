@@ -1,6 +1,6 @@
 # tframe 画面テストカバレッジ分析
 
-最終更新: 2026-05-08
+最終更新: 2026-05-08（対応履歴・コース別商品一覧を追加）
 
 ---
 
@@ -26,6 +26,11 @@
 | レポート | — | — | ✓ | 両 |
 | ヘルプ | — | — | ✓ | 両 |
 | 経理 | — | — | ✓ | 両 |
+| コース別商品一覧 | — | ✓ | — | culture |
+| 対応履歴（受講生） | — | ✓ | — | 両 |
+| 対応履歴（講師） | — | ✓ | — | 両 |
+| 対応履歴テンプレート（受講生） | ✓ | ✓ | — | 両 |
+| 対応履歴テンプレート（講師） | — | ✓ | — | 両 |
 
 ---
 
@@ -39,24 +44,24 @@
 | ~~受講生別コース一覧~~ | `student/sw/courseBySt` | 複合一覧 ✓ | 両 |
 | 口座情報データ取込 | `student/ew/accountInfoDataImport` | インポート | 両 |
 | 問合せデータ取込 | `student/ew/stInquiryDataImport` | インポート | 両 |
-| 対応履歴一覧 | `infoHistory/sw/_default?menuModule=student` | 対応履歴 | 両 |
-| 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=student` | 対応履歴 | 両 |
-| 対応履歴テンプレート一覧 | `infoHistoryTemplate/sw/_default?menuModule=student` | 対応履歴 | 両 |
+| ~~対応履歴一覧~~ | `infoHistory/sw/_default?menuModule=student` | 対応履歴 ✓ | 両 |
+| ~~対応履歴テンプレート登録~~ | `infoHistoryTemplate/ew/_default?menuModule=student` | 対応履歴 ✓ | 両 |
+| ~~対応履歴テンプレート一覧~~ | `infoHistoryTemplate/sw/_default?menuModule=student` | 対応履歴 ✓ | 両 |
 
 ### 講師系
 
 | 画面名 | URL | 系統 | 環境 |
 |---|---|---|---|
 | ~~講師別受講生一覧~~ | `teacher/sw/teByStudent` | 複合一覧 ✓ | 両 |
-| 対応履歴一覧 | `infoHistory/sw/_default?menuModule=teacher` | 対応履歴 | 両 |
-| 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=teacher` | 対応履歴 | 両 |
-| 対応履歴テンプレート一覧 | `infoHistoryTemplate/sw/_default?menuModule=teacher` | 対応履歴 | 両 |
+| ~~対応履歴一覧~~ | `infoHistory/sw/_default?menuModule=teacher` | 対応履歴 ✓ | 両 |
+| 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=teacher` | 対応履歴（未）| 両 |
+| ~~対応履歴テンプレート一覧~~ | `infoHistoryTemplate/sw/_default?menuModule=teacher` | 対応履歴 ✓ | 両 |
 
 ### コース系
 
 | 画面名 | URL | 系統 | 環境 |
 |---|---|---|---|
-| コース別商品一覧 | `course/sw/proByCourse` | 複合一覧 | culture |
+| ~~コース別商品一覧~~ | `course/sw/proByCourse` | 複合一覧 ✓ | culture |
 | 本日の出席表一覧 | `attendance/sw/_default` | 出席 | 両 |
 | 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 一括処理 | 両 |
 
@@ -130,9 +135,9 @@
 
 | 系統 | 難易度 | 環境 | 備考 |
 |---|---|---|---|
-| 複合一覧（コース別受講生など） | 低 | 両 | 一覧検索と同パターン、`/tframe-ichiran-dev` で対応可能 |
-| コース別商品一覧 | 低 | culture | 複合一覧と同パターン |
-| 対応履歴 | 低〜中 | 両 | 登録・一覧の標準パターン（受講生・講師の両メニューに存在） |
+| ~~複合一覧（コース別受講生など）~~ | 低 | 両 | ✓ 完了 |
+| ~~コース別商品一覧~~ | 低 | culture | ✓ 完了 |
+| ~~対応履歴~~ | 低〜中 | 両 | ✓ 完了（講師側テンプレート登録のみ未実装） |
 | 出席・入退室 | 中 | 両 | 日付・コースを組み合わせた検索 |
 | Eメール系 | 中 | 両 | メール送信フローは独自（テンプレート系は標準パターン） |
 | レポート | 中 | 両 | 検索条件 → グラフ/表 出力の確認が必要 |

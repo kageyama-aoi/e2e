@@ -24,6 +24,7 @@
 | `tests/tframe/page/ryokin_master_touroku_test.js` | `ryokin_master_touroku_data.csv` | — | 実装済み（juku_test のみ） |
 | `tests/tframe/page/branch_touroku_test.js` | `branch_touroku_data.csv` | — | 実装済み |
 | `tests/tframe/page/ryokin_package_touroku_test.js` | `ryokin_package_touroku_data.csv` | — | 実装済み（juku_test のみ） |
+| `tests/tframe/page/infoHistoryTemplate_touroku_test.js` | `infoHistoryTemplate_touroku_data.csv` | — | 実装済み。menuModule=student で登録。 |
 
 ## 一覧検索テスト — CSV対応表
 
@@ -43,6 +44,9 @@
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
+| `tests/tframe/page/proByCourse_ichiran_test.js` | `proByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→結果あり確認（culture_beta のみ） |
+| `tests/tframe/page/infoHistory_ichiran_test.js` | `infoHistory_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 件名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
+| `tests/tframe/page/infoHistoryTemplate_ichiran_test.js` | `infoHistoryTemplate_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: テンプレート名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 

@@ -237,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-05-08 15:13:50
+Last updated: 2026-05-08 16:36:23
 
 ```text
 e2e/
@@ -304,6 +304,9 @@ e2e/
 │       ├── course_ichiran_search_data.csv
 │       ├── course_touroku_data.csv
 │       ├── courseBySt_ichiran_search_data.csv
+│       ├── infoHistory_ichiran_search_data.csv
+│       ├── infoHistoryTemplate_ichiran_search_data.csv
+│       ├── infoHistoryTemplate_touroku_data.csv
 │       ├── jukusei_ichiran_search_data.csv
 │       ├── jukusei_touroku_data.csv
 │       ├── koshi_ichiran_search_data.csv
@@ -311,6 +314,7 @@ e2e/
 │       ├── koshi_touroku_data_minimum.csv
 │       ├── kyoshitsu_ichiran_search_data.csv
 │       ├── kyoshitsu_touroku_data.csv
+│       ├── proByCourse_ichiran_search_data.csv
 │       ├── README.md
 │       ├── ryokin_master_ichiran_search_data.csv
 │       ├── ryokin_master_touroku_data.csv
@@ -367,6 +371,7 @@ e2e/
 │           ├── EmailPage.js
 │           ├── HelpPage.js
 │           ├── HomePage.js
+│           ├── InfoHistoryPage.js
 │           ├── JukuseiPage.js
 │           ├── KeiryoMasterPage.js
 │           ├── KoshiPage.js
@@ -409,11 +414,15 @@ e2e/
 │   │   │   ├── course_touroku.html
 │   │   │   ├── courseBySt_list.html
 │   │   │   ├── error_screenshot.png
+│   │   │   ├── infoHistory_student_list.html
+│   │   │   ├── infoHistoryTemplate_student_list.html
+│   │   │   ├── infoHistoryTemplate_touroku.html
 │   │   │   ├── input.html
 │   │   │   ├── jukusei_touroku.html
 │   │   │   ├── keiri_page.png
 │   │   │   ├── kyoshitsu_list.html
 │   │   │   ├── kyoshitsu_touroku.html
+│   │   │   ├── proByCourse_list.html
 │   │   │   ├── ryokin_master_list.html
 │   │   │   ├── ryokin_master_touroku.html
 │   │   │   ├── ryokin_package_list.html
@@ -487,6 +496,9 @@ e2e/
 │           ├── email_test.js
 │           ├── help_test.js
 │           ├── home_test.js
+│           ├── infoHistory_ichiran_test.js
+│           ├── infoHistoryTemplate_ichiran_test.js
+│           ├── infoHistoryTemplate_touroku_test.js
 │           ├── jukusei_ichiran_test.js
 │           ├── jukusei_test.js
 │           ├── jukusei_touroku_test.js
@@ -497,6 +509,7 @@ e2e/
 │           ├── kyoshitsu_ichiran_test.js
 │           ├── kyoshitsu_touroku_test.js
 │           ├── master_menu_test.js
+│           ├── proByCourse_ichiran_test.js
 │           ├── report_test.js
 │           ├── ryokin_master_ichiran_test.js
 │           ├── ryokin_master_touroku_test.js
