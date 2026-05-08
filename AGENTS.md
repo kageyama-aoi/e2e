@@ -147,8 +147,8 @@
 | スタッフ | `staff_` | `StaffPage.js` | `staff` | |
 | 教室 | `kyoshitsu_` | `ClassroomPage.js` | `classroom` | prefix と PO 名が不一致 |
 | 校舎 | `branch_` | `BranchPage.js` | `branch` | |
-| 商品 | `shohin_` | `ShohinPage.js` | `product` | |
-| 調整金（講師謝礼） | `chosekin_` | `ChosekinPage.js` | `shareiDetail` | |
+| 商品 | `shohin_` | `ShohinPage.js` | `product` | culture_beta のみ |
+| 調整金（講師謝礼） | `chosekin_` | `ChosekinPage.js` | `shareiDetail` | culture_beta のみ（画面上の名称は「講師謝礼」） |
 | 料金マスタ | `ryokin_master_` | `RyokinMasterPage.js` | `smsFeeMaster` | juku_test のみ |
 | 料金パッケージ | `ryokin_package_` | `RyokinPackagePage.js` | `smsFeeMasterPackage` | juku_test のみ |
 
