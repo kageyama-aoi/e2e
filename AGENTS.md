@@ -105,6 +105,7 @@
 | `/placement-gate` | 新ファイル作成前に性質を分類し、配置先を確定するゲート |
 | `/tframe-registration-dev` | tframe 登録・編集テストの新規作成・修正手順 |
 | `/tframe-ichiran-dev` | tframe 一覧検索テストの新規作成・修正手順 |
+| `/doc-sync` | 開発作業後のドキュメント連動更新チェックリストを実施 |
 | `/handoff` | セッション終了時のハンドオフ文書作成 |
 | `/newplan` | 新しい開発サイクルの開始（`.spec/` のアーカイブ＆新規作成） |
 
