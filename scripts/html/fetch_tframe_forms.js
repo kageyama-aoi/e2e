@@ -57,6 +57,7 @@ const TARGETS = [
   { name: 'stByCourse_list',  hint: 'コース別受講生一覧',  directUrl: `${BASE_URL}index.php?r=student%2Fsw%2FstByCourse` },
   { name: 'courseBySt_list',  hint: '受講生別コース一覧',  directUrl: `${BASE_URL}index.php?r=student%2Fsw%2FcourseBySt` },
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
+  { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

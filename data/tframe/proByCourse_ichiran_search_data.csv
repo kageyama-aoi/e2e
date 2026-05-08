@@ -1,0 +1,3 @@
+scenario,name,productName,expectedName
+空条件検索,,,
+商品名で検索,,テスト,

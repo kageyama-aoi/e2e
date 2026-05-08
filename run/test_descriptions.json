@@ -42,7 +42,8 @@
     "page/ryokin_package_ichiran_test.js":             "料金パッケージ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ）",
     "page/stByCourse_ichiran_test.js":                 "コース別受講生一覧の空検索とコース名での絞り込み検索を確認",
     "page/courseBySt_ichiran_test.js":                 "受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認",
-    "page/teByStudent_ichiran_test.js":                "講師別受講生一覧の空検索と講師姓での絞り込み検索を確認"
+    "page/teByStudent_ichiran_test.js":                "講師別受講生一覧の空検索と講師姓での絞り込み検索を確認",
+    "page/proByCourse_ichiran_test.js":                "コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ）"
   },
   "shimamura": {
     "syokai_touroku_test.js":                          "会員紹介者の新規登録フローを確認",

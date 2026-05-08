@@ -270,5 +270,28 @@ module.exports = {
     I.see(expectedName, '.tf-group-body-search-result');
   },
 
+  // ----------------------------------------------------------------
+  //  コース別商品一覧（SW）
+  // ----------------------------------------------------------------
+
+  /**
+   * コース別商品一覧画面へ遷移する
+   */
+  navigateToProByCourseListPage() {
+    I.say('【コース別商品一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=course%2Fsw%2FproByCourse');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * コース別商品一覧の検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - proByCourse_ichiran_search_data.csv の1行分
+   */
+  fillProByCourseSearchConditions(data) {
+    I.say('【コース別商品一覧】検索条件を入力');
+    if (data.name)        I.fillField('#name', data.name);
+    if (data.productName) I.fillField('#productName', data.productName);
+  },
+
   ...createMenuNavigationMixin('tframe_course'),
 };
