@@ -1,0 +1,3 @@
+scenario,lastName,courseName,expectedName
+空条件検索,,,
+姓で検索,テスト,,

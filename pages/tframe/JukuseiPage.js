@@ -328,5 +328,51 @@ module.exports = {
     I.see(expectedName, '.tf-group-body-search-result');
   },
 
+  // ----------------------------------------------------------------
+  //  コース別受講生一覧（SW: student/sw/stByCourse）
+  // ----------------------------------------------------------------
+
+  /**
+   * コース別受講生一覧画面へ遷移する
+   */
+  navigateToStByCourseListPage() {
+    I.say('【コース別受講生一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=student%2Fsw%2FstByCourse');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * コース別受講生一覧の検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - stByCourse_ichiran_search_data.csv の1行分
+   */
+  fillStByCourseSearchConditions(data) {
+    I.say('【コース別受講生一覧】検索条件を入力');
+    if (data.courseName) I.fillField('#name', data.courseName);
+    if (data.lastName)   I.fillField('#lastName', data.lastName);
+  },
+
+  // ----------------------------------------------------------------
+  //  受講生別コース一覧（SW: student/sw/courseBySt）
+  // ----------------------------------------------------------------
+
+  /**
+   * 受講生別コース一覧画面へ遷移する
+   */
+  navigateToCourseByStListPage() {
+    I.say('【受講生別コース一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=student%2Fsw%2FcourseBySt');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 受講生別コース一覧の検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - courseBySt_ichiran_search_data.csv の1行分
+   */
+  fillCourseByStSearchConditions(data) {
+    I.say('【受講生別コース一覧】検索条件を入力');
+    if (data.lastName)   I.fillField('#lastName', data.lastName);
+    if (data.courseName) I.fillField('#name', data.courseName);
+  },
+
   ...createMenuNavigationMixin('tframe_student'),
 };

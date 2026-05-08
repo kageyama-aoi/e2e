@@ -1,0 +1,3 @@
+scenario,courseName,lastName,expectedName
+空条件検索,,,
+コース名で検索,テスト_コースA_自動,,

@@ -7,8 +7,7 @@
 | `{name}_data.csv` | フル入力テスト（全フィールド） |
 | `{name}_data_minimum.csv` | 最小入力テスト（必須フィールドのみ） |
 | `{name}_data_{profile}.csv` | プロファイル別上書き（自動適用） |
-| `{name}SideMenu.js` | メニュー定義（ナビゲーションテスト用） |
-| `_urlPath.js` | BASE_URL からパスプレフィックスを実行時解決（SideMenu 内で使用） |
+| `_urlPath.js` | BASE_URL からパスプレフィックスを実行時解決（sideMenus.js 内で使用） |
 
 ## 登録テスト — CSV対応表
 
@@ -41,6 +40,9 @@
 | `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
 | `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
+| `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
+| `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 
@@ -70,19 +72,21 @@ Data(csvMinimum).Scenario('講師を新規登録できる（最小入力）', { 
 
 ## メニュー定義 — SideMenu 対応表
 
-> SideMenu ファイルは `pages/tframe/` に移動しました。
+> 旧 `*SideMenu.js` ファイルは `pages/tframe/sideMenus.js` に統合しました（#72）。
 
-| SideMenuファイル | 参照テスト |
+`pages/tframe/sideMenus.js` はキー別にメニュー定義をエクスポートしており、各テストが必要なキーだけ require します。
+
+| キー（`sideMenus.js` 内） | 参照テスト |
 |---|---|
-| `pages/tframe/studentSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `jukusei_test.js` |
-| `pages/tframe/teacherSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `koshi_test.js` |
-| `pages/tframe/courseSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `course_test.js` |
-| `pages/tframe/calendarSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `calendar_test.js` |
-| `pages/tframe/emailSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `email_test.js` |
-| `pages/tframe/helpSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `help_test.js` |
-| `pages/tframe/masterSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `master_menu_test.js` |
-| `pages/tframe/accountingSideMenu.js` | `dropdown_check_test.js`, `keiryo_master_test.js` |
-| `pages/tframe/reportSideMenu.js` | `lang_check_test.js`, `dropdown_check_test.js`, `report_test.js` |
+| `student` | `lang_check_test.js`, `dropdown_check_test.js`, `jukusei_test.js` |
+| `teacher` | `lang_check_test.js`, `dropdown_check_test.js`, `koshi_test.js` |
+| `course` | `lang_check_test.js`, `dropdown_check_test.js`, `course_test.js` |
+| `calendar` | `lang_check_test.js`, `dropdown_check_test.js`, `calendar_test.js` |
+| `email` | `lang_check_test.js`, `dropdown_check_test.js`, `email_test.js` |
+| `help` | `lang_check_test.js`, `dropdown_check_test.js`, `help_test.js` |
+| `master` | `lang_check_test.js`, `dropdown_check_test.js`, `master_menu_test.js` |
+| `accounting` | `dropdown_check_test.js`, `keiryo_master_test.js` |
+| `report` | `lang_check_test.js`, `dropdown_check_test.js`, `report_test.js` |
 
 ## その他のデータファイル
 

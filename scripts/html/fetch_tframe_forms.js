@@ -52,6 +52,11 @@ const TARGETS = [
   { name: 'branch_list',       hint: '校舎一覧',     directUrl: `${BASE_URL}index.php?r=branch%2Fsw%2F_default` },
   { name: 'ryokin_master_list',  hint: '料金マスタ一覧',   directUrl: `${BASE_URL}index.php?r=smsFeeMaster%2Fsw%2F_default` },
   { name: 'ryokin_package_list', hint: '料金パッケージ一覧', directUrl: `${BASE_URL}index.php?r=smsFeeMasterPackage%2Fsw%2F_default` },
+
+  // ── 複合一覧（SW）──
+  { name: 'stByCourse_list',  hint: 'コース別受講生一覧',  directUrl: `${BASE_URL}index.php?r=student%2Fsw%2FstByCourse` },
+  { name: 'courseBySt_list',  hint: '受講生別コース一覧',  directUrl: `${BASE_URL}index.php?r=student%2Fsw%2FcourseBySt` },
+  { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

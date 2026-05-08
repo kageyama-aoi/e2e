@@ -361,5 +361,28 @@ module.exports = {
     I.see(expectedName, '.tf-group-body-search-result');
   },
 
+  // ----------------------------------------------------------------
+  //  講師別受講生一覧（SW: teacher/sw/teByStudent）
+  // ----------------------------------------------------------------
+
+  /**
+   * 講師別受講生一覧画面へ遷移する
+   */
+  navigateToTeByStudentListPage() {
+    I.say('【講師別受講生一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=teacher%2Fsw%2FteByStudent');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 講師別受講生一覧の検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - teByStudent_ichiran_search_data.csv の1行分
+   */
+  fillTeByStudentSearchConditions(data) {
+    I.say('【講師別受講生一覧】検索条件を入力');
+    if (data.lastName)  I.fillField('#lastName', data.lastName);
+    if (data.firstName) I.fillField('#firstName', data.firstName);
+  },
+
   ...createMenuNavigationMixin('tframe_teacher'),
 };
