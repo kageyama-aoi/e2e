@@ -41,7 +41,7 @@
 | ディレクトリ | 置いてよいもの | 置いてはいけないもの |
 |---|---|---|
 | `tests/` | テストシナリオ（`*_test.js`）のみ | Page Object、ユーティリティ、データ |
-| `pages/` | Page Object、メニュー定義（`*SideMenu.js`）、URL解決ヘルパー（`_urlPath.js`） | テスト入力データ、汎用ユーティリティ |
+| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`） | テスト入力データ、汎用ユーティリティ |
 | `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
 | `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
 | `scripts/` | 単体で起動する補助ツール（Python・Node） | テスト実行中に `require()` されるJS |
@@ -214,7 +214,7 @@
   - `cleanup/`  : output/ と logs/ の古いファイル削除・アーカイブ
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
-  - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ等）
+  - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録等）
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。
 
 ## パス解決のルール（JS テストファイル）
