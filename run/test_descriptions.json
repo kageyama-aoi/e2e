@@ -43,7 +43,10 @@
     "page/stByCourse_ichiran_test.js":                 "コース別受講生一覧の空検索とコース名での絞り込み検索を確認",
     "page/courseBySt_ichiran_test.js":                 "受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認",
     "page/teByStudent_ichiran_test.js":                "講師別受講生一覧の空検索と講師姓での絞り込み検索を確認",
-    "page/proByCourse_ichiran_test.js":                "コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ）"
+    "page/proByCourse_ichiran_test.js":                "コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ）",
+    "page/infoHistory_ichiran_test.js":               "対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認",
+    "page/infoHistoryTemplate_ichiran_test.js":       "対応履歴テンプレート一覧の空検索とテンプレート名での絞り込みを確認",
+    "page/infoHistoryTemplate_touroku_test.js":       "対応履歴テンプレートの登録フォーム入力と保存を確認"
   },
   "shimamura": {
     "syokai_touroku_test.js":                          "会員紹介者の新規登録フローを確認",

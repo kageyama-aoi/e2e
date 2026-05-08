@@ -1,0 +1,5 @@
+scenario,menuModule,name,expectedName
+受講生_空条件検索,student,,
+受講生_件名で検索,student,テスト,
+講師_空条件検索,teacher,,
+講師_件名で検索,teacher,テスト,

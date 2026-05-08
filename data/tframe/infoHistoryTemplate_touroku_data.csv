@@ -1,0 +1,2 @@
+scenario,menuModule,name,description,expectedName
+受講生テンプレート登録,student,自動テスト_対応履歴テンプレート,テスト用テンプレート内容,自動テスト_対応履歴テンプレート

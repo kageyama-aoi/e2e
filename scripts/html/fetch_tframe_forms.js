@@ -58,6 +58,11 @@ const TARGETS = [
   { name: 'courseBySt_list',  hint: '受講生別コース一覧',  directUrl: `${BASE_URL}index.php?r=student%2Fsw%2FcourseBySt` },
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
   { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
+
+  // ── 対応履歴（SW）──
+  { name: 'infoHistory_student_list',  hint: '対応履歴一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistory%2Fsw%2F_default&menuModule=student` },
+  { name: 'infoHistoryTemplate_student_list', hint: '対応履歴テンプレート一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistoryTemplate%2Fsw%2F_default&menuModule=student` },
+  { name: 'infoHistoryTemplate_touroku', hint: '対応履歴テンプレート登録（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistoryTemplate%2Few%2F_default&menuModule=student` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

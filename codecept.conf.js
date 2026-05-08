@@ -181,7 +181,8 @@ AllureResultsDir=${runtimeAllureResultsDir}
     classroomPage:     './pages/tframe/screens/ClassroomPage.js',
     ryokinMasterPage:  './pages/tframe/screens/RyokinMasterPage.js',
     branchPage:        './pages/tframe/screens/BranchPage.js',
-    ryokinPackagePage: './pages/tframe/screens/RyokinPackagePage.js'
+    ryokinPackagePage: './pages/tframe/screens/RyokinPackagePage.js',
+    infoHistoryPage:   './pages/tframe/screens/InfoHistoryPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
