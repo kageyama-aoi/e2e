@@ -5,7 +5,7 @@
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
-const { fillTextFields, submitTframeFormAndVerify } = require('../../../support/utils');
+const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../../support/utils');
 
 module.exports = {
   /** 受講生アイコンのセレクタ（日英） */
@@ -159,15 +159,7 @@ module.exports = {
    * @returns {string} セレクタ文字列
    */
   studentIconLocator() {
-    return this.isEnglish() ? this.locators.studentIconEn : this.locators.studentIconJa;
-  },
-
-  /**
-   * 言語設定が英語かどうかを返す
-   * @returns {boolean} 英語の場合 true
-   */
-  isEnglish() {
-    return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+    return isEnglish() ? this.locators.studentIconEn : this.locators.studentIconJa;
   },
 
   /**
@@ -176,7 +168,7 @@ module.exports = {
   navigateToRegisterPage() {
     I.say('【受講生登録】登録画面へ遷移');
     if (process.env.USE_MENU_NAV === 'true') {
-      const studentText = this.isEnglish() ? 'Student' : '受講生';
+      const studentText = isEnglish() ? 'Student' : '受講生';
       I.click('a:has-text("' + studentText + '")');
       I.waitForElement('a[href*="student%2Few%2F_default"]', 10);
       I.click('a[href*="student%2Few%2F_default"]');

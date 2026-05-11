@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
+const { isEnglish } = require('../../../support/utils');
 
 module.exports = {
   /** マスターアイコンのセレクタ（日英） */
@@ -76,15 +77,7 @@ module.exports = {
    * @returns {string} セレクタ文字列
    */
   masterIconLocator() {
-    return this.isEnglish() ? this.locators.masterIconEn : this.locators.masterIconJa;
-  },
-
-  /**
-   * 言語設定が英語かどうかを返す
-   * @returns {boolean} 英語の場合 true
-   */
-  isEnglish() {
-    return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+    return isEnglish() ? this.locators.masterIconEn : this.locators.masterIconJa;
   },
 
   ...createMenuNavigationMixin('tframe_master'),

@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
+const { isEnglish } = require('../../../support/utils');
 
 module.exports = {
   /** Eメールアイコンのセレクタ（日英） */
@@ -188,15 +189,7 @@ module.exports = {
    * @returns {string} セレクタ文字列
    */
   emailIconLocator() {
-    return this.isEnglish() ? this.locators.emailIconEn : this.locators.emailIconJa;
-  },
-
-  /**
-   * 言語設定が英語かどうかを返す
-   * @returns {boolean} 英語の場合 true
-   */
-  isEnglish() {
-    return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
+    return isEnglish() ? this.locators.emailIconEn : this.locators.emailIconJa;
   },
 
   /**

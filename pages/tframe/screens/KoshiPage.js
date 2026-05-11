@@ -159,15 +159,7 @@ module.exports = {
    * @returns {string} セレクタ文字列
    */
   teacherIconLocator() {
-    return this.isEnglish() ? this.locators.teacherIconEn : this.locators.teacherIconJa;
-  },
-
-  /**
-   * 言語設定が英語かどうかを返す
-   * @returns {boolean} 英語の場合 true
-   */
-  isEnglish() {
-    return isEnglish();
+    return isEnglish() ? this.locators.teacherIconEn : this.locators.teacherIconJa;
   },
 
   /**
@@ -177,7 +169,7 @@ module.exports = {
     I.say('【講師登録】登録画面へ遷移');
     if (process.env.USE_MENU_NAV === 'true') {
       // 講師メニュー → 講師登録（href で判別するため言語不変）
-      const teacherText = this.isEnglish() ? 'Teacher' : '講師';
+      const teacherText = isEnglish() ? 'Teacher' : '講師';
       I.click('a:has-text("' + teacherText + '")');
       I.waitForElement('a[href*="teacher%2Few"]', 10);
       I.click('a[href*="teacher%2Few"]');
