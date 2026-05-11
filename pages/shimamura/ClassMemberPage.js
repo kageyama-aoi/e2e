@@ -129,4 +129,61 @@ module.exports = {
   },
 
   // TODO: これ以降のクラス受講生登録に関する操作（例: registerNewMember）をメソッドとして追加してください。
+
+  // ----------------------------------------------------------------
+  //  入出金一覧（ListView）
+  // ----------------------------------------------------------------
+
+  /**
+   * 入出金一覧画面へ遷移する（URL 直遷移）
+   */
+  navigateToTransactionListPage() {
+    I.say('【入出金一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Transaction&action=index&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+    // 日付フィールドがデフォルトで今日のみに設定されるためクリアして全期間対象にする
+    I.clearField('input[name="date_group1_rstart"]');
+    I.clearField('input[name="date_group1_rend"]');
+  },
+
+  /**
+   * 検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - transaction_ichiran_search_data.csv の1行分
+   */
+  fillTransactionSearchConditions(data) {
+    I.say('【入出金一覧】検索条件を入力');
+    if (data.last_name)    I.fillField('input[name="last_name"]', data.last_name);
+    if (data.course_name)  I.fillField('input[name="course_name"]', data.course_name);
+    if (data.area_id)      I.selectOption('select[name="area_id"]', data.area_id);
+    if (data.school_id)    I.selectOption('select[name="school_id"]', data.school_id);
+    if (data.smsgroup)     I.selectOption('select[name="smsgroup"]', data.smsgroup);
+    if (data.claim_type)   I.selectOption('select[name="claim_type"]', data.claim_type);
+    if (data.payment_type) I.selectOption('select[name="payment_type"]', data.payment_type);
+  },
+
+  /**
+   * 検索ボタンをクリックし、結果が表示されるまで待つ
+   */
+  clickTransactionSearchAndWait() {
+    I.say('【入出金一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  /**
+   * 検索結果に1件以上のリンクがあることを確認する
+   */
+  verifyTransactionResultsExist() {
+    I.say('【入出金一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  /**
+   * 検索結果に指定テキストが表示されることを確認する
+   * @param {string} expectedText - 結果一覧に表示されるべき文字列
+   */
+  verifyTransactionRecordInResults(expectedText) {
+    I.say(`【入出金一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
 };

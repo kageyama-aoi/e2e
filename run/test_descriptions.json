@@ -55,7 +55,8 @@
     "taikai_test.js":                                  "退会処理フローを確認",
     "shimamura_class_existence_check_test.js":         "指定クラスが存在するか一括チェック",
     "shimamura_class_member_registration_test.js":     "クラスへのメンバー登録フローを確認",
-    "keiri_hennkin_syori_test.js":                     "経理の返金処理フローを確認"
+    "keiri_hennkin_syori_test.js":                     "経理の返金処理フローを確認",
+    "transaction_ichiran_test.js":                      "入出金一覧の空検索と姓での絞り込み検索を確認"
   },
   "taskreport": {
     "taskreport_sample_test.js":                       "Taskreport 機能のサンプルテスト"
