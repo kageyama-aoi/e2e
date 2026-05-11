@@ -7,6 +7,7 @@
 
 const { I } = inject();
 const { fillTextFields, submitTframeFormAndVerify } = require('../../../support/utils');
+const createIchiranMixin = require('../_common/IchiranMixin');
 
 module.exports = {
 
@@ -34,31 +35,7 @@ module.exports = {
     if (data.categoryMain) I.selectOption('#categoryMain', data.categoryMain);
   },
 
-  /**
-   * 検索ボタンをクリックし、結果行が表示されるまで待つ
-   */
-  clickSearchAndWait() {
-    I.say('【対応履歴一覧】検索ボタンをクリック');
-    I.click('#swSearchButton');
-    I.waitForElement('.tf-group-body-search-result tr', 15);
-  },
-
-  /**
-   * 検索結果エリアに1件以上の行があることを確認する
-   */
-  verifyResultsExist() {
-    I.say('【対応履歴一覧】検索結果が表示されることを確認');
-    I.seeElement('.tf-group-body-search-result tr');
-  },
-
-  /**
-   * 検索結果エリアに指定テキストが表示されることを確認する
-   * @param {string} expectedName
-   */
-  verifyRecordInResults(expectedName) {
-    I.say(`【対応履歴一覧】"${expectedName}" が結果に表示されることを確認`);
-    I.see(expectedName, '.tf-group-body-search-result');
-  },
+  ...createIchiranMixin('対応履歴一覧'),
 
   // ----------------------------------------------------------------
   //  対応履歴テンプレート一覧（SW）

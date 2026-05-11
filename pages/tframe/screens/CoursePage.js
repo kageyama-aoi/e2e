@@ -4,6 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
+const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields, submitTframeFormAndVerify } = require('../../../support/utils');
 
 module.exports = {
@@ -244,31 +245,7 @@ module.exports = {
     if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
   },
 
-  /**
-   * 検索ボタンをクリックし、結果行が表示されるまで待つ
-   */
-  clickSearchAndWait() {
-    I.say('【コース一覧】検索ボタンをクリック');
-    I.click('#swSearchButton');
-    I.waitForElement('.tf-group-body-search-result tr', 15);
-  },
-
-  /**
-   * 検索結果エリアに1件以上の行があることを確認する
-   */
-  verifyResultsExist() {
-    I.say('【コース一覧】検索結果が表示されることを確認');
-    I.seeElement('.tf-group-body-search-result tr');
-  },
-
-  /**
-   * 検索結果エリアに指定テキストが表示されることを確認する
-   * @param {string} expectedName - 結果一覧に表示されるべき文字列
-   */
-  verifyRecordInResults(expectedName) {
-    I.say(`【コース一覧】"${expectedName}" が結果に表示されることを確認`);
-    I.see(expectedName, '.tf-group-body-search-result');
-  },
+  ...createIchiranMixin('コース一覧'),
 
   // ----------------------------------------------------------------
   //  コース別商品一覧（SW）
