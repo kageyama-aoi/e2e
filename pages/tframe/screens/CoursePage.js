@@ -73,39 +73,6 @@ module.exports = {
   },
 
   /**
-   * 指定 href のリンクが画面内に表示されるようスクロールする
-   * @param {string} href - スクロール先リンクの href
-   */
-  scrollToHref(href) {
-    I.executeScript(
-      ({ targetHref }) => {
-        const target = document.querySelector(`a[href="${targetHref}"]`);
-        if (!target) return false;
-        target.scrollIntoView({ block: 'center', inline: 'nearest' });
-        return true;
-      },
-      { targetHref: href }
-    );
-  },
-
-  /**
-   * 指定 href のリンクをクリックする
-   * @param {string} href - クリックするリンクの href
-   */
-  clickLinkByHref(href) {
-    I.executeScript(
-      ({ targetHref }) => {
-        const target = document.querySelector(`a[href="${targetHref}"]`);
-        if (!target) {
-          throw new Error(`link not found: ${targetHref}`);
-        }
-        target.click();
-      },
-      { targetHref: href }
-    );
-  },
-
-  /**
    * メニュー項目に合わせたスクロール処理を行う（href 優先、なければテキスト）
    * @param {{name: string, href: string}} item - メニュー項目
    */

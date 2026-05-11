@@ -41,19 +41,6 @@ module.exports = {
   },
 
   /**
-   * メニュー定義に従い全メニュー項目を順番に押下・検証する
-   * @param {{groups: Array.<{items: Array.<{name: string, href: string, altName: string}>}>}} menuDefinition - メニュー定義
-   * @returns {Promise.<void>}
-   */
-  async verifyMenuNavigation(menuDefinition) {
-    for (const group of menuDefinition.groups) {
-      for (const item of group.items) {
-        await this.clickMenuItemAndVerify(item);
-      }
-    }
-  },
-
-  /**
    * 指定グループ名のリンクが表示されていることを確認する
    * @param {string} groupName - グループ名
    */
@@ -87,33 +74,6 @@ module.exports = {
   },
 
   /**
-   * 1つのメニュー項目を押下し、URL遷移・スクリーンショットを検証する
-   * @param {{name: string, href: string, altName: string}} item - メニュー項目
-   * @returns {Promise.<void>}
-   */
-  async clickMenuItemAndVerify(item) {
-    const itemName = item.name;
-    const expectedHref = item.href;
-    I.say(`【子メニュー押下】${itemName}`);
-    const resolvedHref = expectedHref || await this.grabHrefByTexts([item.name, item.altName].filter(Boolean));
-
-    if (expectedHref) {
-      const itemLink = this.itemLinkLocator(item);
-      this.scrollToItem(item);
-      I.waitForElement(itemLink, 10);
-      I.click(itemLink);
-    } else {
-      this.clickLinkByTexts([item.name, item.altName].filter(Boolean));
-    }
-
-    I.wait(1);
-    const currentUrl = await I.grabCurrentUrl();
-    this.assertCurrentUrlMatches(currentUrl, resolvedHref);
-    I.saveScreenshotWithTimestamp(this.buildScreenshotName(itemName), true);
-    await this.clickSearchIfPresentAndCapture(itemName);
-  },
-
-  /**
    * テキストに一致するリンクのロケーターを返す
    * @param {string} text - リンクテキスト
    * @returns {CodeceptJS.Locator} ロケーター
@@ -141,123 +101,11 @@ module.exports = {
   },
 
   /**
-   * 指定 href のリンクが画面内に表示されるようスクロールする
-   * @param {string} href - スクロール先リンクの href
-   */
-  scrollToHref(href) {
-    I.executeScript(
-      ({ targetHref }) => {
-        const target = document.querySelector(`a[href="${targetHref}"]`);
-        if (!target) return false;
-        target.scrollIntoView({ block: 'center', inline: 'nearest' });
-        return true;
-      },
-      { targetHref: href }
-    );
-  },
-
-  /**
-   * メニュー項目に合わせたスクロール処理を行う（href 優先、なければテキスト）
-   * @param {{name: string, href: string, altName: string}} item - メニュー項目
-   */
-  scrollToItem(item) {
-    const itemName = item.name;
-    const expectedHref = item.href;
-    if (expectedHref) {
-      this.scrollToHref(expectedHref);
-      return;
-    }
-    this.scrollMenuToTexts([itemName, item.altName].filter(Boolean));
-  },
-
-  /**
-   * メニュー項目に対応するリンクロケーターを返す（href 優先、なければテキスト）
-   * @param {{name: string, href: string, altName: string}} item - メニュー項目
-   * @returns {CodeceptJS.Locator} ロケーター
-   */
-  itemLinkLocator(item) {
-    const itemName = item.name;
-    const expectedHref = item.href;
-    if (expectedHref) {
-      return locate(`a[href="${expectedHref}"]`);
-    }
-    return this.linkByTexts([itemName, item.altName].filter(Boolean));
-  },
-
-  /**
    * 現在の言語設定に合わせたEメールアイコンのロケーターを返す
    * @returns {string} セレクタ文字列
    */
   emailIconLocator() {
     return isEnglish() ? this.locators.emailIconEn : this.locators.emailIconJa;
-  },
-
-  /**
-   * 複数テキストのいずれかに一致するリンクの XPath ロケーターを返す
-   * @param {Array.<string>} texts - 候補テキストの配列
-   * @returns {CodeceptJS.Locator} XPath ロケーター
-   */
-  linkByTexts(texts) {
-    const xpath = texts.map((text) => `contains(., '${text}')`).join(' or ');
-    return locate({ xpath: `.//a[${xpath}]` });
-  },
-
-  /**
-   * 複数テキストのいずれかに一致するリンクの href を取得する
-   * @param {Array.<string>} texts - 候補テキストの配列
-   * @returns {Promise.<string|null>} href 属性値（見つからない場合 null）
-   */
-  async grabHrefByTexts(texts) {
-    return I.executeScript(
-      ({ targetTexts }) => {
-        const links = Array.from(document.querySelectorAll('a'));
-        const target = links.find((link) =>
-          targetTexts.some((text) => link.textContent && link.textContent.includes(text))
-        );
-        return target ? target.getAttribute('href') : null;
-      },
-      { targetTexts: texts }
-    );
-  },
-
-  /**
-   * 複数テキストのいずれかに一致するリンクが画面内に表示されるようスクロールする
-   * @param {Array.<string>} texts - 候補テキストの配列
-   */
-  scrollMenuToTexts(texts) {
-    I.executeScript(
-      ({ targetTexts }) => {
-        const links = Array.from(document.querySelectorAll('a'));
-        const target = links.find((link) =>
-          targetTexts.some((text) => link.textContent && link.textContent.includes(text))
-        );
-        if (!target) return false;
-
-        target.scrollIntoView({ block: 'center', inline: 'nearest' });
-        return true;
-      },
-      { targetTexts: texts }
-    );
-  },
-
-  /**
-   * 複数テキストのいずれかに一致するリンクをクリックする
-   * @param {Array.<string>} texts - 候補テキストの配列
-   */
-  clickLinkByTexts(texts) {
-    I.executeScript(
-      ({ targetTexts }) => {
-        const links = Array.from(document.querySelectorAll('a'));
-        const target = links.find((link) =>
-          targetTexts.some((text) => link.textContent && link.textContent.includes(text))
-        );
-        if (!target) {
-          throw new Error(`link not found: ${targetTexts.join(', ')}`);
-        }
-        target.click();
-      },
-      { targetTexts: texts }
-    );
   },
 
   ...createMenuNavigationMixin('tframe_email'),
