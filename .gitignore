@@ -6,6 +6,7 @@ allure-report/
 docs/generated/
 docs/learning/bash_*.md
 scripts/__pycache__/
+scripts/html/shimamura/
 
 # Environment variables
 .env
