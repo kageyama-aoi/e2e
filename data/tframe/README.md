@@ -89,7 +89,7 @@ Data(csvMinimum).Scenario('講師を新規登録できる（最小入力）', { 
 | `email` | `lang_check_test.js`, `dropdown_check_test.js`, `email_test.js` |
 | `help` | `lang_check_test.js`, `dropdown_check_test.js`, `help_test.js` |
 | `master` | `lang_check_test.js`, `dropdown_check_test.js`, `master_menu_test.js` |
-| `accounting` | `dropdown_check_test.js`, `keiryo_master_test.js` |
+| `accounting` | `keiryo_master_test.js` |
 | `report` | `lang_check_test.js`, `dropdown_check_test.js`, `report_test.js` |
 
 ## その他のデータファイル
