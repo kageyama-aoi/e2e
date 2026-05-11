@@ -110,6 +110,7 @@
 | `/handoff` | セッション終了時のハンドオフ文書作成 |
 | `/newplan` | 新しい開発サイクルの開始（`.spec/` のアーカイブ＆新規作成） |
 | `/tframe-html-fetch` | tframe 画面の HTML 取得 + フォームフィールド ID の抽出・整理 |
+| `/shimamura-html-fetch` | shimamura 画面の HTML 取得 + フォームフィールド（name/id 属性）の抽出・整理 |
 
 ## コーディング規約・命名
 - JavaScript は既存のスタイルに合わせる（強制フォーマッタなし）。
