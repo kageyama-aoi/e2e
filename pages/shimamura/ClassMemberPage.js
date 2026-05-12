@@ -481,4 +481,40 @@ module.exports = {
     I.say('【受注・売上】フォームが再表示されることを確認');
     I.seeElement('select[name="keiri_month_year"]');
   },
+
+  // ----------------------------------------------------------------
+  //  本日の出席表一覧 (attendance_today)
+  //  ※ POST form: 表示ボタン = input[name="button"][value="出席表表示"]
+  //    日付は start_date / end_date（テキスト入力 YYYY-MM-DD）。
+  //    edit_button（出席表編集）は絶対クリックしないこと。
+  // ----------------------------------------------------------------
+
+  navigateToAttendanceTodayPage() {
+    I.say('【出席表一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Course&action=AttendanceViewDetailed&initial_state=menu');
+    I.waitForElement('input[name="button"][value="出席表表示"]', 10);
+  },
+
+  fillAttendanceTodaySearchConditions(data) {
+    I.say('【出席表一覧】検索条件を入力');
+    if (data.start_date) {
+      I.clearField('input[name="start_date"]');
+      I.fillField('input[name="start_date"]', data.start_date);
+    }
+    if (data.end_date) {
+      I.clearField('input[name="end_date"]');
+      I.fillField('input[name="end_date"]', data.end_date);
+    }
+  },
+
+  clickAttendanceTodayDisplayAndWait() {
+    I.say('【出席表一覧】出席表表示ボタンをクリック');
+    I.click('input[name="button"][value="出席表表示"]');
+    I.waitForElement('.listViewPaginationTdS1', 15);
+  },
+
+  verifyAttendanceTodayPageLoaded() {
+    I.say('【出席表一覧】ページが表示されることを確認');
+    I.seeElement('.listViewPaginationTdS1');
+  },
 };
