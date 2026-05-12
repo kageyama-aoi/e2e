@@ -1,0 +1,61 @@
+<div id="rootWidget" class="container-fluid tf-content tf-sw-page" data-actionid="course/sw/_default"><div class="tf-title-wrapper"><div class="tf-page-title"><span class="pull-left showopacity tf-group-title-icon glyphicon glyphicon-book" style="line-height:32px;font-size:18px;padding-right:10px;"></span><span>コース一覧</span></div><div class="tf-help-icon">
+                    <a target="_blank" href="index.php?r=cmn/gw/help&amp;helpFileKey=Course">
+                        <span class="fa fa-question-circle"></span>
+                    </a>
+                </div><div class="clear-both"></div></div><div id="tf-message-summary" class="tf-message-summary"></div>
+    		<div class="tf-message-slide" id="tf-message-slide"></div>
+    		<div class="tf-page-body"><form id="searchForm" action="index.php?r=course/sw" method="POST" enctype="multipart/form-data" autocomplete="off"><div id="searchBlock" class="tf-group-wrapper searchBlock col-sm-12"><div class="tf-group-body col-sm-12"><div id="buttonsGroup" class="tf-group-wrapper top-buttons-group-wrapper-div col-sm-12"><div class="tf-group-body col-sm-12 top-buttons-group-body-div"><div id="searchButtonsMainGroup" class="tf-group-wrapper col-sm-4"><div class="tf-group-body col-sm-12"><div id="wrapper_swSearchButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="swSearchButton" class="tf-data btn btn-primary tf-swSearchButton" name="swSearchButton" value="" onclick="tf.ajax.tcnAjax(  'isSearch=1'   + '&amp;'  +   'isResetPage=1'   + '&amp;'  +   'record=_R_data-record_R_'   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '.searchFields:first')   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '.searchResult:first') + '&amp;' +   'ajaxRenderList[]=searchResult'     + '&amp;'   +   'ajaxRenderList[]=swProspectListCreateGroup'   + '&amp;' + '' + '&amp;', 'index.php?r=course/sw/_default', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_swSearchButton">検索</button></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_swClearButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="swClearButton" class="tf-data btn btn-warning tf-swClearButton" name="swClearButton" value="" onclick="tf.ajax.tcnAjax(  'isClearForm=1'   + '&amp;'  +   'isResetSw=1'   + '&amp;'  +   'record=_R_data-record_R_' + '&amp;' +   'ajaxRenderList[]=searchFields'     + '&amp;'   +   'ajaxRenderList[]=searchResult'   + '&amp;' + '' + '&amp;', 'index.php?r=course/sw/_default', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_swClearButton">クリア</button></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div id="otherButtons" class="tf-group-wrapper col-sm-1"><div class="tf-group-body col-sm-12"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchFields" class="tf-group-wrapper searchFields col-sm-12"><div class="tf-group-body col-sm-12"><div id="infoGroup_1" class="tf-group-wrapper col-sm-12"><div class="tf-group-body col-sm-12 ew-data-group group-bordered"><div id="wrapper_name" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-5"><label class="tf-label">コース名:</label></div><div class="tf-data-div col-sm-7"><input id="name" class="tf-data form-control input-control tf-text" name="name" value="" data-wrapper-id="wrapper_name"></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_school" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-5"><label class="tf-label">校舎:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td style="padding:0px;width:50%;"><div id="wrapper_school_area_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="school_area_id" class="tf-data form-control input-control tf-select" name="school_area_id" onchange="tf.ajax.tcnAjax( $('#wrapper_school').find('select, textarea, input').serialize() + '&amp;' +   'ajaxRenderList[]=school'   + '&amp;' + '' + '&amp;', 'index.php?r=course/sw/_default', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_school_area_id" istranslate="">
+<option value="">すべて</option>
+<option value="a1" selected="">関東</option>
+<option value="a2">関西</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td><td style="padding:0px;width:50%;"><div id="wrapper_school_branch_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="school_branch_id" class="tf-data form-control input-control tf-select" name="school_branch_id" data-wrapper-id="wrapper_school_branch_id" istranslate="">
+<option value="">すべて</option>
+<option value="b1" selected="">東京</option>
+<option value="573c9069-7a40-cd07-121d-656d1a1065f0">account delete test</option>
+<option value="5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba">ダミー校舎</option>
+<option value="a420d855-0f2d-35be-1ba1-66bed2383e20">営業</option>
+<option value="3b680ac4-7794-b926-4ab7-67d8df9982a6">カゲヤマ関とう</option>
+<option value="e19eaa6f-bbe0-bfbc-d115-6800bbdd0288">20250417_test</option>
+<option value="e9915046-9168-6f46-6408-682af2d28db1">shimo_校舎</option>
+<option value="d8f435d4-158d-ca40-52ff-68410359d5de">田中テスト_豊洲</option>
+<option value="14ebb959-c45d-4549-1cd1-68479bd6fc32">カゲ関東2</option>
+<option value="b6ef1889-aa9b-1f44-10df-685bbe440b36">NB</option>
+<option value="5fd5ac68-58a0-e9fd-53a9-68677f904471">KETUGOU＿A校舎</option>
+<option value="23861e14-c4a7-ce89-45c0-68677f786674">KETUGOU＿B校舎</option>
+<option value="8708f85c-2d3c-c55b-4161-686c6a57f6eb">MHI研修センター</option>
+<option value="715cbb12-24e8-e231-fb1e-68be7668bbd9">使用しない</option>
+<option value="83a6f5b4-3fba-daec-2535-691e8078634d">札幌市生涯学習センター※デモ貸与</option>
+<option value="61e4f628-8cf0-2b40-62cc-65a106f4ce52">testcampus</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_courseCategory" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-5"><label class="tf-label">コースカテゴリ:</label></div><div class="tf-data-div col-sm-7"><select id="courseCategory" class="tf-data form-control input-control tf-select" name="courseCategory" data-wrapper-id="wrapper_courseCategory" istranslate="">
+<option value="">すべて</option>
+<option value="通常授業">通常授業</option>
+<option value="単発授業">単発授業</option>
+<option value="発表会">発表会</option>
+<option value="その他">その他</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_nendo" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-5"><label class="tf-label">年度:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td class="year" style="padding:0px;"><div id="wrapper_nendoYear" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="nendoYear" class="tf-data form-control input-control tf-select" name="nendoYear" data-wrapper-id="wrapper_nendo">
+<option value="">すべて</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchResult" class="tf-group-wrapper searchResult tf-group-wrapper-sw-search-result col-sm-12"><div class="tf-group-body col-sm-12 tf-group-body-search-result"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><input type="hidden" id="_csrf" name="_csrf" value="DluADtHXlpJ5KvSmvgmb8EfoqQwgRtyxLDM36d8Citc8Gu5nsuKv9DMfjMfRR8iSCKT_Y2wht-NzWACgqEPQsw=="><input class="tf-visibility-hidden" name="dummyInput"></form><div class="clear-both"></div></div><div class="clear-both"></div></div>
