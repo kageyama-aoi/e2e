@@ -1,0 +1,3 @@
+scenario,last_name,first_name,expectedErrors
+姓なしで保存,,太郎,姓
+名なしで保存,テスト,,名
