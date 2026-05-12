@@ -67,7 +67,20 @@ const TARGETS = [
     hint: '入出金一覧',
     directUrl: `${BASE_URL}index.php?module=Transaction&action=index&top_menu=1` },
 
-  // ── 管理系（URL は管理タブ遷移後のリンクから取得する必要あり）──
+  // ── 経理・謝礼系 ──
+  { name: 'kousha_sharei_add',
+    hint: '講師謝礼追加',
+    directUrl: `${BASE_URL}index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN` },
+  { name: 'ryokin_package_create',
+    hint: '料金パッケージ作成',
+    directUrl: `${BASE_URL}index.php?module=SalesGroup&action=EditView` },
+
+  // ── 管理系 ──
+  { name: 'admin_top',
+    hint: '管理トップ',
+    directUrl: `${BASE_URL}index.php?module=Administration&action=index` },
+
+  // 以下は URL が未確認（コメントアウト）──
   // { name: 'kouhousei_detail', hint: '候補生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },
   // { name: 'student_detail',   hint: '受講生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },
   // { name: 'taikai',           hint: '退会処理',     directUrl: 'ナビゲーション経由のため要調査' },
