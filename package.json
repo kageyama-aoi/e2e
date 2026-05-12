@@ -3,17 +3,15 @@
   "version": "1.0.0",
   "description": "CodeceptJS E2E Tests",
   "scripts": {
+    "gui":    "python run/run_gui.py",
+
     "test": "npx codeceptjs run",
-    
+
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura.testgcp",
-    "test:shimamura:syokai": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js",
-    "test:shimamura:syokai:normal": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --grep \"@normal\" --profile shimamura.testgcp",
-    "test:shimamura:syokai:error": "npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --grep \"@error\" --profile shimamura.testgcp",
-    
+
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
     "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js",
-    "test_now": "set KEEP_BROWSER_OPEN=1&& npx codeceptjs run --steps --debug ./tests/tframe/flow/navigation_after_login_student_test.js",
     
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
     "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport",
