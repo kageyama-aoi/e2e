@@ -450,4 +450,35 @@ module.exports = {
     I.say('【未収金一覧】結果テーブルが表示されることを確認');
     I.seeElement('.listViewPaginationTdS1');
   },
+
+  // ----------------------------------------------------------------
+  //  受注・売上（経理）(keiri_invoices)
+  //  ※ POST form: 表示ボタン = input[name="button"][value="表示"]
+  //    日付は keiri_month_year / keiri_month_month / keiri_month_day の3セレクト。
+  //    デフォルトは現在年月・日は "00"（月全体）。
+  // ----------------------------------------------------------------
+
+  navigateToKeiriInvoicesPage() {
+    I.say('【受注・売上】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Keiri&action=index&keiri_report_type=Invoices&top_menu=1');
+    I.waitForElement('select[name="keiri_month_year"]', 10);
+  },
+
+  fillKeiriInvoicesSearchConditions(data) {
+    I.say('【受注・売上】検索条件を入力');
+    if (data.keiri_year)  I.selectOption('select[name="keiri_month_year"]',  data.keiri_year);
+    if (data.keiri_month) I.selectOption('select[name="keiri_month_month"]', data.keiri_month);
+    if (data.keiri_day)   I.selectOption('select[name="keiri_month_day"]',   data.keiri_day);
+  },
+
+  clickKeiriInvoicesDisplayAndWait() {
+    I.say('【受注・売上】表示ボタンをクリック');
+    I.click('input[name="button"][value="表示"]');
+    I.waitForElement('select[name="keiri_month_year"]', 15);
+  },
+
+  verifyKeiriInvoicesPageLoaded() {
+    I.say('【受注・売上】フォームが再表示されることを確認');
+    I.seeElement('select[name="keiri_month_year"]');
+  },
 };

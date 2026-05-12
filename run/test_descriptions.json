@@ -65,7 +65,8 @@
     "teacher_list_ichiran_test.js":                     "講師一覧の空検索で結果が表示されることを確認",
     "course_ichiran_test.js":                           "コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認",
     "contact_module_list_ichiran_test.js":              "コンタクト一覧の空検索で結果が表示されることを確認",
-    "mishukin_list_ichiran_test.js":                    "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認"
+    "mishukin_list_ichiran_test.js":                    "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認",
+    "keiri_invoices_ichiran_test.js":                   "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認"
   },
   "taskreport": {
     "taskreport_sample_test.js":                       "Taskreport 機能のサンプルテスト"
