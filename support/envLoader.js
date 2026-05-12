@@ -72,3 +72,9 @@ function loadEnv() {
 
 // このファイルを require した際に loadEnv を実行する
 loadEnv();
+
+// 起動時に主要設定値を出力（環境とデータの不一致を即座に検出できるようにする）
+console.log('--- DEBUG: BASE_URL:', process.env.BASE_URL || '(not set)');
+if (process.env.TFRAME_LANGUAGE) {
+  console.log('--- DEBUG: TFRAME_LANGUAGE:', process.env.TFRAME_LANGUAGE);
+}
