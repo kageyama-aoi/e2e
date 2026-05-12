@@ -112,6 +112,7 @@
 | `/tframe-html-fetch` | tframe 画面の HTML 取得 + フォームフィールド ID の抽出・整理 |
 | `/shimamura-html-fetch` | shimamura 画面の HTML 取得 + フォームフィールド（name/id 属性）の抽出・整理 |
 | `/shimamura-ichiran-dev` | shimamura 一覧検索テストの新規作成・修正手順 |
+| `/shimamura-registration-dev` | shimamura 登録・処理フローテストの新規作成・修正手順 |
 
 ## コーディング規約・命名
 - JavaScript は既存のスタイルに合わせる（強制フォーマッタなし）。
