@@ -80,6 +80,23 @@ const TARGETS = [
     hint: '管理トップ',
     directUrl: `${BASE_URL}index.php?module=Administration&action=index` },
 
+  // ── 講師・その他一覧系 ──
+  { name: 'teacher_list',
+    hint: '講師一覧',
+    directUrl: `${BASE_URL}index.php?module=Teacher&action=index&top_menu=1` },
+  { name: 'mishukin_list',
+    hint: '未収金一覧',
+    directUrl: `${BASE_URL}index.php?module=Transaction&action=LWMishukin_AN&query=true` },
+  { name: 'attendance_today',
+    hint: '本日の出席表一覧',
+    directUrl: `${BASE_URL}index.php?module=Course&action=AttendanceViewDetailed&initial_state=menu` },
+  { name: 'course_ichiran',
+    hint: 'コース一覧（管理）',
+    directUrl: `${BASE_URL}index.php?module=Course&action=index&top_menu=1` },
+  { name: 'contact_module_list',
+    hint: 'コンタクト一覧',
+    directUrl: `${BASE_URL}index.php?module=Contacts&action=index&top_menu=1` },
+
   // 以下は URL が未確認（コメントアウト）──
   // { name: 'kouhousei_detail', hint: '候補生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },
   // { name: 'student_detail',   hint: '受講生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },

@@ -1,0 +1,3 @@
+scenario,course_name,expectedName
+空条件検索,,
+コース名で絞り込み,サロン,

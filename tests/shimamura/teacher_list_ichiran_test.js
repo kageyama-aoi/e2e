@@ -1,0 +1,40 @@
+/**
+ * @fileoverview shimamura 講師一覧 E2E テスト
+ *
+ * **テスト内容**
+ * - 空条件で検索 → 結果に1件以上表示される
+ *
+ * **データソース**
+ * - `data/shimamura/teacher_list_ichiran_search_data.csv`
+ */
+const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
+const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+
+const csvData = withScenarioLabel(
+  loadCsvWithProfile('teacher_list_ichiran_search_data'),
+  (row) => row.scenario
+);
+
+Feature('講師一覧検索');
+
+Before(async ({ login, loginPageShimamura }) => {
+  const tantousyaNumber = validateShimamuraEnv();
+  await login('user');
+  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
+});
+
+Data(csvData).Scenario('講師一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
+  classMemberPageShimamura.navigateToTeacherListPage();
+
+  const hasCondition = current.last_name || current.first_name;
+  if (hasCondition) classMemberPageShimamura.fillTeacherListSearchConditions(current);
+
+  classMemberPageShimamura.clickTeacherListSearchAndWait();
+  I.saveScreenshotWithTimestamp('teacher_list_ichiran', true);
+
+  if (current.expectedName) {
+    classMemberPageShimamura.verifyTeacherListRecordInResults(current.expectedName);
+  } else {
+    classMemberPageShimamura.verifyTeacherListResultsExist();
+  }
+});

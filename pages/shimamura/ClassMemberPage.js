@@ -186,4 +186,268 @@ module.exports = {
     I.say(`【入出金一覧】"${expectedText}" が結果に表示されることを確認`);
     I.see(expectedText, 'a.listViewTdLinkS1');
   },
+
+  // ----------------------------------------------------------------
+  //  受講生検索 (student_search)
+  // ----------------------------------------------------------------
+
+  navigateToStudentSearchPage() {
+    I.say('【受講生検索】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Student&action=index&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+    I.clearField('input[name="date_group1_rstart"]');
+    I.clearField('input[name="date_group1_rend"]');
+  },
+
+  fillStudentSearchConditions(data) {
+    I.say('【受講生検索】検索条件を入力');
+    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
+    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
+    if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickStudentSearchAndWait() {
+    I.say('【受講生検索】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyStudentResultsExist() {
+    I.say('【受講生検索】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyStudentRecordInResults(expectedText) {
+    I.say(`【受講生検索】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  問合せ一覧（候補生）(contact_list)
+  // ----------------------------------------------------------------
+
+  navigateToContactListPage() {
+    I.say('【問合せ一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Student&action=index&contact_status=5&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+    I.clearField('input[name="date_group1_rstart"]');
+    I.clearField('input[name="date_group1_rend"]');
+  },
+
+  fillContactListSearchConditions(data) {
+    I.say('【問合せ一覧】検索条件を入力');
+    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
+    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
+  },
+
+  clickContactListSearchAndWait() {
+    I.say('【問合せ一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyContactListResultsExist() {
+    I.say('【問合せ一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyContactListRecordInResults(expectedText) {
+    I.say(`【問合せ一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  コース別受講生一覧 (course_by_student)
+  // ----------------------------------------------------------------
+
+  navigateToCourseByStudentPage() {
+    I.say('【コース別受講生一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Student&action=index&contact_status=0&course_list=true&initial_state&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillCourseByStudentSearchConditions(data) {
+    I.say('【コース別受講生一覧】検索条件を入力');
+    if (data.course_name) I.fillField('input[name="course_name"]', data.course_name);
+    if (data.school_id)   I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickCourseByStudentSearchAndWait() {
+    I.say('【コース別受講生一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyCourseByStudentResultsExist() {
+    I.say('【コース別受講生一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyCourseByStudentRecordInResults(expectedText) {
+    I.say(`【コース別受講生一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  クラス一覧 (class_list)
+  // ----------------------------------------------------------------
+
+  navigateToClassListPage() {
+    I.say('【クラス一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Course&action=ListView&course_list=true&query=true&initial_state');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillClassListSearchConditions(data) {
+    I.say('【クラス一覧】検索条件を入力');
+    if (data.name)      I.fillField('input[name="name"]', data.name);
+    if (data.school_id) I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickClassListSearchAndWait() {
+    I.say('【クラス一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyClassListResultsExist() {
+    I.say('【クラス一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyClassListRecordInResults(expectedText) {
+    I.say(`【クラス一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  講師一覧 (teacher_list)
+  // ----------------------------------------------------------------
+
+  navigateToTeacherListPage() {
+    I.say('【講師一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Teacher&action=index&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillTeacherListSearchConditions(data) {
+    I.say('【講師一覧】検索条件を入力');
+    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
+    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
+    if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickTeacherListSearchAndWait() {
+    I.say('【講師一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyTeacherListResultsExist() {
+    I.say('【講師一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyTeacherListRecordInResults(expectedText) {
+    I.say(`【講師一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  コース一覧（管理）(course_ichiran)
+  // ----------------------------------------------------------------
+
+  navigateToCourseIchiranPage() {
+    I.say('【コース一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Course&action=index&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillCourseIchiranSearchConditions(data) {
+    I.say('【コース一覧】検索条件を入力');
+    if (data.name)      I.fillField('input[name="name"]', data.name);
+    if (data.school_id) I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickCourseIchiranSearchAndWait() {
+    I.say('【コース一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyCourseIchiranResultsExist() {
+    I.say('【コース一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyCourseIchiranRecordInResults(expectedText) {
+    I.say(`【コース一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  コンタクト一覧 (contact_module_list)
+  // ----------------------------------------------------------------
+
+  navigateToContactModuleListPage() {
+    I.say('【コンタクト一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Contacts&action=index&top_menu=1');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillContactModuleListSearchConditions(data) {
+    I.say('【コンタクト一覧】検索条件を入力');
+    if (data.last_name)    I.fillField('input[name="last_name"]', data.last_name);
+    if (data.company_name) I.fillField('input[name="company_name"]', data.company_name);
+    if (data.school_id)    I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickContactModuleListSearchAndWait() {
+    I.say('【コンタクト一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('a.listViewTdLinkS1', 15);
+  },
+
+  verifyContactModuleListResultsExist() {
+    I.say('【コンタクト一覧】検索結果が表示されることを確認');
+    I.seeElement('a.listViewTdLinkS1');
+  },
+
+  verifyContactModuleListRecordInResults(expectedText) {
+    I.say(`【コンタクト一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.see(expectedText, 'a.listViewTdLinkS1');
+  },
+
+  // ----------------------------------------------------------------
+  //  未収金一覧 (mishukin_list)
+  //  ※ 結果リンクは listViewTdLinkS1 を使わない特殊テーブル形式。
+  //    ページネーションセレクタ .listViewPaginationTdS1 を結果確認に使う。
+  // ----------------------------------------------------------------
+
+  navigateToMishukinListPage() {
+    I.say('【未収金一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=Transaction&action=LWMishukin_AN&query=true');
+    I.waitForElement('input[name="search"]', 10);
+  },
+
+  fillMishukinSearchConditions(data) {
+    I.say('【未収金一覧】検索条件を入力');
+    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
+    if (data.query_date) {
+      I.clearField('input[name="query_date"]');
+      I.fillField('input[name="query_date"]', data.query_date);
+    }
+    if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
+  },
+
+  clickMishukinSearchAndWait() {
+    I.say('【未収金一覧】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('.listViewPaginationTdS1', 15);
+  },
+
+  verifyMishukinTableVisible() {
+    I.say('【未収金一覧】結果テーブルが表示されることを確認');
+    I.seeElement('.listViewPaginationTdS1');
+  },
 };

@@ -57,7 +57,15 @@
     "shimamura_class_member_registration_test.js":     "クラスへのメンバー登録フローを確認",
     "keiri_hennkin_syori_test.js":                     "経理の返金処理フローを確認",
     "transaction_ichiran_test.js":                      "入出金一覧の空検索と姓での絞り込み検索を確認",
-    "contact_register_test.js":                         "問合せ登録（候補生登録）の正常系・バリデーションエラー系を確認"
+    "contact_register_test.js":                         "問合せ登録（候補生登録）の正常系・バリデーションエラー系を確認",
+    "student_search_ichiran_test.js":                   "受講生検索の空検索・姓絞り込みで結果が表示されることを確認",
+    "contact_list_ichiran_test.js":                     "問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認",
+    "course_by_student_ichiran_test.js":                "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",
+    "class_list_ichiran_test.js":                       "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
+    "teacher_list_ichiran_test.js":                     "講師一覧の空検索で結果が表示されることを確認",
+    "course_ichiran_test.js":                           "コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認",
+    "contact_module_list_ichiran_test.js":              "コンタクト一覧の空検索で結果が表示されることを確認",
+    "mishukin_list_ichiran_test.js":                    "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認"
   },
   "taskreport": {
     "taskreport_sample_test.js":                       "Taskreport 機能のサンプルテスト"
