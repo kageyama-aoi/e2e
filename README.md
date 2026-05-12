@@ -237,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-05-11 10:51:07
+Last updated: 2026-05-12 15:50:49
 
 ```text
 e2e/
@@ -254,6 +254,9 @@ e2e/
 │   │   ├── 2026-05-07-1544.md
 │   │   ├── 2026-05-07-1701.md
 │   │   ├── 2026-05-08-1204.md
+│   │   ├── 2026-05-08-1332.md
+│   │   ├── 2026-05-11-1653.md
+│   │   ├── 2026-05-12-1100.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -285,14 +288,27 @@ e2e/
 │   └── TODO.md
 ├── data/ 
 │   ├── shimamura/ 
+│   │   ├── attendance_today_ichiran_search_data.csv
+│   │   ├── class_list_ichiran_search_data.csv
+│   │   ├── contact_list_ichiran_search_data.csv
+│   │   ├── contact_module_list_ichiran_search_data.csv
+│   │   ├── contact_register_data.csv
+│   │   ├── contact_register_validation_errors.csv
+│   │   ├── course_by_student_ichiran_search_data.csv
+│   │   ├── course_ichiran_search_data.csv
 │   │   ├── keiri_hennkin_syori_data.csv
 │   │   ├── keiri_hennkin_syori_validation_errors.csv
+│   │   ├── keiri_invoices_ichiran_search_data.csv
+│   │   ├── mishukin_list_ichiran_search_data.csv
+│   │   ├── student_search_ichiran_search_data.csv
 │   │   ├── syokai_touroku_data.csv
 │   │   ├── syokai_touroku_data_shimamura.testgcp.csv
 │   │   ├── syokai_touroku_data_shimamura.testgcp2.csv
 │   │   ├── syokai_touroku_data_shimamura.traininggcp.csv
 │   │   ├── syokai_touroku_validation_errors.csv
-│   │   └── taikai_testdata.csv
+│   │   ├── taikai_testdata.csv
+│   │   ├── teacher_list_ichiran_search_data.csv
+│   │   └── transaction_ichiran_search_data.csv
 │   └── tframe/ 
 │       ├── account_ichiran_search_data.csv
 │       ├── account_touroku_data.csv
@@ -351,6 +367,7 @@ e2e/
 │   └── tframe/ 
 │       ├── _common/ 
 │       │   ├── _urlPath.js
+│       │   ├── IchiranMixin.js
 │       │   ├── MenuNavigationMixin.js
 │       │   └── sideMenus.js
 │       ├── api/ 
@@ -435,12 +452,46 @@ e2e/
 │   │   │   ├── student_list.html
 │   │   │   ├── teacher_list.html
 │   │   │   └── teByStudent_list.html
+│   │   ├── shimamura/ 
+│   │   │   ├── admin_top.html
+│   │   │   ├── admin_top_links.json
+│   │   │   ├── after_login.png
+│   │   │   ├── attendance_today.html
+│   │   │   ├── attendance_today_links.json
+│   │   │   ├── class_list.html
+│   │   │   ├── class_list_links.json
+│   │   │   ├── contact_list.html
+│   │   │   ├── contact_list_links.json
+│   │   │   ├── contact_module_list.html
+│   │   │   ├── contact_module_list_links.json
+│   │   │   ├── contact_register.html
+│   │   │   ├── contact_register_links.json
+│   │   │   ├── course_by_student.html
+│   │   │   ├── course_by_student_links.json
+│   │   │   ├── course_ichiran.html
+│   │   │   ├── course_ichiran_links.json
+│   │   │   ├── keiri_invoices.html
+│   │   │   ├── keiri_invoices_links.json
+│   │   │   ├── kousha_sharei_add.html
+│   │   │   ├── kousha_sharei_add_links.json
+│   │   │   ├── main_menu_links.json
+│   │   │   ├── mishukin_list.html
+│   │   │   ├── mishukin_list_links.json
+│   │   │   ├── ryokin_package_create.html
+│   │   │   ├── ryokin_package_create_links.json
+│   │   │   ├── student_search.html
+│   │   │   ├── student_search_links.json
+│   │   │   ├── teacher_list.html
+│   │   │   ├── teacher_list_links.json
+│   │   │   ├── transaction_list.html
+│   │   │   └── transaction_list_links.json
 │   │   ├── _fetch_juku_lists.js
 │   │   ├── compare_nav.js
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py
 │   │   ├── extract_submenus.py
 │   │   ├── fetch_chosekin_person_id.js
+│   │   ├── fetch_shimamura_screens.js
 │   │   ├── fetch_tframe_forms.js
 │   │   └── tframe_extract_form_fields.js
 │   └── input/ 
@@ -457,12 +508,24 @@ e2e/
 │   └── utils.js
 ├── tests/ 
 │   ├── shimamura/ 
+│   │   ├── attendance_today_ichiran_test.js
+│   │   ├── class_list_ichiran_test.js
+│   │   ├── contact_list_ichiran_test.js
+│   │   ├── contact_module_list_ichiran_test.js
+│   │   ├── contact_register_test.js
+│   │   ├── course_by_student_ichiran_test.js
+│   │   ├── course_ichiran_test.js
 │   │   ├── keiri_hennkin_syori_test.js
+│   │   ├── keiri_invoices_ichiran_test.js
+│   │   ├── mishukin_list_ichiran_test.js
 │   │   ├── shimamura_class_existence_check_test.js
 │   │   ├── shimamura_class_member_registration_test.js
 │   │   ├── shimamura_login_test.js
+│   │   ├── student_search_ichiran_test.js
 │   │   ├── syokai_touroku_test.js
-│   │   └── taikai_test.js
+│   │   ├── taikai_test.js
+│   │   ├── teacher_list_ichiran_test.js
+│   │   └── transaction_ichiran_test.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
 │   ├── taskreport/ 
