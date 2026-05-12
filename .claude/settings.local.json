@@ -66,7 +66,13 @@
       "PowerShell($json = Get-Content \"C:\\\\Users\\\\kageyama\\\\Tools\\\\testcode\\\\e2e\\\\.claude\\\\settings.local.json\" -Raw | ConvertFrom-Json; $json.hooks.Stop[0].hooks[0].command)",
       "PowerShell(Get-Item *)",
       "PowerShell(Rename-Item *)",
-      "PowerShell(python -c \"import json; data=json.load\\(open\\('C:/Users/kageyama/Tools/testcode/e2e/run/test_descriptions.json', encoding='utf-8'\\)\\); print\\('OK, tframe entries:', len\\(data['tframe']\\)\\)\")"
+      "PowerShell(python -c \"import json; data=json.load\\(open\\('C:/Users/kageyama/Tools/testcode/e2e/run/test_descriptions.json', encoding='utf-8'\\)\\); print\\('OK, tframe entries:', len\\(data['tframe']\\)\\)\")",
+      "PowerShell(git mv *)",
+      "PowerShell(Move-Item *)",
+      "Bash(Get-ChildItem *)",
+      "PowerShell(Join-Path *)",
+      "Bash(Select-String -Pattern \"URL調査|URL:|grabCurrentUrl\")",
+      "Bash(dir run *)"
     ]
   },
   "hooks": {
