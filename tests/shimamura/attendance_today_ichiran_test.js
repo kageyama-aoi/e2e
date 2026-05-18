@@ -1,5 +1,5 @@
 /**
- * @fileoverview shimamura 本日の出席表一覧 E2E テスト
+ * @fileoverview shimamura 出席表検索 E2E テスト
  *
  * **テスト内容**
  * - デフォルト日付（今日）で「出席表表示」→ ページが正常にロードされる
@@ -21,7 +21,7 @@ const csvData = withScenarioLabel(
   (row) => row.scenario
 );
 
-Feature('本日の出席表一覧');
+Feature('出席表検索');
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();

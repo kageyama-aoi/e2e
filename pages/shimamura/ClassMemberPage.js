@@ -223,11 +223,11 @@ module.exports = {
   },
 
   // ----------------------------------------------------------------
-  //  問合せ一覧（候補生）(contact_list)
+  //  候補生一覧 (contact_list)
   // ----------------------------------------------------------------
 
   navigateToContactListPage() {
-    I.say('【問合せ一覧】一覧画面へ遷移');
+    I.say('【候補生一覧】一覧画面へ遷移');
     I.amOnPage(process.env.BASE_URL + '/index.php?module=Student&action=index&contact_status=5&top_menu=1');
     I.waitForElement('input[name="search"]', 10);
     I.clearField('input[name="date_group1_rstart"]');
@@ -235,24 +235,24 @@ module.exports = {
   },
 
   fillContactListSearchConditions(data) {
-    I.say('【問合せ一覧】検索条件を入力');
+    I.say('【候補生一覧】検索条件を入力');
     if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
     if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
   },
 
   clickContactListSearchAndWait() {
-    I.say('【問合せ一覧】検索実行');
+    I.say('【候補生一覧】検索実行');
     I.click('input[name="search"]');
     I.waitForElement('a.listViewTdLinkS1', 15);
   },
 
   verifyContactListResultsExist() {
-    I.say('【問合せ一覧】検索結果が表示されることを確認');
+    I.say('【候補生一覧】検索結果が表示されることを確認');
     I.seeElement('a.listViewTdLinkS1');
   },
 
   verifyContactListRecordInResults(expectedText) {
-    I.say(`【問合せ一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.say(`【候補生一覧】"${expectedText}" が結果に表示されることを確認`);
     I.see(expectedText, 'a.listViewTdLinkS1');
   },
 
@@ -359,7 +359,7 @@ module.exports = {
 
   navigateToCourseIchiranPage() {
     I.say('【コース一覧】一覧画面へ遷移');
-    I.amOnPage(process.env.BASE_URL + '/index.php?module=Course&action=index&top_menu=1');
+    I.amOnPage(process.env.BASE_URL + '/index.php?module=ShimaCourse&action=LW_AN&top_menu=1');
     I.waitForElement('input[name="search"]', 10);
   },
 
@@ -386,35 +386,35 @@ module.exports = {
   },
 
   // ----------------------------------------------------------------
-  //  コンタクト一覧 (contact_module_list)
+  //  顧客一覧 (contact_module_list)
   // ----------------------------------------------------------------
 
   navigateToContactModuleListPage() {
-    I.say('【コンタクト一覧】一覧画面へ遷移');
+    I.say('【顧客一覧】一覧画面へ遷移');
     I.amOnPage(process.env.BASE_URL + '/index.php?module=Contacts&action=index&top_menu=1');
     I.waitForElement('input[name="search"]', 10);
   },
 
   fillContactModuleListSearchConditions(data) {
-    I.say('【コンタクト一覧】検索条件を入力');
+    I.say('【顧客一覧】検索条件を入力');
     if (data.last_name)    I.fillField('input[name="last_name"]', data.last_name);
     if (data.company_name) I.fillField('input[name="company_name"]', data.company_name);
     if (data.school_id)    I.selectOption('select[name="school_id"]', data.school_id);
   },
 
   clickContactModuleListSearchAndWait() {
-    I.say('【コンタクト一覧】検索実行');
+    I.say('【顧客一覧】検索実行');
     I.click('input[name="search"]');
     I.waitForElement('a.listViewTdLinkS1', 15);
   },
 
   verifyContactModuleListResultsExist() {
-    I.say('【コンタクト一覧】検索結果が表示されることを確認');
+    I.say('【顧客一覧】検索結果が表示されることを確認');
     I.seeElement('a.listViewTdLinkS1');
   },
 
   verifyContactModuleListRecordInResults(expectedText) {
-    I.say(`【コンタクト一覧】"${expectedText}" が結果に表示されることを確認`);
+    I.say(`【顧客一覧】"${expectedText}" が結果に表示されることを確認`);
     I.see(expectedText, 'a.listViewTdLinkS1');
   },
 
@@ -483,20 +483,20 @@ module.exports = {
   },
 
   // ----------------------------------------------------------------
-  //  本日の出席表一覧 (attendance_today)
+  //  出席表検索 (attendance_today)
   //  ※ POST form: 表示ボタン = input[name="button"][value="出席表表示"]
   //    日付は start_date / end_date（テキスト入力 YYYY-MM-DD）。
   //    edit_button（出席表編集）は絶対クリックしないこと。
   // ----------------------------------------------------------------
 
   navigateToAttendanceTodayPage() {
-    I.say('【出席表一覧】一覧画面へ遷移');
+    I.say('【出席表検索】一覧画面へ遷移');
     I.amOnPage(process.env.BASE_URL + '/index.php?module=Course&action=AttendanceViewDetailed&initial_state=menu');
     I.waitForElement('input[name="button"][value="出席表表示"]', 10);
   },
 
   fillAttendanceTodaySearchConditions(data) {
-    I.say('【出席表一覧】検索条件を入力');
+    I.say('【出席表検索】検索条件を入力');
     if (data.start_date) {
       I.clearField('input[name="start_date"]');
       I.fillField('input[name="start_date"]', data.start_date);
@@ -508,13 +508,13 @@ module.exports = {
   },
 
   clickAttendanceTodayDisplayAndWait() {
-    I.say('【出席表一覧】出席表表示ボタンをクリック');
+    I.say('【出席表検索】出席表表示ボタンをクリック');
     I.click('input[name="button"][value="出席表表示"]');
     I.waitForElement('.listViewPaginationTdS1', 15);
   },
 
   verifyAttendanceTodayPageLoaded() {
-    I.say('【出席表一覧】ページが表示されることを確認');
+    I.say('【出席表検索】ページが表示されることを確認');
     I.seeElement('.listViewPaginationTdS1');
   },
 };

@@ -1,5 +1,5 @@
 /**
- * @fileoverview shimamura 問合せ一覧（候補生）E2E テスト
+ * @fileoverview shimamura 候補生一覧 E2E テスト
  *
  * **テスト内容**
  * - 空条件で検索 → 結果に1件以上表示される
@@ -16,7 +16,7 @@ const csvData = withScenarioLabel(
   (row) => row.scenario
 );
 
-Feature('問合せ一覧（候補生）検索');
+Feature('候補生一覧検索');
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
@@ -24,7 +24,7 @@ Before(async ({ login, loginPageShimamura }) => {
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
-Data(csvData).Scenario('問合せ一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('候補生一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
   classMemberPageShimamura.navigateToContactListPage();
 
   const hasCondition = current.last_name || current.first_name;

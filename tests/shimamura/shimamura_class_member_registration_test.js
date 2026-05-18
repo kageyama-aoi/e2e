@@ -122,7 +122,7 @@ Scenario('クラス受講生の新規登録ができる @dev', async ({ I, class
   await openStudentTabAndSelectCourse(I, courseName);
 
   // クラス受講生登録画面　操作
-  pause(); // ←ここでインタラクティブシェルへ
+  // pause(); // ←ここでインタラクティブシェルへ
 
   // 最終確認のスクリーンショット
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');

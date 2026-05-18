@@ -92,7 +92,7 @@ const TARGETS = [
     directUrl: `${BASE_URL}index.php?module=Course&action=AttendanceViewDetailed&initial_state=menu` },
   { name: 'course_ichiran',
     hint: 'コース一覧（管理）',
-    directUrl: `${BASE_URL}index.php?module=Course&action=index&top_menu=1` },
+    directUrl: `${BASE_URL}index.php?module=ShimaCourse&action=LW_AN` },
   { name: 'contact_module_list',
     hint: 'コンタクト一覧',
     directUrl: `${BASE_URL}index.php?module=Contacts&action=index&top_menu=1` },

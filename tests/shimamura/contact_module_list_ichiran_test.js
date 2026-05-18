@@ -1,5 +1,5 @@
 /**
- * @fileoverview shimamura コンタクト一覧 E2E テスト
+ * @fileoverview shimamura 顧客一覧 E2E テスト
  *
  * **テスト内容**
  * - 空条件で検索 → 結果に1件以上表示される
@@ -15,7 +15,7 @@ const csvData = withScenarioLabel(
   (row) => row.scenario
 );
 
-Feature('コンタクト一覧検索');
+Feature('顧客一覧検索');
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
@@ -23,7 +23,7 @@ Before(async ({ login, loginPageShimamura }) => {
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
-Data(csvData).Scenario('コンタクト一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('顧客一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
   classMemberPageShimamura.navigateToContactModuleListPage();
 
   const hasCondition = current.last_name || current.company_name;
