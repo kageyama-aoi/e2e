@@ -95,8 +95,12 @@ Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, c
 
   I.say('【問合せ登録】保存');
   I.click(S.button.save);
+  I.waitForElement('body', TIMEOUTS.SCREEN);
 
   I.saveScreenshotWithTimestamp('CONTACT_REGISTER_success', true);
+
+  I.say('【問合せ登録】成功確認（エラーが出ていないこと）');
+  I.dontSee('は必須', S.error.container);
   I.say('【問合せ登録】完了');
 });
 

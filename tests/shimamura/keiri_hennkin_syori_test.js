@@ -144,7 +144,7 @@ Data(csvData).Scenario('経理：返金処理 正常系 @dev @normal', async ({ 
 
   // まずは月謝一括作成の画面遷移のみ確認するため、必要に応じて一時停止
   if (isPauseEnabled()) {
-    pause();
+    // pause();
   }
 
   await fillBatchCreateForm(I, input);
@@ -195,7 +195,7 @@ Data(validationErrorData).Scenario('経理：返金処理 異常系 @dev @error'
   await ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura);
 
   if (isPauseEnabled()) {
-    pause();
+    // pause();
   }
   await fillBatchCreateForm(I, input);
 
