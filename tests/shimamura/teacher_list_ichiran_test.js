@@ -8,7 +8,7 @@
  * - `data/shimamura/teacher_list_ichiran_search_data.csv`
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('teacher_list_ichiran_search_data'),
@@ -17,11 +17,7 @@ const csvData = withScenarioLabel(
 
 Feature('講師一覧検索');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 Data(csvData).Scenario('講師一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
   classMemberPageShimamura.navigateToTeacherListPage();

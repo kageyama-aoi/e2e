@@ -14,7 +14,7 @@
  * - `data/shimamura/keiri_invoices_ichiran_search_data.csv`
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('keiri_invoices_ichiran_search_data'),
@@ -23,11 +23,7 @@ const csvData = withScenarioLabel(
 
 Feature('受注・売上（経理）表示');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 Data(csvData).Scenario('受注・売上を表示できる @dev', async ({ I, classMemberPageShimamura, current }) => {
   classMemberPageShimamura.navigateToKeiriInvoicesPage();

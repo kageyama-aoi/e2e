@@ -20,7 +20,8 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { validateShimamuraEnv, verifyValidationErrors } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { verifyValidationErrors } = require('../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
@@ -61,11 +62,7 @@ const validationErrorData = withScenarioLabel(
 
 Feature('問合せ登録（候補生登録）');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 async function navigateToContactRegister(I) {
   I.say('【問合せ登録】URL 直遷移');

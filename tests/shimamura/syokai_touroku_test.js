@@ -18,7 +18,7 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 const { runRegistrationFlow, ShouldBeOnKeirisyoriScreenE, ShouldBeOnTaikai } = require('../../pages/shimamura/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data'), (row) => {
@@ -31,11 +31,7 @@ const validationErrorData = withScenarioLabel(loadCsvWithProfile('syokai_touroku
 
 Feature('Dev sandbox (@dev)');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMemberPageShimamura, current }) => {
   I.say('=== 経理処理 開始 ===');

@@ -31,7 +31,8 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { validateShimamuraEnv, toggleGroupmenu, verifyValidationErrors } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { toggleGroupmenu, verifyValidationErrors } = require('../../support/shimamura/utils');
 
 Feature('Dev sandbox (@dev)');
 
@@ -75,11 +76,7 @@ async function ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura)
   await logScreenUrl(I, S.link.name);
 }
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 const S = {
   screen: { name: '月謝一括作成' },

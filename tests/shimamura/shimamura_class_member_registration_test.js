@@ -14,7 +14,7 @@
  * **最終更新日**
  * - 2026-01-27
  */
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 
 Feature('Dev sandbox (@dev)');
 
@@ -25,11 +25,7 @@ Feature('Dev sandbox (@dev)');
  * @param {CodeceptJS.I} args.I - Iオブジェクト
  * @param {object} args.loginPageShimamura - ログインページオブジェクト
  */
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 const S = {
   search: {

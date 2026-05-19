@@ -20,7 +20,7 @@
  * - 2026-01-27
  */
 const { loadCsvWithProfile } = require('../../support/utils');
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 const csvData = loadCsvWithProfile('syokai_touroku_data');
@@ -36,11 +36,7 @@ const uniqueClassRows = Array.from(
 
 Feature('Dev sandbox (@dev)');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 const S = {
   classList: {

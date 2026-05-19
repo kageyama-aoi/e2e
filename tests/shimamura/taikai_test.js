@@ -18,16 +18,13 @@
  */
 Feature('退会処理 (@dev)');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 
 const path = require('path');
 const { readCsv } = require('../../support/utils');
-const { validateShimamuraEnv, toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 /**

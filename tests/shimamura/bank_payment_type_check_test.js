@@ -14,7 +14,7 @@
  * - エラーコンテナが存在しない場合は「エラーなし（登録成功）」と記録する
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { validateShimamuraEnv } = require('../../support/shimamura/utils');
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
@@ -46,11 +46,7 @@ const csvData = withScenarioLabel(
 
 Feature('bank_payment_type 別必須フィールド探索');
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
 Data(csvData).Scenario('請求方法ごとの必須フィールドを確認する @dev @explore', async ({ I, current }) => {
   I.say(`【探索】bank_payment_type=${current.bank_payment_type} (${current.scenario})`);
