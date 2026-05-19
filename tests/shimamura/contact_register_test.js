@@ -95,27 +95,10 @@ async function fillContactForm(I, data) {
 Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, current }) => {
   setBusinessLabels({ epic: '受講生管理', feature: '問合せ登録', story: '正常フロー' });
 
-  const input = {
-    last_name:           current.last_name,
-    first_name:          current.first_name,
-    last_name_furigana:  current.last_name_furigana,
-    first_name_furigana: current.first_name_furigana,
-    gender:              current.gender,
-    phone_mobile:        current.phone_mobile,
-    application_date:    current.application_date,
-    bank_payment_type:   current.bank_payment_type,
-    bank_code:           current.bank_code,
-    bank_branch_code:    current.bank_branch_code,
-    bank_account_no:     current.bank_account_no,
-    bank_account_name:   current.bank_account_name,
-    acsno:               current.acsno,
-    acsno_check:         current.acsno_check,
-    expis_date:          current.expis_date,
-  };
-  attachBusinessContext({ label: '正常フロー', input });
+  attachBusinessContext({ label: '正常フロー', input: current });
 
   await navigateToContactRegister(I);
-  await fillContactForm(I, input);
+  await fillContactForm(I, current);
 
   I.say('【問合せ登録】保存');
   I.click(S.button.save);
