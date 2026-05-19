@@ -34,8 +34,9 @@ const S = {
     lastNameFurigana:  'last_name_furigana',
     firstNameFurigana: 'first_name_furigana',
     gender:            'select[name="gender"]',
-    phoneMobile:       'phone_mobile',
-    applicationDate:   'application_date',
+    phoneMobile:        'phone_mobile',
+    applicationDate:    'application_date',
+    bankPaymentType:    'select[name="bank_payment_type"]',
   },
   button: { save: 'input[name="save_button"]' },
   error:  { container: '#top_err_info_msg_div' },
@@ -71,9 +72,10 @@ async function fillContactForm(I, data) {
   if (data.first_name)         I.fillField(S.fields.firstName,         data.first_name);
   if (data.last_name_furigana) I.fillField(S.fields.lastNameFurigana,  data.last_name_furigana);
   if (data.first_name_furigana)I.fillField(S.fields.firstNameFurigana, data.first_name_furigana);
-  if (data.gender)             I.selectOption(S.fields.gender,         data.gender);
-  if (data.phone_mobile)       I.fillField(S.fields.phoneMobile,       data.phone_mobile);
-  if (data.application_date)   I.fillField(S.fields.applicationDate,   data.application_date);
+  if (data.gender)             I.selectOption(S.fields.gender,          data.gender);
+  if (data.phone_mobile)       I.fillField(S.fields.phoneMobile,        data.phone_mobile);
+  if (data.application_date)   I.fillField(S.fields.applicationDate,    data.application_date);
+  if (data.bank_payment_type)  I.selectOption(S.fields.bankPaymentType, data.bank_payment_type);
 }
 
 Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, current }) => {
