@@ -1,3 +1,5 @@
-scenario,last_name,first_name,last_name_furigana,first_name_furigana,gender,phone_mobile,application_date,bank_payment_type
-最小限登録（姓名のみ）,テスト,太郎,てすと,たろう,male,,,3
-連絡先あり登録,検証,花子,けんしょう,はなこ,female,090-0000-0001,2026-05-12,3
+scenario,last_name,first_name,last_name_furigana,first_name_furigana,gender,phone_mobile,application_date,bank_payment_type,bank_code,bank_branch_code,bank_account_no,bank_account_name,acsno,acsno_check,expis_date
+最小限登録（姓名のみ）,テスト,太郎,てすと,たろう,male,,,3,,,,,,,
+連絡先あり登録,検証,花子,けんしょう,はなこ,female,090-0000-0001,2026-05-12,3,,,,,,,
+銀行引落登録,銀行,花子,ぎんこう,はなこ,female,,2026-05-19,1,0001,001,1234567,ﾃｽﾄ ﾊﾅｺ,,,
+イオンCカード登録,カード,花子,かーど,はなこ,female,,2026-05-19,2,,,,,000000000001,000000000001,262512

@@ -37,6 +37,13 @@ const S = {
     phoneMobile:        'phone_mobile',
     applicationDate:    'application_date',
     bankPaymentType:    'select[name="bank_payment_type"]',
+    bankCode:           'bank_code',
+    bankBranchCode:     'bank_branch_code',
+    bankAccountNo:      'bank_account_no',
+    bankAccountName:    'bank_account_name',
+    acsno:              'acsno',
+    acsnoCheck:         'acsno_check',
+    expisDate:          'expis_date',
   },
   button: { save: 'input[name="save_button"]' },
   error:  { container: '#top_err_info_msg_div' },
@@ -68,14 +75,21 @@ async function navigateToContactRegister(I) {
 
 async function fillContactForm(I, data) {
   I.say('【問合せ登録】フォーム入力');
-  if (data.last_name)          I.fillField(S.fields.lastName,          data.last_name);
-  if (data.first_name)         I.fillField(S.fields.firstName,         data.first_name);
-  if (data.last_name_furigana) I.fillField(S.fields.lastNameFurigana,  data.last_name_furigana);
-  if (data.first_name_furigana)I.fillField(S.fields.firstNameFurigana, data.first_name_furigana);
-  if (data.gender)             I.selectOption(S.fields.gender,          data.gender);
-  if (data.phone_mobile)       I.fillField(S.fields.phoneMobile,        data.phone_mobile);
-  if (data.application_date)   I.fillField(S.fields.applicationDate,    data.application_date);
-  if (data.bank_payment_type)  I.selectOption(S.fields.bankPaymentType, data.bank_payment_type);
+  if (data.last_name)           I.fillField(S.fields.lastName,          data.last_name);
+  if (data.first_name)          I.fillField(S.fields.firstName,         data.first_name);
+  if (data.last_name_furigana)  I.fillField(S.fields.lastNameFurigana,  data.last_name_furigana);
+  if (data.first_name_furigana) I.fillField(S.fields.firstNameFurigana, data.first_name_furigana);
+  if (data.gender)              I.selectOption(S.fields.gender,          data.gender);
+  if (data.phone_mobile)        I.fillField(S.fields.phoneMobile,        data.phone_mobile);
+  if (data.application_date)    I.fillField(S.fields.applicationDate,    data.application_date);
+  if (data.bank_payment_type)   I.selectOption(S.fields.bankPaymentType, data.bank_payment_type);
+  if (data.bank_code)           I.fillField(S.fields.bankCode,           data.bank_code);
+  if (data.bank_branch_code)    I.fillField(S.fields.bankBranchCode,     data.bank_branch_code);
+  if (data.bank_account_no)     I.fillField(S.fields.bankAccountNo,      data.bank_account_no);
+  if (data.bank_account_name)   I.fillField(S.fields.bankAccountName,    data.bank_account_name);
+  if (data.acsno)               I.fillField(S.fields.acsno,              data.acsno);
+  if (data.acsno_check)         I.fillField(S.fields.acsnoCheck,         data.acsno_check);
+  if (data.expis_date)          I.fillField(S.fields.expisDate,          data.expis_date);
 }
 
 Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, current }) => {
@@ -89,6 +103,14 @@ Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, c
     gender:              current.gender,
     phone_mobile:        current.phone_mobile,
     application_date:    current.application_date,
+    bank_payment_type:   current.bank_payment_type,
+    bank_code:           current.bank_code,
+    bank_branch_code:    current.bank_branch_code,
+    bank_account_no:     current.bank_account_no,
+    bank_account_name:   current.bank_account_name,
+    acsno:               current.acsno,
+    acsno_check:         current.acsno_check,
+    expis_date:          current.expis_date,
   };
   attachBusinessContext({ label: '正常フロー', input });
 
