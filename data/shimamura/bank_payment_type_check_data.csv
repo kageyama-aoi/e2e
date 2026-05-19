@@ -1,0 +1,5 @@
+scenario,bank_payment_type
+銀行引落（type=1）,1
+イオンCカード（type=2）,2
+現金（type=3）,3
+債権買取（type=4）,4

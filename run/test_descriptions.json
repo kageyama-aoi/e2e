@@ -67,7 +67,8 @@
     "contact_module_list_ichiran_test.js":              "コンタクト一覧の空検索で結果が表示されることを確認",
     "mishukin_list_ichiran_test.js":                    "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認",
     "keiri_invoices_ichiran_test.js":                   "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認",
-    "attendance_today_ichiran_test.js":                  "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認"
+    "attendance_today_ichiran_test.js":                  "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認",
+    "bank_payment_type_check_test.js":                   "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト"
   },
   "taskreport": {
     "taskreport_sample_test.js":                       "Taskreport 機能のサンプルテスト"
