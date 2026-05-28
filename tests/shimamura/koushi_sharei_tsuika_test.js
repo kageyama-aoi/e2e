@@ -65,6 +65,14 @@ async function executeImport(I, filePath) {
   I.wait(TIMEOUTS.RESULT);
 }
 
+async function verifyImportResult(I) {
+  const errorText = await I.grabTextFrom(S.message.error);
+  if (errorText.trim()) {
+    throw new Error(`一括取込エラー: ${errorText.trim()}`);
+  }
+  I.say('【結果確認】エラーなし - 取込成功');
+}
+
 Feature('講師謝礼一括取込');
 
 Before(beforeShimamura);
@@ -83,9 +91,7 @@ Data(csvData).Scenario('講師謝礼一括取込を実行できる @dev', async 
 
   await navigateToTsuikaScreen(I);
   await executeImport(I, current.import_file_path);
+  await verifyImportResult(I);
 
   I.saveScreenshotWithTimestamp('KOUSHI_SHAREI_TSUIKA_result');
-  await attachErrorScreenshot(I, 'KOUSHI_SHAREI_TSUIKA');
-
-  I.say('【結果確認】スクリーンショット保存完了');
 });
