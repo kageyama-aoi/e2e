@@ -1,0 +1,4 @@
+scenario,keijoubi,from_datetime,sharei_komoku,houshugaku,expectedErrors
+計上日なし,,2026-04,1,5000,計上日をご入力ください
+対象月なし,2026-05-28,,1,5000,対象月をご入力ください
+金額なし,2026-05-28,2026-04,1,,金額(税抜き)をご入力ください
