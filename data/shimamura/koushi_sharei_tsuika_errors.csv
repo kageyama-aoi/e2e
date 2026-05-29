@@ -1,0 +1,15 @@
+scenario,import_file_path,expectedError
+カラム数不正(19列),data/shimamura/koushi_sharei_errors/error_01_column_count.csv,ファイルのフォーマットが不正です。（ID番号：TESTERROR）
+講師IDなし,data/shimamura/koushi_sharei_errors/error_02_no_koushi_id.csv,講師IDが設定されていません。（ID番号：TESTERROR）
+計上日なし,data/shimamura/koushi_sharei_errors/error_05_no_keijou_date.csv,計上日が設定されていません。（ID番号：TESTERROR）
+計上日フォーマット不正,data/shimamura/koushi_sharei_errors/error_06_invalid_keijou_date.csv,計上日が不正です。（ID番号：TESTERROR）
+対象月なし,data/shimamura/koushi_sharei_errors/error_07_no_taisho_tsuki.csv,計上日は対象月の翌月を設定してください。（ID番号：TESTERROR）
+対象月フォーマット不正,data/shimamura/koushi_sharei_errors/error_08_invalid_taisho_tsuki.csv,計上日は対象月の翌月を設定してください。（ID番号：TESTERROR）
+ID番号なし,data/shimamura/koushi_sharei_errors/error_15_no_id_bangou.csv,ID番号が設定されていません。
+講師名なし,data/shimamura/koushi_sharei_errors/error_16_no_koushi_mei.csv,講師名が設定されていません。（ID番号：TESTERROR）
+支払方法なし,data/shimamura/koushi_sharei_errors/error_17_no_shiharai_houhou.csv,支払方法が設定されていません。（ID番号：TESTERROR）
+店舗IDなし,data/shimamura/koushi_sharei_errors/error_18_no_mise_id.csv,店舗IDが設定されていません。（ID番号：TESTERROR）
+謝礼項目なし,data/shimamura/koushi_sharei_errors/error_19_no_sharei_komoku.csv,謝礼項目が設定されていません。（ID番号：TESTERROR）
+報酬額なし,data/shimamura/koushi_sharei_errors/error_20_no_houshu_gaku.csv,報酬額が設定されていません。（ID番号：TESTERROR）
+計上日と対象月の不整合,data/shimamura/koushi_sharei_errors/error_25_date_mismatch.csv,計上日は対象月の翌月を設定してください。（ID番号：TESTERROR）
+計上日が前月以前,data/shimamura/koushi_sharei_errors/error_26_keijou_past.csv,計上日はシステム年月の当月以降を設定してください。（ID番号：TESTERROR）

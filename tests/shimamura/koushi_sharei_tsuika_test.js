@@ -29,9 +29,8 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
-
+const { beforeShimamura } = require('../../support/shimamura/hooks');
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 const S = {
@@ -48,6 +47,11 @@ const S = {
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_tsuika_data'),
   (row) => row.scenario || '一括取込'
+);
+
+const errorData = withScenarioLabel(
+  loadCsvWithProfile('koushi_sharei_tsuika_errors'),
+  (row) => row.scenario || 'バリデーションエラー'
 );
 
 async function navigateToTsuikaScreen(I) {
@@ -73,6 +77,12 @@ async function verifyImportResult(I) {
   I.say('【結果確認】エラーなし - 取込成功');
 }
 
+async function verifyImportError(I, expectedError) {
+  I.waitForElement(S.message.error, TIMEOUTS.RESULT);
+  I.see(expectedError, S.message.error);
+  I.say(`【結果確認】期待エラーを確認: ${expectedError}`);
+}
+
 Feature('講師謝礼一括取込');
 
 Before(beforeShimamura);
@@ -94,4 +104,23 @@ Data(csvData).Scenario('講師謝礼一括取込を実行できる @dev', async 
   await verifyImportResult(I);
 
   I.saveScreenshotWithTimestamp('KOUSHI_SHAREI_TSUIKA_result');
+});
+
+Data(errorData).Scenario('講師謝礼一括取込のバリデーションエラー @dev @error', async ({ I, current }) => {
+  setBusinessLabels({
+    epic:    '経理・謝礼',
+    feature: '講師謝礼一括取込',
+    story:   current.scenario || 'バリデーションエラー'
+  });
+
+  attachBusinessContext({
+    label: current.scenario || 'バリデーションエラー',
+    input: { import_file_path: current.import_file_path, expectedError: current.expectedError }
+  });
+
+  await navigateToTsuikaScreen(I);
+  await executeImport(I, current.import_file_path);
+  await verifyImportError(I, current.expectedError);
+
+  await attachErrorScreenshot(I, 'KOUSHI_SHAREI_TSUIKA_validation');
 });
