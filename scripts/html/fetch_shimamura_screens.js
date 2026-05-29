@@ -68,6 +68,9 @@ const TARGETS = [
     directUrl: `${BASE_URL}index.php?module=Transaction&action=index&top_menu=1` },
 
   // ── 経理・謝礼系 ──
+  { name: 'sharei_ichiran',
+    hint: '講師謝礼一覧',
+    directUrl: `${BASE_URL}index.php?module=ShareiNichibetsu&action=LWShareiIchiran_AN&top_menu=1` },
   { name: 'kousha_sharei_add',
     hint: '講師謝礼追加',
     directUrl: `${BASE_URL}index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN` },
@@ -92,7 +95,7 @@ const TARGETS = [
     directUrl: `${BASE_URL}index.php?module=Course&action=AttendanceViewDetailed&initial_state=menu` },
   { name: 'course_ichiran',
     hint: 'コース一覧（管理）',
-    directUrl: `${BASE_URL}index.php?module=ShimaCourse&action=LW_AN` },
+    directUrl: `${BASE_URL}index.php?module=ShimaCourse&action=LW_AN&top_menu=1` },
   { name: 'contact_module_list',
     hint: 'コンタクト一覧',
     directUrl: `${BASE_URL}index.php?module=Contacts&action=index&top_menu=1` },

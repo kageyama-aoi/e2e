@@ -6,8 +6,16 @@ const { TIMEOUTS } = require('../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
+const NAV = {
+  directUrl: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
+  sidebar: {
+    moduleUrl: 'index.php?module=ShareiNichibetsu&action=LWShareiIchiran_AN&top_menu=1',
+    shortcut:  '講師謝礼追加',
+  },
+};
+
 const S = {
-  url: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
+  url: NAV.directUrl,
   fields: {
     keijoubi:      '#keijoubi',
     from_datetime: '#from_datetime',
@@ -34,7 +42,14 @@ const S = {
 
 async function ShouldBeOnTsuikaScreen(I) {
   I.say('【画面遷移】講師謝礼追加画面へ');
-  I.amOnPage(BASE_URL + S.url);
+  if (process.env.SHIMAMURA_NAV === 'sidebar') {
+    I.amOnPage(BASE_URL + NAV.sidebar.moduleUrl);
+    I.waitForElement('a[class*="subMenuLink"]', TIMEOUTS.SCREEN);
+    I.say(`【ナビ】サイドバー "${NAV.sidebar.shortcut}" をクリック`);
+    I.click(locate('a[class*="subMenuLink"]').withText(NAV.sidebar.shortcut));
+  } else {
+    I.amOnPage(BASE_URL + NAV.directUrl);
+  }
   I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '講師謝礼追加');
 }
