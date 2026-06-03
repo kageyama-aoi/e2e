@@ -1,6 +1,7 @@
 # Generic CodeceptJS test runner GUI
 # Uses only Python standard library (Tkinter)
 
+import csv
 import json
 import os
 import re
@@ -296,6 +297,153 @@ class _Tooltip:
             self._tip = None
 
 
+class CsvEditorWindow(tk.Toplevel):
+    """CSVファイルをテーブル形式で編集するウィンドウ。"""
+
+    def __init__(self, parent, csv_path):
+        super().__init__(parent)
+        self.csv_path = csv_path
+        self.title(os.path.basename(csv_path))
+        self.geometry('900x360')
+        self.minsize(500, 240)
+        self._entry = None
+        self._editing = None
+        self._headers = []
+        self._load_csv()
+        self._build_ui()
+
+    def _load_csv(self):
+        try:
+            with open(self.csv_path, encoding='utf-8-sig', newline='') as f:
+                rows = list(csv.reader(f))
+        except Exception as e:
+            messagebox.showerror('Error', f'CSVを開けませんでした:\n{e}', parent=self)
+            self.destroy()
+            return
+        self._headers = rows[0] if rows else []
+        self._data = [
+            (r + [''] * len(self._headers))[:len(self._headers)]
+            for r in rows[1:]
+        ]
+
+    def _build_ui(self):
+        if not self._headers:
+            ttk.Label(self, text='CSVが空です。').pack(padx=16, pady=16)
+            ttk.Button(self, text='閉じる', command=self.destroy).pack()
+            return
+
+        tbl = ttk.Frame(self)
+        tbl.pack(fill=tk.BOTH, expand=True, padx=8, pady=(8, 4))
+
+        self.tree = ttk.Treeview(tbl, columns=self._headers, show='headings', selectmode='browse')
+        for col in self._headers:
+            w = 160 if col == 'scenario' else 110
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=w, minwidth=60, stretch=True)
+
+        vsb = ttk.Scrollbar(tbl, orient='vertical', command=self.tree.yview)
+        hsb = ttk.Scrollbar(tbl, orient='horizontal', command=self.tree.xview)
+        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        self.tree.grid(row=0, column=0, sticky='nsew')
+        vsb.grid(row=0, column=1, sticky='ns')
+        hsb.grid(row=1, column=0, sticky='ew')
+        tbl.rowconfigure(0, weight=1)
+        tbl.columnconfigure(0, weight=1)
+
+        self._populate()
+        self.tree.bind('<Double-1>', self._on_double_click)
+
+        btns = ttk.Frame(self)
+        btns.pack(fill=tk.X, padx=8, pady=(0, 8))
+        ttk.Button(btns, text='行を追加', command=self._add_row).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text='行を削除', command=self._delete_row).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text='Save', command=self._save).pack(side=tk.RIGHT, padx=2)
+        ttk.Button(btns, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=2)
+
+    def _populate(self):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        for row in self._data:
+            self.tree.insert('', tk.END, values=row)
+
+    def _on_double_click(self, event):
+        self._commit_edit()
+        if self.tree.identify_region(event.x, event.y) != 'cell':
+            return
+        row_id = self.tree.identify_row(event.y)
+        col_id = self.tree.identify_column(event.x)
+        if not row_id or not col_id:
+            return
+        col_idx = int(col_id.lstrip('#')) - 1
+        bbox = self.tree.bbox(row_id, col_id)
+        if not bbox:
+            return
+        x, y, w, h = bbox
+        val = self.tree.item(row_id, 'values')
+        val = val[col_idx] if col_idx < len(val) else ''
+
+        self._editing = (row_id, col_idx)
+        self._entry = ttk.Entry(self.tree)
+        self._entry.place(x=x, y=y, width=w, height=h)
+        self._entry.insert(0, val)
+        self._entry.select_range(0, tk.END)
+        self._entry.focus_set()
+        self._entry.bind('<Return>', lambda _: self._commit_edit())
+        self._entry.bind('<Tab>',    lambda _: self._commit_edit())
+        self._entry.bind('<Escape>', lambda _: self._cancel_edit())
+        self._entry.bind('<FocusOut>', lambda _: self._commit_edit())
+
+    def _commit_edit(self):
+        if not self._entry or not self._editing:
+            return
+        try:
+            if not self._entry.winfo_exists():
+                return
+            row_id, col_idx = self._editing
+            new_val = self._entry.get()
+            vals = list(self.tree.item(row_id, 'values'))
+            vals = (vals + [''] * len(self._headers))[:len(self._headers)]
+            vals[col_idx] = new_val
+            self.tree.item(row_id, values=vals)
+        except Exception:
+            pass
+        finally:
+            self._cancel_edit()
+
+    def _cancel_edit(self):
+        if self._entry:
+            try:
+                self._entry.destroy()
+            except Exception:
+                pass
+            self._entry = None
+        self._editing = None
+
+    def _add_row(self):
+        self._commit_edit()
+        self.tree.insert('', tk.END, values=[''] * len(self._headers))
+
+    def _delete_row(self):
+        self._commit_edit()
+        for item in self.tree.selection():
+            self.tree.delete(item)
+
+    def _save(self):
+        self._commit_edit()
+        try:
+            with open(self.csv_path, 'w', encoding='utf-8', newline='') as f:
+                w = csv.writer(f)
+                w.writerow(self._headers)
+                for item in self.tree.get_children():
+                    vals = list(self.tree.item(item, 'values'))
+                    vals = (vals + [''] * len(self._headers))[:len(self._headers)]
+                    w.writerow(vals)
+            messagebox.showinfo('Saved', f'保存しました', parent=self)
+            self.destroy()
+        except Exception as e:
+            messagebox.showerror('Error', f'保存に失敗しました:\n{e}', parent=self)
+
+
 class RunnerApp(tk.Tk):
     def __init__(self, repo_root):
         super().__init__()
@@ -538,10 +686,7 @@ class RunnerApp(tk.Tk):
             messagebox.showinfo('CSV not found', '対応する CSV ファイルが見つかりません。')
             return
         for path in csvs:
-            if os.name == 'nt':
-                os.startfile(path)
-            else:
-                subprocess.Popen(['open' if sys.platform == 'darwin' else 'xdg-open', path])
+            CsvEditorWindow(self, path)
 
     def _on_profile_select(self, _event):
         sel = self.profile_list.curselection()
