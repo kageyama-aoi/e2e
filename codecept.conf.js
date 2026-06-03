@@ -105,7 +105,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
       files: './tests/smoke/*_test.js'
     },
     shimamura: {
-      files: './tests/shimamura/*_test.js'
+      files: './tests/shimamura/**/*_test.js'
     },
     tframe: {
       files: './tests/tframe/**/*_test.js'
@@ -161,6 +161,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
 
     loginPageShimamura: './pages/shimamura/LoginPage.js',
     classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
+    ichiranPageShimamura: './pages/shimamura/IchiranPage.js',
 
     taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
 

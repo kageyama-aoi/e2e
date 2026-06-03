@@ -25,13 +25,13 @@ Feature('受注・売上（経理）表示');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('受注・売上を表示できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToKeiriInvoicesPage();
+Data(csvData).Scenario('受注・売上を表示できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToKeiriInvoicesPage();
 
   const hasCondition = current.keiri_year || current.keiri_month || current.keiri_day;
-  if (hasCondition) classMemberPageShimamura.fillKeiriInvoicesSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillKeiriInvoicesSearchConditions(current);
 
-  classMemberPageShimamura.clickKeiriInvoicesDisplayAndWait();
+  ichiranPageShimamura.clickKeiriInvoicesDisplayAndWait();
   I.saveScreenshotWithTimestamp('keiri_invoices_ichiran', true);
-  classMemberPageShimamura.verifyKeiriInvoicesPageLoaded();
+  ichiranPageShimamura.verifyKeiriInvoicesPageLoaded();
 });

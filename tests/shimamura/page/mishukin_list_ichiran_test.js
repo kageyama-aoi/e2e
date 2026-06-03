@@ -24,13 +24,13 @@ Feature('未収金一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('未収金一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToMishukinListPage();
+Data(csvData).Scenario('未収金一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToMishukinListPage();
 
   const hasCondition = current.last_name || current.query_date;
-  if (hasCondition) classMemberPageShimamura.fillMishukinSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillMishukinSearchConditions(current);
 
-  classMemberPageShimamura.clickMishukinSearchAndWait();
+  ichiranPageShimamura.clickMishukinSearchAndWait();
   I.saveScreenshotWithTimestamp('mishukin_list_ichiran', true);
-  classMemberPageShimamura.verifyMishukinTableVisible();
+  ichiranPageShimamura.verifyMishukinTableVisible();
 });

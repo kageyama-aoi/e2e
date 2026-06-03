@@ -19,18 +19,18 @@ Feature('顧客一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('顧客一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToContactModuleListPage();
+Data(csvData).Scenario('顧客一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToContactModuleListPage();
 
   const hasCondition = current.last_name || current.company_name;
-  if (hasCondition) classMemberPageShimamura.fillContactModuleListSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillContactModuleListSearchConditions(current);
 
-  classMemberPageShimamura.clickContactModuleListSearchAndWait();
+  ichiranPageShimamura.clickContactModuleListSearchAndWait();
   I.saveScreenshotWithTimestamp('contact_module_list_ichiran', true);
 
   if (current.expectedName) {
-    classMemberPageShimamura.verifyContactModuleListRecordInResults(current.expectedName);
+    ichiranPageShimamura.verifyContactModuleListRecordInResults(current.expectedName);
   } else {
-    classMemberPageShimamura.verifyContactModuleListResultsExist();
+    ichiranPageShimamura.verifyContactModuleListResultsExist();
   }
 });

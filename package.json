@@ -9,7 +9,7 @@
 
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "pretest_s": "node scripts/check_pause.js",
-    "test_s": "npx codeceptjs run ./tests/shimamura/*_test.js --profile shimamura.testgcp",
+    "test_s": "npx codeceptjs run ./tests/shimamura/**/*_test.js --profile shimamura.testgcp",
 
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
     "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js",

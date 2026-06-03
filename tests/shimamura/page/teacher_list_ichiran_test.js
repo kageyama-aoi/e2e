@@ -19,18 +19,18 @@ Feature('講師一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('講師一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToTeacherListPage();
+Data(csvData).Scenario('講師一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToTeacherListPage();
 
   const hasCondition = current.last_name || current.first_name;
-  if (hasCondition) classMemberPageShimamura.fillTeacherListSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillTeacherListSearchConditions(current);
 
-  classMemberPageShimamura.clickTeacherListSearchAndWait();
+  ichiranPageShimamura.clickTeacherListSearchAndWait();
   I.saveScreenshotWithTimestamp('teacher_list_ichiran', true);
 
   if (current.expectedName) {
-    classMemberPageShimamura.verifyTeacherListRecordInResults(current.expectedName);
+    ichiranPageShimamura.verifyTeacherListRecordInResults(current.expectedName);
   } else {
-    classMemberPageShimamura.verifyTeacherListResultsExist();
+    ichiranPageShimamura.verifyTeacherListResultsExist();
   }
 });

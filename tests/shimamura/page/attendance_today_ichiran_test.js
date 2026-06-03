@@ -25,13 +25,13 @@ Feature('出席表検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('出席表を表示できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToAttendanceTodayPage();
+Data(csvData).Scenario('出席表を表示できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToAttendanceTodayPage();
 
   const hasCondition = current.start_date || current.end_date;
-  if (hasCondition) classMemberPageShimamura.fillAttendanceTodaySearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillAttendanceTodaySearchConditions(current);
 
-  classMemberPageShimamura.clickAttendanceTodayDisplayAndWait();
+  ichiranPageShimamura.clickAttendanceTodayDisplayAndWait();
   I.saveScreenshotWithTimestamp('attendance_today_ichiran', true);
-  classMemberPageShimamura.verifyAttendanceTodayPageLoaded();
+  ichiranPageShimamura.verifyAttendanceTodayPageLoaded();
 });

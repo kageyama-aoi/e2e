@@ -20,18 +20,18 @@ Feature('候補生一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('候補生一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToContactListPage();
+Data(csvData).Scenario('候補生一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToContactListPage();
 
   const hasCondition = current.last_name || current.first_name;
-  if (hasCondition) classMemberPageShimamura.fillContactListSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillContactListSearchConditions(current);
 
-  classMemberPageShimamura.clickContactListSearchAndWait();
+  ichiranPageShimamura.clickContactListSearchAndWait();
   I.saveScreenshotWithTimestamp('contact_list_ichiran', true);
 
   if (current.expectedName) {
-    classMemberPageShimamura.verifyContactListRecordInResults(current.expectedName);
+    ichiranPageShimamura.verifyContactListRecordInResults(current.expectedName);
   } else {
-    classMemberPageShimamura.verifyContactListResultsExist();
+    ichiranPageShimamura.verifyContactListResultsExist();
   }
 });

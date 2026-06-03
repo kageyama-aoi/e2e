@@ -85,12 +85,34 @@ def load_descriptions(run_dir):
         return {}
 
 
-def get_display_name(test_path, product):
-    """./tests/<product>/page/foo_test.js → page/foo_test.js"""
+def get_desc_text(entry):
+    """descriptions の値が文字列かオブジェクトかに関わらず説明文を返す。"""
+    if isinstance(entry, dict):
+        return entry.get('description', '')
+    return entry or ''
+
+
+def get_feature_no(entry):
+    """descriptions の値から feature_no を返す。なければ空文字。"""
+    if isinstance(entry, dict):
+        return entry.get('feature_no', '') or ''
+    return ''
+
+
+def get_display_name(test_path, product, descriptions=None):
+    """./tests/<product>/page/foo_test.js → page/foo_test.js
+    feature_no がある場合は page/[1002_4_3] foo_test.js 形式にする。"""
     prefix = f'./tests/{product}/'
-    if test_path.startswith(prefix):
-        return test_path[len(prefix):]
-    return test_path
+    if not test_path.startswith(prefix):
+        return test_path
+    rel = test_path[len(prefix):]  # e.g. page/student_search_ichiran_test.js
+    if descriptions is not None:
+        entry = descriptions.get(product, {}).get(rel)
+        feature_no = get_feature_no(entry)
+        if feature_no and '/' in rel:
+            folder, fname = rel.split('/', 1)
+            return f'{folder}/[{feature_no}] {fname}'
+    return rel
 
 
 def format_test_list(display_names):
@@ -424,7 +446,7 @@ class RunnerApp(tk.Tk):
 
         # テストリストを製品でフィルタリング（表示はサブパスのみ）
         self._filtered_test_paths = [t for t in self._all_tests if get_product_from_test(t) == product]
-        display_names = [get_display_name(t, product) for t in self._filtered_test_paths]
+        display_names = [get_display_name(t, product, self._descriptions) for t in self._filtered_test_paths]
         formatted = format_test_list(display_names)
         self.test_list.delete(0, tk.END)
         for name in formatted:
@@ -485,9 +507,11 @@ class RunnerApp(tk.Tk):
 
     def _update_desc_label(self):
         product = self.product_var.get()
-        display = get_display_name(self.test_var.get(), product)
-        desc = self._descriptions.get(product, {}).get(display, '')
-        self.desc_var.set(desc)
+        prefix = f'./tests/{product}/'
+        test = self.test_var.get()
+        key = test[len(prefix):] if test.startswith(prefix) else test
+        entry = self._descriptions.get(product, {}).get(key, '')
+        self.desc_var.set(get_desc_text(entry))
 
     def _update_csv_btn(self):
         product = self.product_var.get()

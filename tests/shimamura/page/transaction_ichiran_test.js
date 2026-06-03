@@ -28,18 +28,18 @@ Feature('入出金一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('入出金一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToTransactionListPage();
+Data(csvData).Scenario('入出金一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToTransactionListPage();
 
   const hasCondition = current.last_name || current.course_name || current.smsgroup;
-  if (hasCondition) classMemberPageShimamura.fillTransactionSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillTransactionSearchConditions(current);
 
-  classMemberPageShimamura.clickTransactionSearchAndWait();
+  ichiranPageShimamura.clickTransactionSearchAndWait();
   I.saveScreenshotWithTimestamp('transaction_ichiran_search', true);
 
   if (current.expectedName) {
-    classMemberPageShimamura.verifyTransactionRecordInResults(current.expectedName);
+    ichiranPageShimamura.verifyTransactionRecordInResults(current.expectedName);
   } else {
-    classMemberPageShimamura.verifyTransactionResultsExist();
+    ichiranPageShimamura.verifyTransactionResultsExist();
   }
 });

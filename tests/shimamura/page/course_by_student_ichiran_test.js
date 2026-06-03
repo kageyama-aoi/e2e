@@ -20,18 +20,18 @@ Feature('コース別受講生一覧検索');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('コース別受講生一覧で検索できる @dev', async ({ I, classMemberPageShimamura, current }) => {
-  classMemberPageShimamura.navigateToCourseByStudentPage();
+Data(csvData).Scenario('コース別受講生一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
+  await ichiranPageShimamura.navigateToCourseByStudentPage();
 
   const hasCondition = current.course_name;
-  if (hasCondition) classMemberPageShimamura.fillCourseByStudentSearchConditions(current);
+  if (hasCondition) ichiranPageShimamura.fillCourseByStudentSearchConditions(current);
 
-  classMemberPageShimamura.clickCourseByStudentSearchAndWait();
+  ichiranPageShimamura.clickCourseByStudentSearchAndWait();
   I.saveScreenshotWithTimestamp('course_by_student_ichiran', true);
 
   if (current.expectedName) {
-    classMemberPageShimamura.verifyCourseByStudentRecordInResults(current.expectedName);
+    ichiranPageShimamura.verifyCourseByStudentRecordInResults(current.expectedName);
   } else {
-    classMemberPageShimamura.verifyCourseByStudentResultsExist();
+    ichiranPageShimamura.verifyCourseByStudentResultsExist();
   }
 });
