@@ -304,8 +304,8 @@ class CsvEditorWindow(tk.Toplevel):
         super().__init__(parent)
         self.csv_path = csv_path
         self.title(os.path.basename(csv_path))
-        self.geometry('900x360')
-        self.minsize(500, 240)
+        self.geometry('900x400')
+        self.minsize(500, 280)
         self._entry = None
         self._editing = None
         self._headers = []
@@ -386,15 +386,24 @@ class CsvEditorWindow(tk.Toplevel):
         tbl = ttk.Frame(self)
         tbl.pack(fill=tk.BOTH, expand=True, padx=8, pady=(8, 4))
 
+        # 行番号列 (_no) + データ列
+        all_cols = ['_no'] + list(self._headers)
         self.tree = ttk.Treeview(
-            tbl, columns=self._headers, show='headings',
+            tbl, columns=all_cols, show='headings',
             selectmode='browse', style='CsvEditor.Treeview',
         )
+        self.tree.heading('_no', text='#', anchor='center')
+        self.tree.column('_no', width=36, minwidth=30, stretch=False, anchor='center')
+
         for ci, col in enumerate(self._headers):
             w = 160 if col == 'scenario' else 110
             anchor = 'e' if ci in self._numeric_cols else 'w'
             self.tree.heading(col, text=col, anchor=anchor)
             self.tree.column(col, width=w, minwidth=60, stretch=True, anchor=anchor)
+
+        # ゼブラカラー
+        self.tree.tag_configure('oddrow',  background='#f0f4fa')
+        self.tree.tag_configure('evenrow', background='#ffffff')
 
         vsb = ttk.Scrollbar(tbl, orient='vertical', command=self.tree.yview)
         hsb = ttk.Scrollbar(tbl, orient='horizontal', command=self.tree.xview)
@@ -409,23 +418,52 @@ class CsvEditorWindow(tk.Toplevel):
         self.tree.bind('<Double-1>', self._on_double_click)
 
         btns = ttk.Frame(self)
-        btns.pack(fill=tk.X, padx=8, pady=(0, 8))
+        btns.pack(fill=tk.X, padx=8, pady=(0, 2))
         ttk.Button(btns, text='行を追加', command=self._add_row).pack(side=tk.LEFT, padx=2)
         ttk.Button(btns, text='行を削除', command=self._delete_row).pack(side=tk.LEFT, padx=2)
         ttk.Button(btns, text='Save', command=self._save).pack(side=tk.RIGHT, padx=2)
         ttk.Button(btns, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=2)
+
+        # ステータスバー
+        self._status_var = tk.StringVar()
+        ttk.Label(
+            self, textvariable=self._status_var,
+            foreground='#888888', font=('Segoe UI', 8),
+        ).pack(anchor='w', padx=10, pady=(0, 6))
+        self._update_status()
 
     # ── テーブル操作 ──────────────────────────────────
 
     def _populate(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
-        for row in self._data:
+        for i, row in enumerate(self._data):
             display = [
-                self._fmt_num(v) if i in self._numeric_cols else v
-                for i, v in enumerate(row)
+                self._fmt_num(v) if ci in self._numeric_cols else v
+                for ci, v in enumerate(row)
             ]
-            self.tree.insert('', tk.END, values=display)
+            tag = 'oddrow' if i % 2 == 0 else 'evenrow'
+            self.tree.insert('', tk.END, values=[str(i + 1)] + display, tags=(tag,))
+
+    def _renumber_rows(self):
+        """行番号列と交互背景色を振り直す。"""
+        for i, item in enumerate(self.tree.get_children()):
+            vals = list(self.tree.item(item, 'values'))
+            vals[0] = str(i + 1)
+            tag = 'oddrow' if i % 2 == 0 else 'evenrow'
+            self.tree.item(item, values=vals, tags=(tag,))
+
+    def _update_status(self):
+        """ステータスバーのテキストを更新する。"""
+        try:
+            mtime = os.path.getmtime(self.csv_path)
+            dt = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M')
+        except Exception:
+            dt = '---'
+        count = len(self.tree.get_children())
+        self._status_var.set(
+            f'{os.path.basename(self.csv_path)}  |  {count} レコード  |  最終更新: {dt}'
+        )
 
     def _on_double_click(self, event):
         self._commit_edit()
@@ -435,18 +473,22 @@ class CsvEditorWindow(tk.Toplevel):
         col_id = self.tree.identify_column(event.x)
         if not row_id or not col_id:
             return
-        col_idx = int(col_id.lstrip('#')) - 1
+        # '#1'=行番号列, '#2'以降=データ列
+        display_ci = int(col_id.lstrip('#')) - 1
+        if display_ci == 0:   # 行番号列は編集不可
+            return
+        data_ci = display_ci - 1
+
         bbox = self.tree.bbox(row_id, col_id)
         if not bbox:
             return
         x, y, w, h = bbox
         vals = self.tree.item(row_id, 'values')
-        val = vals[col_idx] if col_idx < len(vals) else ''
-        # 編集時はカンマを除去した生の値を使う
-        if col_idx in self._numeric_cols:
+        val = vals[display_ci] if display_ci < len(vals) else ''
+        if data_ci in self._numeric_cols:
             val = self._raw_num(val)
 
-        self._editing = (row_id, col_idx)
+        self._editing = (row_id, data_ci)
         self._entry = ttk.Entry(self.tree)
         self._entry.place(x=x, y=y, width=w, height=h)
         self._entry.insert(0, val)
@@ -463,13 +505,14 @@ class CsvEditorWindow(tk.Toplevel):
         try:
             if not self._entry.winfo_exists():
                 return
-            row_id, col_idx = self._editing
+            row_id, data_ci = self._editing
             new_val = self._entry.get()
-            # 数値列はカンマ付き表示に変換して格納
-            display_val = self._fmt_num(new_val) if col_idx in self._numeric_cols else new_val
+            display_val = self._fmt_num(new_val) if data_ci in self._numeric_cols else new_val
             vals = list(self.tree.item(row_id, 'values'))
-            vals = (vals + [''] * len(self._headers))[:len(self._headers)]
-            vals[col_idx] = display_val
+            # vals[0]=行番号, vals[data_ci+1]=対象データ列
+            while len(vals) <= data_ci + 1:
+                vals.append('')
+            vals[data_ci + 1] = display_val
             self.tree.item(row_id, values=vals)
         except Exception:
             pass
@@ -487,12 +530,19 @@ class CsvEditorWindow(tk.Toplevel):
 
     def _add_row(self):
         self._commit_edit()
-        self.tree.insert('', tk.END, values=[''] * len(self._headers))
+        next_no = len(self.tree.get_children()) + 1
+        tag = 'oddrow' if (next_no - 1) % 2 == 0 else 'evenrow'
+        self.tree.insert('', tk.END,
+                         values=[str(next_no)] + [''] * len(self._headers),
+                         tags=(tag,))
+        self._update_status()
 
     def _delete_row(self):
         self._commit_edit()
         for item in self.tree.selection():
             self.tree.delete(item)
+        self._renumber_rows()
+        self._update_status()
 
     def _save(self):
         self._commit_edit()
@@ -502,11 +552,11 @@ class CsvEditorWindow(tk.Toplevel):
                 w.writerow(self._headers)
                 for item in self.tree.get_children():
                     vals = list(self.tree.item(item, 'values'))
-                    vals = (vals + [''] * len(self._headers))[:len(self._headers)]
-                    # 数値列はカンマを除去してから保存
+                    # vals[0] は行番号なのでスキップ
+                    data_vals = (vals[1:] + [''] * len(self._headers))[:len(self._headers)]
                     saved = [
-                        self._raw_num(v) if i in self._numeric_cols else v
-                        for i, v in enumerate(vals)
+                        self._raw_num(v) if ci in self._numeric_cols else v
+                        for ci, v in enumerate(data_vals)
                     ]
                     w.writerow(saved)
             messagebox.showinfo('Saved', '保存しました', parent=self)
