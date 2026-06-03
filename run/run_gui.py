@@ -351,14 +351,18 @@ class CsvEditorWindow(tk.Toplevel):
 
     def _detect_date_cols(self):
         """列名または列データから日付列のインデックスセットを返す。
-        数値列と重複する場合は日付列を優先する。"""
+        数値列と重複する場合は日付列を優先する。
+        YYYY-MM のような年月のみ列は対象外（データが YYYY-MM-DD に一致するか確認）。"""
         date_cols = set()
         for ci, col in enumerate(self._headers):
-            if any(kw in col.lower() for kw in _DATE_COL_KEYWORDS):
-                date_cols.add(ci)
-                continue
             vals = [row[ci] for row in self._data if ci < len(row) and row[ci].strip()]
-            if vals and all(_DATE_VALUE_RE.match(v) for v in vals):
+            data_is_full_date = not vals or all(_DATE_VALUE_RE.match(v) for v in vals)
+            if any(kw in col.lower() for kw in _DATE_COL_KEYWORDS):
+                # キーワード一致でもデータが YYYY-MM 等なら除外
+                if data_is_full_date:
+                    date_cols.add(ci)
+                continue
+            if vals and data_is_full_date:
                 date_cols.add(ci)
         self._numeric_cols -= date_cols  # 日付列は数値列から除外
         return date_cols
