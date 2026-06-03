@@ -67,17 +67,50 @@
     "flow/shimamura_class_member_registration_test.js":         "クラスへのメンバー登録フローを確認",
     "flow/koushi_sharei_manual_test.js":                        "講師謝礼の手動入力登録フローを確認",
     "flow/koushi_sharei_tsuika_test.js":                        "講師謝礼のCSVファイル一括取込フローを確認",
-    "page/student_search_ichiran_test.js":                      { "description": "受講生検索の空検索・姓絞り込みで結果が表示されることを確認",                              "feature_no": "1001_1_1" },
-    "page/contact_list_ichiran_test.js":                        { "description": "問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認",                     "feature_no": "1001_1_2" },
-    "page/course_by_student_ichiran_test.js":                   { "description": "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",                   "feature_no": "1001_1_3" },
-    "page/class_list_ichiran_test.js":                          { "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",                           "feature_no": "1001_2_1" },
-    "page/teacher_list_ichiran_test.js":                        { "description": "講師一覧の空検索で結果が表示されることを確認",                                               "feature_no": "1001_2_2" },
-    "page/course_ichiran_test.js":                              { "description": "コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認",                   "feature_no": "1001_3_1" },
-    "page/contact_module_list_ichiran_test.js":                 { "description": "コンタクト一覧の空検索で結果が表示されることを確認",                                         "feature_no": "1001_3_2" },
-    "page/mishukin_list_ichiran_test.js":                       { "description": "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認",                       "feature_no": "1001_4_1" },
-    "page/keiri_invoices_ichiran_test.js":                      { "description": "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認",                       "feature_no": "1001_4_2" },
-    "page/attendance_today_ichiran_test.js":                    { "description": "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認",             "feature_no": "1001_5_1" },
-    "page/transaction_ichiran_test.js":                         { "description": "入出金一覧の空検索と姓での絞り込み検索を確認",                                               "feature_no": "1001_5_2" },
+    "page/student_search_ichiran_test.js": {
+      "description": "受講生検索の空検索・姓絞り込みで結果が表示されることを確認",
+      "feature_no": "1002_4_3"
+    },
+    "page/contact_list_ichiran_test.js": {
+      "description": "問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認",
+      "feature_no": "1001_1_2"
+    },
+    "page/course_by_student_ichiran_test.js": {
+      "description": "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",
+      "feature_no": "1001_1_3"
+    },
+    "page/class_list_ichiran_test.js": {
+      "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
+      "feature_no": "1001_2_1"
+    },
+    "page/teacher_list_ichiran_test.js": {
+      "description": "講師一覧の空検索で結果が表示されることを確認",
+      "feature_no": "1001_2_2"
+    },
+    "page/course_ichiran_test.js": {
+      "description": "コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認",
+      "feature_no": "1001_3_1"
+    },
+    "page/contact_module_list_ichiran_test.js": {
+      "description": "コンタクト一覧の空検索で結果が表示されることを確認",
+      "feature_no": "1001_3_2"
+    },
+    "page/mishukin_list_ichiran_test.js": {
+      "description": "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認",
+      "feature_no": "1001_4_1"
+    },
+    "page/keiri_invoices_ichiran_test.js": {
+      "description": "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認",
+      "feature_no": "1001_4_2"
+    },
+    "page/attendance_today_ichiran_test.js": {
+      "description": "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認",
+      "feature_no": "1001_5_1"
+    },
+    "page/transaction_ichiran_test.js": {
+      "description": "入出金一覧の空検索と姓での絞り込み検索を確認",
+      "feature_no": "1001_5_2"
+    },
     "check/shimamura_class_existence_check_test.js":            "指定クラスが存在するか一括チェック",
     "check/bank_payment_type_check_test.js":                    "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト"
   },
