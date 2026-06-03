@@ -317,10 +317,14 @@ class CsvEditorWindow(tk.Toplevel):
 
     @staticmethod
     def _is_numeric_str(s):
-        """カンマを除いて数値のみかどうか判定（空文字は True）。"""
+        """カンマを除いて数値のみかどうか判定（空文字は True）。
+        先頭ゼロ付き文字列（0001, 001 等）はコード系とみなして False を返す。"""
         s = s.replace(',', '').strip()
         if not s:
             return True
+        # 先頭が '0' かつ次の文字が '.' 以外 → 銀行コード・口座番号等のコード系
+        if len(s) > 1 and s[0] == '0' and s[1] != '.':
+            return False
         try:
             float(s)
             return True
