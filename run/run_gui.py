@@ -134,12 +134,17 @@ def format_test_list(display_names):
     return [f.ljust(max_len + 1) + fname for f, fname in parts]
 
 
-def filter_profiles_for_product(all_profiles, product):
-    """product に対応するプロファイルを返す。一致なしの場合は全件返す。"""
+def filter_profiles_for_product(all_profiles, product, order=None):
+    """product に対応するプロファイルを返す。order が指定された場合はその順序を優先する。"""
     if not product:
         return list(all_profiles)
     matched = [p for p in all_profiles if p == product or p.startswith(product + '.')]
-    return matched if matched else list(all_profiles)
+    result = matched if matched else list(all_profiles)
+    if order:
+        ordered = [p for p in order if p in result]
+        remaining = sorted(p for p in result if p not in ordered)
+        return ordered + remaining
+    return result
 
 
 def extract_tags_from_test(test_path):
@@ -467,7 +472,8 @@ class RunnerApp(tk.Tk):
 
     def _refresh_profiles(self, product):
         """product に対応するプロファイルでリストを更新し、ラベルに製品名を表示する。"""
-        filtered = filter_profiles_for_product(self._all_profiles, product)
+        order = self._descriptions.get('_profile_order', {}).get(product)
+        filtered = filter_profiles_for_product(self._all_profiles, product, order)
         has_match = product and any(
             p == product or p.startswith(product + '.') for p in self._all_profiles
         )
