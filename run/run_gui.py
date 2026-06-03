@@ -5,6 +5,11 @@ import csv
 import json
 import os
 import re
+try:
+    from tkcalendar import DateEntry as _DateEntry
+    _TKCALENDAR = True
+except ImportError:
+    _TKCALENDAR = False
 import sys
 import queue
 import zipfile
@@ -16,6 +21,9 @@ from tkinter.scrolledtext import ScrolledText
 from datetime import datetime, timedelta
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+_DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
+_DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
 LOG_FONT = ('Courier New', 9)
 
@@ -310,6 +318,7 @@ class CsvEditorWindow(tk.Toplevel):
         self._editing = None
         self._headers = []
         self._numeric_cols = set()
+        self._date_cols = set()
         self._load_csv()
         self._build_ui()
 
@@ -339,6 +348,20 @@ class CsvEditorWindow(tk.Toplevel):
             if vals and all(self._is_numeric_str(v) for v in vals):
                 numeric.add(ci)
         return numeric
+
+    def _detect_date_cols(self):
+        """列名または列データから日付列のインデックスセットを返す。
+        数値列と重複する場合は日付列を優先する。"""
+        date_cols = set()
+        for ci, col in enumerate(self._headers):
+            if any(kw in col.lower() for kw in _DATE_COL_KEYWORDS):
+                date_cols.add(ci)
+                continue
+            vals = [row[ci] for row in self._data if ci < len(row) and row[ci].strip()]
+            if vals and all(_DATE_VALUE_RE.match(v) for v in vals):
+                date_cols.add(ci)
+        self._numeric_cols -= date_cols  # 日付列は数値列から除外
+        return date_cols
 
     @staticmethod
     def _fmt_num(val):
@@ -373,6 +396,7 @@ class CsvEditorWindow(tk.Toplevel):
             for r in rows[1:]
         ]
         self._numeric_cols = self._detect_numeric_cols()
+        self._date_cols = self._detect_date_cols()
 
     # ── UI 構築 ───────────────────────────────────────
 
@@ -400,7 +424,12 @@ class CsvEditorWindow(tk.Toplevel):
         self.tree.column('_no', width=36, minwidth=30, stretch=False, anchor='center')
 
         for ci, col in enumerate(self._headers):
-            w = 160 if col == 'scenario' else 110
+            if col == 'scenario':
+                w = 160
+            elif ci in self._date_cols:
+                w = 130
+            else:
+                w = 110
             anchor = 'e' if ci in self._numeric_cols else 'w'
             self.tree.heading(col, text=col, anchor=anchor)
             self.tree.column(col, width=w, minwidth=60, stretch=True, anchor=anchor)
@@ -493,10 +522,24 @@ class CsvEditorWindow(tk.Toplevel):
             val = self._raw_num(val)
 
         self._editing = (row_id, data_ci)
-        self._entry = ttk.Entry(self.tree)
-        self._entry.place(x=x, y=y, width=w, height=h)
-        self._entry.insert(0, val)
-        self._entry.select_range(0, tk.END)
+        if data_ci in self._date_cols and _TKCALENDAR:
+            self._entry = _DateEntry(
+                self.tree, date_pattern='yyyy-mm-dd', width=12,
+                background='#3a7dc8', foreground='white', borderwidth=1,
+            )
+            self._entry.place(x=x, y=y, width=w, height=h)
+            if val:
+                try:
+                    from datetime import date as _date
+                    parts = val.replace('/', '-').split('-')
+                    self._entry.set_date(_date(int(parts[0]), int(parts[1]), int(parts[2])))
+                except Exception:
+                    pass
+        else:
+            self._entry = ttk.Entry(self.tree)
+            self._entry.place(x=x, y=y, width=w, height=h)
+            self._entry.insert(0, val)
+            self._entry.select_range(0, tk.END)
         self._entry.focus_set()
         self._entry.bind('<Return>', lambda _: self._commit_edit())
         self._entry.bind('<Tab>',    lambda _: self._commit_edit())
