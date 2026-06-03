@@ -25,12 +25,12 @@ const {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
-} = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+} = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const {
   runKoushiShareiManualFlow,
   runKoushiShareiValidationFlow
-} = require('../../pages/shimamura/KoushiShareiFlowPage');
+} = require('../../../pages/shimamura/KoushiShareiFlowPage');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_manual_data'),

@@ -13,9 +13,9 @@
  * - このテストは探索用途。PASS/FAIL でなくエラー内容の記録が目的
  * - エラーコンテナが存在しない場合は「エラーなし（登録成功）」と記録する
  */
-const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
   + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true';

@@ -16,8 +16,8 @@
  * - expectedName: 結果確認用テキスト（空の場合は「結果あり」のみ確認）
  */
 
-const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('transaction_ichiran_search_data'),

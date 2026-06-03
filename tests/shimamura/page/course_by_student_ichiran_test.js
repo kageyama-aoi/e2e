@@ -8,8 +8,8 @@
  * **データソース**
  * - `data/shimamura/course_by_student_ichiran_search_data.csv`
  */
-const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('course_by_student_ichiran_search_data'),

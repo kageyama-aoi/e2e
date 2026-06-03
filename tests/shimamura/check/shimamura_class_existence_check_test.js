@@ -19,9 +19,9 @@
  * **最終更新日**
  * - 2026-01-27
  */
-const { loadCsvWithProfile } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { loadCsvWithProfile } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const csvData = loadCsvWithProfile('syokai_touroku_data');
 

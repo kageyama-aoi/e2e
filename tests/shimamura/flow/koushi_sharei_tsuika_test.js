@@ -28,9 +28,9 @@ const {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
-} = require('../../support/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+} = require('../../../support/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 const S = {

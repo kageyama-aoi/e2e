@@ -22,10 +22,10 @@ Before(beforeShimamura);
 
 
 const path = require('path');
-const { readCsv } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { readCsv } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 /**
  * CSVファイルから退会テストデータを読み込む

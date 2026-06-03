@@ -30,9 +30,9 @@ const {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
-} = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { toggleGroupmenu, verifyValidationErrors } = require('../../support/shimamura/utils');
+} = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { toggleGroupmenu, verifyValidationErrors } = require('../../../support/shimamura/utils');
 
 Feature('Dev sandbox (@dev)');
 

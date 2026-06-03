@@ -17,9 +17,9 @@ const {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
-} = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { runRegistrationFlow, ShouldBeOnKeirisyoriScreenE, ShouldBeOnTaikai } = require('../../pages/shimamura/SyokaiFlowPage');
+} = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { runRegistrationFlow, ShouldBeOnKeirisyoriScreenE, ShouldBeOnTaikai } = require('../../../pages/shimamura/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data'), (row) => {
   return row.className || row.class_name01 || row.lastName || row.last_name || 'データ行';

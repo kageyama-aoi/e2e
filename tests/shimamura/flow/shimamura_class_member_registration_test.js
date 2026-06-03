@@ -14,7 +14,7 @@
  * **最終更新日**
  * - 2026-01-27
  */
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 Feature('Dev sandbox (@dev)');
 

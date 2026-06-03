@@ -19,10 +19,10 @@ const {
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
-} = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
-const { verifyValidationErrors } = require('../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+} = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
   + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true';

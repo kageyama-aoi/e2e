@@ -13,8 +13,8 @@
  * **データソース**
  * - `data/shimamura/attendance_today_ichiran_search_data.csv`
  */
-const { loadCsvWithProfile, withScenarioLabel } = require('../../support/utils');
-const { beforeShimamura } = require('../../support/shimamura/hooks');
+const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('attendance_today_ichiran_search_data'),
