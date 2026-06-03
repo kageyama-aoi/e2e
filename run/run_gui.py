@@ -544,7 +544,12 @@ class CsvEditorWindow(tk.Toplevel):
         self._entry.bind('<Return>', lambda _: self._commit_edit())
         self._entry.bind('<Tab>',    lambda _: self._commit_edit())
         self._entry.bind('<Escape>', lambda _: self._cancel_edit())
-        self._entry.bind('<FocusOut>', lambda _: self._commit_edit())
+        if data_ci in self._date_cols and _TKCALENDAR:
+            # FocusOutはカレンダー展開時に誤発火するため除外
+            # 日付選択完了時に発火する仮想イベントを使う
+            self._entry.bind('<<DateEntrySelected>>', lambda _: self._commit_edit())
+        else:
+            self._entry.bind('<FocusOut>', lambda _: self._commit_edit())
 
     def _commit_edit(self):
         if not self._entry or not self._editing:
