@@ -309,8 +309,51 @@ class CsvEditorWindow(tk.Toplevel):
         self._entry = None
         self._editing = None
         self._headers = []
+        self._numeric_cols = set()
         self._load_csv()
         self._build_ui()
+
+    # ── ヘルパー ──────────────────────────────────────
+
+    @staticmethod
+    def _is_numeric_str(s):
+        """カンマを除いて数値のみかどうか判定（空文字は True）。"""
+        s = s.replace(',', '').strip()
+        if not s:
+            return True
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
+
+    def _detect_numeric_cols(self):
+        """全データが数値の列インデックスのセットを返す。"""
+        numeric = set()
+        for ci in range(len(self._headers)):
+            vals = [row[ci] for row in self._data if ci < len(row) and row[ci].strip()]
+            if vals and all(self._is_numeric_str(v) for v in vals):
+                numeric.add(ci)
+        return numeric
+
+    @staticmethod
+    def _fmt_num(val):
+        """数値文字列をカンマ区切り表示にフォーマット。"""
+        s = val.replace(',', '').strip()
+        if not s:
+            return val
+        try:
+            n = float(s)
+            return f'{int(n):,}' if n == int(n) else f'{n:,}'
+        except ValueError:
+            return val
+
+    @staticmethod
+    def _raw_num(val):
+        """表示用カンマを除去した生の数値文字列を返す。"""
+        return val.replace(',', '')
+
+    # ── CSV 読み込み ──────────────────────────────────
 
     def _load_csv(self):
         try:
@@ -325,6 +368,9 @@ class CsvEditorWindow(tk.Toplevel):
             (r + [''] * len(self._headers))[:len(self._headers)]
             for r in rows[1:]
         ]
+        self._numeric_cols = self._detect_numeric_cols()
+
+    # ── UI 構築 ───────────────────────────────────────
 
     def _build_ui(self):
         if not self._headers:
@@ -332,14 +378,23 @@ class CsvEditorWindow(tk.Toplevel):
             ttk.Button(self, text='閉じる', command=self.destroy).pack()
             return
 
+        # ヘッダー行を太字・青字に
+        style = ttk.Style(self)
+        style.configure('CsvEditor.Treeview.Heading',
+                         font=('Segoe UI', 9, 'bold'), foreground='#3a7dc8')
+
         tbl = ttk.Frame(self)
         tbl.pack(fill=tk.BOTH, expand=True, padx=8, pady=(8, 4))
 
-        self.tree = ttk.Treeview(tbl, columns=self._headers, show='headings', selectmode='browse')
-        for col in self._headers:
+        self.tree = ttk.Treeview(
+            tbl, columns=self._headers, show='headings',
+            selectmode='browse', style='CsvEditor.Treeview',
+        )
+        for ci, col in enumerate(self._headers):
             w = 160 if col == 'scenario' else 110
-            self.tree.heading(col, text=col)
-            self.tree.column(col, width=w, minwidth=60, stretch=True)
+            anchor = 'e' if ci in self._numeric_cols else 'w'
+            self.tree.heading(col, text=col, anchor=anchor)
+            self.tree.column(col, width=w, minwidth=60, stretch=True, anchor=anchor)
 
         vsb = ttk.Scrollbar(tbl, orient='vertical', command=self.tree.yview)
         hsb = ttk.Scrollbar(tbl, orient='horizontal', command=self.tree.xview)
@@ -360,11 +415,17 @@ class CsvEditorWindow(tk.Toplevel):
         ttk.Button(btns, text='Save', command=self._save).pack(side=tk.RIGHT, padx=2)
         ttk.Button(btns, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=2)
 
+    # ── テーブル操作 ──────────────────────────────────
+
     def _populate(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
         for row in self._data:
-            self.tree.insert('', tk.END, values=row)
+            display = [
+                self._fmt_num(v) if i in self._numeric_cols else v
+                for i, v in enumerate(row)
+            ]
+            self.tree.insert('', tk.END, values=display)
 
     def _on_double_click(self, event):
         self._commit_edit()
@@ -379,8 +440,11 @@ class CsvEditorWindow(tk.Toplevel):
         if not bbox:
             return
         x, y, w, h = bbox
-        val = self.tree.item(row_id, 'values')
-        val = val[col_idx] if col_idx < len(val) else ''
+        vals = self.tree.item(row_id, 'values')
+        val = vals[col_idx] if col_idx < len(vals) else ''
+        # 編集時はカンマを除去した生の値を使う
+        if col_idx in self._numeric_cols:
+            val = self._raw_num(val)
 
         self._editing = (row_id, col_idx)
         self._entry = ttk.Entry(self.tree)
@@ -401,9 +465,11 @@ class CsvEditorWindow(tk.Toplevel):
                 return
             row_id, col_idx = self._editing
             new_val = self._entry.get()
+            # 数値列はカンマ付き表示に変換して格納
+            display_val = self._fmt_num(new_val) if col_idx in self._numeric_cols else new_val
             vals = list(self.tree.item(row_id, 'values'))
             vals = (vals + [''] * len(self._headers))[:len(self._headers)]
-            vals[col_idx] = new_val
+            vals[col_idx] = display_val
             self.tree.item(row_id, values=vals)
         except Exception:
             pass
@@ -437,8 +503,13 @@ class CsvEditorWindow(tk.Toplevel):
                 for item in self.tree.get_children():
                     vals = list(self.tree.item(item, 'values'))
                     vals = (vals + [''] * len(self._headers))[:len(self._headers)]
-                    w.writerow(vals)
-            messagebox.showinfo('Saved', f'保存しました', parent=self)
+                    # 数値列はカンマを除去してから保存
+                    saved = [
+                        self._raw_num(v) if i in self._numeric_cols else v
+                        for i, v in enumerate(vals)
+                    ]
+                    w.writerow(saved)
+            messagebox.showinfo('Saved', '保存しました', parent=self)
             self.destroy()
         except Exception as e:
             messagebox.showerror('Error', f'保存に失敗しました:\n{e}', parent=self)
