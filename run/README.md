@@ -12,6 +12,8 @@ Python 標準ライブラリ（Tkinter）のみで動作するテスト実行ラ
 | Python | 3.8 以上（Tkinter 付属、標準配布で OK） |
 | Node.js / npm | `npx codeceptjs` が実行できること |
 | CodeceptJS | プロジェクトに `node_modules/` がインストール済み |
+| sv-ttk | **任意**。`pip install sv-ttk` でインストールすると Windows 11 スタイルのモダンテーマが有効になる。未インストールでも標準 ttk テーマで正常動作する |
+| tkcalendar | **任意**。`pip install tkcalendar` で CSV エディタの日付列にカレンダーピッカーが有効になる |
 
 ---
 
@@ -89,6 +91,29 @@ Run 終了（正常終了・Stop・エラー）後に `logs/<testname>_<YYYYMMDD
 
 起動 0.3 秒後にバックグラウンドで実行。  
 `logs/` 内の `<name>_<YYYYMMDD_HHMMSS>.log` のうち **30 日以上** 古いものを `logs/archive/<name>.log.zip` に圧縮してから削除する。
+
+---
+
+## UI テーマについて（設計判断の記録）
+
+### 採用：sv-ttk（任意依存）
+
+既存の Tkinter/ttk コードをそのまま使いながら Windows 11 スタイルのテーマを適用できる
+[sv-ttk](https://github.com/rdbende/Sun-Valley-ttk-theme) を任意依存として採用した。
+
+- `pip install sv-ttk` でインストール済みの場合のみ有効
+- 未インストールでも標準 ttk テーマにフォールバックし、動作に影響なし
+
+### 不採用：CustomTkinter
+
+CustomTkinter への全面移行は以下の理由で見送った：
+
+| 理由 | 詳細 |
+|---|---|
+| Treeview の代替品なし | `CsvEditorWindow` で使用する `ttk.Treeview` に CTk の同等品がなく、ttk との混在 UI になる |
+| tkcalendar との不一致 | `DateEntry` は ttk ベースのウィジェットのため CTk 環境と外観が合わない |
+| カラーログの互換性 | `ScrolledText.tag_configure` を使ったログ色分けが CTkTextbox では内部 API 扱いになる |
+| 開発者専用ツール | 外部から見えないツールに対してコスト対効果が低い |
 
 ---
 

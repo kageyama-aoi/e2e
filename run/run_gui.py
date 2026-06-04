@@ -1,5 +1,7 @@
 # Generic CodeceptJS test runner GUI
 # Uses only Python standard library (Tkinter)
+# Optional: pip install sv-ttk   → Windows 11 style theme
+# Optional: pip install tkcalendar → calendar picker in CSV editor
 
 import csv
 import json
@@ -10,6 +12,11 @@ try:
     _TKCALENDAR = True
 except ImportError:
     _TKCALENDAR = False
+try:
+    import sv_ttk as _sv_ttk
+    _SV_TTK = True
+except ImportError:
+    _SV_TTK = False
 import sys
 import queue
 import zipfile
@@ -652,6 +659,8 @@ class RunnerApp(tk.Tk):
         self.status_var = tk.StringVar(value='Ready')
 
         self._build_ui()
+        if _SV_TTK:
+            _sv_ttk.set_theme('light')
         self._all_tests = find_all_tests(self.tests_dir)
         self._all_profiles = find_all_profiles(self.env_dir)
         self._load_products()
