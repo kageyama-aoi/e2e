@@ -169,28 +169,33 @@ async function ShouldFillSmbcForm(I, input) {
   I.say('【債権買取顧客情報登録】フォームに入力（editable フィールドのみ）');
   // readonly フィールド（gender, address, bank_* など）は受講生レコードから自動引用される
 
-  // ─ 本人情報（editable）
-  if (input.smbc_phone_mobile)     I.fillField(S.smbc.fields.phoneMobile,       input.smbc_phone_mobile);
-  if (input.smbc_last_name_furigana) {
-    I.clearField(S.smbc.fields.lastNameFurigana);
-    I.fillField(S.smbc.fields.lastNameFurigana, input.smbc_last_name_furigana);
-  }
-  if (input.smbc_first_name_furigana) {
-    I.clearField(S.smbc.fields.firstNameFurigana);
-    I.fillField(S.smbc.fields.firstNameFurigana, input.smbc_first_name_furigana);
-  }
-  if (input.smbc_phone_home)       I.fillField(S.smbc.fields.phoneHome,         input.smbc_phone_home);
-  if (input.smbc_gengo)            I.selectOption(S.smbc.fields.gengo,           input.smbc_gengo);
-  if (input.smbc_year)             I.fillField(S.smbc.fields.year,               input.smbc_year);
-  if (input.smbc_month)            I.fillField(S.smbc.fields.month,              input.smbc_month);
-  if (input.smbc_day)              I.fillField(S.smbc.fields.day,                input.smbc_day);
-  if (input.smbc_area_id)          I.selectOption(S.smbc.fields.areaId,          input.smbc_area_id);
-  if (input.smbc_school_id)        I.selectOption(S.smbc.fields.schoolId,        input.smbc_school_id);
+  // ─ テキスト系（input + textarea）を executeScript で一括入力
+  const mainTextFields = [
+    ['phone_mobile',                input.smbc_phone_mobile],
+    ['last_name_furigana',          input.smbc_last_name_furigana],
+    ['first_name_furigana',         input.smbc_first_name_furigana],
+    ['phone_home',                  input.smbc_phone_home],
+    ['year',                        input.smbc_year],
+    ['month',                       input.smbc_month],
+    ['day',                         input.smbc_day],
+    ['primary_address_state_kana',  input.smbc_state_kana],
+    ['primary_address_city_kana',   input.smbc_city_kana],
+    ['primary_address_street_kana', input.smbc_street_kana],
+  ].filter(([, v]) => v);
 
-  // ─ 住所フリガナ（editable）
-  if (input.smbc_state_kana)       I.fillField(S.smbc.fields.stateKana,          input.smbc_state_kana);
-  if (input.smbc_city_kana)        I.fillField(S.smbc.fields.cityKana,           input.smbc_city_kana);
-  if (input.smbc_street_kana)      I.fillField('textarea[name="primary_address_street_kana"]', input.smbc_street_kana);
+  if (mainTextFields.length > 0) {
+    I.executeScript((fields) => {
+      fields.forEach(([name, value]) => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.value = value;
+      });
+    }, mainTextFields);
+  }
+
+  // ─ セレクト系（change イベントが必要なため個別に）
+  if (input.smbc_gengo)     I.selectOption(S.smbc.fields.gengo,    input.smbc_gengo);
+  if (input.smbc_area_id)   I.selectOption(S.smbc.fields.areaId,   input.smbc_area_id);
+  if (input.smbc_school_id) I.selectOption(S.smbc.fields.schoolId, input.smbc_school_id);
 
   // ─ 契約者情報（keiyakusha_honnin_def で editable 化）
   if (input.smbc_keiyakusha_honnin_def) {
@@ -199,29 +204,53 @@ async function ShouldFillSmbcForm(I, input) {
     I.wait(1); // JS のイベント待ち
   }
   if (input.smbc_keiyakusha_honnin_def === '1') {
-    if (input.smbc_k_last_name)       I.fillField('input[name="keiyakusha_last_name"]',            input.smbc_k_last_name);
-    if (input.smbc_k_first_name)      I.fillField('input[name="keiyakusha_first_name"]',           input.smbc_k_first_name);
-    if (input.smbc_k_gender)          I.selectOption('select[name="keiyakusha_gender"]',           input.smbc_k_gender);
-    if (input.smbc_k_last_furigana)   I.fillField('input[name="keiyakusha_last_name_furigana"]',   input.smbc_k_last_furigana);
-    if (input.smbc_k_first_furigana)  I.fillField('input[name="keiyakusha_first_name_furigana"]',  input.smbc_k_first_furigana);
-    if (input.smbc_k_gengo)           I.selectOption('select[name="keiyakusha_gengo"]',            input.smbc_k_gengo);
-    if (input.smbc_k_year)            I.fillField('input[name="keiyakusha_year"]',                 input.smbc_k_year);
-    if (input.smbc_k_month)           I.fillField('input[name="keiyakusha_month"]',                input.smbc_k_month);
-    if (input.smbc_k_day)             I.fillField('input[name="keiyakusha_day"]',                  input.smbc_k_day);
-    if (input.smbc_k_phone_mobile)    I.fillField('input[name="keiyakusha_phone_mobile"]',         input.smbc_k_phone_mobile);
+    const keiyakushaTextFields = [
+      ['keiyakusha_last_name',           input.smbc_k_last_name],
+      ['keiyakusha_first_name',          input.smbc_k_first_name],
+      ['keiyakusha_last_name_furigana',  input.smbc_k_last_furigana],
+      ['keiyakusha_first_name_furigana', input.smbc_k_first_furigana],
+      ['keiyakusha_year',                input.smbc_k_year],
+      ['keiyakusha_month',               input.smbc_k_month],
+      ['keiyakusha_day',                 input.smbc_k_day],
+      ['keiyakusha_phone_mobile',        input.smbc_k_phone_mobile],
+    ].filter(([, v]) => v);
+
+    if (keiyakushaTextFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, keiyakushaTextFields);
+    }
+
+    if (input.smbc_k_gender) I.selectOption('select[name="keiyakusha_gender"]', input.smbc_k_gender);
+    if (input.smbc_k_gengo)  I.selectOption('select[name="keiyakusha_gengo"]',  input.smbc_k_gengo);
   }
+
   if (input.smbc_jusho_honnin_def) {
     I.selectOption('select[name="jusho_honnin_def"]', input.smbc_jusho_honnin_def);
     I.wait(1);
   }
   if (input.smbc_keiyakusha_honnin_def === '1' && input.smbc_jusho_honnin_def === '1') {
-    if (input.smbc_k_postalcode)  I.fillField('input[name="keiyakusha_address_postalcode"]', input.smbc_k_postalcode);
-    if (input.smbc_k_state)       I.fillField('input[name="keiyakusha_address_state"]',      input.smbc_k_state);
-    if (input.smbc_k_state_kana)  I.fillField('input[name="keiyakusha_address_state_kana"]', input.smbc_k_state_kana);
-    if (input.smbc_k_city)        I.fillField('input[name="keiyakusha_address_city"]',       input.smbc_k_city);
-    if (input.smbc_k_city_kana)   I.fillField('input[name="keiyakusha_address_city_kana"]',  input.smbc_k_city_kana);
-    if (input.smbc_k_street)      I.fillField('textarea[name="keiyakusha_address_street"]',  input.smbc_k_street);
-    if (input.smbc_k_street_kana) I.fillField('textarea[name="keiyakusha_address_street_kana"]', input.smbc_k_street_kana);
+    const addressTextFields = [
+      ['keiyakusha_address_postalcode',  input.smbc_k_postalcode],
+      ['keiyakusha_address_state',       input.smbc_k_state],
+      ['keiyakusha_address_state_kana',  input.smbc_k_state_kana],
+      ['keiyakusha_address_city',        input.smbc_k_city],
+      ['keiyakusha_address_city_kana',   input.smbc_k_city_kana],
+      ['keiyakusha_address_street',      input.smbc_k_street],
+      ['keiyakusha_address_street_kana', input.smbc_k_street_kana],
+    ].filter(([, v]) => v);
+
+    if (addressTextFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, addressTextFields);
+    }
   }
 }
 
