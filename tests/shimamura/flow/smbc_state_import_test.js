@@ -15,7 +15,7 @@
  *   - smbc_err_no_header.txt    : ヘッダーレコード未存在
  *   - smbc_err_header_short.txt : ヘッダーレコード桁数不正
  *   - smbc_err_no_end.txt       : エンドレコード未存在
- *   ※ 前日データ欠損時の window.confirm() ポップアップは I.acceptPopup() で自動承認
+ *   ※ 前日データ欠損時の window.confirm() ポップアップは executeScript で自動承認（I.acceptPopup はポップアップ表示中にしか使えないため不可）
  *
  * **パターン**: B（1画面完結・FlowPage なし）
  */
@@ -74,8 +74,9 @@ async function selectAndImportFile(I, filePath, expectedErrors) {
   }
 
   I.say('【ファイル読込】ボタンをクリック');
-  // 前日データ欠損の場合に window.confirm() ポップアップが出るため事前にacceptを登録
-  I.acceptPopup();
+  // 前日データ欠損時に window.confirm() が出る場合があるため、クリック前にオーバーライドしておく
+  // (I.acceptPopup() はポップアップ表示中にしか使えないため executeScript で対応)
+  await I.executeScript(() => { window.confirm = () => true; });
   I.click(S.importBtn);
   // フォーム送信後、ページリロードでファイル入力欄が再表示されるまで待つ
   I.waitForElement(S.fileInput, TIMEOUTS.RESULT);
