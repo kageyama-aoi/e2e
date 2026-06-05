@@ -100,6 +100,24 @@ const TARGETS = [
     hint: 'コンタクト一覧',
     directUrl: `${BASE_URL}index.php?module=Contacts&action=index&top_menu=1` },
 
+  // ── 債権買取系 ──
+  { name: 'credit_purchase_list',
+    hint: '債権買取顧客情報一覧',
+    directUrl: `${BASE_URL}index.php?module=Student&action=LW_CreditPurchaseCustomerInfo_AN&empty_form=1` },
+  { name: 'credit_purchase_edit',
+    hint: '債権買取顧客情報編集（TK26012870154）',
+    directUrl: `${BASE_URL}index.php?module=Student&action=EW_CreditPurchaseCustomerInfo_AN&record=ec75d9e6-fc06-11f0-b915-42010a28a120` },
+  { name: 'student_detail_keiri',
+    hint: '受講生詳細_経理カルテビュー（TK26012870154）',
+    directUrl: `${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=ec75d9e6-fc06-11f0-b915-42010a28a120` },
+  { name: 'student_detail_view',
+    hint: '受講生詳細_DetailView（TK26012870154）',
+    directUrl: `${BASE_URL}index.php?detailview=1&module=Student&action=DetailView&return_module=Student&return_action=DetailView&record=ec75d9e6-fc06-11f0-b915-42010a28a120` },
+
+  { name: 'smbc_state_import',
+    hint: '債権買取状態読込',
+    directUrl: `${BASE_URL}index.php?module=SmbcStateSummary&action=EWSMBCPurchaseStatusImport_AN` },
+
   // 以下は URL が未確認（コメントアウト）──
   // { name: 'kouhousei_detail', hint: '候補生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },
   // { name: 'student_detail',   hint: '受講生詳細',   directUrl: `${BASE_URL}index.php?module=Student&action=DetailView&record=<id>` },

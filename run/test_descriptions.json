@@ -68,6 +68,7 @@
     "flow/koushi_sharei_manual_test.js":                        "講師謝礼の手動入力登録フローを確認",
     "flow/koushi_sharei_tsuika_test.js":                        "講師謝礼のCSVファイル一括取込フローを確認",
     "flow/student_saikenkai_test.js":                           "受講生の請求方法を債権買取に変更し、債権買取顧客情報登録フォームを保存するフローを確認",
+    "flow/smbc_state_import_test.js":                           "債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認",
     "page/student_search_ichiran_test.js": {
       "description": "受講生検索の空検索・姓絞り込みで結果が表示されることを確認",
       "feature_no": "1002_4_3"
