@@ -11,7 +11,7 @@ const { config: codeceptConfig } = require('../codecept.conf.js');
 function readCsv(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
-    const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+    const lines = content.split(/\r?\n/).filter(line => line.trim() !== '' && !line.trim().startsWith('#'));
     if (lines.length < 2) return []; // ヘッダーのみまたは空の場合
 
     const headers = lines[0].split(',').map(h => h.trim());
