@@ -1,2 +1,5 @@
 scenario,import_file_path,expectedErrors
-ファイル未選択,,
+ファイル未選択,,ファイルが選択されていません
+ヘッダーレコード未存在,data/shimamura/smbc_err_no_header.txt,ヘッダレコードが存在しません
+ヘッダーレコード桁数不正,data/shimamura/smbc_err_header_short.txt,ヘッダレコードのフォーマットが不正です
+エンドレコード未存在,data/shimamura/smbc_err_no_end.txt,エンドレコードが存在しません

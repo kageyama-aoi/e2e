@@ -11,9 +11,11 @@
  * - `data/shimamura/smbc_state_import_data.csv`（正常系）
  * - `data/shimamura/smbc_state_import_validation_errors.csv`（異常系）
  *
- * ⚠️ 正しい読込ファイルは後から受領予定。
- *    受領後に CSV の import_file_path 列にパスを設定すること。
- *    異常系の expectedErrors も実機確認後に更新すること。
+ * **エラーテスト用ファイル**（data/shimamura/ に配置済み）
+ *   - smbc_err_no_header.txt    : ヘッダーレコード未存在
+ *   - smbc_err_header_short.txt : ヘッダーレコード桁数不正
+ *   - smbc_err_no_end.txt       : エンドレコード未存在
+ *   ※ 前日データ欠損時の window.confirm() ポップアップは I.acceptPopup() で自動承認
  *
  * **パターン**: B（1画面完結・FlowPage なし）
  */
@@ -72,6 +74,8 @@ async function selectAndImportFile(I, filePath, expectedErrors) {
   }
 
   I.say('【ファイル読込】ボタンをクリック');
+  // 前日データ欠損の場合に window.confirm() ポップアップが出るため事前にacceptを登録
+  I.acceptPopup();
   I.click(S.importBtn);
   // フォーム送信後、ページリロードでファイル入力欄が再表示されるまで待つ
   I.waitForElement(S.fileInput, TIMEOUTS.RESULT);
