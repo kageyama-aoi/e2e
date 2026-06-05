@@ -4,6 +4,16 @@ const { logScreenUrl } = require('../../support/utils');
 const { verifyValidationErrors } = require('../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../support/shimamura/constants');
 
+// ── 保存完了を動的検知するヘルパー ──────────────────────────────
+// エラーが出るか editButton が現れた時点で即座に次へ進む（固定待ちを排除）
+async function waitForSaveResult(I) {
+  await I.waitForFunction(
+    () => document.querySelector('#top_err_info_msg_div')?.innerText.trim() ||
+          !!document.querySelector('input[name="edit_button"]'),
+    TIMEOUTS.RESULT
+  );
+}
+
 // ── ローカルロケーター ────────────────────────────────────────
 const S = {
   detail: {
@@ -76,7 +86,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   if (input.student_postalcode) {
     I.fillField('input[name="primary_address_postalcode"]', input.student_postalcode);
     I.click('input[value="〒"]');  // shimamura 郵便番号検索ボタン
-    I.wait(1); // 郵便番号 API 待ち（都道府県・市区町村を自動補完）
+    I.wait(0.5); // 郵便番号 API 待ち
   }
   // zipCodeBtn で自動補完されない場合は直接入力
   if (input.student_address_state)  I.fillField('input[name="primary_address_state"]',  input.student_address_state);
@@ -92,7 +102,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   if (input.student_bank_account_type) I.selectOption('select[name="bank_account_type"]',  input.student_bank_account_type);
   if (input.student_bank_code) {
     I.fillField('input[name="bank_code"]', input.student_bank_code);
-    I.wait(1); // 銀行名 AJAX 補完待ち
+    I.wait(0.5); // 銀行名 AJAX 補完待ち
   }
   if (input.student_bank_branch_code) I.fillField('input[name="bank_branch_code"]', input.student_bank_branch_code);
   if (input.student_bank_account_no)  I.fillField('input[name="bank_account_no"]',  input.student_bank_account_no);
@@ -100,7 +110,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
 
   I.say('【受講生基本情報】保存');
   I.click(S.edit.saveButton);
-  I.wait(TIMEOUTS.RESULT);
+  await waitForSaveResult(I);
 
   const errorText = await I.executeScript(() => {
     const el = document.querySelector('#top_err_info_msg_div');
@@ -109,7 +119,6 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   if (errorText) throw new Error(`【受講生基本情報】保存エラー: ${errorText}`);
 
   I.say('【受講生基本情報】保存成功 → DetailView へ戻る');
-  I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生詳細(DetailView)_基本情報保存後');
 }
 
@@ -129,7 +138,7 @@ async function ShouldEditStudentPaymentType(I, input) {
 async function ShouldSaveStudentEdit(I, expectedErrors) {
   I.say('【受講生編集】保存');
   I.click(S.edit.saveButton);
-  I.wait(TIMEOUTS.RESULT);
+  await waitForSaveResult(I);
 
   const errorText = await I.executeScript(() => {
     const el = document.querySelector('#top_err_info_msg_div');
@@ -151,7 +160,6 @@ async function ShouldSaveStudentEdit(I, expectedErrors) {
   }
 
   I.say('【受講生編集】保存成功 → DetailView へ戻る');
-  I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生詳細(DetailView)_保存後');
 }
 
@@ -257,7 +265,7 @@ async function ShouldFillSmbcForm(I, input) {
 async function ShouldSaveSmbcForm(I, expectedErrors) {
   I.say('【債権買取顧客情報登録】申込情報登録ボタンをクリック');
   I.click(S.smbc.saveButton);
-  I.wait(TIMEOUTS.RESULT);
+  await waitForSaveResult(I);
 
   const errorText = await I.executeScript(() => {
     const el = document.querySelector('#top_err_info_msg_div');
@@ -272,7 +280,6 @@ async function ShouldSaveSmbcForm(I, expectedErrors) {
 
   I.say('【債権買取顧客情報登録】保存成功 → DetailView へ戻る');
   // 保存後は return_action=DetailView で受講生詳細へ戻る
-  I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生詳細(DetailView)_SMBC保存後');
 }
 
