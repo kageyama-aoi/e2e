@@ -1,9 +1,12 @@
 scenario,import_file_path,expectedErrors
 ファイル未選択,,ファイルが選択されていません
 データ区分不正,data/shimamura/smbc_err_invalid_type.txt,データ区分は対象外です
+種類コード不正,data/shimamura/smbc_err_invalid_kind.txt,種類コードは本機能の処理対象外です
 ヘッダーレコード未存在,data/shimamura/smbc_err_no_header.txt,ヘッダレコードが存在しません
 ヘッダーレコード桁数不正,data/shimamura/smbc_err_header_short.txt,ヘッダレコードのフォーマットが不正です
-# エンドレコード未存在,data/shimamura/smbc_err_no_end.txt,エンドレコードが存在しません
+データレコード桁数不正,data/shimamura/smbc_err_data_short.txt,データレコードのフォーマットが不正です
 トレーラーレコード未存在,data/shimamura/smbc_err_no_trailer.txt,トレーラレコードが存在しません
 トレーラーレコード桁数不正,data/shimamura/smbc_err_trailer_short.txt,トレーラレコードのフォーマットが不正です
 エンドレコード桁数不正,data/shimamura/smbc_err_end_short.txt,エンドレコードのフォーマットが不正です
+# エンドレコード未存在,data/shimamura/smbc_err_no_end.txt,エンドレコードが存在しません
+データ作成年月エラー,data/shimamura/smbc_err_old_date.txt,データ作成年月
