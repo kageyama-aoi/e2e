@@ -81,32 +81,69 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
 
   I.say('【受講生基本情報】フォームに入力');
   // SMBCフォームで readonly になっているため、受講生レコードに先に設定する
-  if (input.student_gender)         I.selectOption('select[name="gender"]',            input.student_gender);
-  if (input.student_phone_mobile)   I.fillField('input[name="phone_mobile"]',           input.student_phone_mobile);
+
+  // ─ selectOption は change イベントが必要なため個別に
+  if (input.student_gender) I.selectOption('select[name="gender"]', input.student_gender);
+
+  // ─ グループ1: 郵便番号入力前のテキストフィールド一括入力
+  const preZipFields = [
+    ['phone_mobile', input.student_phone_mobile],
+  ].filter(([, v]) => v);
+  if (preZipFields.length > 0) {
+    I.executeScript((fields) => {
+      fields.forEach(([name, value]) => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.value = value;
+      });
+    }, preZipFields);
+  }
+
+  // ─ 郵便番号 API（wait 必須）
   if (input.student_postalcode) {
     I.fillField('input[name="primary_address_postalcode"]', input.student_postalcode);
     I.click('input[value="〒"]');  // shimamura 郵便番号検索ボタン
     I.wait(0.5); // 郵便番号 API 待ち
   }
-  // zipCodeBtn で自動補完されない場合は直接入力
-  if (input.student_address_state)  I.fillField('input[name="primary_address_state"]',  input.student_address_state);
-  if (input.student_address_city)   I.fillField('input[name="primary_address_city"]',   input.student_address_city);
-  if (input.student_address_street) {
-    // primary_address_street は textarea かつ郵便番号APIで自動補完されるため JS で直接セット
-    I.executeScript((val) => {
-      const el = document.querySelector('textarea[name="primary_address_street"]');
-      if (el) { el.removeAttribute('readonly'); el.value = val; }
-    }, input.student_address_street);
+
+  // ─ グループ2: 郵便番号API後の住所フィールド一括入力（自動補完の上書き含む）
+  // primary_address_street は textarea かつ readonly 属性があるため removeAttribute が必要
+  const postZipFields = [
+    ['primary_address_state',  input.student_address_state],
+    ['primary_address_city',   input.student_address_city],
+    ['primary_address_street', input.student_address_street],
+  ].filter(([, v]) => v);
+  if (postZipFields.length > 0) {
+    I.executeScript((fields) => {
+      fields.forEach(([name, value]) => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) { el.removeAttribute('readonly'); el.value = value; }
+      });
+    }, postZipFields);
   }
-  // 口座情報（SMBCフォームの readonly 項目として引用される）
-  if (input.student_bank_account_type) I.selectOption('select[name="bank_account_type"]',  input.student_bank_account_type);
+
+  // ─ 口座タイプは selectOption で個別に
+  if (input.student_bank_account_type) I.selectOption('select[name="bank_account_type"]', input.student_bank_account_type);
+
+  // ─ 銀行コード AJAX（wait 必須）
   if (input.student_bank_code) {
     I.fillField('input[name="bank_code"]', input.student_bank_code);
     I.wait(0.5); // 銀行名 AJAX 補完待ち
   }
-  if (input.student_bank_branch_code) I.fillField('input[name="bank_branch_code"]', input.student_bank_branch_code);
-  if (input.student_bank_account_no)  I.fillField('input[name="bank_account_no"]',  input.student_bank_account_no);
-  if (input.student_bank_account_name)I.fillField('input[name="bank_account_name"]',input.student_bank_account_name);
+
+  // ─ グループ3: 銀行コードAJAX後の口座フィールド一括入力
+  const bankFields = [
+    ['bank_branch_code',  input.student_bank_branch_code],
+    ['bank_account_no',   input.student_bank_account_no],
+    ['bank_account_name', input.student_bank_account_name],
+  ].filter(([, v]) => v);
+  if (bankFields.length > 0) {
+    I.executeScript((fields) => {
+      fields.forEach(([name, value]) => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.value = value;
+      });
+    }, bankFields);
+  }
 
   I.say('【受講生基本情報】保存');
   I.click(S.edit.saveButton);
