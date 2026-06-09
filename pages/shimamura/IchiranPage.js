@@ -33,6 +33,15 @@ module.exports = {
     this._clickShortcut(menuDef.shortcut);
   },
 
+  _clearDateRangeFields() {
+    I.executeScript(() => {
+      ['date_group1_rstart', 'date_group1_rend'].forEach(name => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.value = '';
+      });
+    });
+  },
+
   // ----------------------------------------------------------------
   //  入出金一覧 (transaction_list)
   // ----------------------------------------------------------------
@@ -41,8 +50,7 @@ module.exports = {
     I.say('【入出金一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.transactionList);
     I.waitForElement('input[name="search"]', 10);
-    I.clearField('input[name="date_group1_rstart"]');
-    I.clearField('input[name="date_group1_rend"]');
+    this._clearDateRangeFields();
   },
 
   fillTransactionSearchConditions(data) {
@@ -90,8 +98,7 @@ module.exports = {
     I.say('【受講生検索】一覧画面へ遷移');
     await this._navigateViaMenu(menus.studentSearch);
     I.waitForElement('input[name="search"]', 10);
-    I.clearField('input[name="date_group1_rstart"]');
-    I.clearField('input[name="date_group1_rend"]');
+    this._clearDateRangeFields();
   },
 
   fillStudentSearchConditions(data) {
@@ -136,8 +143,7 @@ module.exports = {
     I.say('【候補生一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.contactList);
     I.waitForElement('input[name="search"]', 10);
-    I.clearField('input[name="date_group1_rstart"]');
-    I.clearField('input[name="date_group1_rend"]');
+    this._clearDateRangeFields();
   },
 
   fillContactListSearchConditions(data) {
