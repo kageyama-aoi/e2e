@@ -373,10 +373,17 @@ module.exports = {
 
   fillMishukinSearchConditions(data) {
     I.say('【未収金一覧】検索条件を入力');
-    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
-    if (data.query_date) {
-      I.clearField('input[name="query_date"]');
-      I.fillField('input[name="query_date"]', data.query_date);
+    const textFields = [
+      ['last_name',  data.last_name],
+      ['query_date', data.query_date],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
     }
     if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
   },
@@ -432,13 +439,17 @@ module.exports = {
 
   fillAttendanceTodaySearchConditions(data) {
     I.say('【出席表検索】検索条件を入力');
-    if (data.start_date) {
-      I.clearField('input[name="start_date"]');
-      I.fillField('input[name="start_date"]', data.start_date);
-    }
-    if (data.end_date) {
-      I.clearField('input[name="end_date"]');
-      I.fillField('input[name="end_date"]', data.end_date);
+    const dateFields = [
+      ['start_date', data.start_date],
+      ['end_date',   data.end_date],
+    ].filter(([, v]) => v);
+    if (dateFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, dateFields);
     }
   },
 

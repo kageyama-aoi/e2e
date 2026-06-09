@@ -31,8 +31,10 @@ module.exports = {
     I.say('【ログイン】認証情報の入力');
     I.amOnPage('/');
     I.waitForElement(locators_2.usernameField, 5);
-    I.fillField(locators_2.usernameField, process.env.SHIMAMURA_USER);
-    I.fillField(locators_2.passwordField, process.env.SHIMAMURA_PASSWORD);
+    I.executeScript(([user, pass]) => {
+      document.querySelector('input[name="user_name"]').value = user;
+      document.querySelector('input[name="user_password"]').value = pass;
+    }, [process.env.SHIMAMURA_USER, process.env.SHIMAMURA_PASSWORD]);
     I.say('【ログイン】実行');
     I.click('ログイン');
     const count = await I.grabNumberOfVisibleElements(locate('input[name="idnumber"]'));

@@ -201,8 +201,10 @@ async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taika
   await classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
   I.click('退会処理');
   await logScreenUrl(I, '退会処理');
-  I.fillField('#final_enrollment_year', taikaiYear);
-  I.fillField('#final_enrollment_month', taikaiMonth);
+  I.executeScript(([year, month]) => {
+    document.querySelector('#final_enrollment_year').value = year;
+    document.querySelector('#final_enrollment_month').value = month;
+  }, [taikaiYear, taikaiMonth]);
 }
 
 async function runRegistrationFlow(I, classMemberPageShimamura, input) {
