@@ -47,8 +47,18 @@ module.exports = {
 
   fillTransactionSearchConditions(data) {
     I.say('【入出金一覧】検索条件を入力');
-    if (data.last_name)    I.fillField('input[name="last_name"]', data.last_name);
-    if (data.course_name)  I.fillField('input[name="course_name"]', data.course_name);
+    const textFields = [
+      ['last_name',   data.last_name],
+      ['course_name', data.course_name],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
+    }
     if (data.area_id)      I.selectOption('select[name="area_id"]', data.area_id);
     if (data.school_id)    I.selectOption('select[name="school_id"]', data.school_id);
     if (data.smsgroup)     I.selectOption('select[name="smsgroup"]', data.smsgroup);
@@ -86,9 +96,19 @@ module.exports = {
 
   fillStudentSearchConditions(data) {
     I.say('【受講生検索】検索条件を入力');
-    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
-    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
-    if (data.idnumber)   I.fillField('input[name="idnumber"]', data.idnumber);
+    const textFields = [
+      ['last_name',  data.last_name],
+      ['first_name', data.first_name],
+      ['idnumber',   data.idnumber],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
+    }
     if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
   },
 
@@ -122,8 +142,18 @@ module.exports = {
 
   fillContactListSearchConditions(data) {
     I.say('【候補生一覧】検索条件を入力');
-    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
-    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
+    const textFields = [
+      ['last_name',  data.last_name],
+      ['first_name', data.first_name],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
+    }
   },
 
   clickContactListSearchAndWait() {
@@ -218,8 +248,18 @@ module.exports = {
 
   fillTeacherListSearchConditions(data) {
     I.say('【講師一覧】検索条件を入力');
-    if (data.last_name)  I.fillField('input[name="last_name"]', data.last_name);
-    if (data.first_name) I.fillField('input[name="first_name"]', data.first_name);
+    const textFields = [
+      ['last_name',  data.last_name],
+      ['first_name', data.first_name],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
+    }
     if (data.school_id)  I.selectOption('select[name="school_id"]', data.school_id);
   },
 
@@ -283,8 +323,18 @@ module.exports = {
 
   fillContactModuleListSearchConditions(data) {
     I.say('【顧客一覧】検索条件を入力');
-    if (data.last_name)    I.fillField('input[name="last_name"]', data.last_name);
-    if (data.company_name) I.fillField('input[name="company_name"]', data.company_name);
+    const textFields = [
+      ['last_name',    data.last_name],
+      ['company_name', data.company_name],
+    ].filter(([, v]) => v);
+    if (textFields.length > 0) {
+      I.executeScript((fields) => {
+        fields.forEach(([name, value]) => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = value;
+        });
+      }, textFields);
+    }
     if (data.school_id)    I.selectOption('select[name="school_id"]', data.school_id);
   },
 
