@@ -66,7 +66,12 @@ async function executeImport(I, filePath) {
   I.attachFile(S.fileInput, filePath);
   I.say('【一括取込実行】講師謝礼一括取込ボタンをクリック');
   I.click(S.button.import);
-  I.wait(TIMEOUTS.RESULT);
+  // 成功メッセージかエラーテキストが現れるまで動的に待機（空のまま存在する要素は無視）
+  await I.waitForFunction(
+    () => document.querySelector('#top_message_div_id')?.textContent.trim() ||
+          document.querySelector('#top_err_info_msg_div')?.textContent.trim(),
+    TIMEOUTS.RESULT
+  );
 }
 
 async function verifyImportResult(I) {
