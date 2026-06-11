@@ -22,7 +22,7 @@ const KEIRI_SCREEN_B_LOCATORS = {
 
 async function fillClassSearchForm(I, locators, className, options) {
   I.say('【クラス選択】検索条件入力');
-  I.wait(TIMEOUTS.TAB_SWITCH);
+  I.wait(1);
   I.switchToNextTab();
   I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);
   I.fillField(locators.textbox.class_name, className);

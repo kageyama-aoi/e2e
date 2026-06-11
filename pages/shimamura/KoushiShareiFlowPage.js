@@ -57,12 +57,10 @@ async function ShouldBeOnTsuikaScreen(I) {
 async function ShouldSelectTeacher(I) {
   I.say('【講師選択】ポップアップを開く');
   I.click(S.buttons.teacher_popup);
-  I.wait(TIMEOUTS.TAB_SWITCH);
   I.switchToNextTab();
   I.waitForElement(S.teacher_popup.result, TIMEOUTS.RESULT);
   I.say('【講師選択】最初の結果を選択');
   I.click(locate(S.teacher_popup.result).first());
-  I.wait(TIMEOUTS.TAB_SWITCH);
   // ポップアップタブが閉じた後、元のタブへ戻る
   I.switchToNextTab();
 }
