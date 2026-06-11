@@ -99,13 +99,16 @@ async function ShouldFillMainForm(I, input) {
 async function ShouldSaveAndVerify(I, expectedErrors) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
-  I.wait(TIMEOUTS.RESULT);
+  // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機
+  await I.waitForFunction(
+    () => document.querySelector('#top_err_info_msg_div')?.textContent.trim() ||
+          !document.querySelector('input[name="save_button"]'),
+    TIMEOUTS.RESULT
+  );
   if (expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.message.error);
     return;
   }
-  // 登録成功時はページ遷移するため grabTextFrom は使えない
-  // executeScript でDOM直接確認（要素なし=遷移=成功、テキストあり=エラー）
   const errorText = await I.executeScript(() => {
     const el = document.querySelector('#top_err_info_msg_div');
     return el ? el.textContent.trim() : '';
