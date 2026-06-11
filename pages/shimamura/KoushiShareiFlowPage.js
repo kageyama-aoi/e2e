@@ -74,7 +74,7 @@ async function ShouldFillMainForm(I, input) {
   }, [input.keijoubi, input.from_datetime]);
   if (input.area_id) {
     I.selectOption(S.selects.area_id, input.area_id);
-    I.wait(1);
+    I.waitForEnabled(S.selects.school_id, TIMEOUTS.ENABLED);
   }
   if (input.school_id) {
     I.selectOption(S.selects.school_id, input.school_id);
