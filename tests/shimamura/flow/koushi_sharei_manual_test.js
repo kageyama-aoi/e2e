@@ -30,7 +30,7 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const {
   runKoushiShareiManualFlow,
   runKoushiShareiValidationFlow
-} = require('../../../pages/shimamura/KoushiShareiFlowPage');
+} = require('../../../pages/shimamura/flow/KoushiShareiFlowPage');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_manual_data', 'shimamura'),

@@ -1,15 +1,15 @@
 'use strict';
 
-const { logScreenUrl } = require('../../support/utils');
+const { logScreenUrl } = require('../../../support/utils');
 const {
   toggleGroupmenu,
   verifyNavigationByUrlChange,
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName,
   verifyValidationErrors
-} = require('../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
-const { prepareInput, buildExecutionPlan } = require('../../support/shimamura/syokai_helpers');
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { prepareInput, buildExecutionPlan } = require('../../../support/shimamura/syokai_helpers');
 
 const KEIRI_SCREEN_B_LOCATORS = {
   textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },

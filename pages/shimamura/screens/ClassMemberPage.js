@@ -1,5 +1,5 @@
 const { I } = inject();
-const { attachScreenshotFromOutput, parseEnvBoolean } = require('../../support/utils');
+const { attachScreenshotFromOutput, parseEnvBoolean } = require('../../../support/utils');
 
 module.exports = {
   /**

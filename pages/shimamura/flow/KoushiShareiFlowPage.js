@@ -1,8 +1,8 @@
 'use strict';
 
-const { logScreenUrl } = require('../../support/utils');
-const { verifyValidationErrors } = require('../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { logScreenUrl } = require('../../../support/utils');
+const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 

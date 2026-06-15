@@ -159,9 +159,9 @@ AllureResultsDir=${runtimeAllureResultsDir}
     apiTeacherInfoGetPage:'./pages/tframe/api/ApiTeacherInfoGetPage.js',
     jsonInputPage:        './pages/tframe/api/JsonInputPage.js',
 
-    loginPageShimamura: './pages/shimamura/LoginPage.js',
-    classMemberPageShimamura: './pages/shimamura/ClassMemberPage.js',
-    ichiranPageShimamura: './pages/shimamura/IchiranPage.js',
+    loginPageShimamura: './pages/shimamura/auth/LoginPage.js',
+    classMemberPageShimamura: './pages/shimamura/screens/ClassMemberPage.js',
+    ichiranPageShimamura: './pages/shimamura/screens/IchiranPage.js',
 
     taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
 
@@ -208,12 +208,12 @@ AllureResultsDir=${runtimeAllureResultsDir}
           // ログイン処理
           login: () => {
             // ページオブジェクト側で inject() を使っている前提なので require の位置は現状維持
-            const loginPageShimamura = require('./pages/shimamura/LoginPage.js');
+            const loginPageShimamura = require('./pages/shimamura/auth/LoginPage.js');
             loginPageShimamura.login();
           },
           // ログイン済みか確認
           check: () => {
-            const loginPageShimamura = require('./pages/shimamura/LoginPage.js');
+            const loginPageShimamura = require('./pages/shimamura/auth/LoginPage.js');
             loginPageShimamura.seeLoggedIn();
           },
         },

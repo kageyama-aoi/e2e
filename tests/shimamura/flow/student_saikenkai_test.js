@@ -14,7 +14,7 @@
  * - `data/shimamura/student_saikenkai_data.csv`
  *
  * **パターン**: A（複数画面フロー型）
- * **FlowPage**: `pages/shimamura/StudentSaikenkaiFlowPage.js`
+ * **FlowPage**: `pages/shimamura/flow/StudentSaikenkaiFlowPage.js`
  */
 const {
   loadCsvWithProfile,
@@ -25,7 +25,7 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runSaikenkaiFlow } = require('../../../pages/shimamura/StudentSaikenkaiFlowPage');
+const { runSaikenkaiFlow } = require('../../../pages/shimamura/flow/StudentSaikenkaiFlowPage');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('student_saikenkai_data', 'shimamura'),

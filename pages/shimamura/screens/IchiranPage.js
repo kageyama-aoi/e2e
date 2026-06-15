@@ -1,8 +1,8 @@
 'use strict';
 
 const { I } = inject();
-const { toggleGroupmenu } = require('../../support/shimamura/utils');
-const menus = require('./_common/sideMenus');
+const { toggleGroupmenu } = require('../../../support/shimamura/utils');
+const menus = require('../_common/sideMenus');
 
 module.exports = {
 

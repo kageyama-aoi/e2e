@@ -1,8 +1,8 @@
 'use strict';
 
-const { logScreenUrl } = require('../../support/utils');
-const { verifyValidationErrors } = require('../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { logScreenUrl } = require('../../../support/utils');
+const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 // ── 保存完了を動的検知するヘルパー ──────────────────────────────
 // エラーが出るか editButton が現れた時点で即座に次へ進む（固定待ちを排除）
