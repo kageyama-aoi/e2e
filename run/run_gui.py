@@ -253,7 +253,7 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
 
 
 def _cleanup_old_learning_logs(learning_dir, days=LOG_CLEANUP_DAYS):
-    """docs/learning/ 配下の bash_YYYYMMDD.md を days 日以上古ければ削除する。"""
+    """docs/common/learning/ 配下の bash_YYYYMMDD.md を days 日以上古ければ削除する。"""
     DATE_RE = re.compile(r'^bash_(\d{8})\.md$')
     threshold = datetime.now() - timedelta(days=days)
     results = []
@@ -947,7 +947,7 @@ class RunnerApp(tk.Tk):
         def run():
             results = cleanup_old_logs(self.logs_dir)
             results += _cleanup_old_learning_logs(
-                os.path.join(REPO_ROOT, 'docs', 'learning'), LOG_CLEANUP_DAYS
+                os.path.join(REPO_ROOT, 'docs', 'common', 'learning'), LOG_CLEANUP_DAYS
             )
             if results:
                 self.log_queue.put(f'=== 自動クリーンアップ（{LOG_CLEANUP_DAYS}日以上古いログ）===\n')

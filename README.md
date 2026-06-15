@@ -108,9 +108,9 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ### 共通
 - [CodeceptJS APIリファレンス](./docs/common/codeceptjs_api_reference.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
 - [CodeceptJS 設計パターン・用語集](./docs/common/codeceptjs_design_patterns.md): 設計思想（データ駆動・エラー注入・単一フロー設計）と技術用語を解説しています。
-- [プロジェクト設計・アーキテクチャガイド](./docs/guides/project_architecture_guide.md): ディレクトリ構成・責務分離・設計ルールの詳細を説明しています。
+- [プロジェクト設計・アーキテクチャガイド](./docs/project/project_architecture_guide.md): ディレクトリ構成・責務分離・設計ルールの詳細を説明しています。
 - [モジュール依存関係図](./docs/common/mermaid_code_relationships.md): テスト・Page Object・データファイルの依存関係を Mermaid 図で可視化しています。
-- [技術概要 (Technical Overview)](./docs/guides/project_architecture_guide.md#6-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
+- [技術概要 (Technical Overview)](./docs/project/project_architecture_guide.md#6-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
 ### プロダクト別
 - [しまむらテスト コーディング規約](./docs/shimamura/coding_guidelines.md): しまむら系テストの構成・命名・共通化のルールをまとめたガイドです。
@@ -234,10 +234,10 @@ python scripts/extract_body_only_fields.py
 
 ## ディレクトリ構成
 
-💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/guides/project_architecture_guide.md) を参照してください。**
+💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-05-12 15:50:49
+Last updated: 2026-06-15 13:59:27
 
 ```text
 e2e/
@@ -257,6 +257,13 @@ e2e/
 │   │   ├── 2026-05-08-1332.md
 │   │   ├── 2026-05-11-1653.md
 │   │   ├── 2026-05-12-1100.md
+│   │   ├── 2026-05-12-1429.md
+│   │   ├── 2026-05-12-1646.md
+│   │   ├── 2026-05-28-1651.md
+│   │   ├── 2026-06-05-1324.md
+│   │   ├── 2026-06-05-1326.md
+│   │   ├── 2026-06-05-1748.md
+│   │   ├── 2026-06-09-1708.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -288,7 +295,36 @@ e2e/
 │   └── TODO.md
 ├── data/ 
 │   ├── shimamura/ 
+│   │   ├── koushi_sharei_errors/ 
+│   │   │   ├── error_01_column_count.csv
+│   │   │   ├── error_02_no_koushi_id.csv
+│   │   │   ├── error_05_no_keijou_date.csv
+│   │   │   ├── error_06_invalid_keijou_date.csv
+│   │   │   ├── error_07_no_taisho_tsuki.csv
+│   │   │   ├── error_08_invalid_taisho_tsuki.csv
+│   │   │   ├── error_15_no_id_bangou.csv
+│   │   │   ├── error_16_no_koushi_mei.csv
+│   │   │   ├── error_17_no_shiharai_houhou.csv
+│   │   │   ├── error_18_no_mise_id.csv
+│   │   │   ├── error_19_no_sharei_komoku.csv
+│   │   │   ├── error_20_no_houshu_gaku.csv
+│   │   │   ├── error_25_date_mismatch.csv
+│   │   │   ├── error_26_keijou_past.csv
+│   │   │   └── test_18col_no_koushi_id.csv
+│   │   ├── smbc_import/ 
+│   │   │   ├── smbc_err_data_short.txt
+│   │   │   ├── smbc_err_end_short.txt
+│   │   │   ├── smbc_err_header_short.txt
+│   │   │   ├── smbc_err_invalid_kind.txt
+│   │   │   ├── smbc_err_invalid_type.txt
+│   │   │   ├── smbc_err_no_end.txt
+│   │   │   ├── smbc_err_no_header.txt
+│   │   │   ├── smbc_err_no_trailer.txt
+│   │   │   ├── smbc_err_old_date.txt
+│   │   │   ├── smbc_err_trailer_short.txt
+│   │   │   └── smbc_state_import_sample.txt
 │   │   ├── attendance_today_ichiran_search_data.csv
+│   │   ├── bank_payment_type_check_data.csv
 │   │   ├── class_list_ichiran_search_data.csv
 │   │   ├── contact_list_ichiran_search_data.csv
 │   │   ├── contact_module_list_ichiran_search_data.csv
@@ -299,7 +335,15 @@ e2e/
 │   │   ├── keiri_hennkin_syori_data.csv
 │   │   ├── keiri_hennkin_syori_validation_errors.csv
 │   │   ├── keiri_invoices_ichiran_search_data.csv
+│   │   ├── koushi_sharei_import_sample.csv
+│   │   ├── koushi_sharei_manual_data.csv
+│   │   ├── koushi_sharei_manual_validation_errors.csv
+│   │   ├── koushi_sharei_tsuika_data.csv
+│   │   ├── koushi_sharei_tsuika_errors.csv
 │   │   ├── mishukin_list_ichiran_search_data.csv
+│   │   ├── smbc_state_import_data.csv
+│   │   ├── smbc_state_import_validation_errors.csv
+│   │   ├── student_saikenkai_data.csv
 │   │   ├── student_search_ichiran_search_data.csv
 │   │   ├── syokai_touroku_data.csv
 │   │   ├── syokai_touroku_data_shimamura.testgcp.csv
@@ -308,6 +352,7 @@ e2e/
 │   │   ├── syokai_touroku_validation_errors.csv
 │   │   ├── taikai_testdata.csv
 │   │   ├── teacher_list_ichiran_search_data.csv
+│   │   ├── testgcp一括取込ファイル_20230402.txt
 │   │   └── transaction_ichiran_search_data.csv
 │   └── tframe/ 
 │       ├── account_ichiran_search_data.csv
@@ -359,8 +404,13 @@ e2e/
 │   └── .env.tframe.template
 ├── pages/ 
 │   ├── shimamura/ 
+│   │   ├── _common/ 
+│   │   │   └── sideMenus.js
 │   │   ├── ClassMemberPage.js
+│   │   ├── IchiranPage.js
+│   │   ├── KoushiShareiFlowPage.js
 │   │   ├── LoginPage.js
+│   │   ├── StudentSaikenkaiFlowPage.js
 │   │   └── SyokaiFlowPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
@@ -470,6 +520,11 @@ e2e/
 │   │   │   ├── course_by_student_links.json
 │   │   │   ├── course_ichiran.html
 │   │   │   ├── course_ichiran_links.json
+│   │   │   ├── credit_purchase_edit.html
+│   │   │   ├── credit_purchase_edit_links.json
+│   │   │   ├── credit_purchase_list.html
+│   │   │   ├── credit_purchase_list_links.json
+│   │   │   ├── fetch_student_edit_flow.js
 │   │   │   ├── keiri_invoices.html
 │   │   │   ├── keiri_invoices_links.json
 │   │   │   ├── kousha_sharei_add.html
@@ -477,10 +532,40 @@ e2e/
 │   │   │   ├── main_menu_links.json
 │   │   │   ├── mishukin_list.html
 │   │   │   ├── mishukin_list_links.json
+│   │   │   ├── nav__HideMenu.html
+│   │   │   ├── nav__leftcol.html
+│   │   │   ├── nav_full_body.html
+│   │   │   ├── nav_links_with_class.json
 │   │   │   ├── ryokin_package_create.html
 │   │   │   ├── ryokin_package_create_links.json
+│   │   │   ├── sharei_ichiran.html
+│   │   │   ├── sharei_ichiran_links.json
+│   │   │   ├── sharei_nichibetsu_list.html
+│   │   │   ├── sharei_nichibetsu_list_links.json
+│   │   │   ├── smbc_state_import.html
+│   │   │   ├── smbc_state_import_links.json
+│   │   │   ├── student_detail.html
+│   │   │   ├── student_detail_after_saikenkai.html
+│   │   │   ├── student_detail_after_saikenkai_buttons.json
+│   │   │   ├── student_detail_after_saikenkai_links.json
+│   │   │   ├── student_detail_buttons.json
+│   │   │   ├── student_detail_keiri.html
+│   │   │   ├── student_detail_keiri_links.json
+│   │   │   ├── student_detail_links.json
+│   │   │   ├── student_detail_view.html
+│   │   │   ├── student_detail_view_buttons_check_buttons.json
+│   │   │   ├── student_detail_view_links.json
+│   │   │   ├── student_edit.html
+│   │   │   ├── student_edit_buttons.json
+│   │   │   ├── student_edit_links.json
+│   │   │   ├── student_edit_saikenkai.html
+│   │   │   ├── student_edit_saikenkai_buttons.json
+│   │   │   ├── student_edit_saikenkai_links.json
 │   │   │   ├── student_search.html
 │   │   │   ├── student_search_links.json
+│   │   │   ├── student_smbc_detail.html
+│   │   │   ├── student_smbc_detail_buttons.json
+│   │   │   ├── student_smbc_detail_links.json
 │   │   │   ├── teacher_list.html
 │   │   │   ├── teacher_list_links.json
 │   │   │   ├── transaction_list.html
@@ -491,15 +576,18 @@ e2e/
 │   │   ├── extract_side_menu_groups.py
 │   │   ├── extract_submenus.py
 │   │   ├── fetch_chosekin_person_id.js
+│   │   ├── fetch_shimamura_nav.js
 │   │   ├── fetch_shimamura_screens.js
 │   │   ├── fetch_tframe_forms.js
 │   │   └── tframe_extract_form_fields.js
-│   └── input/ 
-│       └── side_menu_extract/ 
-│           └── source.html
+│   ├── input/ 
+│   │   └── side_menu_extract/ 
+│   │       └── source.html
+│   └── check_pause.js
 ├── support/ 
 │   ├── shimamura/ 
 │   │   ├── constants.js
+│   │   ├── hooks.js
 │   │   ├── syokai_helpers.js
 │   │   └── utils.js
 │   ├── envLoader.js
@@ -508,24 +596,33 @@ e2e/
 │   └── utils.js
 ├── tests/ 
 │   ├── shimamura/ 
-│   │   ├── attendance_today_ichiran_test.js
-│   │   ├── class_list_ichiran_test.js
-│   │   ├── contact_list_ichiran_test.js
-│   │   ├── contact_module_list_ichiran_test.js
-│   │   ├── contact_register_test.js
-│   │   ├── course_by_student_ichiran_test.js
-│   │   ├── course_ichiran_test.js
-│   │   ├── keiri_hennkin_syori_test.js
-│   │   ├── keiri_invoices_ichiran_test.js
-│   │   ├── mishukin_list_ichiran_test.js
-│   │   ├── shimamura_class_existence_check_test.js
-│   │   ├── shimamura_class_member_registration_test.js
-│   │   ├── shimamura_login_test.js
-│   │   ├── student_search_ichiran_test.js
-│   │   ├── syokai_touroku_test.js
-│   │   ├── taikai_test.js
-│   │   ├── teacher_list_ichiran_test.js
-│   │   └── transaction_ichiran_test.js
+│   │   ├── auth/ 
+│   │   │   └── shimamura_login_test.js
+│   │   ├── check/ 
+│   │   │   ├── bank_payment_type_check_test.js
+│   │   │   └── shimamura_class_existence_check_test.js
+│   │   ├── flow/ 
+│   │   │   ├── contact_register_test.js
+│   │   │   ├── keiri_hennkin_syori_test.js
+│   │   │   ├── koushi_sharei_manual_test.js
+│   │   │   ├── koushi_sharei_tsuika_test.js
+│   │   │   ├── shimamura_class_member_registration_test.js
+│   │   │   ├── smbc_state_import_test.js
+│   │   │   ├── student_saikenkai_test.js
+│   │   │   ├── syokai_touroku_test.js
+│   │   │   └── taikai_test.js
+│   │   └── page/ 
+│   │       ├── attendance_today_ichiran_test.js
+│   │       ├── class_list_ichiran_test.js
+│   │       ├── contact_list_ichiran_test.js
+│   │       ├── contact_module_list_ichiran_test.js
+│   │       ├── course_by_student_ichiran_test.js
+│   │       ├── course_ichiran_test.js
+│   │       ├── keiri_invoices_ichiran_test.js
+│   │       ├── mishukin_list_ichiran_test.js
+│   │       ├── student_search_ichiran_test.js
+│   │       ├── teacher_list_ichiran_test.js
+│   │       └── transaction_ichiran_test.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
 │   ├── taskreport/ 

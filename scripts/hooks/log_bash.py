@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-PostToolUse(Bash) Hook: Bash コマンド実行ログを docs/learning/ に自動記録する。
+PostToolUse(Bash) Hook: Bash コマンド実行ログを docs/common/learning/ に自動記録する。
 
 各実行を bash_YYYYMMDD.md に追記することで、セッション中のコマンド学習記録を蓄積する。
 """
@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 MAX_OUTPUT_LINES = 50
-LEARNING_DIR = 'docs/learning'
+LEARNING_DIR = 'docs/common/learning'
 
 
 def main():

@@ -92,7 +92,7 @@
 
 | 変更内容 | 更新が必要なドキュメント |
 |---|---|
-| ディレクトリ構成の変更（追加・削除・移動） | `README.md`（`npm run docs:update-readme-map` で自動更新）、`docs/guides/project_architecture_guide.md` |
+| ディレクトリ構成の変更（追加・削除・移動） | `README.md`（`npm run docs:update-readme-map` で自動更新）、`docs/project/project_architecture_guide.md` |
 | `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
