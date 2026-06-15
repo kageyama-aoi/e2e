@@ -11,17 +11,46 @@
 
 ```
 pages/shimamura/
-  LoginPage.js          ... ログイン・担当者番号入力の Page Object
-  ClassMemberPage.js    ... 管理メニュー遷移・クラス検索・サブメニューリンク
-  SyokaiFlowPage.js     ... 新規受講生登録フロー（候補生検索〜経理処理）
+  auth/
+    LoginPage.js              ... ログイン・担当者番号入力の Page Object
+  screens/
+    ClassMemberPage.js        ... 管理メニュー遷移・クラス検索・サブメニューリンク
+    IchiranPage.js            ... 汎用一覧画面ベース（検索・件数確認）
+  flow/
+    SyokaiFlowPage.js         ... 新規受講生登録フロー（候補生検索〜経理処理）
+    KoushiShareiFlowPage.js   ... 講師謝礼フロー
+    StudentSaikenkaiFlowPage.js ... 受講生再検開フロー
+  _common/
+    sideMenus.js              ... サイドメニュー定数
 
 tests/shimamura/
-  shimamura_login_test.js               ... ログイン動作確認
-  shimamura_class_existence_check_test.js  ... クラス存在事前確認
-  shimamura_class_member_registration_test.js  ... クラス受講生登録（pause() あり、作業中）
-  syokai_touroku_test.js                ... 新規受講生登録＋経理処理（Data Driven）
-  keiri_hennkin_syori_test.js           ... 経理 返金処理（ひな形）
-  taikai_test.js                        ... 退会処理（CSV 駆動）
+  auth/
+    shimamura_login_test.js               ... ログイン動作確認
+  check/
+    shimamura_class_existence_check_test.js  ... クラス存在事前確認
+    bank_payment_type_check_test.js          ... 支払方法区分確認
+  flow/
+    syokai_touroku_test.js                ... 新規受講生登録＋経理処理（Data Driven）
+    keiri_hennkin_syori_test.js           ... 経理 返金処理
+    taikai_test.js                        ... 退会処理（CSV 駆動）
+    shimamura_class_member_registration_test.js  ... クラス受講生登録
+    koushi_sharei_tsuika_test.js          ... 講師謝礼追加
+    koushi_sharei_manual_test.js          ... 講師謝礼手動登録
+    student_saikenkai_test.js             ... 受講生再検開
+    contact_register_test.js              ... 連絡先登録
+    smbc_state_import_test.js             ... SMBC 明細取込
+  page/
+    student_search_ichiran_test.js        ... 受講生検索一覧
+    class_list_ichiran_test.js            ... クラス一覧
+    course_ichiran_test.js                ... コース一覧
+    course_by_student_ichiran_test.js     ... 受講生別コース一覧
+    keiri_invoices_ichiran_test.js        ... 経理請求一覧
+    attendance_today_ichiran_test.js      ... 本日出席一覧
+    teacher_list_ichiran_test.js          ... 講師一覧
+    contact_list_ichiran_test.js          ... 連絡先一覧
+    contact_module_list_ichiran_test.js   ... 連絡先モジュール一覧
+    transaction_ichiran_test.js           ... 取引一覧
+    mishukin_list_ichiran_test.js         ... 未集金一覧
 
 data/shimamura/
   syokai_touroku_data.csv               ... 受講生登録（正常系）
@@ -43,14 +72,31 @@ support/shimamura/
 
 ### 1-2. テスト一覧と状態
 
-| ファイル | 状態 | Data Driven |
-|---|---|---|
-| shimamura_login_test.js | 完成・稼働中 | なし |
-| shimamura_class_existence_check_test.js | 完成・稼働中 | CSV（syokai_touroku_data）|
-| syokai_touroku_test.js | 完成・稼働中 | CSV（syokai_touroku_data / validation_errors）|
-| taikai_test.js | 完成・稼働中 | CSV（taikai_testdata）|
-| keiri_hennkin_syori_test.js | ひな形段階 | CSV（keiri_hennkin_syori_data）|
-| shimamura_class_member_registration_test.js | 作業中（pause() あり）| なし |
+| ファイル | フォルダ | 状態 | Data Driven |
+|---|---|---|---|
+| shimamura_login_test.js | auth/ | 完成・稼働中 | なし |
+| shimamura_class_existence_check_test.js | check/ | 完成・稼働中 | CSV（syokai_touroku_data）|
+| bank_payment_type_check_test.js | check/ | 完成・稼働中 | なし |
+| syokai_touroku_test.js | flow/ | 完成・稼働中 | CSV（syokai_touroku_data / validation_errors）|
+| keiri_hennkin_syori_test.js | flow/ | 完成・稼働中 | CSV（keiri_hennkin_syori_data）|
+| taikai_test.js | flow/ | 完成・稼働中 | CSV（taikai_testdata）|
+| shimamura_class_member_registration_test.js | flow/ | 完成・稼働中 | なし |
+| koushi_sharei_tsuika_test.js | flow/ | 完成・稼働中 | CSV |
+| koushi_sharei_manual_test.js | flow/ | 完成・稼働中 | CSV |
+| student_saikenkai_test.js | flow/ | 完成・稼働中 | CSV |
+| contact_register_test.js | flow/ | 完成・稼働中 | CSV |
+| smbc_state_import_test.js | flow/ | 完成・稼働中 | CSV |
+| student_search_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| class_list_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| course_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| course_by_student_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| keiri_invoices_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| attendance_today_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| teacher_list_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| contact_list_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| contact_module_list_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| transaction_ichiran_test.js | page/ | 完成・稼働中 | CSV |
+| mishukin_list_ichiran_test.js | page/ | 完成・稼働中 | CSV |
 
 ---
 
@@ -71,7 +117,7 @@ support/shimamura/
 3. **共通保存ボタン**: `#ewSaveButton` が全画面に共通
 4. **エラー表示**: `#tf-message-summary` が共通
 5. **フォーム構造**: `<form id="editForm">` / `<form id="searchForm">` が共通
-6. **support/utils.js の共通関数**: `fillTextFields` / `submitTframeFormAndVerify` / `isEnglish` / `loadCsvWithProfile`
+6. **support/utils.js の共通関数**: `fillTextFields` / `loadCsvWithProfile`（tframe 固有の `submitTframeFormAndVerify` / `isEnglish` は `support/tframe/utils.js` に分離済み）
 7. **HTMLフェッチスクリプト**: `scripts/html/fetch_tframe_forms.js` + `scripts/html/tframe_extract_form_fields.js` がログイン済み HTML を自動取得
 
 ---
@@ -82,11 +128,11 @@ support/shimamura/
 
 | 項目 | tframe | shimamura |
 |---|---|---|
-| Page Object の置き場 | `pages/tframe/screens/` (画面単位) | `pages/shimamura/` (フラット 3 ファイル) |
-| サブディレクトリ | `screens/` `auth/` `api/` `_common/` の 4 分類 | 分類なし（全てルートに平置き） |
-| ログイン PO | `auth/LoginKannrisyaPage.js` | `LoginPage.js` |
-| 画面 PO | `screens/KoshiPage.js` など | `ClassMemberPage.js`（全画面共通の汎用 PO） |
-| フロー関数 | テストファイル内 or Page Object メソッド | `SyokaiFlowPage.js`（フロー専用ファイル） |
+| Page Object の置き場 | `pages/tframe/screens/` (画面単位) | `pages/shimamura/{auth,screens,flow}/` (役割別) |
+| サブディレクトリ | `screens/` `auth/` `api/` `_common/` の 4 分類 | `auth/` `screens/` `flow/` `_common/` の 4 分類 |
+| ログイン PO | `auth/LoginKannrisyaPage.js` | `auth/LoginPage.js` |
+| 画面 PO | `screens/KoshiPage.js` など | `screens/ClassMemberPage.js`（共通ナビ） / `screens/IchiranPage.js`（一覧ベース） |
+| フロー関数 | テストファイル内 or Page Object メソッド | `flow/SyokaiFlowPage.js` など（フロー専用ファイル） |
 
 shimamura の `SyokaiFlowPage.js` は tframe の Page Object と異なり、画面単位ではなく業務フロー単位の関数集。これは shimamura の画面遷移が複数タブ・ポップアップをまたぐ複雑なフローのため。
 
@@ -96,7 +142,7 @@ shimamura の `SyokaiFlowPage.js` は tframe の Page Object と異なり、画�
 |---|---|---|
 | `fillTextFields(I, fieldMap)` | 全 Page Object で使用（FORM_FILL_FAST 対応） | 未使用（未導入） |
 | `submitTframeFormAndVerify(I, text)` | 全登録 Page Object で使用 | 未使用（tframe 専用） |
-| `loadCsvWithProfile(baseName, dataDir)` | `data/tframe/` を参照（第 2 引数で指定） | 使用しているが `data/shimamura/` への dataDir 省略で動作している |
+| `loadCsvWithProfile(baseName, dataDir)` | `data/tframe/` を参照（第 2 引数で明示） | `data/shimamura/` を参照（全呼び出しで `'shimamura'` を第 2 引数に明示） |
 | `withScenarioLabel(data, fn)` | テストファイルで使用 | syokai_touroku_test.js / keiri で使用 |
 | `parseExpectedErrors(str)` | テストファイルで使用 | syokai_touroku_test.js で使用 |
 | `isEnglish()` | juku プロファイルで USE | 未使用（shimamura は日本語のみ） |
@@ -162,7 +208,7 @@ shimamura は tframe の `#swSearchButton` に相当する共通検索 ID がな
 | URL 直遷移の未確立 | URL ベースの直接遷移が機能するかどうか調査できていない（shimamura はセッション状態に依存する可能性） |
 | フローの複雑さ | 受講生登録は「候補生検索 → 詳細 → 経理ビュー A → 別タブでクラス選択 → 経理ビュー B → 確認完了 → 退会処理」と 7 ステップ以上のフロー |
 | HTML 取得スクリプトの不在 | `fetch_tframe_forms.js` に相当する shimamura 版が存在しない。HTML を手動で貼り付けるか、新規スクリプトを作成する必要がある |
-| `loadCsvWithProfile` の dataDir 指定 | 現状 shimamura テストは第 2 引数なしで `loadCsvWithProfile('name')` を呼んでいるが、tframe との混在時に誤動作するリスクがある |
+| `loadCsvWithProfile` の dataDir 指定 | 全テストで `'shimamura'` を第 2 引数に明示済み。`support/utils.js` のデフォルト値も削除済みのため誤動作リスクは解消 |
 
 ### 4-3. スキル別ギャップ分析
 
@@ -316,12 +362,12 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 ### 6-3. loadCsvWithProfile の dataDir
 
-**結論: 現状は誤動作リスクなし。ただし設計上の注意点あり**
+**結論: 対応済み。デフォルト値削除＋全呼び出しに明示引数を追加**
 
-- `loadCsvWithProfile(baseName, dataDir = 'shimamura')` — デフォルト値が `'shimamura'` に固定されている。
-- shimamura テスト全 5 呼び出しは全て第 2 引数省略。正しく `data/shimamura/` を参照している。
-- tframe テストは明示的に `'tframe'` を渡しているため混在時も誤動作しない。
-- **注意点**: 将来 tframe テストが `dataDir` 省略で追記されると `data/shimamura/` を誤参照するリスクがある。新規テスト追加時は必ず `dataDir` を明示する運用ルールを守ること。
+- `support/utils.js` の `dataDir = 'shimamura'` デフォルト値を削除済み。
+- shimamura テスト全呼び出しに `loadCsvWithProfile(baseName, 'shimamura')` を明示済み。
+- tframe テストも同様に `'tframe'` を明示済み。
+- **今後の運用**: 新規テスト追加時は必ず第 2 引数（`'shimamura'` / `'tframe'` 等）を明示すること（デフォルト値がないためコンパイルエラーにはならないが、省略すると `undefined` フォルダを参照して実行時エラーになる）。
 
 ### 6-4. Phase 0 完了後の次アクション
 
@@ -329,7 +375,7 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 |---|---|---|
 | URL 直遷移の可否 | **確認済: 直遷移可能**（`index.php?module=X&action=Y`） | Phase 3/4 で `navigateTo` 系メソッドに活用 |
 | PO 設計方針 | **決定: フロー単位維持** | Phase 1 に進める |
-| loadCsvWithProfile dataDir | **現状問題なし** | 新規テスト追加時に `dataDir` 明示を徹底 |
+| loadCsvWithProfile dataDir | **対応済み: 全呼び出しに明示引数、デフォルト削除** | 新規テスト追加時は必ず第 2 引数を明示 |
 
 ---
 
@@ -337,4 +383,4 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 - `scripts/html/shimamura/` は存在しなかった。shimamura 用の HTML サンプルはどこにも保存されていない（tframe は `scripts/html/input/` に多数の HTML が存在）。
 - `scripts/html/input/input.html` は tframe 専用の一時貼り付け先として使われており、shimamura には流用できない。
-- `SyokaiFlowPage.js` は `pages/shimamura/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `pages/` 配置は妥当。
+- `SyokaiFlowPage.js` は `pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `pages/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。

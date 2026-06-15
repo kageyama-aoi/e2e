@@ -24,7 +24,7 @@ syokai_touroku_test.js         ← 「何をテストするか」（司令塔）
 ### 1-1. `require` — 道具を借りてくる
 
 ```js
-const { logScreenUrl } = require('../../support/utils');
+const { logScreenUrl } = require('../../../support/utils');
 ```
 
 `require` は「他のファイルから機能を借りてくる」命令です。
@@ -32,14 +32,14 @@ const { logScreenUrl } = require('../../support/utils');
 | 書き方 | 意味 |
 |---|---|
 | `require('./foo')` | 同じフォルダの foo.js から借りる |
-| `require('../../support/utils')` | 2つ上のフォルダの support/utils.js から借りる |
+| `require('../../../support/utils')` | 3つ上のフォルダの support/utils.js から借りる |
 | `const { A, B } = require(...)` | A と B だけ取り出す（分割代入） |
 
 **練習**: 以下の `require` はどこのファイルから何を借りていますか？
 ```js
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 ```
-→ `support/shimamura/constants.js` から `TIMEOUTS` を借りている
+→ 3つ上の `support/shimamura/constants.js` から `TIMEOUTS` を借りている
 
 ---
 
@@ -128,7 +128,7 @@ I.click(locate('.listViewTdLinkS1'));
 ### 2-3. `TIMEOUTS` — 待ち時間の定数
 
 ```js
-const { TIMEOUTS } = require('../../support/shimamura/constants');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);
 ```
@@ -371,9 +371,9 @@ ShouldBeOnKeirisyoriScreenB(I, input)
 
 ```
 e2e/
-├── tests/shimamura/
+├── tests/shimamura/flow/
 │   └── syokai_touroku_test.js    ← 「何をテストするか」
-├── pages/shimamura/
+├── pages/shimamura/flow/
 │   └── SyokaiFlowPage.js         ← 「どう画面を操作するか」（このガイドの対象）
 ├── support/shimamura/
 │   ├── syokai_helpers.js         ← 「データをどう計算するか」
