@@ -6,8 +6,8 @@ const fs = require('fs');
  * 優先順位:
  * 1. 環境変数 `PROFILE`
  * 2. コマンドライン引数 `--profile <name>`
- * 3. 最後の引数がプロファイル名と一致する場合 (npm スクリプト経由での実行対策)
- * 4. デフォルト値 'shimamura'
+ * 3. 最後の引数に対応する env ファイルが存在する場合 (npm スクリプト経由での実行対策)
+ * 4. 未指定の場合はデフォルトなし（ルート .env のみ使用）
  *
  * @returns {string} 解決されたプロファイル名
  */
@@ -30,16 +30,20 @@ function getProfileFromArgs() {
   }
 
   // 3. 特殊ケース: npm経由でフラグが消えて値だけが最後に残っている場合
+  //    サイト名ハードコードを避けるため、対応する env ファイルの存在で判定する
   if (!profile && args.length > 0) {
     const lastArg = args[args.length - 1];
-    if (lastArg.startsWith('shimamura.') || lastArg.startsWith('tframe.') || lastArg === 'taskreport' || lastArg === 'shimamura' || lastArg === 'tframe') {
-      profile = lastArg;
+    if (!lastArg.startsWith('-') && !lastArg.endsWith('.js')) {
+      const envFilePath = path.resolve(process.cwd(), 'env', `.env.${lastArg}`);
+      if (fs.existsSync(envFilePath)) {
+        profile = lastArg;
+      }
     }
   }
-  
-  // 4. 指定がない場合のデフォルト
+
+  // 4. 指定がない場合はデフォルトなし（ルート .env のみ使用）
   if (!profile) {
-    profile = 'shimamura';
+    console.log('--- DEBUG: No profile specified, using root .env only');
   }
 
   console.log('--- DEBUG: Detected Profile from CLI or fallback:', profile);

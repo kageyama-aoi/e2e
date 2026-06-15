@@ -118,10 +118,10 @@ function parseEnvBoolean(envKey) {
  * プロファイルに応じたCSVを読み込む
  * プロファイル用ファイルが存在すればそちらを優先する
  * @param {string} baseName - CSVファイルのベース名（拡張子なし）
- * @param {string} [dataDir='shimamura'] - data/ 以下のサブディレクトリ名
+ * @param {string} dataDir - data/ 以下のサブディレクトリ名（例: 'shimamura', 'tframe'）
  * @returns {Array<Object>}
  */
-function loadCsvWithProfile(baseName, dataDir = 'shimamura') {
+function loadCsvWithProfile(baseName, dataDir) {
   const profile = getProfileFromArgs();
   const defaultPath = path.join(__dirname, `../data/${dataDir}/${baseName}.csv`);
   const profilePath = profile

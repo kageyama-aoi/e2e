@@ -40,7 +40,7 @@ const BASE_INPUT = {
 };
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('bank_payment_type_check_data'),
+  loadCsvWithProfile('bank_payment_type_check_data', 'shimamura'),
   (row) => row.scenario
 );
 

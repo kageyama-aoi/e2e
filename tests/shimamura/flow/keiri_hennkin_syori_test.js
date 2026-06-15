@@ -36,8 +36,8 @@ const { toggleGroupmenu, verifyValidationErrors } = require('../../../support/sh
 
 Feature('Dev sandbox (@dev)');
 
-const csvDataRaw = loadCsvWithProfile('keiri_hennkin_syori_data');
-const validationErrorDataRaw = loadCsvWithProfile('keiri_hennkin_syori_validation_errors');
+const csvDataRaw = loadCsvWithProfile('keiri_hennkin_syori_data', 'shimamura');
+const validationErrorDataRaw = loadCsvWithProfile('keiri_hennkin_syori_validation_errors', 'shimamura');
 
 const csvData = withScenarioLabel(csvDataRaw, (row) => {
   return row.label || row.targetMonth || 'データ行';

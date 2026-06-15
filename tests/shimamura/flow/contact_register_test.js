@@ -51,12 +51,12 @@ const S = {
 };
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('contact_register_data'),
+  loadCsvWithProfile('contact_register_data', 'shimamura'),
   (row) => row.scenario
 );
 
 const validationErrorData = withScenarioLabel(
-  loadCsvWithProfile('contact_register_validation_errors'),
+  loadCsvWithProfile('contact_register_validation_errors', 'shimamura'),
   (row) => row.scenario
 );
 

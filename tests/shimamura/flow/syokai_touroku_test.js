@@ -21,11 +21,11 @@ const {
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { runRegistrationFlow, ShouldBeOnKeirisyoriScreenE, ShouldBeOnTaikai } = require('../../../pages/shimamura/SyokaiFlowPage');
 
-const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data'), (row) => {
+const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data', 'shimamura'), (row) => {
   return row.className || row.class_name01 || row.lastName || row.last_name || 'データ行';
 });
 
-const validationErrorData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_validation_errors'), (row) => {
+const validationErrorData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_validation_errors', 'shimamura'), (row) => {
   return row.label || row.breakTarget || 'バリデーションエラー';
 });
 

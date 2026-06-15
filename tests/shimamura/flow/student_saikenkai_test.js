@@ -28,7 +28,7 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { runSaikenkaiFlow } = require('../../../pages/shimamura/StudentSaikenkaiFlowPage');
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('student_saikenkai_data'),
+  loadCsvWithProfile('student_saikenkai_data', 'shimamura'),
   (row) => row.scenario
 );
 

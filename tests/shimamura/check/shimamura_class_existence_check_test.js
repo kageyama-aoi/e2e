@@ -23,7 +23,7 @@ const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
-const csvData = loadCsvWithProfile('syokai_touroku_data');
+const csvData = loadCsvWithProfile('syokai_touroku_data', 'shimamura');
 
 // className の重複チェックを避ける（同名クラスの繰り返し確認をしない）
 const uniqueClassRows = Array.from(

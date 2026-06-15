@@ -33,12 +33,12 @@ const {
 } = require('../../../pages/shimamura/KoushiShareiFlowPage');
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('koushi_sharei_manual_data'),
+  loadCsvWithProfile('koushi_sharei_manual_data', 'shimamura'),
   (row) => row.scenario || '手動登録'
 );
 
 const validationErrorData = withScenarioLabel(
-  loadCsvWithProfile('koushi_sharei_manual_validation_errors'),
+  loadCsvWithProfile('koushi_sharei_manual_validation_errors', 'shimamura'),
   (row) => row.scenario || 'バリデーションエラー'
 );
 

@@ -44,11 +44,11 @@ const S = {
 
 // ── CSV ──────────────────────────────────────────────────────
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('smbc_state_import_data'),
+  loadCsvWithProfile('smbc_state_import_data', 'shimamura'),
   (row) => row.scenario
 );
 const validationErrorData = withScenarioLabel(
-  loadCsvWithProfile('smbc_state_import_validation_errors'),
+  loadCsvWithProfile('smbc_state_import_validation_errors', 'shimamura'),
   (row) => row.scenario
 );
 

@@ -17,7 +17,7 @@ const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/util
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('attendance_today_ichiran_search_data'),
+  loadCsvWithProfile('attendance_today_ichiran_search_data', 'shimamura'),
   (row) => row.scenario
 );
 

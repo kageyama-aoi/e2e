@@ -45,12 +45,12 @@ const S = {
 };
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('koushi_sharei_tsuika_data'),
+  loadCsvWithProfile('koushi_sharei_tsuika_data', 'shimamura'),
   (row) => row.scenario || '一括取込'
 );
 
 const errorData = withScenarioLabel(
-  loadCsvWithProfile('koushi_sharei_tsuika_errors'),
+  loadCsvWithProfile('koushi_sharei_tsuika_errors', 'shimamura'),
   (row) => row.scenario || 'バリデーションエラー'
 );
 
