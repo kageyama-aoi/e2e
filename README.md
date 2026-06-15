@@ -237,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-06-15 13:59:27
+Last updated: 2026-06-15 15:00:13
 
 ```text
 e2e/
@@ -406,12 +406,15 @@ e2e/
 │   ├── shimamura/ 
 │   │   ├── _common/ 
 │   │   │   └── sideMenus.js
-│   │   ├── ClassMemberPage.js
-│   │   ├── IchiranPage.js
-│   │   ├── KoushiShareiFlowPage.js
-│   │   ├── LoginPage.js
-│   │   ├── StudentSaikenkaiFlowPage.js
-│   │   └── SyokaiFlowPage.js
+│   │   ├── auth/ 
+│   │   │   └── LoginPage.js
+│   │   ├── flow/ 
+│   │   │   ├── KoushiShareiFlowPage.js
+│   │   │   ├── StudentSaikenkaiFlowPage.js
+│   │   │   └── SyokaiFlowPage.js
+│   │   └── screens/ 
+│   │       ├── ClassMemberPage.js
+│   │       └── IchiranPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 
@@ -450,6 +453,7 @@ e2e/
 │           └── StaffPage.js
 ├── run/ 
 │   ├── ps/ 
+│   │   ├── _run_batch_core.ps1
 │   │   └── tframe_run_nav_all.ps1
 │   ├── README.md
 │   ├── run_gui.bat
@@ -590,6 +594,8 @@ e2e/
 │   │   ├── hooks.js
 │   │   ├── syokai_helpers.js
 │   │   └── utils.js
+│   ├── tframe/ 
+│   │   └── utils.js
 │   ├── envLoader.js
 │   ├── repoRoot.js
 │   ├── steps_file.js
@@ -683,6 +689,7 @@ e2e/
 │           └── teByStudent_ichiran_test.js
 ├── .env
 ├── .gitignore
+├── _temp_review_汎用性.md
 ├── AGENTS.md
 ├── CHANGELOG.md
 ├── CLAUDE.md
