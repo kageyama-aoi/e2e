@@ -246,7 +246,9 @@ async function ShouldFillSmbcForm(I, input) {
   if (input.smbc_keiyakusha_honnin_def) {
     // =1 にすると契約者フィールドが editable になる（受講生と契約者が異なる場合）
     I.selectOption('select[name="keiyakusha_honnin_def"]', input.smbc_keiyakusha_honnin_def);
-    I.wait(1);
+    if (input.smbc_keiyakusha_honnin_def === '1') {
+      I.waitForEnabled('[name="keiyakusha_last_name"]', 5);
+    }
   }
   if (input.smbc_keiyakusha_honnin_def === '1') {
     const keiyakushaTextFields = [
@@ -275,7 +277,9 @@ async function ShouldFillSmbcForm(I, input) {
 
   if (input.smbc_jusho_honnin_def) {
     I.selectOption('select[name="jusho_honnin_def"]', input.smbc_jusho_honnin_def);
-    I.wait(1);
+    if (input.smbc_jusho_honnin_def === '1') {
+      I.waitForEnabled('[name="keiyakusha_address_postalcode"]', 5);
+    }
   }
   if (input.smbc_keiyakusha_honnin_def === '1' && input.smbc_jusho_honnin_def === '1') {
     const addressTextFields = [
