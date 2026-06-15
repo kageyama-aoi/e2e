@@ -237,7 +237,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-06-15 15:00:13
+Last updated: 2026-06-15 15:38:08
 
 ```text
 e2e/
@@ -264,6 +264,7 @@ e2e/
 │   │   ├── 2026-06-05-1326.md
 │   │   ├── 2026-06-05-1748.md
 │   │   ├── 2026-06-09-1708.md
+│   │   ├── 2026-06-15-1205.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -281,6 +282,7 @@ e2e/
 │   │   ├── planner.md
 │   │   └── worker.md
 │   ├── commands/ 
+│   │   ├── doc-sync.md
 │   │   ├── handoff.md
 │   │   ├── newplan.md
 │   │   └── placement-gate.md

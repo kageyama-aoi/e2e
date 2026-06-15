@@ -1,7 +1,7 @@
 # プロジェクト設計・アーキテクチャガイド
 
 本リポジトリは、テスト自動化プロジェクトにおける「関心の分離」と「運用効率」を追求した構成です。  
-最終更新: 2026-05-08
+最終更新: 2026-06-15
 
 ---
 
@@ -44,6 +44,17 @@ tests/
 ```
 pages/
 ├── shimamura/        # しまむら固有の Page Object
+│   ├── auth/                   # ログイン系
+│   │   └── LoginPage.js
+│   ├── flow/                   # 複数画面をまたぐ処理フロー
+│   │   ├── KoushiShareiFlowPage.js
+│   │   ├── StudentSaikenkaiFlowPage.js
+│   │   └── SyokaiFlowPage.js
+│   ├── screens/                # 画面操作 Page Object
+│   │   ├── ClassMemberPage.js
+│   │   └── IchiranPage.js
+│   └── _common/                # 共通ユーティリティ
+│       └── sideMenus.js        # サイドメニュー定義
 ├── tframe/           # tframe 固有の Page Object
 │   ├── auth/                   # ログイン・認証系
 │   │   ├── LoginKannrisyaPage.js
