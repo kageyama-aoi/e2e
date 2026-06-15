@@ -175,8 +175,13 @@ _LOG_TAGS = {
 
 ### 新プロダクトを追加する
 
-`tests/<product>/` フォルダを作成し、`env/.env.<product>.*` を用意するだけで自動スキャンされる。  
+`tests/<product>/` フォルダを作成し、`env/.env.<product>.*` を用意するだけで GUI に自動スキャンされる。  
 GUI 側のコード変更は不要。
+
+ただし以下は手動で追加すること：
+
+- `test_descriptions.json` に `"<product>": { ... }` セクションを追加（TestFile 欄の日本語説明）
+- 連続バッチ実行が必要な場合は `ps/_run_batch_core.ps1` を呼ぶラッパー `.ps1` と `.bat` を `run/` に追加
 
 ### ウィンドウサイズを変更する
 
@@ -199,9 +204,13 @@ Allure の実行スクリプトは `scripts/allure/serve_latest.js`。
 
 ```
 run/
-├── run_gui.py            # このツールの本体
-├── run_gui.bat           # ダブルクリック起動用ランチャー
-└── test_descriptions.json  # テストファイルの日本語説明マップ
+├── run_gui.py               # このツールの本体
+├── run_gui.bat              # ダブルクリック起動用ランチャー
+├── test_descriptions.json   # テストファイルの日本語説明マップ
+├── tframe_run_nav_all.bat   # tframe 全ページテスト連続実行バッチ
+└── ps/
+    ├── _run_batch_core.ps1      # バッチ連続実行の汎用ループ・集計ロジック
+    └── tframe_run_nav_all.ps1   # tframe 向けテストリスト定義（コアへのラッパー）
 ```
 
 ---
