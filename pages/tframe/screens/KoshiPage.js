@@ -5,7 +5,8 @@
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
-const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../../support/utils');
+const { fillTextFields } = require('../../../support/utils');
+const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 
 module.exports = {
   /** 講師アイコンのセレクタ（日英） */

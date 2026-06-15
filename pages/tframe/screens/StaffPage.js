@@ -3,7 +3,8 @@
  */
 
 const { I } = inject();
-const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../../support/utils');
+const { fillTextFields } = require('../../../support/utils');
+const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 
 module.exports = {

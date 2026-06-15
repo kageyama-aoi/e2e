@@ -4,7 +4,7 @@
 
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
-const { isEnglish } = require('../../../support/utils');
+const { isEnglish } = require('../../../support/tframe/utils');
 
 module.exports = {
   /** 経理アイコンのセレクタ（日英） */
