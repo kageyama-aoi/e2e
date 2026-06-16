@@ -113,6 +113,7 @@
 | `/shimamura-html-fetch` | shimamura 画面の HTML 取得 + フォームフィールド（name/id 属性）の抽出・整理 |
 | `/shimamura-ichiran-dev` | shimamura 一覧検索テストの新規作成・修正手順 |
 | `/shimamura-registration-dev` | shimamura 登録・処理フローテストの新規作成・修正手順 |
+| `/shimamura-download-verify` | shimamura ダウンロードボタンでファイルを取得・検証するテストの新規作成手順（CSV・固定長両対応） |
 | `/github-issue-dev` | 開発作業全般（バグ修正・機能追加・リファクタリング）を Issue 駆動で進める |
 | `/string-template-refactor` | 文字列テンプレートのリファクタリング手順を実施する（グローバルスキル） |
 
