@@ -100,6 +100,26 @@ module.exports = function() {
     },
 
     /**
+     * ボタンクリックでCSVをダウンロードし、ファイル内容を文字列で返す。
+     * @param {string} clickTarget - クリックするボタンのCSSセレクタ
+     * @param {string} savePath - ダウンロードしたファイルの保存先（絶対パス）
+     * @returns {Promise<string>} CSVの内容
+     */
+    async downloadAndReadCsv(clickTarget, savePath) {
+      fs.mkdirSync(path.dirname(savePath), { recursive: true });
+      let csvContent = '';
+      await this.usePlaywrightTo('CSVダウンロード', async ({ page }) => {
+        const [download] = await Promise.all([
+          page.waitForEvent('download'),
+          page.click(clickTarget)
+        ]);
+        await download.saveAs(savePath);
+        csvContent = fs.readFileSync(savePath, 'utf-8');
+      });
+      return csvContent;
+    },
+
+    /**
      * JSで強制クリック（通常のclickが効かない時の最終手段）。
      * Shadow DOM / iframe には未対応。必要なら個別対応してください。
      * @param {string} selector

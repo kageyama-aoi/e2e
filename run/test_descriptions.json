@@ -113,6 +113,7 @@
       "description": "入出金一覧の空検索と姓での絞り込み検索を確認",
       "feature_no": "1001_5_2"
     },
+    "page/validity_data_output_test.js":                        "有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証",
     "check/shimamura_class_existence_check_test.js":            "指定クラスが存在するか一括チェック",
     "check/bank_payment_type_check_test.js":                    "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト"
   },

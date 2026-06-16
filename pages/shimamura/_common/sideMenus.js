@@ -62,6 +62,14 @@ module.exports = {
     shortcut:  '顧客一覧',
   },
 
+  // ── 有効性データ ──────────────────────────────────────────────
+  validityDataOutput: {
+    directUrl:      '/index.php?module=Student&action=LWValidityDataOutput_AN',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__validity_data_sub', menuname: '有効性データ' },
+    shortcut:       '有効性データ出力',
+  },
+
   // ── 経理系 ───────────────────────────────────────────────────
   keiriInvoices: {
     directUrl: '/index.php?module=Keiri&action=index&keiri_report_type=Invoices&top_menu=1',

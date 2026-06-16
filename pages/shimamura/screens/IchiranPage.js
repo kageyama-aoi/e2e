@@ -400,6 +400,21 @@ module.exports = {
   },
 
   // ----------------------------------------------------------------
+  //  有効性データ出力 (validity_data_output)
+  // ----------------------------------------------------------------
+
+  async navigateToValidityDataOutputPage() {
+    I.say('【有効性データ出力】画面へ遷移');
+    await this._navigateViaMenu(menus.validityDataOutput);
+    I.waitForElement('input[value="有効性データ出力"]', 10);
+  },
+
+  async downloadValidityDataCsv(savePath) {
+    I.say('【有効性データ出力】出力ボタンをクリックしてCSVをダウンロード');
+    return await I.downloadAndReadCsv('input[value="有効性データ出力"]', savePath);
+  },
+
+  // ----------------------------------------------------------------
   //  受注・売上（経理）(keiri_invoices)
   // ----------------------------------------------------------------
 
