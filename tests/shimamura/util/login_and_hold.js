@@ -18,6 +18,8 @@ Before(beforeShimamura);
 
 Scenario('shimamura にログインしてブラウザを渡す', async ({ I }) => {
   I.say('✅ ログイン完了 — ブラウザを手動で操作してください');
-  I.say('このターミナルに "resume" と入力すると終了します (Ctrl+C × 2 でも終了)');
-  I.pause();
+  I.say('Playwright Inspector の ▶ Resume をクリックするとブラウザが閉じます');
+  await I.usePlaywrightTo('手動操作のために停止', async ({ page }) => {
+    await page.pause();
+  });
 });
