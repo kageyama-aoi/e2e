@@ -54,18 +54,27 @@ def _format_filesize(size_bytes):
     return f'{size_bytes / 1024 / 1024:.1f} MB'
 
 
-def _count_csv_rows(path):
-    """CSVの行数とエンコードを返す。cp932(Shift-JIS) → UTF-8 の順で試行。"""
-    for enc in ('cp932', 'utf-8-sig', 'utf-8'):
-        try:
-            with open(path, encoding=enc, errors='strict') as f:
-                count = sum(1 for line in f if line.strip())
-            return count, 'Shift-JIS' if enc == 'cp932' else 'UTF-8'
-        except (UnicodeDecodeError, LookupError):
-            continue
-    with open(path, 'rb') as f:
-        count = sum(1 for line in f if line.strip())
-    return count, '不明'
+def _analyze_download_file(path):
+    """ダウンロードファイルを解析し (件数, 単位, エンコード表示) を返す。
+    改行なし かつ サイズが120の倍数 → 固定長レコード形式と判定する。"""
+    try:
+        with open(path, 'rb') as f:
+            raw = f.read()
+        size = len(raw)
+        if size == 0:
+            return 0, '行', '(空)'
+        if raw.count(b'\n') == 0 and size % 120 == 0:
+            return size // 120, 'レコード', '固定長-120'
+        for enc in ('cp932', 'utf-8-sig', 'utf-8'):
+            try:
+                text = raw.decode(enc)
+                count = sum(1 for line in text.splitlines() if line.strip())
+                return count, '行', 'Shift-JIS' if enc == 'cp932' else 'UTF-8'
+            except (UnicodeDecodeError, LookupError):
+                continue
+        return sum(1 for line in raw.split(b'\n') if line.strip()), '行', '不明'
+    except Exception:
+        return 0, '行', 'error'
 
 
 def find_products(tests_dir):
@@ -795,8 +804,8 @@ class RunnerApp(tk.Tk):
         self._dl_tree = ttk.Treeview(self._dl_frame, columns=dl_cols, show='headings', height=3)
         self._dl_tree.heading('name', text='ファイル名')
         self._dl_tree.heading('size', text='サイズ')
-        self._dl_tree.heading('rows', text='行数')
-        self._dl_tree.heading('enc', text='エンコード')
+        self._dl_tree.heading('rows', text='件数')
+        self._dl_tree.heading('enc', text='形式/エンコード')
         self._dl_tree.column('name', width=260, stretch=True)
         self._dl_tree.column('size', width=70, anchor='e')
         self._dl_tree.column('rows', width=70, anchor='e')
@@ -1134,9 +1143,9 @@ class RunnerApp(tk.Tk):
             self._dl_tree.delete(item)
         for fpath in new_files:
             size_str = _format_filesize(os.path.getsize(fpath))
-            rows, enc = _count_csv_rows(fpath)
+            count, unit, enc = _analyze_download_file(fpath)
             self._dl_tree.insert('', tk.END, iid=fpath, values=(
-                os.path.basename(fpath), size_str, f'{rows:,}', enc,
+                os.path.basename(fpath), size_str, f'{count:,} {unit}', enc,
             ))
         self._dl_frame.configure(text=f'ダウンロードファイル（{len(new_files)} 件）')
         self._dl_frame.pack(fill=tk.X, pady=(4, 0))
