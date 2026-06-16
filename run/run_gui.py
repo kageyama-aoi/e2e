@@ -783,6 +783,12 @@ class RunnerApp(tk.Tk):
         self.csv_hint_var = tk.StringVar(value='')
         _Tooltip(self.csv_btn, self.csv_hint_var)
 
+        self.login_hold_btn = ttk.Button(
+            btn_frame, text='Login & Hold  (shimamura)',
+            command=self._on_login_and_hold,
+        )
+        self.login_hold_btn.grid(row=3, column=0, columnspan=2, sticky='ew', pady=(4, 2))
+
         # ---- 右ペイン ----
         right = ttk.Frame(body)
         right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
@@ -1087,6 +1093,37 @@ class RunnerApp(tk.Tk):
         self.log_text.configure(state='normal')
         self.log_text.delete('1.0', tk.END)
         self.log_text.configure(state='disabled')
+
+    def _on_login_and_hold(self):
+        """shimamura にログインしてブラウザを手動操作できる状態で開く。
+        新しいコンソールウィンドウで I.pause() を実行し、ユーザーが resume/exit を入力するまで待機する。"""
+        profile = self.profile_var.get().strip()
+        if not profile:
+            messagebox.showerror('Profile required', 'プロファイルを選択してください。')
+            return
+        if not profile.startswith('shimamura'):
+            messagebox.showwarning(
+                'shimamura 専用',
+                f'Login & Hold は shimamura プロファイル専用です。\n現在のプロファイル: {profile}',
+            )
+            return
+
+        test_file = './tests/shimamura/util/login_and_hold.js'
+        npm_cmd = f'npx codeceptjs run {test_file} --profile {profile}'
+        title = f'Login & Hold [{profile}]'
+
+        try:
+            # 新しいコンソールウィンドウで起動（/k = コマンド終了後もウィンドウを残す）
+            subprocess.Popen(
+                ['cmd.exe', '/c', 'start', title, 'cmd.exe', '/k', npm_cmd],
+                cwd=self.repo_root,
+            )
+            self._append_log(f'\n=== Login & Hold [{profile}] ===\n')
+            self._append_log('--- 新しいターミナルウィンドウでブラウザを起動しました\n')
+            self._append_log('--- ログイン完了後にブラウザを手動操作できます\n')
+            self._append_log('--- ターミナルに "resume" と入力するか Ctrl+C × 2 で終了します\n')
+        except Exception as exc:
+            messagebox.showerror('Error', f'起動に失敗しました:\n{exc}')
 
     def _on_open_allure(self):
         profile = self.profile_var.get().strip()
