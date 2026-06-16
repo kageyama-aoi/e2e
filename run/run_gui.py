@@ -45,6 +45,29 @@ _LOG_TAGS = {
 }
 
 
+def _format_filesize(size_bytes):
+    """バイト数を人が読みやすいサイズ文字列に変換する。"""
+    if size_bytes < 1024:
+        return f'{size_bytes} B'
+    if size_bytes < 1024 * 1024:
+        return f'{size_bytes / 1024:.1f} KB'
+    return f'{size_bytes / 1024 / 1024:.1f} MB'
+
+
+def _count_csv_rows(path):
+    """CSVの行数とエンコードを返す。cp932(Shift-JIS) → UTF-8 の順で試行。"""
+    for enc in ('cp932', 'utf-8-sig', 'utf-8'):
+        try:
+            with open(path, encoding=enc, errors='strict') as f:
+                count = sum(1 for line in f if line.strip())
+            return count, 'Shift-JIS' if enc == 'cp932' else 'UTF-8'
+        except (UnicodeDecodeError, LookupError):
+            continue
+    with open(path, 'rb') as f:
+        count = sum(1 for line in f if line.strip())
+    return count, '不明'
+
+
 def find_products(tests_dir):
     """tests/ 直下のサブディレクトリ名をプロダクト一覧として返す。"""
     if not os.path.isdir(tests_dir):
@@ -644,6 +667,7 @@ class RunnerApp(tk.Tk):
         self.proc = None
         self.thread = None
         self.is_running = False
+        self._run_start_time = 0.0
 
         self._all_tests = []
         self._all_profiles = []
@@ -763,6 +787,25 @@ class RunnerApp(tk.Tk):
         self.log_text.configure(state='disabled')
         self._configure_log_tags()
         self._bind_log_context_menu()
+
+        # ---- ダウンロードパネル（テスト完了後に自動表示） ----
+        self._dl_frame = ttk.LabelFrame(right, text='ダウンロードファイル')
+        # 初期は非表示 - _show_downloads_panel() が呼ばれたときに pack する
+        dl_cols = ('name', 'size', 'rows', 'enc')
+        self._dl_tree = ttk.Treeview(self._dl_frame, columns=dl_cols, show='headings', height=3)
+        self._dl_tree.heading('name', text='ファイル名')
+        self._dl_tree.heading('size', text='サイズ')
+        self._dl_tree.heading('rows', text='行数')
+        self._dl_tree.heading('enc', text='エンコード')
+        self._dl_tree.column('name', width=260, stretch=True)
+        self._dl_tree.column('size', width=70, anchor='e')
+        self._dl_tree.column('rows', width=70, anchor='e')
+        self._dl_tree.column('enc', width=80, anchor='center')
+        self._dl_tree.pack(fill=tk.X, padx=4, pady=(4, 2))
+        dl_btn = ttk.Frame(self._dl_frame)
+        dl_btn.pack(fill=tk.X, padx=4, pady=(0, 4))
+        ttk.Button(dl_btn, text='フォルダを開く', command=self._open_downloads_folder).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(dl_btn, text='Excelで開く', command=self._open_selected_dl_file).pack(side=tk.LEFT)
 
         ttk.Label(self, textvariable=self.status_var, anchor='w').pack(fill=tk.X, padx=8, pady=(0, 4))
 
@@ -1005,6 +1048,8 @@ class RunnerApp(tk.Tk):
             messagebox.showinfo('Running', 'テストは既に実行中です。')
             return
 
+        self._run_start_time = datetime.now().timestamp()
+        self._hide_downloads_panel()
         self.log_text.configure(state='normal')
         self.log_text.delete('1.0', tk.END)
         self.log_text.configure(state='disabled')
@@ -1065,6 +1110,54 @@ class RunnerApp(tk.Tk):
         except Exception as exc:
             self.log_queue.put(f'\nERROR: Allure open failed: {exc}\n')
 
+    def _hide_downloads_panel(self):
+        self._dl_frame.pack_forget()
+
+    def _show_downloads_panel(self):
+        """output/downloads/ から実行開始後に作成されたファイルを探して表示する。"""
+        dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
+        if not os.path.isdir(dl_dir):
+            return
+        start = self._run_start_time
+        new_files = sorted(
+            [
+                os.path.join(dl_dir, f)
+                for f in os.listdir(dl_dir)
+                if f.endswith(('.csv', '.tsv', '.txt'))
+                and os.path.getmtime(os.path.join(dl_dir, f)) >= start
+            ],
+            key=os.path.getmtime,
+        )
+        if not new_files:
+            return
+        for item in self._dl_tree.get_children():
+            self._dl_tree.delete(item)
+        for fpath in new_files:
+            size_str = _format_filesize(os.path.getsize(fpath))
+            rows, enc = _count_csv_rows(fpath)
+            self._dl_tree.insert('', tk.END, iid=fpath, values=(
+                os.path.basename(fpath), size_str, f'{rows:,}', enc,
+            ))
+        self._dl_frame.configure(text=f'ダウンロードファイル（{len(new_files)} 件）')
+        self._dl_frame.pack(fill=tk.X, pady=(4, 0))
+
+    def _open_downloads_folder(self):
+        dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
+        os.makedirs(dl_dir, exist_ok=True)
+        os.startfile(dl_dir)
+
+    def _open_selected_dl_file(self):
+        sel = self._dl_tree.selection()
+        if not sel:
+            items = self._dl_tree.get_children()
+            if not items:
+                return
+            sel = (items[0],)
+        try:
+            os.startfile(sel[0])
+        except Exception as exc:
+            messagebox.showerror('Error', f'ファイルを開けませんでした:\n{exc}')
+
     def _on_stop(self):
         if self.proc and self.proc.poll() is None:
             self._append_log('\n--- Stopping... ---\n')
@@ -1096,6 +1189,7 @@ class RunnerApp(tk.Tk):
                 self.log_queue.put(line)
             exit_code = self.proc.wait()
             self.log_queue.put(f'\n=== Finished (exit code {exit_code}) ===\n')
+            self.after(400, self._show_downloads_panel)
         except FileNotFoundError:
             self.log_queue.put('\nERROR: npx が見つかりません。Node.js/npm をインストールしてください。\n')
         except Exception as exc:
