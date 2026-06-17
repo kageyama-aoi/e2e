@@ -166,7 +166,7 @@ module.exports = {
 
   fillCourseByStudentSearchConditions(data) {
     I.say('【コース別受講生一覧】検索条件を入力');
-    if (data.course_name) I.fillField('input[name="course_name"]', data.course_name);
+    fillTextFieldsByName(I, { course_name: data.course_name });
     if (data.school_id)   I.selectOption('select[name="school_id"]', data.school_id);
   },
 
@@ -198,7 +198,7 @@ module.exports = {
 
   fillClassListSearchConditions(data) {
     I.say('【クラス一覧】検索条件を入力');
-    if (data.name)      I.fillField('input[name="name"]', data.name);
+    fillTextFieldsByName(I, { name: data.name });
     if (data.school_id) I.selectOption('select[name="school_id"]', data.school_id);
   },
 
@@ -265,7 +265,7 @@ module.exports = {
 
   fillCourseIchiranSearchConditions(data) {
     I.say('【コース一覧】検索条件を入力');
-    if (data.name)      I.fillField('input[name="course_name"]', data.name);
+    fillTextFieldsByName(I, { course_name: data.name });
     if (data.school_id) I.selectOption('select[name="school_id"]', data.school_id);
   },
 

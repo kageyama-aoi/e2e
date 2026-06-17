@@ -209,20 +209,6 @@ async function verifyCheckboxCheckedByLabelOrName(
 }
 
 /**
- * チェックボックスの状態を取得する（デバッグ用）
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {Object} options - 探索条件
- * @param {string} options.labelText - 画面上のラベル（例: '月途中'）
- * @param {string} [options.inputName] - inputのname属性
- * @param {string} [options.inputId] - inputのid属性
- * @param {string} [options.containerSelector] - ルート要素
- * @returns {Promise<Object>} 状態情報
- */
-async function getCheckboxStateByLabelOrName(I, { labelText, inputName, inputId, containerSelector }) {
-  return resolveCheckboxState(I, { labelText, inputName, inputId, containerSelector });
-}
-
-/**
  * バリデーションエラーメッセージを検証する
  * @param {CodeceptJS.I} I
  * @param {string[]} expectedErrors - 期待するエラー文言の配列
@@ -279,7 +265,6 @@ module.exports = {
   resolveCheckboxState,
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName,
-  getCheckboxStateByLabelOrName,
   verifyValidationErrors,
   assertNoShimamuraError,
   fillTextFieldsByName,
