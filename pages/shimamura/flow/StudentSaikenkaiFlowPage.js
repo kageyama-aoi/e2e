@@ -1,7 +1,7 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 // ── 保存完了を動的検知するヘルパー ──────────────────────────────
@@ -86,17 +86,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   if (input.student_gender) I.selectOption('select[name="gender"]', input.student_gender);
 
   // ─ グループ1: 郵便番号入力前のテキストフィールド一括入力
-  const preZipFields = [
-    ['phone_mobile', input.student_phone_mobile],
-  ].filter(([, v]) => v);
-  if (preZipFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, preZipFields);
-  }
+  fillTextFieldsByName(I, { phone_mobile: input.student_phone_mobile });
 
   // ─ 郵便番号 API（wait 必須）
   if (input.student_postalcode) {
@@ -131,19 +121,11 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   }
 
   // ─ グループ3: 銀行コードAJAX後の口座フィールド一括入力
-  const bankFields = [
-    ['bank_branch_code',  input.student_bank_branch_code],
-    ['bank_account_no',   input.student_bank_account_no],
-    ['bank_account_name', input.student_bank_account_name],
-  ].filter(([, v]) => v);
-  if (bankFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, bankFields);
-  }
+  fillTextFieldsByName(I, {
+    bank_branch_code:  input.student_bank_branch_code,
+    bank_account_no:   input.student_bank_account_no,
+    bank_account_name: input.student_bank_account_name,
+  });
 
   I.say('【受講生基本情報】保存');
   I.click(S.edit.saveButton);
@@ -209,28 +191,19 @@ async function ShouldFillSmbcForm(I, input) {
   I.say('【債権買取顧客情報登録】フォームに入力（editable フィールドのみ）');
   // readonly フィールド（gender, address, bank_* など）は受講生レコードから自動引用される
 
-  // ─ テキスト系（input + textarea）を executeScript で一括入力
-  const mainTextFields = [
-    ['phone_mobile',                input.smbc_phone_mobile],
-    ['last_name_furigana',          input.smbc_last_name_furigana],
-    ['first_name_furigana',         input.smbc_first_name_furigana],
-    ['phone_home',                  input.smbc_phone_home],
-    ['year',                        input.smbc_year],
-    ['month',                       input.smbc_month],
-    ['day',                         input.smbc_day],
-    ['primary_address_state_kana',  input.smbc_state_kana],
-    ['primary_address_city_kana',   input.smbc_city_kana],
-    ['primary_address_street_kana', input.smbc_street_kana],
-  ].filter(([, v]) => v);
-
-  if (mainTextFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, mainTextFields);
-  }
+  // ─ テキスト系（input + textarea）を一括入力
+  fillTextFieldsByName(I, {
+    phone_mobile:                input.smbc_phone_mobile,
+    last_name_furigana:          input.smbc_last_name_furigana,
+    first_name_furigana:         input.smbc_first_name_furigana,
+    phone_home:                  input.smbc_phone_home,
+    year:                        input.smbc_year,
+    month:                       input.smbc_month,
+    day:                         input.smbc_day,
+    primary_address_state_kana:  input.smbc_state_kana,
+    primary_address_city_kana:   input.smbc_city_kana,
+    primary_address_street_kana: input.smbc_street_kana,
+  });
 
   // ─ セレクト系（change イベントが必要なため個別に）
   if (input.smbc_gengo)     I.selectOption(S.smbc.fields.gengo,    input.smbc_gengo);
@@ -246,25 +219,16 @@ async function ShouldFillSmbcForm(I, input) {
     }
   }
   if (input.smbc_keiyakusha_honnin_def === '1') {
-    const keiyakushaTextFields = [
-      ['keiyakusha_last_name',           input.smbc_k_last_name],
-      ['keiyakusha_first_name',          input.smbc_k_first_name],
-      ['keiyakusha_last_name_furigana',  input.smbc_k_last_furigana],
-      ['keiyakusha_first_name_furigana', input.smbc_k_first_furigana],
-      ['keiyakusha_year',                input.smbc_k_year],
-      ['keiyakusha_month',               input.smbc_k_month],
-      ['keiyakusha_day',                 input.smbc_k_day],
-      ['keiyakusha_phone_mobile',        input.smbc_k_phone_mobile],
-    ].filter(([, v]) => v);
-
-    if (keiyakushaTextFields.length > 0) {
-      I.executeScript((fields) => {
-        fields.forEach(([name, value]) => {
-          const el = document.querySelector(`[name="${name}"]`);
-          if (el) el.value = value;
-        });
-      }, keiyakushaTextFields);
-    }
+    fillTextFieldsByName(I, {
+      keiyakusha_last_name:           input.smbc_k_last_name,
+      keiyakusha_first_name:          input.smbc_k_first_name,
+      keiyakusha_last_name_furigana:  input.smbc_k_last_furigana,
+      keiyakusha_first_name_furigana: input.smbc_k_first_furigana,
+      keiyakusha_year:                input.smbc_k_year,
+      keiyakusha_month:               input.smbc_k_month,
+      keiyakusha_day:                 input.smbc_k_day,
+      keiyakusha_phone_mobile:        input.smbc_k_phone_mobile,
+    });
 
     if (input.smbc_k_gender) I.selectOption('select[name="keiyakusha_gender"]', input.smbc_k_gender);
     if (input.smbc_k_gengo)  I.selectOption('select[name="keiyakusha_gengo"]',  input.smbc_k_gengo);
@@ -277,24 +241,15 @@ async function ShouldFillSmbcForm(I, input) {
     }
   }
   if (input.smbc_keiyakusha_honnin_def === '1' && input.smbc_jusho_honnin_def === '1') {
-    const addressTextFields = [
-      ['keiyakusha_address_postalcode',  input.smbc_k_postalcode],
-      ['keiyakusha_address_state',       input.smbc_k_state],
-      ['keiyakusha_address_state_kana',  input.smbc_k_state_kana],
-      ['keiyakusha_address_city',        input.smbc_k_city],
-      ['keiyakusha_address_city_kana',   input.smbc_k_city_kana],
-      ['keiyakusha_address_street',      input.smbc_k_street],
-      ['keiyakusha_address_street_kana', input.smbc_k_street_kana],
-    ].filter(([, v]) => v);
-
-    if (addressTextFields.length > 0) {
-      I.executeScript((fields) => {
-        fields.forEach(([name, value]) => {
-          const el = document.querySelector(`[name="${name}"]`);
-          if (el) el.value = value;
-        });
-      }, addressTextFields);
-    }
+    fillTextFieldsByName(I, {
+      keiyakusha_address_postalcode:  input.smbc_k_postalcode,
+      keiyakusha_address_state:       input.smbc_k_state,
+      keiyakusha_address_state_kana:  input.smbc_k_state_kana,
+      keiyakusha_address_city:        input.smbc_k_city,
+      keiyakusha_address_city_kana:   input.smbc_k_city_kana,
+      keiyakusha_address_street:      input.smbc_k_street,
+      keiyakusha_address_street_kana: input.smbc_k_street_kana,
+    });
   }
 }
 

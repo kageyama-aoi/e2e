@@ -21,7 +21,7 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
@@ -73,28 +73,20 @@ async function navigateToContactRegister(I) {
 async function fillContactForm(I, data) {
   I.say('【問合せ登録】フォーム入力');
   // テキストフィールド一括入力（bank_code は AJAX 自動補完のため除外）
-  const textFields = [
-    ['last_name',           data.last_name],
-    ['first_name',          data.first_name],
-    ['last_name_furigana',  data.last_name_furigana],
-    ['first_name_furigana', data.first_name_furigana],
-    ['phone_mobile',        data.phone_mobile],
-    ['application_date',    data.application_date],
-    ['bank_branch_code',    data.bank_branch_code],
-    ['bank_account_no',     data.bank_account_no],
-    ['bank_account_name',   data.bank_account_name],
-    ['acsno',               data.acsno],
-    ['acsno_check',         data.acsno_check],
-    ['expis_date',          data.expis_date],
-  ].filter(([, v]) => v);
-  if (textFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, textFields);
-  }
+  fillTextFieldsByName(I, {
+    last_name:           data.last_name,
+    first_name:          data.first_name,
+    last_name_furigana:  data.last_name_furigana,
+    first_name_furigana: data.first_name_furigana,
+    phone_mobile:        data.phone_mobile,
+    application_date:    data.application_date,
+    bank_branch_code:    data.bank_branch_code,
+    bank_account_no:     data.bank_account_no,
+    bank_account_name:   data.bank_account_name,
+    acsno:               data.acsno,
+    acsno_check:         data.acsno_check,
+    expis_date:          data.expis_date,
+  });
   if (data.gender)            I.selectOption(S.fields.gender,          data.gender);
   if (data.bank_payment_type) I.selectOption(S.fields.bankPaymentType, data.bank_payment_type);
   if (data.bank_code)         I.fillField(S.fields.bankCode,           data.bank_code);
