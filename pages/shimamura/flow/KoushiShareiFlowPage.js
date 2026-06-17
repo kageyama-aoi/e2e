@@ -1,7 +1,7 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
@@ -68,10 +68,10 @@ async function ShouldSelectTeacher(I) {
 async function ShouldFillMainForm(I, input) {
   I.say('【フォーム入力】計上日・対象月・謝礼項目・金額');
   // グループ1: 計上日・対象月（常に入力）
-  I.executeScript(([keijoubi, from_datetime]) => {
-    document.querySelector('#keijoubi').value = keijoubi;
-    document.querySelector('#from_datetime').value = from_datetime;
-  }, [input.keijoubi, input.from_datetime]);
+  fillTextFieldsBySelector(I, [
+    [S.fields.keijoubi,      input.keijoubi],
+    [S.fields.from_datetime, input.from_datetime],
+  ]);
   if (input.area_id) {
     I.selectOption(S.selects.area_id, input.area_id);
     I.waitForEnabled(S.selects.school_id, TIMEOUTS.ENABLED);
@@ -81,19 +81,11 @@ async function ShouldFillMainForm(I, input) {
   }
   I.selectOption(S.selects.sharei_komoku, input.sharei_komoku);
   // グループ2: 謝礼金額・人数・備考
-  const mainFields = [
+  fillTextFieldsBySelector(I, [
     [S.fields.houshugaku,    input.houshugaku],
     [S.fields.student_count, input.student_count],
     [S.fields.bikou,         input.bikou],
-  ].filter(([, v]) => v);
-  if (mainFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([sel, value]) => {
-        const el = document.querySelector(sel);
-        if (el) el.value = value;
-      });
-    }, mainFields);
-  }
+  ]);
 }
 
 async function ShouldSaveAndVerify(I, expectedErrors) {
@@ -123,19 +115,11 @@ async function runKoushiShareiManualFlow(I, input) {
 async function runKoushiShareiValidationFlow(I, input) {
   await ShouldBeOnTsuikaScreen(I);
   // 講師選択なしでバリデーションを確認するフロー（日付・金額のみ入力）
-  const textFields = [
+  fillTextFieldsBySelector(I, [
     [S.fields.keijoubi,      input.keijoubi],
     [S.fields.from_datetime, input.from_datetime],
     [S.fields.houshugaku,    input.houshugaku],
-  ].filter(([, v]) => v);
-  if (textFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([sel, value]) => {
-        const el = document.querySelector(sel);
-        if (el) el.value = value;
-      });
-    }, textFields);
-  }
+  ]);
   if (input.sharei_komoku) I.selectOption(S.selects.sharei_komoku, input.sharei_komoku);
   await ShouldSaveAndVerify(I, input.expectedErrors || []);
 }

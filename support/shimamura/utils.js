@@ -234,6 +234,24 @@ async function assertNoShimamuraError(I, context = '処理') {
 }
 
 /**
+ * CSS selector ベースのテキストフィールドを一括入力する（shimamura用）
+ * id セレクタ（#keijoubi 等）や複合セレクタを扱う場合に使用する
+ *
+ * @param {CodeceptJS.I} I
+ * @param {Array<[string, string|undefined]>} selectorValuePairs - [[selector, value], ...] の形式
+ */
+function fillTextFieldsBySelector(I, selectorValuePairs) {
+  const entries = selectorValuePairs.filter(([, v]) => v);
+  if (entries.length === 0) return;
+  I.executeScript((fields) => {
+    fields.forEach(([sel, value]) => {
+      const el = document.querySelector(sel);
+      if (el) el.value = value;
+    });
+  }, entries);
+}
+
+/**
  * name属性ベースのテキストフィールドを一括入力する（shimamura用）
  *
  * FORM_FILL_FAST=true  → I.executeScript で一括セット（速い）
@@ -268,4 +286,5 @@ module.exports = {
   verifyValidationErrors,
   assertNoShimamuraError,
   fillTextFieldsByName,
+  fillTextFieldsBySelector,
 };
