@@ -1,7 +1,7 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
@@ -109,13 +109,7 @@ async function ShouldSaveAndVerify(I, expectedErrors) {
     await verifyValidationErrors(I, expectedErrors, S.message.error);
     return;
   }
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.textContent.trim() : '';
-  });
-  if (errorText) {
-    throw new Error(`登録エラー: ${errorText}`);
-  }
+  await assertNoShimamuraError(I, '登録');
   I.say('【確認】登録成功');
 }
 

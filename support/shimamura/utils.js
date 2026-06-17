@@ -233,6 +233,45 @@ async function verifyValidationErrors(I, expectedErrors, containerSelector) {
   expectedErrors.forEach(err => I.see(err, containerSelector));
 }
 
+/**
+ * 保存後に shimamura エラーダイアログ（#top_err_info_msg_div）にテキストがないことを確認する
+ * エラーテキストがあれば throw する
+ * @param {CodeceptJS.I} I
+ * @param {string} [context] - エラーメッセージのプレフィックス（例: '【受講生基本情報】保存'）
+ */
+async function assertNoShimamuraError(I, context = '処理') {
+  const errorText = await I.executeScript(() => {
+    const el = document.querySelector('#top_err_info_msg_div');
+    return el ? el.innerText.trim() : '';
+  });
+  if (errorText) throw new Error(`${context}エラー: ${errorText}`);
+}
+
+/**
+ * name属性ベースのテキストフィールドを一括入力する（shimamura用）
+ *
+ * FORM_FILL_FAST=true  → I.executeScript で一括セット（速い）
+ * FORM_FILL_FAST=false → I.fillField で1フィールドずつ（安全・デフォルト）
+ *
+ * @param {CodeceptJS.I} I
+ * @param {Object.<string, string|undefined>} fieldMap - { fieldName: value } の形式
+ */
+function fillTextFieldsByName(I, fieldMap) {
+  const entries = Object.entries(fieldMap).filter(([, v]) => v);
+  if (entries.length === 0) return;
+
+  if (process.env.FORM_FILL_FAST === 'true') {
+    I.executeScript((fields) => {
+      fields.forEach(([name, value]) => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) el.value = value;
+      });
+    }, entries);
+  } else {
+    entries.forEach(([name, value]) => I.fillField(`[name="${name}"]`, value));
+  }
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -242,4 +281,6 @@ module.exports = {
   verifyCheckboxCheckedByLabelOrName,
   getCheckboxStateByLabelOrName,
   verifyValidationErrors,
+  assertNoShimamuraError,
+  fillTextFieldsByName,
 };

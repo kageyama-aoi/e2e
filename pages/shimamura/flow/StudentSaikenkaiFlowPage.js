@@ -1,7 +1,7 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 // ── 保存完了を動的検知するヘルパー ──────────────────────────────
@@ -149,12 +149,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
   I.click(S.edit.saveButton);
   await waitForSaveResult(I);
 
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.innerText.trim() : '';
-  });
-  if (errorText) throw new Error(`【受講生基本情報】保存エラー: ${errorText}`);
-
+  await assertNoShimamuraError(I, '【受講生基本情報】保存');
   I.say('【受講生基本情報】保存成功 → DetailView へ戻る');
   await logScreenUrl(I, '受講生詳細(DetailView)_基本情報保存後');
 }
@@ -308,17 +303,11 @@ async function ShouldSaveSmbcForm(I, expectedErrors) {
   I.click(S.smbc.saveButton);
   await waitForSaveResult(I);
 
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.innerText.trim() : '';
-  });
-
-  if (expectedErrors && expectedErrors.length > 0) {
+  if (expectedErrors?.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);
     return;
   }
-  if (errorText) throw new Error(`【債権買取顧客情報登録】保存エラー: ${errorText}`);
-
+  await assertNoShimamuraError(I, '【債権買取顧客情報登録】保存');
   I.say('【債権買取顧客情報登録】保存成功 → DetailView へ戻る');
   // 保存後は return_action=DetailView で受講生詳細へ戻る
   await logScreenUrl(I, '受講生詳細(DetailView)_SMBC保存後');

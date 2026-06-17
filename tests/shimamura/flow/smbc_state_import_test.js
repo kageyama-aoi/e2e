@@ -31,7 +31,7 @@ const {
   attachErrorScreenshot,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 // ── セレクタ定数 ─────────────────────────────────────────────
@@ -81,17 +81,11 @@ async function selectAndImportFile(I, filePath, expectedErrors) {
   // フォーム送信後、ページリロードでファイル入力欄が再表示されるまで待つ
   I.waitForElement(S.fileInput, TIMEOUTS.RESULT);
 
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.innerText.trim() : '';
-  });
-
-  if (expectedErrors && expectedErrors.length > 0) {
+  if (expectedErrors?.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);
     return;
   }
-  if (errorText) throw new Error(`【ファイル読込】エラー: ${errorText}`);
-
+  await assertNoShimamuraError(I, '【ファイル読込】');
   I.say('【ファイル読込】取込完了');
   await logScreenUrl(I, '債権買取状態読込_取込後');
 }
