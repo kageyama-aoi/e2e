@@ -29,6 +29,10 @@ from datetime import datetime, timedelta
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
+_DOWNLOADS_DIR   = os.path.join('output', 'downloads')
+_ALLURE_SCRIPT   = os.path.join('scripts', 'allure', 'serve_latest.js')
+_LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
+
 _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
 _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
@@ -115,7 +119,7 @@ def find_all_profiles(env_dir):
     return sorted(set(profiles))
 
 
-def get_product_from_test(test_path):
+def _get_product_from_test(test_path):
     """./tests/<product>/... からプロダクト名を抽出する。"""
     parts = test_path.replace('\\', '/').lstrip('./').split('/')
     if len(parts) >= 2 and parts[0] == 'tests':
@@ -246,73 +250,61 @@ def wrap_command_for_windows(cmd):
     return [comspec, '/c'] + cmd
 
 
-def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
-    """logs/ 配下の <name>_<YYYYMMDD_HHMMSS>.log を days 日以上古ければアーカイブして削除する。"""
-    TIMESTAMP_RE = re.compile(r'_(\d{8}_\d{6})\.log$')
+def _cleanup_old_files(target_dir, pattern, date_fmt, days, *, archive=False):
+    """target_dir 内のファイルを pattern で検索し、days 日以上古ければ処理する。
+    archive=True のとき zip 圧縮してから削除。False のとき削除のみ。"""
     threshold = datetime.now() - timedelta(days=days)
-    archive_dir = os.path.join(logs_dir, 'archive')
+    archive_dir = os.path.join(target_dir, 'archive')
     results = []
-
-    if not os.path.isdir(logs_dir):
+    if not os.path.isdir(target_dir):
         return results
-
-    for fname in sorted(os.listdir(logs_dir)):
-        if not fname.endswith('.log'):
-            continue
-        m = TIMESTAMP_RE.search(fname)
+    for fname in sorted(os.listdir(target_dir)):
+        m = pattern.search(fname)
         if not m:
             continue
         try:
-            dt = datetime.strptime(m.group(1), '%Y%m%d_%H%M%S')
+            dt = datetime.strptime(m.group(1), date_fmt)
         except ValueError:
             continue
         if dt >= threshold:
             continue
-
-        src = os.path.join(logs_dir, fname)
-        os.makedirs(archive_dir, exist_ok=True)
-        dest = os.path.join(archive_dir, fname + '.zip')
+        src = os.path.join(target_dir, fname)
+        age = (datetime.now() - dt).days
         try:
-            with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as zf:
-                zf.write(src, fname)
+            if archive:
+                os.makedirs(archive_dir, exist_ok=True)
+                dest = os.path.join(archive_dir, fname + '.zip')
+                with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as zf:
+                    zf.write(src, fname)
+                results.append(f'  archived: {fname} ({age}日前)')
+            else:
+                results.append(f'  deleted: {fname} ({age}日前)')
             os.remove(src)
-            age = (datetime.now() - dt).days
-            results.append(f'  archived: {fname} ({age}日前)')
         except Exception as exc:
             results.append(f'  error: {fname} -> {exc}')
-
     return results
+
+
+def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
+    """logs/ 配下の <name>_<YYYYMMDD_HHMMSS>.log を days 日以上古ければアーカイブして削除する。"""
+    return _cleanup_old_files(
+        logs_dir,
+        pattern=re.compile(r'_(\d{8}_\d{6})\.log$'),
+        date_fmt='%Y%m%d_%H%M%S',
+        days=days,
+        archive=True,
+    )
 
 
 def _cleanup_old_learning_logs(learning_dir, days=LOG_CLEANUP_DAYS):
     """docs/common/learning/ 配下の bash_YYYYMMDD.md を days 日以上古ければ削除する。"""
-    DATE_RE = re.compile(r'^bash_(\d{8})\.md$')
-    threshold = datetime.now() - timedelta(days=days)
-    results = []
-
-    if not os.path.isdir(learning_dir):
-        return results
-
-    for fname in sorted(os.listdir(learning_dir)):
-        m = DATE_RE.match(fname)
-        if not m:
-            continue
-        try:
-            dt = datetime.strptime(m.group(1), '%Y%m%d')
-        except ValueError:
-            continue
-        if dt >= threshold:
-            continue
-
-        fpath = os.path.join(learning_dir, fname)
-        try:
-            os.remove(fpath)
-            age = (datetime.now() - dt).days
-            results.append(f'  deleted (learning): {fname} ({age}日前)')
-        except Exception as exc:
-            results.append(f'  error: {fname} -> {exc}')
-
-    return results
+    return _cleanup_old_files(
+        learning_dir,
+        pattern=re.compile(r'^bash_(\d{8})\.md$'),
+        date_fmt='%Y%m%d',
+        days=days,
+        archive=False,
+    )
 
 
 class _Tooltip:
@@ -642,7 +634,7 @@ class CsvEditorWindow(tk.Toplevel):
     def _save(self):
         self._commit_edit()
         try:
-            with open(self.csv_path, 'w', encoding='utf-8', newline='') as f:
+            with open(self.csv_path, 'w', encoding='utf-8-sig', newline='') as f:
                 w = csv.writer(f)
                 w.writerow(self._headers)
                 for item in self.tree.get_children():
@@ -842,7 +834,7 @@ class RunnerApp(tk.Tk):
         self.product_var.set(product)
 
         # テストリストを製品でフィルタリング（表示はサブパスのみ）
-        self._filtered_test_paths = [t for t in self._all_tests if get_product_from_test(t) == product]
+        self._filtered_test_paths = [t for t in self._all_tests if _get_product_from_test(t) == product]
         display_names = [get_display_name(t, product, self._descriptions) for t in self._filtered_test_paths]
         formatted = format_test_list(display_names)
         self.test_list.delete(0, tk.END)
@@ -1108,8 +1100,8 @@ class RunnerApp(tk.Tk):
             )
             return
 
-        test_file = './tests/shimamura/util/login_and_hold.js'
-        npm_cmd = f'npx codeceptjs run {test_file} --profile {profile}'
+        parts = build_command(_LOGIN_HOLD_TEST, profile)
+        npm_cmd = subprocess.list2cmdline(parts)
         title = f'Login & Hold [{profile}]'
 
         try:
@@ -1134,34 +1126,39 @@ class RunnerApp(tk.Tk):
         if not os.path.isdir(allure_dir):
             messagebox.showwarning('No Results', f'Allure 結果が見つかりません:\n{allure_dir}\n\n先にテストを実行してください。')
             return
-        cmd = ['node', 'scripts/allure/serve_latest.js', profile]
+        cmd = ['node', _ALLURE_SCRIPT, profile]
         self._append_log(f'\n=== Open Allure [{profile}] ===\n')
         self._append_log(f'--- run: {" ".join(cmd)}\n')
         threading.Thread(target=self._run_allure_process, args=(cmd,), daemon=True).start()
 
     def _run_allure_process(self, cmd):
         try:
-            proc = subprocess.Popen(
-                wrap_command_for_windows(cmd),
-                cwd=self.repo_root,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                encoding='utf-8',
-                errors='replace',
-                bufsize=1,
-            )
+            proc = self._pipe_process_output(cmd)
             for line in proc.stdout:
                 self.log_queue.put(line)
         except Exception as exc:
             self.log_queue.put(f'\nERROR: Allure open failed: {exc}\n')
+
+    def _pipe_process_output(self, cmd, env=None):
+        """cmd を実行して stdout を log_queue に流す準備をした Popen オブジェクトを返す。"""
+        return subprocess.Popen(
+            wrap_command_for_windows(cmd),
+            cwd=self.repo_root,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding='utf-8',
+            errors='replace',
+            bufsize=1,
+            env=env,
+        )
 
     def _hide_downloads_panel(self):
         self._dl_frame.pack_forget()
 
     def _show_downloads_panel(self):
         """output/downloads/ から実行開始後に作成されたファイルを探して表示する。"""
-        dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
+        dl_dir = os.path.join(self.repo_root, _DOWNLOADS_DIR)
         if not os.path.isdir(dl_dir):
             return
         start = self._run_start_time
@@ -1188,7 +1185,7 @@ class RunnerApp(tk.Tk):
         self._dl_frame.pack(fill=tk.X, pady=(4, 0))
 
     def _open_downloads_folder(self):
-        dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
+        dl_dir = os.path.join(self.repo_root, _DOWNLOADS_DIR)
         os.makedirs(dl_dir, exist_ok=True)
         os.startfile(dl_dir)
 
@@ -1220,17 +1217,7 @@ class RunnerApp(tk.Tk):
         if debug:
             env['KEEP_BROWSER_OPEN'] = '1'
         try:
-            self.proc = subprocess.Popen(
-                wrap_command_for_windows(cmd),
-                cwd=self.repo_root,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                encoding='utf-8',
-                errors='replace',
-                bufsize=1,
-                env=env,
-            )
+            self.proc = self._pipe_process_output(cmd, env=env)
             for line in self.proc.stdout:
                 self.log_queue.put(line)
             exit_code = self.proc.wait()
@@ -1243,8 +1230,8 @@ class RunnerApp(tk.Tk):
         finally:
             self.proc = None
             if self.is_running:
-                self._set_running(False)
-                self._autosave_log_file()
+                self.after(0, self._set_running, False)
+                self.after(0, self._autosave_log_file)
 
 
 def main():
