@@ -60,12 +60,12 @@
   },
   "shimamura": {
     "auth/shimamura_login_test.js":                             "しまむらシステムへのログイン動作を確認",
-    "flow/syokai_touroku_test.js":                              "会員紹介者の新規登録フローを確認",
+    "flow/syokai_touroku_test.js":                              "受講生の新規登録および経理処理フローの正常系・バリデーションエラーを確認",
     "flow/taikai_test.js": {
       "description": "退会処理フローを確認",
       "feature_no": "1000_2_2"
     },
-    "flow/contact_register_test.js":                            "問合せ登録（候補生登録）の正常系・バリデーションエラー系を確認",
+    "flow/contact_register_test.js":                            "候補生詳細（詳細タブ）フォームへの入力・保存の正常系とバリデーションエラーを確認",
     "flow/keiri_hennkin_syori_test.js": {
       "description": "経理の返金処理フローを確認",
       "feature_no": "1600_17_1"
@@ -82,7 +82,7 @@
       "description": "講師謝礼のCSVファイル一括取込フローを確認",
       "feature_no": "1600_19_1"
     },
-    "flow/student_saikenkai_test.js":                           "受講生の請求方法を債権買取に変更し、債権買取顧客情報登録フォームを保存するフローを確認",
+    "flow/student_saikenkai_test.js":                           "SMBC債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認",
     "flow/smbc_state_import_test.js": {
       "description": "債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認",
       "feature_no": "4000_3_1"
