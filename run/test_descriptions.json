@@ -83,14 +83,17 @@
       "feature_no": "1600_19_1"
     },
     "flow/student_saikenkai_test.js":                           "受講生の請求方法を債権買取に変更し、債権買取顧客情報登録フォームを保存するフローを確認",
-    "flow/smbc_state_import_test.js":                           "債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認",
+    "flow/smbc_state_import_test.js": {
+      "description": "債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認",
+      "feature_no": "4000_3_1"
+    },
     "page/student_search_ichiran_test.js": {
       "description": "受講生検索の空検索・姓絞り込みで結果が表示されることを確認",
-      "feature_no": "1002_4_3"
+      "feature_no": "1000_5_1"
     },
     "page/contact_list_ichiran_test.js": {
       "description": "問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認",
-      "feature_no": "1001_1_2"
+      "feature_no": "1000_8_1"
     },
     "page/course_by_student_ichiran_test.js": {
       "description": "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",
@@ -114,7 +117,7 @@
     },
     "page/mishukin_list_ichiran_test.js": {
       "description": "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認",
-      "feature_no": "1001_4_1"
+      "feature_no": "1600_2_1"
     },
     "page/keiri_invoices_ichiran_test.js": {
       "description": "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認",
@@ -126,10 +129,16 @@
     },
     "page/transaction_ichiran_test.js": {
       "description": "入出金一覧の空検索と姓での絞り込み検索を確認",
-      "feature_no": "1001_5_2"
+      "feature_no": "1600_9_1"
     },
-    "page/validity_data_output_test.js":                        "有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証",
-    "check/shimamura_class_existence_check_test.js":            "指定クラスが存在するか一括チェック",
+    "page/validity_data_output_test.js": {
+      "description": "有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証",
+      "feature_no": "2000_2_1"
+    },
+    "check/shimamura_class_existence_check_test.js": {
+      "description": "指定クラスが存在するか一括チェック",
+      "feature_no": "1100_4_1"
+    },
     "check/bank_payment_type_check_test.js":                    "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト"
   },
   "taskreport": {
