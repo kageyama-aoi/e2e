@@ -61,12 +61,27 @@
   "shimamura": {
     "auth/shimamura_login_test.js":                             "しまむらシステムへのログイン動作を確認",
     "flow/syokai_touroku_test.js":                              "会員紹介者の新規登録フローを確認",
-    "flow/taikai_test.js":                                      "退会処理フローを確認",
+    "flow/taikai_test.js": {
+      "description": "退会処理フローを確認",
+      "feature_no": "1000_2_2"
+    },
     "flow/contact_register_test.js":                            "問合せ登録（候補生登録）の正常系・バリデーションエラー系を確認",
-    "flow/keiri_hennkin_syori_test.js":                         "経理の返金処理フローを確認",
-    "flow/shimamura_class_member_registration_test.js":         "クラスへのメンバー登録フローを確認",
-    "flow/koushi_sharei_manual_test.js":                        "講師謝礼の手動入力登録フローを確認",
-    "flow/koushi_sharei_tsuika_test.js":                        "講師謝礼のCSVファイル一括取込フローを確認",
+    "flow/keiri_hennkin_syori_test.js": {
+      "description": "経理の返金処理フローを確認",
+      "feature_no": "1600_17_1"
+    },
+    "flow/shimamura_class_member_registration_test.js": {
+      "description": "クラスへのメンバー登録フローを確認",
+      "feature_no": "1100_15_1"
+    },
+    "flow/koushi_sharei_manual_test.js": {
+      "description": "講師謝礼の手動入力登録フローを確認",
+      "feature_no": "1600_19_1"
+    },
+    "flow/koushi_sharei_tsuika_test.js": {
+      "description": "講師謝礼のCSVファイル一括取込フローを確認",
+      "feature_no": "1600_19_1"
+    },
     "flow/student_saikenkai_test.js":                           "受講生の請求方法を債権買取に変更し、債権買取顧客情報登録フォームを保存するフローを確認",
     "flow/smbc_state_import_test.js":                           "債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認",
     "page/student_search_ichiran_test.js": {
@@ -79,19 +94,19 @@
     },
     "page/course_by_student_ichiran_test.js": {
       "description": "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",
-      "feature_no": "1001_1_3"
+      "feature_no": "1000_6_1"
     },
     "page/class_list_ichiran_test.js": {
       "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
-      "feature_no": "1001_2_1"
+      "feature_no": "1100_4_1"
     },
     "page/teacher_list_ichiran_test.js": {
       "description": "講師一覧の空検索で結果が表示されることを確認",
-      "feature_no": "1001_2_2"
+      "feature_no": "1200_3_1"
     },
     "page/course_ichiran_test.js": {
       "description": "コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認",
-      "feature_no": "1001_3_1"
+      "feature_no": "1100_3_1"
     },
     "page/contact_module_list_ichiran_test.js": {
       "description": "コンタクト一覧の空検索で結果が表示されることを確認",
