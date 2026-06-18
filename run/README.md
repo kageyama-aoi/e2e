@@ -60,6 +60,7 @@ run/run_gui.bat をダブルクリック
 | **Stop** | 実行中プロセスを `terminate()` で停止。停止後にログを自動保存 |
 | **Open Allure** | `allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
 | **Open CSV** | テストファイルに対応する `data/<product>/*_data*.csv` をデフォルトアプリで開く |
+| **Login & Hold (shimamura)** | shimamura プロファイル専用。新しいコンソールウィンドウでブラウザを起動し、ログイン後に手動操作できる状態で待機させる。ターミナルに `resume` を入力するか Ctrl+C × 2 で終了 |
 
 ### 右ペイン
 
@@ -81,6 +82,24 @@ run/run_gui.bat をダブルクリック
 
 ---
 
+## ダウンロードファイルパネル
+
+テスト実行完了後、`output/downloads/` に新しく作成された `.csv` / `.tsv` / `.txt` ファイルを自動検出して右ペイン下部に一覧表示する。
+
+| 列 | 内容 |
+|---|---|
+| ファイル名 | ダウンロードされたファイル名 |
+| サイズ | ファイルサイズ（B / KB / MB） |
+| 件数 | 行数またはレコード数（固定長120バイトのファイルはレコード数で表示） |
+| 形式/エンコード | Shift-JIS / UTF-8 / 固定長-120 など |
+
+- **フォルダを開く** — `output/downloads/` をエクスプローラーで開く
+- **Excelで開く** — 選択中のファイルをデフォルトアプリで開く
+
+ダウンロード検証テストを実行した際に結果をすぐ確認できる。
+
+---
+
 ## 自動ログ保存・クリーンアップ
 
 ### テスト終了時の自動保存
@@ -91,6 +110,8 @@ Run 終了（正常終了・Stop・エラー）後に `logs/<testname>_<YYYYMMDD
 
 起動 0.3 秒後にバックグラウンドで実行。  
 `logs/` 内の `<name>_<YYYYMMDD_HHMMSS>.log` のうち **30 日以上** 古いものを `logs/archive/<name>.log.zip` に圧縮してから削除する。
+
+また、`docs/common/learning/bash_YYYYMMDD.md` のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
 
 ---
 
@@ -144,7 +165,7 @@ CustomTkinter への全面移行は以下の理由で見送った：
 
 ### ログクリーンアップの日数を変更する
 
-`run_gui.py` の 7 行目：
+`run_gui.py` の 34 行目：
 
 ```python
 LOG_CLEANUP_DAYS = 30
@@ -152,7 +173,7 @@ LOG_CLEANUP_DAYS = 30
 
 ### ログのフォント・サイズを変更する
 
-`run_gui.py` の 8 行目：
+`run_gui.py` の 35 行目：
 
 ```python
 LOG_FONT = ('Courier New', 9)
@@ -160,7 +181,7 @@ LOG_FONT = ('Courier New', 9)
 
 ### ログの色設定を変更する
 
-`_LOG_TAGS` 辞書（28 行目付近）で各タグの色・太字を指定している：
+`_LOG_TAGS` 辞書（38 行目付近）で各タグの色・太字を指定している：
 
 ```python
 _LOG_TAGS = {
@@ -171,7 +192,7 @@ _LOG_TAGS = {
 ```
 
 色は HTML カラーコード（`#RRGGBB`）で指定する。  
-新しいタグを追加する場合は `_get_log_tag()` メソッド（516 行目付近）にも判定条件を追加すること。
+新しいタグを追加する場合は `_get_log_tag()` メソッド（967 行目付近）にも判定条件を追加すること。
 
 ### 新プロダクトを追加する
 
@@ -185,7 +206,7 @@ GUI 側のコード変更は不要。
 
 ### ウィンドウサイズを変更する
 
-`RunnerApp.__init__` の 2 行（247 行目付近）：
+`RunnerApp.__init__` の 2 行（664 行目付近）：
 
 ```python
 self.geometry('960x640')   # 初期サイズ（幅×高さ）
@@ -227,5 +248,8 @@ run/
 | `find_csvs_for_test()` | `data/<product>/<stem>_data*.csv` を検索 |
 | `build_command()` | `npx codeceptjs run` コマンドを組み立て |
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
+| `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |
+| `_analyze_download_file()` | ダウンロードファイルの件数・エンコードを解析 |
 | `RunnerApp._run_process()` | テストをサブスレッドで実行してログをキューに流す |
 | `RunnerApp._drain_log_queue()` | 100ms ごとにキューを消費して UI に反映 |
+| `RunnerApp._show_downloads_panel()` | テスト完了後に新着ダウンロードファイルを検出して表示 |
