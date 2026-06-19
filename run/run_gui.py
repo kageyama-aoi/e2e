@@ -652,12 +652,44 @@ class CsvEditorWindow(tk.Toplevel):
             messagebox.showerror('Error', f'保存に失敗しました:\n{e}', parent=self)
 
 
+class SplashScreen(tk.Toplevel):
+    """起動中スプラッシュスクリーン。RunnerApp の初期化が完了したら destroy() で閉じる。"""
+    _W, _H = 400, 160
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.overrideredirect(True)
+        sw, sh = self.winfo_screenwidth(), self.winfo_screenheight()
+        x = (sw - self._W) // 2
+        y = (sh - self._H) // 2
+        self.geometry(f'{self._W}x{self._H}+{x}+{y}')
+        self.configure(background='#1e2a3a')
+        self.resizable(False, False)
+        tk.Label(
+            self, text='CodeceptJS Test Runner',
+            font=('Segoe UI', 16, 'bold'),
+            foreground='#4a9eff', background='#1e2a3a',
+        ).pack(pady=(30, 4))
+        tk.Label(
+            self, text='起動中...',
+            font=('Segoe UI', 9),
+            foreground='#aaaaaa', background='#1e2a3a',
+        ).pack()
+        self._bar = ttk.Progressbar(self, mode='indeterminate', length=340)
+        self._bar.pack(pady=(14, 0))
+        self._bar.start(10)
+        self.lift()
+        self.update()
+
+
 class RunnerApp(tk.Tk):
     def __init__(self, repo_root):
         super().__init__()
+        self.withdraw()  # 初期化完了まで非表示
+        self._splash = SplashScreen(self)
         self.title('CodeceptJS Test Runner')
-        self.geometry('960x640')
-        self.minsize(760, 520)
+        self.geometry('1080x700')
+        self.minsize(820, 560)
 
         self.repo_root = repo_root
         self.env_dir = os.path.join(repo_root, 'env')
@@ -672,13 +704,16 @@ class RunnerApp(tk.Tk):
 
         self._all_tests = []
         self._all_profiles = []
-        self._filtered_test_paths = []  # test_list の各行に対応するフルパス
+        self._filtered_test_paths = []  # 選択 Product の全テスト
+        self._visible_test_paths = []   # フィルター・ソート後の表示対象
         self._descriptions = load_descriptions(os.path.dirname(__file__))
 
         self.product_var = tk.StringVar()
         self.test_var = tk.StringVar()
         self.profile_var = tk.StringVar()
         self.grep_var = tk.StringVar()
+        self.feature_filter_var = tk.StringVar()
+        self.sort_by_feature_var = tk.BooleanVar()
         self.debug_var = tk.BooleanVar()
         self.cmd_var = tk.StringVar()
         self.status_var = tk.StringVar(value='Ready')
@@ -691,6 +726,8 @@ class RunnerApp(tk.Tk):
         self._load_products()
         self.after(100, self._drain_log_queue)
         self.after(300, self._auto_cleanup_on_start)
+        self._splash.destroy()
+        self.deiconify()
 
     def _build_ui(self):
         ttk.Label(self, text='CodeceptJS Test Runner', font=('Segoe UI', 14, 'bold')).pack(pady=8)
@@ -704,13 +741,13 @@ class RunnerApp(tk.Tk):
 
         # Product
         ttk.Label(left, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
-        self.product_list = tk.Listbox(left, width=42, height=4, exportselection=False)
-        self.product_list.grid(row=1, column=0, columnspan=2, sticky='ew')
-        self.product_list.bind('<<ListboxSelect>>', self._on_product_select)
+        self.product_combo = ttk.Combobox(left, textvariable=self.product_var, width=46, state='readonly')
+        self.product_combo.grid(row=1, column=0, columnspan=2, sticky='ew')
+        self.product_combo.bind('<<ComboboxSelected>>', self._on_product_select)
 
         # Test File
         ttk.Label(left, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.test_list = tk.Listbox(left, width=42, height=10, exportselection=False, font=('Courier New', 9))
+        self.test_list = tk.Listbox(left, width=48, height=12, exportselection=False, font=('Courier New', 9))
         tsb_y = ttk.Scrollbar(left, orient='vertical', command=self.test_list.yview)
         tsb_x = ttk.Scrollbar(left, orient='horizontal', command=self.test_list.xview)
         self.test_list.configure(yscrollcommand=tsb_y.set, xscrollcommand=tsb_x.set)
@@ -723,14 +760,14 @@ class RunnerApp(tk.Tk):
         self.desc_var = tk.StringVar(value='')
         desc_label = ttk.Label(
             left, textvariable=self.desc_var,
-            foreground='#555555', wraplength=300, justify='left',
+            foreground='#555555', wraplength=340, justify='left',
         )
         desc_label.grid(row=5, column=0, columnspan=2, sticky='w', pady=(2, 0))
 
         # Profile
         self.profile_label = ttk.Label(left, text='Profile')
         self.profile_label.grid(row=6, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.profile_list = tk.Listbox(left, width=42, height=5, exportselection=False)
+        self.profile_list = tk.Listbox(left, width=48, height=5, exportselection=False)
         psb = ttk.Scrollbar(left, orient='vertical', command=self.profile_list.yview)
         self.profile_list.configure(yscrollcommand=psb.set)
         self.profile_list.grid(row=7, column=0, sticky='ew')
@@ -739,19 +776,30 @@ class RunnerApp(tk.Tk):
 
         # Grep filter
         ttk.Label(left, text='Grep (任意)').grid(row=8, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.grep_combo = ttk.Combobox(left, textvariable=self.grep_var, width=40)
+        self.grep_combo = ttk.Combobox(left, textvariable=self.grep_var, width=46)
         self.grep_combo.grid(row=9, column=0, columnspan=2, sticky='ew')
         self.grep_combo.bind('<KeyRelease>', lambda _: self._update_cmd_display())
         self.grep_combo.bind('<<ComboboxSelected>>', lambda _: self._update_cmd_display())
         self.grep_hint_var = tk.StringVar(value='')
         ttk.Label(
             left, textvariable=self.grep_hint_var,
-            foreground='#4a9eff', wraplength=300, justify='left',
+            foreground='#4a9eff', wraplength=340, justify='left',
         ).grid(row=10, column=0, columnspan=2, sticky='w')
+
+        # 機能番号フィルター
+        feature_filter_frame = ttk.Frame(left)
+        feature_filter_frame.grid(row=11, column=0, columnspan=2, sticky='ew', pady=(8, 0))
+        ttk.Label(feature_filter_frame, text='機能番号フィルター').pack(side=tk.LEFT)
+        ttk.Entry(feature_filter_frame, textvariable=self.feature_filter_var, width=20).pack(side=tk.LEFT, padx=(4, 8))
+        self.feature_filter_var.trace_add('write', lambda *_: self._apply_test_filter())
+        ttk.Checkbutton(
+            feature_filter_frame, text='番号順',
+            variable=self.sort_by_feature_var, command=self._apply_test_filter,
+        ).pack(side=tk.LEFT)
 
         # Buttons（2列グリッド）
         btn_frame = ttk.Frame(left)
-        btn_frame.grid(row=11, column=0, columnspan=2, sticky='ew', pady=(8, 0))
+        btn_frame.grid(row=12, column=0, columnspan=2, sticky='ew', pady=(8, 0))
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
 
@@ -821,34 +869,53 @@ class RunnerApp(tk.Tk):
         if not products:
             messagebox.showwarning('No Products', 'tests/ 配下にサブフォルダが見つかりません。')
             return
-        for p in products:
-            self.product_list.insert(tk.END, p)
-        self.product_list.selection_set(0)
-        self.product_list.activate(0)
+        self.product_combo['values'] = products
+        self.product_combo.current(0)
         self.product_var.set(products[0])
         self._on_product_select(None)
 
     def _on_product_select(self, _event):
-        sel = self.product_list.curselection()
-        product = self.product_list.get(sel[0]) if sel else self.product_var.get()
-        self.product_var.set(product)
-
-        # テストリストを製品でフィルタリング（表示はサブパスのみ）
+        product = self.product_var.get()
         self._filtered_test_paths = [t for t in self._all_tests if _get_product_from_test(t) == product]
-        display_names = [get_display_name(t, product, self._descriptions) for t in self._filtered_test_paths]
+        self._apply_test_filter()
+        self._refresh_profiles(product)
+
+    def _apply_test_filter(self):
+        """feature_filter_var と sort_by_feature_var を見て _visible_test_paths を更新し、リストを再描画する。"""
+        product = self.product_var.get()
+        query = self.feature_filter_var.get().strip()
+        sort_by_feature = self.sort_by_feature_var.get()
+
+        if query:
+            prefix = f'./tests/{product}/'
+            def _matches(path):
+                rel = path[len(prefix):] if path.startswith(prefix) else path
+                fno = get_feature_no(self._descriptions.get(product, {}).get(rel))
+                return fno.startswith(query)
+            paths = [p for p in self._filtered_test_paths if _matches(p)]
+        else:
+            paths = list(self._filtered_test_paths)
+
+        if sort_by_feature:
+            prefix = f'./tests/{product}/'
+            def _sort_key(path):
+                rel = path[len(prefix):] if path.startswith(prefix) else path
+                fno = get_feature_no(self._descriptions.get(product, {}).get(rel))
+                return (0 if fno else 1, fno, path)
+            paths = sorted(paths, key=_sort_key)
+
+        self._visible_test_paths = paths
+        display_names = [get_display_name(t, product, self._descriptions) for t in paths]
         formatted = format_test_list(display_names)
         self.test_list.delete(0, tk.END)
         for name in formatted:
             self.test_list.insert(tk.END, name)
-        if self._filtered_test_paths:
+        if paths:
             self.test_list.selection_set(0)
             self.test_list.activate(0)
-            self.test_var.set(self._filtered_test_paths[0])
+            self.test_var.set(paths[0])
         else:
             self.test_var.set('')
-
-        # プロファイルリストを製品でフィルタリング
-        self._refresh_profiles(product)
         self._update_desc_label()
         self._update_grep_combo()
         self._update_cmd_display()
@@ -878,7 +945,7 @@ class RunnerApp(tk.Tk):
         sel = self.test_list.curselection()
         if not sel:
             return
-        self.test_var.set(self._filtered_test_paths[sel[0]])
+        self.test_var.set(self._visible_test_paths[sel[0]])
         self._update_desc_label()
         self._update_grep_combo()
         self._update_cmd_display()
