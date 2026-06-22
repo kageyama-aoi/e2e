@@ -226,11 +226,16 @@ async function verifyValidationErrors(I, expectedErrors, containerSelector) {
  * @param {string} [context] - エラーメッセージのプレフィックス（例: '【受講生基本情報】保存'）
  */
 async function assertNoShimamuraError(I, context = '処理') {
-  const errorText = await I.executeScript(() => {
+  const errorInfo = await I.executeScript(() => {
     const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.innerText.trim() : '';
+    if (!el) return null;
+    const text = el.innerText.trim();
+    if (!text) return null;
+    return { text, html: el.innerHTML.trim() };
   });
-  if (errorText) throw new Error(`${context}エラー: ${errorText}`);
+  if (errorInfo) {
+    throw new Error(`${context}エラー: ${errorInfo.text}\n[HTML] ${errorInfo.html}`);
+  }
 }
 
 /**
