@@ -683,7 +683,7 @@ class EnvSettingsWindow(tk.Toplevel):
         super().__init__(parent)
         self.env_path = env_path
         self.title(f'Settings — {os.path.basename(env_path)}')
-        self.geometry('460x420')
+        self.geometry('480x390')
         self.resizable(False, False)
         self._vars = {}
         self._load_and_build()
@@ -705,41 +705,47 @@ class EnvSettingsWindow(tk.Toplevel):
 
     def _load_and_build(self):
         values = self._load_env()
+
+        # ヘッダー
         ttk.Label(
             self, text=os.path.basename(self.env_path),
             font=('Segoe UI', 10, 'bold'),
-        ).pack(padx=16, pady=(12, 6), anchor='w')
+        ).pack(padx=16, pady=(14, 6), anchor='w')
+        ttk.Separator(self, orient='horizontal').pack(fill=tk.X, padx=12)
 
         frame = ttk.Frame(self)
-        frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=4)
+        frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=(8, 4))
         frame.columnconfigure(0, weight=1)
 
         for i, (key, label, typ, options, hint) in enumerate(self._SETTINGS):
-            row_base = i * 3
-            # ラベル行
+            row_base = i * 2
+            pady_label = (12, 0) if i > 0 else (0, 0)
+
+            # ラベル（左）＋ コントロール（右）を同じ行に並べる
             ttk.Label(frame, text=label, font=('Segoe UI', 9, 'bold')).grid(
-                row=row_base, column=0, sticky='w', pady=(8, 0))
-            # コントロール行
+                row=row_base, column=0, sticky='w', pady=pady_label)
             if typ == 'bool':
                 var = tk.BooleanVar(value=values.get(key, 'false').lower() == 'true')
-                ttk.Checkbutton(frame, variable=var, text='有効').grid(
-                    row=row_base + 1, column=0, sticky='w', padx=(4, 0))
+                ttk.Checkbutton(frame, variable=var, text='ON').grid(
+                    row=row_base, column=1, sticky='e', padx=(8, 0), pady=pady_label)
             else:
                 raw = values.get(key, '')
                 cur = 'sidebar（メニュークリック）' if raw == 'sidebar' else 'デフォルト（URLで直接遷移）'
                 var = tk.StringVar(value=cur)
                 ttk.Combobox(
                     frame, textvariable=var, values=options,
-                    state='readonly', width=30,
-                ).grid(row=row_base + 1, column=0, sticky='w', padx=(4, 0))
+                    state='readonly', width=22,
+                ).grid(row=row_base, column=1, sticky='e', padx=(8, 0), pady=pady_label)
             self._vars[key] = var
-            # ヒント行
+
+            # ヒント文（2列にまたがる、ラベルの直下）
             ttk.Label(
                 frame, text=hint,
                 foreground='#888888', font=('Segoe UI', 8),
-                wraplength=410, justify='left',
-            ).grid(row=row_base + 2, column=0, sticky='w', padx=(4, 0))
+                wraplength=440, justify='left',
+            ).grid(row=row_base + 1, column=0, columnspan=2, sticky='w', padx=(2, 0), pady=(2, 0))
 
+        ttk.Separator(self, orient='horizontal').pack(fill=tk.X, padx=12, pady=(8, 0))
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill=tk.X, padx=16, pady=(8, 14))
         ttk.Button(btn_frame, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=(4, 0))
