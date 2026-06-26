@@ -652,6 +652,126 @@ class CsvEditorWindow(tk.Toplevel):
             messagebox.showerror('Error', f'保存に失敗しました:\n{e}', parent=self)
 
 
+class EnvSettingsWindow(tk.Toplevel):
+    """選択プロファイルの .env ファイルを GUI で編集するウィンドウ。"""
+
+    _SETTINGS = [
+        ('HEADLESS',                 'ヘッドレスモード',              'bool',   None),
+        ('SCREENSHOT_ON_NAVIGATION', 'スクリーンショット（画面遷移時）', 'bool',   None),
+        ('CHECKBOX_DEBUG',           'チェックボックスデバッグログ',    'bool',   None),
+        ('FORM_FILL_FAST',           'フォーム一括入力（高速）',        'bool',   None),
+        ('SHIMAMURA_NAV',            '遷移方式',                      'select', ['デフォルト（directUrl）', 'sidebar']),
+    ]
+
+    def __init__(self, parent, env_path):
+        super().__init__(parent)
+        self.env_path = env_path
+        self.title(f'Settings — {os.path.basename(env_path)}')
+        self.geometry('400x280')
+        self.resizable(False, False)
+        self._vars = {}
+        self._load_and_build()
+
+    def _load_env(self):
+        result = {}
+        try:
+            with open(self.env_path, encoding='utf-8') as f:
+                for line in f:
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith('#'):
+                        continue
+                    if '=' in stripped:
+                        k, _, v = stripped.partition('=')
+                        result[k.strip()] = v.strip().strip('"').strip("'")
+        except Exception:
+            pass
+        return result
+
+    def _load_and_build(self):
+        values = self._load_env()
+        ttk.Label(
+            self, text=os.path.basename(self.env_path),
+            font=('Segoe UI', 10, 'bold'),
+        ).pack(padx=16, pady=(12, 8), anchor='w')
+
+        frame = ttk.Frame(self)
+        frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=4)
+        frame.columnconfigure(1, weight=1)
+
+        for i, (key, label, typ, options) in enumerate(self._SETTINGS):
+            ttk.Label(frame, text=label).grid(row=i, column=0, sticky='w', pady=4)
+            if typ == 'bool':
+                var = tk.BooleanVar(value=values.get(key, 'false').lower() == 'true')
+                ttk.Checkbutton(frame, variable=var).grid(row=i, column=1, sticky='w', padx=(12, 0))
+            else:
+                raw = values.get(key, '')
+                cur = 'sidebar' if raw == 'sidebar' else 'デフォルト（directUrl）'
+                var = tk.StringVar(value=cur)
+                ttk.Combobox(
+                    frame, textvariable=var, values=options,
+                    state='readonly', width=22,
+                ).grid(row=i, column=1, sticky='w', padx=(12, 0))
+            self._vars[key] = var
+
+        btn_frame = ttk.Frame(self)
+        btn_frame.pack(fill=tk.X, padx=16, pady=(8, 14))
+        ttk.Button(btn_frame, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=(4, 0))
+        ttk.Button(btn_frame, text='Save', command=self._save).pack(side=tk.RIGHT)
+
+    def _save(self):
+        try:
+            with open(self.env_path, encoding='utf-8') as f:
+                lines = f.readlines()
+        except Exception as e:
+            messagebox.showerror('Error', f'読み込みに失敗しました:\n{e}', parent=self)
+            return
+
+        new_values = {}
+        for key, var in self._vars.items():
+            if key == 'SHIMAMURA_NAV':
+                new_values[key] = 'sidebar' if var.get() == 'sidebar' else ''
+            else:
+                new_values[key] = 'true' if var.get() else 'false'
+
+        updated_keys = set()
+        new_lines = []
+        for line in lines:
+            stripped = line.strip()
+            # コメントアウトされた SHIMAMURA_NAV 行の処理
+            if re.match(r'^#\s*SHIMAMURA_NAV\s*=', stripped):
+                if new_values.get('SHIMAMURA_NAV') == 'sidebar':
+                    new_lines.append('SHIMAMURA_NAV=sidebar\n')
+                    updated_keys.add('SHIMAMURA_NAV')
+                else:
+                    new_lines.append(line)
+                continue
+            m = re.match(r'^([A-Z_]+)=', stripped)
+            if m and m.group(1) in new_values:
+                k = m.group(1)
+                val = new_values[k]
+                if k == 'SHIMAMURA_NAV':
+                    new_lines.append('SHIMAMURA_NAV=sidebar\n' if val == 'sidebar' else '# SHIMAMURA_NAV=sidebar\n')
+                else:
+                    new_lines.append(f'{k}={val}\n')
+                updated_keys.add(k)
+                continue
+            new_lines.append(line)
+
+        for key, val in new_values.items():
+            if key not in updated_keys and key != 'SHIMAMURA_NAV':
+                new_lines.append(f'{key}={val}\n')
+            elif key not in updated_keys and val == 'sidebar':
+                new_lines.append('SHIMAMURA_NAV=sidebar\n')
+
+        try:
+            with open(self.env_path, 'w', encoding='utf-8') as f:
+                f.writelines(new_lines)
+            messagebox.showinfo('Saved', '設定を保存しました', parent=self)
+            self.destroy()
+        except Exception as e:
+            messagebox.showerror('Error', f'保存に失敗しました:\n{e}', parent=self)
+
+
 class SplashScreen(tk.Toplevel):
     """起動中スプラッシュスクリーン。RunnerApp の初期化が完了したら destroy() で閉じる。"""
     _W, _H = 400, 160
@@ -828,6 +948,9 @@ class RunnerApp(tk.Tk):
             command=self._on_login_and_hold,
         )
         self.login_hold_btn.grid(row=3, column=0, columnspan=2, sticky='ew', pady=(4, 2))
+
+        self.settings_btn = ttk.Button(btn_frame, text='Settings (.env)', command=self._on_open_settings)
+        self.settings_btn.grid(row=4, column=0, columnspan=2, sticky='ew', pady=(2, 2))
 
         # ---- 右ペイン ----
         right = ttk.Frame(body)
@@ -1152,6 +1275,17 @@ class RunnerApp(tk.Tk):
         self.log_text.configure(state='normal')
         self.log_text.delete('1.0', tk.END)
         self.log_text.configure(state='disabled')
+
+    def _on_open_settings(self):
+        profile = self.profile_var.get().strip()
+        if not profile:
+            messagebox.showerror('Profile required', 'プロファイルを選択してください。')
+            return
+        env_path = os.path.join(self.env_dir, f'.env.{profile}')
+        if not os.path.isfile(env_path):
+            messagebox.showwarning('Not found', f'.env.{profile} が見つかりません:\n{env_path}')
+            return
+        EnvSettingsWindow(self, env_path)
 
     def _on_login_and_hold(self):
         """shimamura にログインしてブラウザを手動操作できる状態で開く。
