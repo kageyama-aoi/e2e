@@ -16,6 +16,12 @@ const NAV = {
 
 const S = {
   url: NAV.directUrl,
+  import: {
+    fileInput: 'input[name="import_file"]',
+    button:    'input[name="batch_import"]',
+    success:   '#top_message_div_id',
+    error:     '#top_err_info_msg_div',
+  },
   fields: {
     keijoubi:      '#keijoubi',
     from_datetime: '#from_datetime',
@@ -124,7 +130,44 @@ async function runKoushiShareiValidationFlow(I, input) {
   await ShouldSaveAndVerify(I, input.expectedErrors || []);
 }
 
+async function navigateToTsuikaImportScreen(I) {
+  I.say('【画面遷移】講師謝礼追加画面（取込）へ');
+  I.amOnPage(BASE_URL + NAV.directUrl);
+  I.waitForElement(S.import.fileInput, TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '講師謝礼追加画面');
+}
+
+async function executeImport(I, filePath) {
+  I.say(`【ファイル選択】${filePath}`);
+  I.attachFile(S.import.fileInput, filePath);
+  I.say('【一括取込実行】講師謝礼一括取込ボタンをクリック');
+  I.click(S.import.button);
+  await I.waitForFunction(
+    () => document.querySelector('#top_message_div_id')?.textContent.trim() ||
+          document.querySelector('#top_err_info_msg_div')?.textContent.trim(),
+    TIMEOUTS.RESULT
+  );
+}
+
+async function verifyImportResult(I) {
+  const errorText = await I.grabTextFrom(S.import.error);
+  if (errorText.trim()) {
+    throw new Error(`一括取込エラー: ${errorText.trim()}`);
+  }
+  I.say('【結果確認】エラーなし - 取込成功');
+}
+
+async function verifyImportError(I, expectedError) {
+  I.waitForElement(S.import.error, TIMEOUTS.RESULT);
+  I.see(expectedError, S.import.error);
+  I.say(`【結果確認】期待エラーを確認: ${expectedError}`);
+}
+
 module.exports = {
   runKoushiShareiManualFlow,
-  runKoushiShareiValidationFlow
+  runKoushiShareiValidationFlow,
+  navigateToTsuikaImportScreen,
+  executeImport,
+  verifyImportResult,
+  verifyImportError,
 };

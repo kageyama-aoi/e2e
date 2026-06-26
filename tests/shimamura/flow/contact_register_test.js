@@ -22,10 +22,7 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
-
-const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
-  + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true';
+const { TIMEOUTS, URLS } = require('../../../support/shimamura/constants');
 
 const S = {
   screen:  { name: '問合せ' },
@@ -66,7 +63,7 @@ Before(beforeShimamura);
 
 async function navigateToContactRegister(I) {
   I.say('【問合せ登録】URL 直遷移');
-  I.amOnPage(process.env.BASE_URL + CONTACT_REGISTER_URL);
+  I.amOnPage(process.env.BASE_URL + URLS.CONTACT_REGISTER);
   I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
 }
 

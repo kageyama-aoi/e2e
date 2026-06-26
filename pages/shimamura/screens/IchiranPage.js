@@ -3,8 +3,28 @@
 const { I } = inject();
 const { toggleGroupmenu, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const menus = require('../_common/sideMenus');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
+
+const RESULT_LINK = 'a.listViewTdLinkS1';
 
 module.exports = {
+
+  // ----------------------------------------------------------------
+  //  共通: 検索実行・結果確認（listViewTdLinkS1 を使う全モジュール共通）
+  // ----------------------------------------------------------------
+
+  _clickSearchAndWait() {
+    I.click('input[name="search"]');
+    I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
+  },
+
+  _verifyResultsExist() {
+    I.seeElement(RESULT_LINK);
+  },
+
+  _verifyRecordInResults(expectedText) {
+    I.see(expectedText, RESULT_LINK);
+  },
 
   // ----------------------------------------------------------------
   //  ナビゲーションヘルパー
@@ -12,7 +32,7 @@ module.exports = {
 
   _navigateToModule(moduleRelUrl) {
     I.amOnPage(process.env.BASE_URL + moduleRelUrl);
-    I.waitForElement('a[class*="subMenuLink"]', 10);
+    I.waitForElement('a[class*="subMenuLink"]', TIMEOUTS.ELEMENT);
   },
 
   _clickShortcut(linkText) {
@@ -49,7 +69,7 @@ module.exports = {
   async navigateToTransactionListPage() {
     I.say('【入出金一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.transactionList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
     this._clearDateRangeFields();
   },
 
@@ -68,18 +88,17 @@ module.exports = {
 
   clickTransactionSearchAndWait() {
     I.say('【入出金一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyTransactionResultsExist() {
     I.say('【入出金一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyTransactionRecordInResults(expectedText) {
     I.say(`【入出金一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -89,7 +108,7 @@ module.exports = {
   async navigateToStudentSearchPage() {
     I.say('【受講生検索】一覧画面へ遷移');
     await this._navigateViaMenu(menus.studentSearch);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
     this._clearDateRangeFields();
   },
 
@@ -105,18 +124,17 @@ module.exports = {
 
   clickStudentSearchAndWait() {
     I.say('【受講生検索】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyStudentResultsExist() {
     I.say('【受講生検索】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyStudentRecordInResults(expectedText) {
     I.say(`【受講生検索】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -126,7 +144,7 @@ module.exports = {
   async navigateToContactListPage() {
     I.say('【候補生一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.contactList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
     this._clearDateRangeFields();
   },
 
@@ -140,18 +158,17 @@ module.exports = {
 
   clickContactListSearchAndWait() {
     I.say('【候補生一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyContactListResultsExist() {
     I.say('【候補生一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyContactListRecordInResults(expectedText) {
     I.say(`【候補生一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -161,7 +178,7 @@ module.exports = {
   async navigateToCourseByStudentPage() {
     I.say('【コース別受講生一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.courseByStudent);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillCourseByStudentSearchConditions(data) {
@@ -172,18 +189,17 @@ module.exports = {
 
   clickCourseByStudentSearchAndWait() {
     I.say('【コース別受講生一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyCourseByStudentResultsExist() {
     I.say('【コース別受講生一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyCourseByStudentRecordInResults(expectedText) {
     I.say(`【コース別受講生一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -193,7 +209,7 @@ module.exports = {
   async navigateToClassListPage() {
     I.say('【クラス一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.classList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillClassListSearchConditions(data) {
@@ -204,18 +220,17 @@ module.exports = {
 
   clickClassListSearchAndWait() {
     I.say('【クラス一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyClassListResultsExist() {
     I.say('【クラス一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyClassListRecordInResults(expectedText) {
     I.say(`【クラス一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -225,7 +240,7 @@ module.exports = {
   async navigateToTeacherListPage() {
     I.say('【講師一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.teacherList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillTeacherListSearchConditions(data) {
@@ -239,18 +254,17 @@ module.exports = {
 
   clickTeacherListSearchAndWait() {
     I.say('【講師一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyTeacherListResultsExist() {
     I.say('【講師一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyTeacherListRecordInResults(expectedText) {
     I.say(`【講師一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -260,7 +274,7 @@ module.exports = {
   async navigateToCourseIchiranPage() {
     I.say('【コース一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.courseIchiran);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillCourseIchiranSearchConditions(data) {
@@ -271,18 +285,17 @@ module.exports = {
 
   clickCourseIchiranSearchAndWait() {
     I.say('【コース一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyCourseIchiranResultsExist() {
     I.say('【コース一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyCourseIchiranRecordInResults(expectedText) {
     I.say(`【コース一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -292,7 +305,7 @@ module.exports = {
   async navigateToContactModuleListPage() {
     I.say('【顧客一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.contactModuleList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillContactModuleListSearchConditions(data) {
@@ -306,18 +319,17 @@ module.exports = {
 
   clickContactModuleListSearchAndWait() {
     I.say('【顧客一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('a.listViewTdLinkS1', 15);
+    this._clickSearchAndWait();
   },
 
   verifyContactModuleListResultsExist() {
     I.say('【顧客一覧】検索結果が表示されることを確認');
-    I.seeElement('a.listViewTdLinkS1');
+    this._verifyResultsExist();
   },
 
   verifyContactModuleListRecordInResults(expectedText) {
     I.say(`【顧客一覧】"${expectedText}" が結果に表示されることを確認`);
-    I.see(expectedText, 'a.listViewTdLinkS1');
+    this._verifyRecordInResults(expectedText);
   },
 
   // ----------------------------------------------------------------
@@ -328,7 +340,7 @@ module.exports = {
   async navigateToMishukinListPage() {
     I.say('【未収金一覧】一覧画面へ遷移');
     await this._navigateViaMenu(menus.mishukinList);
-    I.waitForElement('input[name="search"]', 10);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
   },
 
   fillMishukinSearchConditions(data) {
@@ -343,7 +355,7 @@ module.exports = {
   clickMishukinSearchAndWait() {
     I.say('【未収金一覧】検索実行');
     I.click('input[name="search"]');
-    I.waitForElement('.listViewPaginationTdS1', 15);
+    I.waitForElement('.listViewPaginationTdS1', TIMEOUTS.ENABLED);
   },
 
   verifyMishukinTableVisible() {
@@ -358,7 +370,7 @@ module.exports = {
   async navigateToValidityDataOutputPage() {
     I.say('【有効性データ出力】画面へ遷移');
     await this._navigateViaMenu(menus.validityDataOutput);
-    I.waitForElement('input[value="有効性データ出力"]', 10);
+    I.waitForElement('input[value="有効性データ出力"]', TIMEOUTS.ELEMENT);
   },
 
   async downloadValidityDataCsv(savePath) {
@@ -373,7 +385,7 @@ module.exports = {
   async navigateToKeiriInvoicesPage() {
     I.say('【受注・売上】一覧画面へ遷移');
     await this._navigateViaMenu(menus.keiriInvoices);
-    I.waitForElement('select[name="keiri_month_year"]', 10);
+    I.waitForElement('select[name="keiri_month_year"]', TIMEOUTS.ELEMENT);
   },
 
   fillKeiriInvoicesSearchConditions(data) {
@@ -386,7 +398,7 @@ module.exports = {
   clickKeiriInvoicesDisplayAndWait() {
     I.say('【受注・売上】表示ボタンをクリック');
     I.click('input[name="button"][value="表示"]');
-    I.waitForElement('select[name="keiri_month_year"]', 15);
+    I.waitForElement('select[name="keiri_month_year"]', TIMEOUTS.ENABLED);
   },
 
   verifyKeiriInvoicesPageLoaded() {
@@ -401,7 +413,7 @@ module.exports = {
   async navigateToAttendanceTodayPage() {
     I.say('【出席表検索】一覧画面へ遷移');
     await this._navigateViaMenu(menus.attendanceToday);
-    I.waitForElement('input[name="button"][value="出席表表示"]', 10);
+    I.waitForElement('input[name="button"][value="出席表表示"]', TIMEOUTS.ELEMENT);
   },
 
   fillAttendanceTodaySearchConditions(data) {
@@ -415,7 +427,7 @@ module.exports = {
   clickAttendanceTodayDisplayAndWait() {
     I.say('【出席表検索】出席表表示ボタンをクリック');
     I.click('input[name="button"][value="出席表表示"]');
-    I.waitForElement('.listViewPaginationTdS1', 15);
+    I.waitForElement('.listViewPaginationTdS1', TIMEOUTS.ENABLED);
   },
 
   verifyAttendanceTodayPageLoaded() {

@@ -18,4 +18,9 @@ const TIMEOUTS = {
   TAB_SWITCH: 2
 };
 
-module.exports = { TIMEOUTS };
+const URLS = {
+  CONTACT_REGISTER: '/index.php?module=Student&action=EditView'
+    + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true',
+};
+
+module.exports = { TIMEOUTS, URLS };

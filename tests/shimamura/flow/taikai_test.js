@@ -16,26 +16,14 @@
  * **最終更新日**
  * - 2026-01-27
  */
+const { loadCsvWithProfile } = require('../../../support/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { toggleGroupmenu } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
+
 Feature('退会処理 (@dev)');
 
 Before(beforeShimamura);
-
-
-const path = require('path');
-const { readCsv } = require('../../../support/utils');
-const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { toggleGroupmenu, verifyNavigationByUrlChange } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
-
-/**
- * CSVファイルから退会テストデータを読み込む
- * @param {string} csvFileName - 読み込むCSVファイル名
- * @returns {Array<Object>} パースされたテストデータの配列
- */
-function loadTaikaiTestDataFromCsv(csvFileName) {
-  const filePath = path.join(__dirname, '../../data/shimamura', csvFileName);
-  return readCsv(filePath);
-}
 
 /**
  * 受講生一覧画面で検索を行い、詳細画面へ遷移する
@@ -179,7 +167,7 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear,
 
 Scenario('受講生退会 @dev', async ({ I, classMemberPageShimamura }) => {
 
-  const testDataList = loadTaikaiTestDataFromCsv('taikai_testdata.csv');
+  const testDataList = loadCsvWithProfile('taikai_testdata', 'shimamura');
 
   I.say(`CSVテストデータ件数: ${testDataList.length}件`);
 

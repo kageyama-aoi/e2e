@@ -24,25 +24,17 @@
 const {
   loadCsvWithProfile,
   withScenarioLabel,
-  logScreenUrl,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../../support/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
-
-const S = {
-  fileInput:  'input[name="import_file"]',
-  button: {
-    import: 'input[name="batch_import"]'
-  },
-  message: {
-    success: '#top_message_div_id',
-    error:   '#top_err_info_msg_div'
-  }
-};
+const {
+  navigateToTsuikaImportScreen,
+  executeImport,
+  verifyImportResult,
+  verifyImportError,
+} = require('../../../pages/shimamura/flow/KoushiShareiFlowPage');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_tsuika_data', 'shimamura'),
@@ -53,40 +45,6 @@ const errorData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_tsuika_errors', 'shimamura'),
   (row) => row.scenario || 'バリデーションエラー'
 );
-
-async function navigateToTsuikaScreen(I) {
-  I.say('【画面遷移】講師謝礼追加画面へ');
-  I.amOnPage(BASE_URL + 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN');
-  I.waitForElement(S.fileInput, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '講師謝礼追加画面');
-}
-
-async function executeImport(I, filePath) {
-  I.say(`【ファイル選択】${filePath}`);
-  I.attachFile(S.fileInput, filePath);
-  I.say('【一括取込実行】講師謝礼一括取込ボタンをクリック');
-  I.click(S.button.import);
-  // 成功メッセージかエラーテキストが現れるまで動的に待機（空のまま存在する要素は無視）
-  await I.waitForFunction(
-    () => document.querySelector('#top_message_div_id')?.textContent.trim() ||
-          document.querySelector('#top_err_info_msg_div')?.textContent.trim(),
-    TIMEOUTS.RESULT
-  );
-}
-
-async function verifyImportResult(I) {
-  const errorText = await I.grabTextFrom(S.message.error);
-  if (errorText.trim()) {
-    throw new Error(`一括取込エラー: ${errorText.trim()}`);
-  }
-  I.say('【結果確認】エラーなし - 取込成功');
-}
-
-async function verifyImportError(I, expectedError) {
-  I.waitForElement(S.message.error, TIMEOUTS.RESULT);
-  I.see(expectedError, S.message.error);
-  I.say(`【結果確認】期待エラーを確認: ${expectedError}`);
-}
 
 Feature('講師謝礼一括取込');
 
@@ -104,7 +62,7 @@ Data(csvData).Scenario('講師謝礼一括取込を実行できる @dev', async 
     input: { import_file_path: current.import_file_path }
   });
 
-  await navigateToTsuikaScreen(I);
+  await navigateToTsuikaImportScreen(I);
   await executeImport(I, current.import_file_path);
   await verifyImportResult(I);
 
@@ -123,7 +81,7 @@ Data(errorData).Scenario('講師謝礼一括取込のバリデーションエラ
     input: { import_file_path: current.import_file_path, expectedError: current.expectedError }
   });
 
-  await navigateToTsuikaScreen(I);
+  await navigateToTsuikaImportScreen(I);
   await executeImport(I, current.import_file_path);
   await verifyImportError(I, current.expectedError);
 

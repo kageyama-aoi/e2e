@@ -15,10 +15,7 @@
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
-
-const CONTACT_REGISTER_URL = '/index.php?module=Student&action=EditView'
-  + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true';
+const { TIMEOUTS, URLS } = require('../../../support/shimamura/constants');
 
 const S = {
   fields: {
@@ -51,7 +48,7 @@ Before(beforeShimamura);
 Data(csvData).Scenario('請求方法ごとの必須フィールドを確認する @dev @explore', async ({ I, current }) => {
   I.say(`【探索】bank_payment_type=${current.bank_payment_type} (${current.scenario})`);
 
-  I.amOnPage(process.env.BASE_URL + CONTACT_REGISTER_URL);
+  I.amOnPage(process.env.BASE_URL + URLS.CONTACT_REGISTER);
   I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
 
   I.fillField(S.fields.lastName,          BASE_INPUT.last_name);

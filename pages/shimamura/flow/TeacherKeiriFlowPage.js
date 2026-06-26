@@ -20,7 +20,7 @@ async function findTeacherRecordId(I, idnumber) {
   I.waitForElement(S.list.search, TIMEOUTS.SCREEN);
   fillTextFieldsByName(I, { idnumber });
   I.click(S.list.search);
-  I.wait(2);
+  I.wait(TIMEOUTS.TAB_SWITCH);
 
   const count = await I.grabNumberOfVisibleElements(S.list.firstLink);
   if (count === 0) {
@@ -84,6 +84,30 @@ async function setAccountingTab(I, recordId, input) {
   // tax_class は 0 が有効値のため truthy チェックではなく存在チェック
   if (input.tax_class !== undefined && input.tax_class !== '')
     I.selectOption('select[name="tax_class"]', input.tax_class);
+
+  // 金融機関コード: value設定 + keyup発火でAJAX補完（bank_name を自動入力）
+  if (input.bank_code) {
+    await I.executeScript((code) => {
+      const el = document.querySelector('#bank_code');
+      if (el) {
+        el.value = code;
+        el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+      }
+    }, input.bank_code);
+    I.wait(1);
+  }
+
+  // 支店コード: 同様にkeyup発火でAJAX補完（bank_branch_name を自動入力）
+  if (input.bank_branch_code) {
+    await I.executeScript((code) => {
+      const el = document.querySelector('#bank_branch_code');
+      if (el) {
+        el.value = code;
+        el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+      }
+    }, input.bank_branch_code);
+    I.wait(1);
+  }
 
   // 口座番号・口座名義人: 既存値が残っている場合を考慮して clearField してから入力
   if (input.bank_account_no) {
