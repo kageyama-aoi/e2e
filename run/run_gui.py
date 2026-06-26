@@ -835,8 +835,8 @@ class RunnerApp(tk.Tk):
         self.withdraw()  # 初期化完了まで非表示
         self._splash = SplashScreen(self)
         self.title('CodeceptJS Test Runner')
-        self.geometry('1080x700')
-        self.minsize(820, 560)
+        self.geometry('1100x720')
+        self.minsize(860, 600)
 
         self.repo_root = repo_root
         self.env_dir = os.path.join(repo_root, 'env')
@@ -886,17 +886,28 @@ class RunnerApp(tk.Tk):
         left = ttk.Frame(body)
         left.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 12))
 
+        # 上部：選択エリア（ウィンドウ高さに合わせて伸び縮みする）
+        left_top = ttk.Frame(left)
+        left_top.pack(fill=tk.BOTH, expand=True)
+        left_top.columnconfigure(0, weight=1)
+        left_top.rowconfigure(3, weight=2)  # テストリストが高さを吸収
+        left_top.rowconfigure(7, weight=1)  # プロファイルリストも少し伸び縮み
+
+        # 下部：ボタン（常に見える固定エリア）
+        left_bot = ttk.Frame(left)
+        left_bot.pack(fill=tk.X, pady=(6, 0))
+
         # Product
-        ttk.Label(left, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
-        self.product_combo = ttk.Combobox(left, textvariable=self.product_var, width=46, state='readonly')
+        ttk.Label(left_top, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
+        self.product_combo = ttk.Combobox(left_top, textvariable=self.product_var, width=46, state='readonly')
         self.product_combo.grid(row=1, column=0, columnspan=2, sticky='ew')
         self.product_combo.bind('<<ComboboxSelected>>', self._on_product_select)
 
         # Test File
-        ttk.Label(left, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.test_list = tk.Listbox(left, width=48, height=12, exportselection=False, font=('Courier New', 9))
-        tsb_y = ttk.Scrollbar(left, orient='vertical', command=self.test_list.yview)
-        tsb_x = ttk.Scrollbar(left, orient='horizontal', command=self.test_list.xview)
+        ttk.Label(left_top, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
+        self.test_list = tk.Listbox(left_top, width=48, height=8, exportselection=False, font=('Courier New', 9))
+        tsb_y = ttk.Scrollbar(left_top, orient='vertical', command=self.test_list.yview)
+        tsb_x = ttk.Scrollbar(left_top, orient='horizontal', command=self.test_list.xview)
         self.test_list.configure(yscrollcommand=tsb_y.set, xscrollcommand=tsb_x.set)
         self.test_list.grid(row=3, column=0, sticky='nsew')
         tsb_y.grid(row=3, column=1, sticky='ns')
@@ -906,35 +917,35 @@ class RunnerApp(tk.Tk):
         # Test description
         self.desc_var = tk.StringVar(value='')
         desc_label = ttk.Label(
-            left, textvariable=self.desc_var,
+            left_top, textvariable=self.desc_var,
             foreground='#555555', wraplength=340, justify='left',
         )
         desc_label.grid(row=5, column=0, columnspan=2, sticky='w', pady=(2, 0))
 
         # Profile
-        self.profile_label = ttk.Label(left, text='Profile')
+        self.profile_label = ttk.Label(left_top, text='Profile')
         self.profile_label.grid(row=6, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.profile_list = tk.Listbox(left, width=48, height=5, exportselection=False)
-        psb = ttk.Scrollbar(left, orient='vertical', command=self.profile_list.yview)
+        self.profile_list = tk.Listbox(left_top, width=48, height=3, exportselection=False)
+        psb = ttk.Scrollbar(left_top, orient='vertical', command=self.profile_list.yview)
         self.profile_list.configure(yscrollcommand=psb.set)
-        self.profile_list.grid(row=7, column=0, sticky='ew')
+        self.profile_list.grid(row=7, column=0, sticky='nsew')
         psb.grid(row=7, column=1, sticky='ns')
         self.profile_list.bind('<<ListboxSelect>>', self._on_profile_select)
 
         # Grep filter
-        ttk.Label(left, text='Grep (任意)').grid(row=8, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.grep_combo = ttk.Combobox(left, textvariable=self.grep_var, width=46)
+        ttk.Label(left_top, text='Grep (任意)').grid(row=8, column=0, columnspan=2, sticky='w', pady=(8, 0))
+        self.grep_combo = ttk.Combobox(left_top, textvariable=self.grep_var, width=46)
         self.grep_combo.grid(row=9, column=0, columnspan=2, sticky='ew')
         self.grep_combo.bind('<KeyRelease>', lambda _: self._update_cmd_display())
         self.grep_combo.bind('<<ComboboxSelected>>', lambda _: self._update_cmd_display())
         self.grep_hint_var = tk.StringVar(value='')
         ttk.Label(
-            left, textvariable=self.grep_hint_var,
+            left_top, textvariable=self.grep_hint_var,
             foreground='#4a9eff', wraplength=340, justify='left',
         ).grid(row=10, column=0, columnspan=2, sticky='w')
 
         # 機能番号フィルター
-        feature_filter_frame = ttk.Frame(left)
+        feature_filter_frame = ttk.Frame(left_top)
         feature_filter_frame.grid(row=11, column=0, columnspan=2, sticky='ew', pady=(8, 0))
         ttk.Label(feature_filter_frame, text='機能番号フィルター').pack(side=tk.LEFT)
         ttk.Entry(feature_filter_frame, textvariable=self.feature_filter_var, width=20).pack(side=tk.LEFT, padx=(4, 8))
@@ -944,9 +955,9 @@ class RunnerApp(tk.Tk):
             variable=self.sort_by_feature_var, command=self._apply_test_filter,
         ).pack(side=tk.LEFT)
 
-        # Buttons（2列グリッド）
-        btn_frame = ttk.Frame(left)
-        btn_frame.grid(row=12, column=0, columnspan=2, sticky='ew', pady=(8, 0))
+        # Buttons（2列グリッド・常に下部に固定表示）
+        btn_frame = ttk.Frame(left_bot)
+        btn_frame.pack(fill=tk.X)
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
 
