@@ -655,19 +655,35 @@ class CsvEditorWindow(tk.Toplevel):
 class EnvSettingsWindow(tk.Toplevel):
     """選択プロファイルの .env ファイルを GUI で編集するウィンドウ。"""
 
+    # (key, label, type, options, hint)
     _SETTINGS = [
-        ('HEADLESS',                 'ヘッドレスモード',              'bool',   None),
-        ('SCREENSHOT_ON_NAVIGATION', 'スクリーンショット（画面遷移時）', 'bool',   None),
-        ('CHECKBOX_DEBUG',           'チェックボックスデバッグログ',    'bool',   None),
-        ('FORM_FILL_FAST',           'フォーム一括入力（高速）',        'bool',   None),
-        ('SHIMAMURA_NAV',            '遷移方式',                      'select', ['デフォルト（directUrl）', 'sidebar']),
+        ('HEADLESS',
+         'ヘッドレスモード',
+         'bool', None,
+         'ON=ブラウザ画面を表示しない（高速・CI向き） / OFF=画面あり（目視確認向き）'),
+        ('SCREENSHOT_ON_NAVIGATION',
+         'スクリーンショット（画面遷移時）',
+         'bool', None,
+         'ON=遷移のたびにAllureレポートへ画像を添付 / OFF=撮影しない（実行時間短縮）'),
+        ('CHECKBOX_DEBUG',
+         'チェックボックスデバッグログ',
+         'bool', None,
+         'ON=どのセレクタでチェック操作したかをコンソールに出力（動作調査時のみ推奨）'),
+        ('FORM_FILL_FAST',
+         'フォーム一括入力（高速）',
+         'bool', None,
+         'ON=フィールドをまとめてセット（高速） / OFF=1つずつ入力（安全・デフォルト）'),
+        ('SHIMAMURA_NAV',
+         '遷移方式',
+         'select', ['デフォルト（URLで直接遷移）', 'sidebar（メニュークリック）'],
+         'デフォルト=URLを直接開いて遷移 / sidebar=サイドバーのメニューをクリックして遷移'),
     ]
 
     def __init__(self, parent, env_path):
         super().__init__(parent)
         self.env_path = env_path
         self.title(f'Settings — {os.path.basename(env_path)}')
-        self.geometry('400x280')
+        self.geometry('460x420')
         self.resizable(False, False)
         self._vars = {}
         self._load_and_build()
@@ -692,26 +708,37 @@ class EnvSettingsWindow(tk.Toplevel):
         ttk.Label(
             self, text=os.path.basename(self.env_path),
             font=('Segoe UI', 10, 'bold'),
-        ).pack(padx=16, pady=(12, 8), anchor='w')
+        ).pack(padx=16, pady=(12, 6), anchor='w')
 
         frame = ttk.Frame(self)
         frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=4)
-        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(0, weight=1)
 
-        for i, (key, label, typ, options) in enumerate(self._SETTINGS):
-            ttk.Label(frame, text=label).grid(row=i, column=0, sticky='w', pady=4)
+        for i, (key, label, typ, options, hint) in enumerate(self._SETTINGS):
+            row_base = i * 3
+            # ラベル行
+            ttk.Label(frame, text=label, font=('Segoe UI', 9, 'bold')).grid(
+                row=row_base, column=0, sticky='w', pady=(8, 0))
+            # コントロール行
             if typ == 'bool':
                 var = tk.BooleanVar(value=values.get(key, 'false').lower() == 'true')
-                ttk.Checkbutton(frame, variable=var).grid(row=i, column=1, sticky='w', padx=(12, 0))
+                ttk.Checkbutton(frame, variable=var, text='有効').grid(
+                    row=row_base + 1, column=0, sticky='w', padx=(4, 0))
             else:
                 raw = values.get(key, '')
-                cur = 'sidebar' if raw == 'sidebar' else 'デフォルト（directUrl）'
+                cur = 'sidebar（メニュークリック）' if raw == 'sidebar' else 'デフォルト（URLで直接遷移）'
                 var = tk.StringVar(value=cur)
                 ttk.Combobox(
                     frame, textvariable=var, values=options,
-                    state='readonly', width=22,
-                ).grid(row=i, column=1, sticky='w', padx=(12, 0))
+                    state='readonly', width=30,
+                ).grid(row=row_base + 1, column=0, sticky='w', padx=(4, 0))
             self._vars[key] = var
+            # ヒント行
+            ttk.Label(
+                frame, text=hint,
+                foreground='#888888', font=('Segoe UI', 8),
+                wraplength=410, justify='left',
+            ).grid(row=row_base + 2, column=0, sticky='w', padx=(4, 0))
 
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill=tk.X, padx=16, pady=(8, 14))
@@ -729,7 +756,7 @@ class EnvSettingsWindow(tk.Toplevel):
         new_values = {}
         for key, var in self._vars.items():
             if key == 'SHIMAMURA_NAV':
-                new_values[key] = 'sidebar' if var.get() == 'sidebar' else ''
+                new_values[key] = 'sidebar' if var.get().startswith('sidebar') else ''
             else:
                 new_values[key] = 'true' if var.get() else 'false'
 
