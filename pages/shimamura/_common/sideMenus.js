@@ -87,4 +87,9 @@ module.exports = {
     collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
     shortcut:       '入出金一覧',
   },
+  monthlyFeeCreation: {
+    directUrl: '/index.php?module=Fee&action=LWMonthlyFeeCreation_AN',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  '月謝一括作成',
+  },
 };
