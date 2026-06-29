@@ -7,15 +7,15 @@ const { TIMEOUTS } = require('../../../support/shimamura/constants');
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 const S = {
-  studentSearch: {
-    lastName:     '#last_name',
-    searchButton: 'input[name="search"]',
+  kouhoseiSearch: {
+    lastName:     'last_name',            // name属性（SyokaiFlowPage と同じ）
+    searchButton: '検索',
     resultLink:   'a.listViewTdLinkS1',
   },
-  studentDetail: {
+  kouhoseiDetail: {
     editButton: 'input[name="edit_button"]',
   },
-  studentEdit: {
+  kouhoseiEdit: {
     bankPaymentType: '#bank_payment_type',
     shimaStorageId:  '#shima_storage_id',
     saveButton:      'input[name="save_button"]',
@@ -23,30 +23,31 @@ const S = {
 };
 
 async function runStudentPaymentSetup(I, row) {
-  I.say(`【請求方法設定】受講生検索: ${row.lastName}`);
-  I.amOnPage(BASE_URL + 'index.php?module=Student&action=index&top_menu=1');
-  I.waitForElement(S.studentSearch.lastName, TIMEOUTS.SCREEN);
-  I.fillField(S.studentSearch.lastName, row.lastName);
-  I.click(S.studentSearch.searchButton);
-  I.waitForElement(S.studentSearch.resultLink, TIMEOUTS.RESULT);
-  await logScreenUrl(I, '受講生検索結果');
+  I.say(`【請求方法設定】候補生一覧へ遷移: ${row.lastName}`);
+  // contact_status=5 が候補生（問合せ）一覧
+  I.amOnPage(BASE_URL + 'index.php?module=Student&action=index&contact_status=5&top_menu=1');
+  I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
+  I.fillField(S.kouhoseiSearch.lastName, row.lastName);
+  I.click(S.kouhoseiSearch.searchButton);
+  I.waitForElement(S.kouhoseiSearch.resultLink, TIMEOUTS.RESULT);
+  await logScreenUrl(I, '候補生一覧');
 
-  I.click(locate(S.studentSearch.resultLink).first());
-  I.waitForElement(S.studentDetail.editButton, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '受講生詳細');
+  I.click(locate(S.kouhoseiSearch.resultLink).first());
+  I.waitForElement(S.kouhoseiDetail.editButton, TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '候補生詳細');
 
-  I.click(S.studentDetail.editButton);
-  I.waitForElement(S.studentEdit.bankPaymentType, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '受講生編集');
+  I.click(S.kouhoseiDetail.editButton);
+  I.waitForElement(S.kouhoseiEdit.bankPaymentType, TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '候補生編集');
 
-  I.selectOption(S.studentEdit.bankPaymentType, row.bank_payment_type);
-  I.selectOption(S.studentEdit.shimaStorageId,  row.shima_storage_id);
+  I.selectOption(S.kouhoseiEdit.bankPaymentType, row.bank_payment_type);
+  I.selectOption(S.kouhoseiEdit.shimaStorageId,  row.shima_storage_id);
 
   I.say('【請求方法設定】保存');
-  I.click(S.studentEdit.saveButton);
-  I.waitForElement(S.studentDetail.editButton, TIMEOUTS.SCREEN);
+  I.click(S.kouhoseiEdit.saveButton);
+  I.waitForElement(S.kouhoseiDetail.editButton, TIMEOUTS.SCREEN);
   await assertNoShimamuraError(I, '【請求方法設定】保存');
-  await logScreenUrl(I, '受講生詳細（保存後）');
+  await logScreenUrl(I, '候補生詳細（保存後）');
 }
 
 async function runMonthlyFeeCreation(I) {
