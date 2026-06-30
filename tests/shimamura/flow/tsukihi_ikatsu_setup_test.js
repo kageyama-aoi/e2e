@@ -62,7 +62,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   // Step1: 候補生検索 → 受講生へ移動（昇格） → 請求方法編集
   await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
-  // Step2: 受講生詳細から経理ビューA/B でクラス登録
+  // Step2: 受講生詳細から経理ビューA/B でクラス登録（1クラス目）
   const classInput = {
     lastName:        current.lastName,
     class_name01:    current.className,
@@ -73,4 +73,19 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
   await ShouldBeOnKeirisyoriScreenB(I, classInput);
   await ShouldBeOnKeirisyoriScreenE(I);
+
+  // Step3: 2クラス目登録（UNNパターン等、className2 が指定されている場合のみ）
+  if (current.className2 && current.className2.trim()) {
+    I.say(`【クラス登録 2本目】${current.className2}（${current.courseCategory2}）`);
+    const classInput2 = {
+      lastName:        current.lastName,
+      class_name01:    current.className2,
+      course_category: current.courseCategory2,
+      keiyaku_date:    current.keiyakuDate2,
+      kaishi_date:     current.kaishiDate2,
+    };
+    await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
+    await ShouldBeOnKeirisyoriScreenB(I, classInput2);
+    await ShouldBeOnKeirisyoriScreenE(I);
+  }
 });
