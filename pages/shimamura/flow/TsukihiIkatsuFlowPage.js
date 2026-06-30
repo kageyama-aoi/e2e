@@ -83,6 +83,8 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 
 /**
  * 月謝一括作成画面へ遷移し、月謝作成ボタンを押す。
+ * ボタンの onclick は window.confirm を出した後 this.form.submit() を呼ぶ。
+ * サーバー側で全受講生分の月謝を作成するため処理に時間がかかる。
  */
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
@@ -92,9 +94,16 @@ async function runMonthlyFeeCreation(I) {
   I.waitForElement('#create_next_monthly_fee', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '月謝一括作成');
 
-  I.say('【月謝一括作成】月謝作成ボタンをクリック');
-  I.click('#create_next_monthly_fee');
-  I.waitForElement('body', TIMEOUTS.RESULT);
+  I.say('【月謝一括作成】月謝作成ボタンをクリック（confirm 承認 + サーバー処理完了まで待機）');
+  // ボタンの onclick は window.confirm を出した後 this.form.submit() を呼ぶ。
+  // CodeceptJS の Playwright helper がダイアログを自動承認する。
+  // サーバーが全受講生の月謝を処理するため時間がかかる → timeout: 60000 を明示。
+  await I.usePlaywrightTo('月謝作成ボタンクリック・完了待ち', async ({ page }) => {
+    await Promise.all([
+      page.waitForLoadState('networkidle', { timeout: 60000 }),
+      page.locator('#create_next_monthly_fee').click({ timeout: 60000 }),
+    ]);
+  });
   await logScreenUrl(I, '月謝一括作成（実行後）');
 }
 
