@@ -34,6 +34,9 @@ function buildTestName(row) {
 
 /**
  * サイドバー経由で候補生一覧へ移動し、姓で候補生を検索して候補生詳細へ進む。
+ * 「受講生へ移動」後に会員番号重複エラーが出た候補生はスキップして次の候補生を試みる。
+ * 成功した場合は受講生詳細ページに留まる（runStudentPaymentSetup の続きのため）。
+ * 戻り値なし。呼び出し元では「受講生へ移動」後の昇格は完了済みとして扱う。
  */
 async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   I.say('【候補生一覧】サイドバー → 候補生グループ → 候補生検索');
@@ -49,10 +52,76 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
   await logScreenUrl(I, '候補生一覧');
 
-  I.click(locate(RESULT_LINK).first());
-  // 候補生詳細ページには edit_button ではなく「受講生へ移動」ボタンがある
-  I.waitForElement(locate('body').withText('候補生詳細'), TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '候補生詳細');
+  // 全候補生リンクを取得し、会員番号重複エラーが出た場合は次の候補生を試みる
+  const hrefs = await I.grabAttributeFrom(RESULT_LINK, 'href');
+  const links = (Array.isArray(hrefs) ? hrefs : [hrefs]).filter(h => h?.startsWith('http'));
+  I.say(`  候補生 ${links.length}件`);
+
+  // DBで重複を確認するための SELECT SQL
+  const DUPLICATE_CHECK_SQL = `
+SELECT
+  k.id          AS kouho_id,
+  k.idnumber    AS kouho_idnumber,
+  k.last_name   AS 姓_候補生,
+  c.id          AS contact_id,
+  c.last_name   AS 姓_contacts,
+  c.first_name  AS 名_contacts,
+  c.deleted     AS contacts_deleted
+FROM contacts_kouho k
+INNER JOIN contacts c ON c.idnumber = k.idnumber
+WHERE k.deleted = 0
+  AND k.last_name = '${lastName}'
+ORDER BY k.idnumber;`;
+
+  for (const href of links) {
+    // クリック〜URL確認をすべて usePlaywrightTo 内で完結させタイミング問題を回避
+    let promotionResult = 'pending'; // 'success' | 'duplicate' | 'timeout'
+    let duplicateErrorText = '';
+
+    await I.usePlaywrightTo('候補生詳細表示 + 受講生へ移動', async ({ page }) => {
+      await page.goto(href, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('body:has-text("候補生詳細")', { timeout: TIMEOUTS.SCREEN });
+
+      await page.locator('text=受講生へ移動').first().click();
+
+      const deadline = Date.now() + 10000;
+      while (Date.now() < deadline) {
+        if (!page.url().includes('ContactsKouho')) {
+          promotionResult = 'success';
+          break;
+        }
+        // 会員番号重複エラーの検出（青バー）
+        const errEl = page.locator(':has-text("既にcontactsに同一会員番号")').last();
+        if (await errEl.count() > 0) {
+          duplicateErrorText = ((await errEl.textContent()) ?? '').trim();
+          promotionResult = 'duplicate';
+          break;
+        }
+        await page.waitForTimeout(300);
+      }
+      if (promotionResult === 'pending') promotionResult = 'timeout';
+    });
+
+    if (promotionResult === 'duplicate') {
+      // 会員番号重複はDB側の問題のためテストを停止してユーザーに確認を促す
+      throw new Error(
+        `【会員番号重複エラー】${duplicateErrorText}\n` +
+        `\nDBに同一会員番号のレコードが存在します。以下のSQLで確認・対処してください：\n` +
+        DUPLICATE_CHECK_SQL
+      );
+    }
+
+    if (promotionResult === 'success') {
+      I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+      await logScreenUrl(I, '受講生詳細（昇格後）');
+      return;
+    }
+
+    // timeout の場合は次の候補生を試みる
+    I.say(`  タイムアウト（URL変化なし）のためスキップ → 次の候補生へ`);
+  }
+
+  throw new Error(`有効な候補生が見つかりませんでした（姓: ${lastName}）。候補生データを補充してください。`);
 }
 
 /**
@@ -61,11 +130,6 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
  */
 async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   await navigateToKouhosei(I, classMemberPageShimamura, row.lastName);
-
-  I.say('【昇格】受講生へ移動をクリック');
-  I.click('受講生へ移動');
-  I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '受講生詳細（昇格後）');
 
   I.say('【請求方法設定】受講生詳細 → 編集');
   I.click(S.kouhoseiEdit.editButton);
