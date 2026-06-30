@@ -1,8 +1,14 @@
 'use strict';
 
+const fs   = require('fs');
+const path = require('path');
+
 const { logScreenUrl } = require('../../../support/utils');
 const { toggleGroupmenu, assertNoShimamuraError } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
+
+// setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
+const SESSION_FILE = path.resolve(__dirname, '../../../output/tsukihi_ikatsu_session.json');
 
 const RESULT_LINK = 'a.listViewTdLinkS1';
 
@@ -79,6 +85,19 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   await assertNoShimamuraError(I, '【請求方法設定】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');
+
+  // 受講生の record UUID をセッションファイルに追記（verifyMonthlyFees で再利用）
+  const currentUrl = await I.grabCurrentUrl();
+  const match = currentUrl.match(/[?&]record=([^&]+)/);
+  if (match) {
+    const recordId = match[1];
+    let session = [];
+    try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
+    session.push({ recordId, lastName: testName.lastName, firstName: testName.firstName, scenario: row.scenario });
+    fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
+    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+    I.say(`  受講生 record=${recordId} をセッションファイルに保存`);
+  }
 }
 
 /**
@@ -118,28 +137,17 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const targetYearMonth = `${next.getFullYear()}/${String(next.getMonth() + 1).padStart(2, '0')}`;
 
-  // 今日の実行で作成されたテスト受講生の姓パターン
-  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-  const studentLastName = `月謝テスト${mmdd}`;
+  // setupテストが書き出した受講生 record UUID リストを読み込む
+  let session = [];
+  try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
 
-  I.say(`【月謝確認】対象: ${studentLastName} / 確認月: ${targetYearMonth}`);
+  I.say(`【月謝確認】${session.length}件 / 確認月: ${targetYearMonth}`);
 
-  // 受講生検索（URL直指定で結果を即表示）
-  I.amOnPage(
-    `${BASE_URL}index.php?module=Student&action=index` +
-    `&searchFormTab=basic_search&query=true&search_form=true` +
-    `&last_name=${encodeURIComponent(studentLastName)}`
-  );
-  I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
-  await logScreenUrl(I, '月謝確認_受講生一覧');
+  for (const { recordId, lastName, firstName, scenario } of session) {
+    I.say(`  対象: ${lastName} ${firstName}（${scenario}）record=${recordId}`);
 
-  const hrefs = await I.grabAttributeFrom(RESULT_LINK, 'href');
-  const studentUrls = (Array.isArray(hrefs) ? hrefs : [hrefs]).filter(h => h?.startsWith('http'));
-  I.say(`  受講生 ${studentUrls.length}件`);
-
-  for (const url of studentUrls) {
-    // 受講生詳細へ遷移
-    I.amOnPage(url);
+    // 受講生詳細へ record UUID で直接遷移（同名受講生が複数いても混在しない）
+    I.amOnPage(`${BASE_URL}index.php?module=Student&action=DetailView&record=${recordId}`);
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
 
     // 経理ビューへ遷移
@@ -151,6 +159,9 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
     I.see(targetYearMonth);
     I.say(`  ✓ ${targetYearMonth} の料金を確認`);
   }
+
+  // 次回実行のためセッションファイルをクリア
+  fs.writeFileSync(SESSION_FILE, JSON.stringify([], null, 2));
 }
 
 module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees };
