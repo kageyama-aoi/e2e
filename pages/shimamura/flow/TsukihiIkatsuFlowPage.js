@@ -80,7 +80,7 @@ ORDER BY k.idnumber;`;
 
     await I.usePlaywrightTo('候補生詳細表示 + 受講生へ移動', async ({ page }) => {
       await page.goto(href, { waitUntil: 'domcontentloaded' });
-      await page.waitForSelector('body:has-text("候補生詳細")', { timeout: TIMEOUTS.SCREEN });
+      await page.waitForSelector('body:has-text("候補生詳細")', { timeout: TIMEOUTS.SCREEN * 1000 });
 
       await page.locator('text=受講生へ移動').first().click();
 
