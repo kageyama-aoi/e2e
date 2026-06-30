@@ -26,6 +26,7 @@ const { runStudentPaymentSetup } = require('../../../pages/shimamura/flow/Tsukih
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
+  ShouldBeOnKeirisyoriScreenE,
 } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(
@@ -65,4 +66,5 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   };
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
   await ShouldBeOnKeirisyoriScreenB(I, classInput);
+  await ShouldBeOnKeirisyoriScreenE(I);
 });
