@@ -4,7 +4,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
-const { toggleGroupmenu, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
@@ -47,7 +47,7 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
 
   I.say(`【候補生一覧】姓 "${lastName}" で検索`);
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
-  I.fillField('last_name', lastName);
+  fillTextFieldsByName(I, { last_name: lastName });
   I.click('検索');
   I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
   await logScreenUrl(I, '候補生一覧');
@@ -138,8 +138,7 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 
   const testName = buildTestName(row);
   I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
-  I.fillField(S.kouhoseiEdit.lastName,  testName.lastName);
-  I.fillField(S.kouhoseiEdit.firstName, testName.firstName);
+  fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
 
   I.selectOption(S.kouhoseiEdit.bankPaymentType, row.bank_payment_type);
   I.selectOption(S.kouhoseiEdit.shimaStorageId,  row.shima_storage_id);

@@ -6,7 +6,9 @@ const {
   verifyNavigationByUrlChange,
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName,
-  verifyValidationErrors
+  verifyValidationErrors,
+  fillTextFieldsByName,
+  fillTextFieldsBySelector,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 const { prepareInput, buildExecutionPlan } = require('../../../support/shimamura/syokai_helpers');
@@ -24,7 +26,7 @@ async function fillClassSearchForm(I, locators, className, options) {
   I.say('【クラス選択】検索条件入力');
   I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();
   I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);
-  I.fillField(locators.textbox.class_name, className);
+  fillTextFieldsBySelector(I, [[locators.textbox.class_name, className]]);
   I.selectOption(locators.pulldown.couse_category, options.couse_category);
   I.selectOption(locators.pulldown.area, options.area);
   I.selectOption(locators.pulldown.tenpo, options.tenpo);
@@ -33,8 +35,10 @@ async function fillClassSearchForm(I, locators, className, options) {
 async function fillAccountingDates(I, locators, dates) {
   I.say('【経理日付入力】契約日・開始日');
   I.waitForEnabled(locators.textbox.keiyaku_date, TIMEOUTS.ENABLED);
-  I.fillField(locators.textbox.keiyaku_date, dates.keiyaku_date);
-  I.fillField(locators.textbox.kaishi_date, dates.kaishi_date);
+  fillTextFieldsBySelector(I, [
+    [locators.textbox.keiyaku_date, dates.keiyaku_date],
+    [locators.textbox.kaishi_date,  dates.kaishi_date],
+  ]);
 
   const midMonthValue = typeof dates.mid_month === 'string' ? dates.mid_month.trim() : dates.mid_month;
   const remainingClassesValue = typeof dates.remaining_classes === 'string' ? dates.remaining_classes.trim() : dates.remaining_classes;
@@ -118,7 +122,7 @@ async function ShouldBeOnKouhoseiList(I, last_name) {
   };
   I.say('【候補生検索】一覧表示＆検索実行');
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
-  I.fillField(S.field.lastName, last_name);
+  fillTextFieldsByName(I, { last_name });
   I.click(S.button.search);
   I.waitForElement(S.result.list, TIMEOUTS.RESULT);
   await logScreenUrl(I, '候補生一覧');
