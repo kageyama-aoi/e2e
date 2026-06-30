@@ -1,2 +1,4 @@
-scenario,lastName,bank_payment_type,shima_storage_id,className,courseCategory,keiyakuDate,kaishiDate
-銀行引落_スクール,月謝テスト,1,00120211112,ドラム-水-19:00-萩本宗太,スクール,2026-07-01,2026-07-01
+scenario,lastName,bank_payment_type,shima_storage_id,className,courseCategory,keiyakuDate,kaishiDate,testNo
+銀行引落_スクール,かげやま,1,00120211112,ピアノ水曜日_02,スクール,2026-07-01,2026-07-01,001
+イオンCカード_スクール,かげやま,2,00120211112,ピアノ水曜日_02,スクール,2026-07-01,2026-07-01,002
+銀行引落_サロン,かげやま,1,00120211112,サロン1_30分水曜13：00_カゲ,サロン,2026-07-01,2026-07-01,003

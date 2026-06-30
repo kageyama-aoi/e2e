@@ -223,6 +223,8 @@ async function runRegistrationFlow(I, classMemberPageShimamura, input) {
 module.exports = {
   KEIRI_SCREEN_B_LOCATORS,
   runRegistrationFlow,
+  ShouldBeOnKeirisyoriScreenA,
+  ShouldBeOnKeirisyoriScreenB,
   ShouldBeOnKeirisyoriScreenE,
   ShouldBeOnTaikai
 };

@@ -6,8 +6,9 @@
  * testgcp 環境に準備し、クラスへ登録する。
  *
  * **処理フロー**
- * 1. 受講生の請求方法（bank_payment_type）・収納業者（shima_storage_id）を設定
- * 2. 受講生をクラスに登録（経理ビュー A/B 処理）
+ * 1. 候補生一覧から候補生を検索 → 「受講生へ移動」で昇格
+ * 2. 受講生詳細で請求方法（bank_payment_type）・収納業者（shima_storage_id）を設定
+ * 3. 受講生をクラスに登録（経理ビュー A/B 処理）
  *
  * **データソース**
  * - `data/shimamura/tsukihi_ikatsu_setup_data.csv`
@@ -22,7 +23,10 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { runStudentPaymentSetup } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
-const { runRegistrationFlow } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const {
+  ShouldBeOnKeirisyoriScreenA,
+  ShouldBeOnKeirisyoriScreenB,
+} = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('tsukihi_ikatsu_setup_data', 'shimamura'),
@@ -48,8 +52,10 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
     },
   });
 
-  await runStudentPaymentSetup(I, current);
+  // Step1: 候補生検索 → 受講生へ移動（昇格） → 請求方法編集
+  await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
+  // Step2: 受講生詳細から経理ビューA/B でクラス登録
   const classInput = {
     lastName:        current.lastName,
     class_name01:    current.className,
@@ -57,5 +63,6 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
     keiyaku_date:    current.keiyakuDate,
     kaishi_date:     current.kaishiDate,
   };
-  await runRegistrationFlow(I, classMemberPageShimamura, classInput);
+  await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
+  await ShouldBeOnKeirisyoriScreenB(I, classInput);
 });
