@@ -107,4 +107,50 @@ async function runMonthlyFeeCreation(I) {
   await logScreenUrl(I, '月謝一括作成（実行後）');
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation };
+/**
+ * 月謝一括作成後の結果確認。
+ * 実行日の月謝テスト受講生（月謝テスト{MMDD}）の経理ビューで
+ * 来月分の料金・入出金が作成されていることを I.see() で検証する。
+ */
+async function verifyMonthlyFees(I, classMemberPageShimamura) {
+  // 来月の YYYY/MM（例: 2026/07）
+  const now  = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const targetYearMonth = `${next.getFullYear()}/${String(next.getMonth() + 1).padStart(2, '0')}`;
+
+  // 今日の実行で作成されたテスト受講生の姓パターン
+  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+  const studentLastName = `月謝テスト${mmdd}`;
+
+  I.say(`【月謝確認】対象: ${studentLastName} / 確認月: ${targetYearMonth}`);
+
+  // 受講生検索（URL直指定で結果を即表示）
+  I.amOnPage(
+    `${BASE_URL}index.php?module=Student&action=index` +
+    `&searchFormTab=basic_search&query=true&search_form=true` +
+    `&last_name=${encodeURIComponent(studentLastName)}`
+  );
+  I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
+  await logScreenUrl(I, '月謝確認_受講生一覧');
+
+  const hrefs = await I.grabAttributeFrom(RESULT_LINK, 'href');
+  const studentUrls = (Array.isArray(hrefs) ? hrefs : [hrefs]).filter(h => h?.startsWith('http'));
+  I.say(`  受講生 ${studentUrls.length}件`);
+
+  for (const url of studentUrls) {
+    // 受講生詳細へ遷移
+    I.amOnPage(url);
+    I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+
+    // 経理ビューへ遷移
+    await toggleGroupmenu(I, { icon_id: 'submenu__detailviews_sub', menuname: '閲覧/登録・経理ビュー' });
+    await classMemberPageShimamura.clickSubMenuLink('受講生登録・経理ビュー（個人）', '受講生登録・経理ビュー（個人）');
+    await logScreenUrl(I, '月謝確認_経理ビュー');
+
+    // 来月分の料金・入出金が存在することを確認
+    I.see(targetYearMonth);
+    I.say(`  ✓ ${targetYearMonth} の料金を確認`);
+  }
+}
+
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees };
