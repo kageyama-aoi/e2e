@@ -75,6 +75,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   await ShouldBeOnKeirisyoriScreenE(I);
 
   // Step3: 2クラス目登録（UNNパターン等、className2 が指定されている場合のみ）
+  // 経理ビューEから戻った後は既に経理ビューAにいるため skipNav: true でサイドバーナビをスキップ
   if (current.className2 && current.className2.trim()) {
     I.say(`【クラス登録 2本目】${current.className2}（${current.courseCategory2}）`);
     const classInput2 = {
@@ -84,7 +85,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
       keiyaku_date:    current.keiyakuDate2,
       kaishi_date:     current.kaishiDate2,
     };
-    await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
+    await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
     await ShouldBeOnKeirisyoriScreenB(I, classInput2);
     await ShouldBeOnKeirisyoriScreenE(I);
   }

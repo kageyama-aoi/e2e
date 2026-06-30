@@ -7,6 +7,8 @@ const { logScreenUrl } = require('../../../support/utils');
 const { toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
+const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/tsukihi_ikatsu_session.json');
 
@@ -168,7 +170,6 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
  * ボタンの onclick は window.confirm を出した後 this.form.submit() を呼ぶ。
  * サーバー側で全受講生分の月謝を作成するため処理に時間がかかる。
  */
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 async function runMonthlyFeeCreation(I) {
   I.say('【月謝一括作成】画面へ遷移');

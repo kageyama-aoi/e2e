@@ -141,7 +141,7 @@ async function ShouldBeOnKouhouseiDetail(I, student_name) {
   I.click('受講生へ移動');
 }
 
-async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura) {
+async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false } = {}) {
   const S = {
     submenu: {
       icon_id: 'submenu__detailviews_sub',
@@ -150,11 +150,13 @@ async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura) {
     },
     button: { addUpdateClass: 'クラス追加/更新する' }
   };
-  I.say('【画面遷移】受講生登録・経理ビュー');
-  I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  await toggleGroupmenu(I, { icon_id: S.submenu.icon_id, menuname: S.submenu.groupName });
-  await classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
-  await logScreenUrl(I, '受講生詳細');
+  if (!skipNav) {
+    I.say('【画面遷移】受講生登録・経理ビュー');
+    I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+    await toggleGroupmenu(I, { icon_id: S.submenu.icon_id, menuname: S.submenu.groupName });
+    await classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
+    await logScreenUrl(I, '受講生詳細');
+  }
   I.waitForElement(locate('body').withText(S.button.addUpdateClass), TIMEOUTS.SCREEN);
   I.click(S.button.addUpdateClass);
 }
