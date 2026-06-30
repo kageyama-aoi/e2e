@@ -159,9 +159,6 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
     I.see(targetYearMonth);
     I.say(`  ✓ ${targetYearMonth} の料金を確認`);
   }
-
-  // 次回実行のためセッションファイルをクリア
-  fs.writeFileSync(SESSION_FILE, JSON.stringify([], null, 2));
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees };
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, SESSION_FILE };

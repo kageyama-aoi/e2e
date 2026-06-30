@@ -15,6 +15,7 @@
  */
 'use strict';
 
+const fs = require('fs');
 const {
   loadCsvWithProfile,
   withScenarioLabel,
@@ -22,7 +23,7 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runStudentPaymentSetup } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runStudentPaymentSetup, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
@@ -35,6 +36,11 @@ const csvData = withScenarioLabel(
 );
 
 Feature('月謝一括作成準備（受講生・請求方法設定）');
+
+BeforeSuite(() => {
+  // setup再実行時にセッションファイルをリセット（前回の受講生UUIDを破棄）
+  try { fs.writeFileSync(SESSION_FILE, JSON.stringify([], null, 2)); } catch {}
+});
 
 Before(beforeShimamura);
 
