@@ -18,6 +18,7 @@ const S = {
   kouhoseiEdit: {
     lastName:        '#last_name',
     firstName:       '#first_name',
+    description:     'textarea[name="description"]',
     bankPaymentType: '#bank_payment_type',
     shimaStorageId:  '#shima_storage_id',
     saveButton:      'input[name="save_button"]',
@@ -25,21 +26,57 @@ const S = {
   },
 };
 
+function resolveRelativeMonth(taikaiYear, taikaiMonth) {
+  const OFFSETS = { '先月': -1, '今月': 0, '来月': 1 };
+  const key = String(taikaiMonth).trim();
+  if (key in OFFSETS) {
+    const now = new Date();
+    const d = new Date(now.getFullYear(), now.getMonth() + OFFSETS[key], 1);
+    return { year: String(d.getFullYear()), month: String(d.getMonth() + 1).padStart(2, '0') };
+  }
+  return { year: String(taikaiYear).trim(), month: String(taikaiMonth).trim().padStart(2, '0') };
+}
+
 function buildTestName(row) {
   const now  = new Date();
   const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+  const hhmm = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
   return {
-    lastName:  `月謝テスト${mmdd}`,
-    firstName: `${row.testNo}${row.scenario.replace(/_/g, '')}`,
+    lastName:    `月謝テスト${mmdd}`,
+    firstName:   `${row.testNo}${row.scenario.replace(/_/g, '')}`,
+    description: `テスト実行 ${mmdd}_${hhmm} | ${row.scenario}`,
   };
 }
 
-/**
- * サイドバー経由で候補生一覧へ移動し、姓で候補生を検索して候補生詳細へ進む。
- * 「受講生へ移動」後に会員番号重複エラーが出た候補生はスキップして次の候補生を試みる。
- * 成功した場合は受講生詳細ページに留まる（runStudentPaymentSetup の続きのため）。
- * 戻り値なし。呼び出し元では「受講生へ移動」後の昇格は完了済みとして扱う。
- */
+function buildDuplicateCheckSQL(lastName) {
+  return `
+SELECT
+  k.id          AS kouho_id,
+  k.idnumber    AS kouho_idnumber,
+  k.last_name   AS 姓_候補生,
+  c.id          AS contact_id,
+  c.last_name   AS 姓_contacts,
+  c.first_name  AS 名_contacts,
+  c.deleted     AS contacts_deleted
+FROM contacts_kouho k
+INNER JOIN contacts c ON c.idnumber = k.idnumber
+WHERE k.deleted = 0
+  AND k.last_name = '${lastName}'
+ORDER BY k.idnumber;`;
+}
+
+function saveToSession(SESSION_FILE, recordId, testName, row) {
+  const withdrawn = !!(row.taikaiMonth && String(row.taikaiMonth).trim());
+  let session = [];
+  try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
+  session.push({ recordId, lastName: testName.lastName, firstName: testName.firstName, scenario: row.scenario, withdrawn });
+  fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
+  fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+  return withdrawn;
+}
+
+// 候補生一覧へ移動し姓で検索、「受講生へ移動」で昇格する。
+// 会員番号重複エラーが出た候補生はスキップして次を試みる。
 async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   I.say('【候補生一覧】サイドバー → 候補生グループ → 候補生検索');
   await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
@@ -59,21 +96,7 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   const links = (Array.isArray(hrefs) ? hrefs : [hrefs]).filter(h => h?.startsWith('http'));
   I.say(`  候補生 ${links.length}件`);
 
-  // DBで重複を確認するための SELECT SQL
-  const DUPLICATE_CHECK_SQL = `
-SELECT
-  k.id          AS kouho_id,
-  k.idnumber    AS kouho_idnumber,
-  k.last_name   AS 姓_候補生,
-  c.id          AS contact_id,
-  c.last_name   AS 姓_contacts,
-  c.first_name  AS 名_contacts,
-  c.deleted     AS contacts_deleted
-FROM contacts_kouho k
-INNER JOIN contacts c ON c.idnumber = k.idnumber
-WHERE k.deleted = 0
-  AND k.last_name = '${lastName}'
-ORDER BY k.idnumber;`;
+  const DUPLICATE_CHECK_SQL = buildDuplicateCheckSQL(lastName);
 
   for (const href of links) {
     // クリック〜URL確認をすべて usePlaywrightTo 内で完結させタイミング問題を回避
@@ -126,10 +149,6 @@ ORDER BY k.idnumber;`;
   throw new Error(`有効な候補生が見つかりませんでした（姓: ${lastName}）。候補生データを補充してください。`);
 }
 
-/**
- * 候補生詳細 → 「受講生へ移動」で昇格 → 受講生詳細で請求方法を編集して保存。
- * 完了後は受講生詳細ページに留まる（後続の経理ビュー遷移に備える）。
- */
 async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   await navigateToKouhosei(I, classMemberPageShimamura, row.lastName);
 
@@ -141,6 +160,7 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   const testName = buildTestName(row);
   I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
   fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
+  I.fillField(S.kouhoseiEdit.description, testName.description);
 
   I.selectOption(S.kouhoseiEdit.bankPaymentType, row.bank_payment_type);
   I.selectOption(S.kouhoseiEdit.shimaStorageId,  row.shima_storage_id);
@@ -151,25 +171,14 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   await assertNoShimamuraError(I, '【請求方法設定】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');
 
-  // 受講生の record UUID をセッションファイルに追記（verifyMonthlyFees で再利用）
   const currentUrl = await I.grabCurrentUrl();
   const match = currentUrl.match(/[?&]record=([^&]+)/);
   if (match) {
     const recordId = match[1];
-    let session = [];
-    try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
-    session.push({ recordId, lastName: testName.lastName, firstName: testName.firstName, scenario: row.scenario });
-    fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
-    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
-    I.say(`  受講生 record=${recordId} をセッションファイルに保存`);
+    const withdrawn = saveToSession(SESSION_FILE, recordId, testName, row);
+    I.say(`  受講生 record=${recordId} をセッションファイルに保存${withdrawn ? '（退会済みフラグあり）' : ''}`);
   }
 }
-
-/**
- * 月謝一括作成画面へ遷移し、月謝作成ボタンを押す。
- * ボタンの onclick は window.confirm を出した後 this.form.submit() を呼ぶ。
- * サーバー側で全受講生分の月謝を作成するため処理に時間がかかる。
- */
 
 async function runMonthlyFeeCreation(I) {
   I.say('【月謝一括作成】画面へ遷移');
@@ -178,9 +187,7 @@ async function runMonthlyFeeCreation(I) {
   await logScreenUrl(I, '月謝一括作成');
 
   I.say('【月謝一括作成】月謝作成ボタンをクリック（confirm 承認 + サーバー処理完了まで待機）');
-  // ボタンの onclick は window.confirm を出した後 this.form.submit() を呼ぶ。
-  // CodeceptJS の Playwright helper がダイアログを自動承認する。
-  // サーバーが全受講生の月謝を処理するため時間がかかる → timeout: 60000 を明示。
+  // onclick は window.confirm → form.submit()。サーバー処理に時間がかかるため timeout を明示。
   await I.usePlaywrightTo('月謝作成ボタンクリック・完了待ち', async ({ page }) => {
     await Promise.all([
       page.waitForLoadState('networkidle', { timeout: 60000 }),
@@ -190,11 +197,6 @@ async function runMonthlyFeeCreation(I) {
   await logScreenUrl(I, '月謝一括作成（実行後）');
 }
 
-/**
- * 月謝一括作成後の結果確認。
- * 実行日の月謝テスト受講生（月謝テスト{MMDD}）の経理ビューで
- * 来月分の料金・入出金が作成されていることを I.see() で検証する。
- */
 async function verifyMonthlyFees(I, classMemberPageShimamura) {
   // 来月の YYYY/MM（例: 2026/07）
   const now  = new Date();
@@ -207,7 +209,11 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
 
   I.say(`【月謝確認】${session.length}件 / 確認月: ${targetYearMonth}`);
 
-  for (const { recordId, lastName, firstName, scenario } of session) {
+  for (const { recordId, lastName, firstName, scenario, withdrawn } of session) {
+    if (withdrawn) {
+      I.say(`  スキップ（退会済み）: ${lastName} ${firstName}（${scenario}）`);
+      continue;
+    }
     I.say(`  対象: ${lastName} ${firstName}（${scenario}）record=${recordId}`);
 
     // 受講生詳細へ record UUID で直接遷移（同名受講生が複数いても混在しない）
@@ -219,10 +225,9 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
     await classMemberPageShimamura.clickSubMenuLink('受講生登録・経理ビュー（個人）', '受講生登録・経理ビュー（個人）');
     await logScreenUrl(I, '月謝確認_経理ビュー');
 
-    // 来月分の料金・入出金が存在することを確認
     I.see(targetYearMonth);
     I.say(`  ✓ ${targetYearMonth} の料金を確認`);
   }
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, SESSION_FILE };
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, resolveRelativeMonth, SESSION_FILE };

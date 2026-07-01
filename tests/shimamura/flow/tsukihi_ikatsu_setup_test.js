@@ -23,12 +23,22 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runStudentPaymentSetup, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runStudentPaymentSetup, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
   ShouldBeOnKeirisyoriScreenE,
+  ShouldBeOnTaikai,
 } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+
+function buildClassInput(row, suffix = '') {
+  return {
+    class_name01:    row[`className${suffix}`],
+    course_category: row[`courseCategory${suffix}`],
+    keiyaku_date:    row[`keiyakuDate${suffix}`],
+    kaishi_date:     row[`kaishiDate${suffix}`],
+  };
+}
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('tsukihi_ikatsu_setup_data', 'shimamura'),
@@ -62,31 +72,27 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   // Step1: 候補生検索 → 受講生へ移動（昇格） → 請求方法編集
   await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
-  // Step2: 受講生詳細から経理ビューA/B でクラス登録（1クラス目）
-  const classInput = {
-    lastName:        current.lastName,
-    class_name01:    current.className,
-    course_category: current.courseCategory,
-    keiyaku_date:    current.keiyakuDate,
-    kaishi_date:     current.kaishiDate,
-  };
+  // Step2: 経理ビューA/B でクラス登録（1クラス目）
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
-  await ShouldBeOnKeirisyoriScreenB(I, classInput);
+  await ShouldBeOnKeirisyoriScreenB(I, buildClassInput(current));
   await ShouldBeOnKeirisyoriScreenE(I);
 
-  // Step3: 2クラス目登録（UNNパターン等、className2 が指定されている場合のみ）
+  // Step3: 2クラス目（UNNパターン等、className2 が指定されている場合のみ）
   // 経理ビューEから戻った後は既に経理ビューAにいるため skipNav: true でサイドバーナビをスキップ
   if (current.className2 && current.className2.trim()) {
     I.say(`【クラス登録 2本目】${current.className2}（${current.courseCategory2}）`);
-    const classInput2 = {
-      lastName:        current.lastName,
-      class_name01:    current.className2,
-      course_category: current.courseCategory2,
-      keiyaku_date:    current.keiyakuDate2,
-      kaishi_date:     current.kaishiDate2,
-    };
     await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
-    await ShouldBeOnKeirisyoriScreenB(I, classInput2);
+    await ShouldBeOnKeirisyoriScreenB(I, buildClassInput(current, '2'));
     await ShouldBeOnKeirisyoriScreenE(I);
+  }
+
+  // Step4: 退会処理（taikaiMonth が指定されている場合のみ）
+  if (current.taikaiMonth && String(current.taikaiMonth).trim()) {
+    const resolved = resolveRelativeMonth(current.taikaiYear, current.taikaiMonth);
+    I.say(`【退会処理】${current.taikaiMonth} → ${resolved.year}/${resolved.month}`);
+    await ShouldBeOnTaikai(I, classMemberPageShimamura, {
+      taikaiYear:  resolved.year,
+      taikaiMonth: resolved.month,
+    });
   }
 });

@@ -7,6 +7,7 @@ const {
   clickCheckboxByLabelOrName,
   verifyCheckboxCheckedByLabelOrName,
   verifyValidationErrors,
+  assertNoShimamuraError,
   fillTextFieldsByName,
   fillTextFieldsBySelector,
 } = require('../../../support/shimamura/utils');
@@ -14,13 +15,24 @@ const { TIMEOUTS } = require('../../../support/shimamura/constants');
 const { prepareInput, buildExecutionPlan } = require('../../../support/shimamura/syokai_helpers');
 
 const KEIRI_SCREEN_B_LOCATORS = {
-  textbox: { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
+  textbox:  { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
   pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
   checkbox: { mid_month: '#ltd_mid_month' },
-  button: { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
-  screen: { name: '受講生詳細' },
-  error: { container: '#top_err_info_msg_div' }
+  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
+  screen:   { name: '受講生詳細' },
+  error:    { container: '#top_err_info_msg_div' }
 };
+
+const KEIRI_SUBMENU = {
+  icon_id:   'submenu__detailviews_sub',
+  groupName: '閲覧/登録・経理ビュー',
+  linkName:  '受講生登録・経理ビュー（個人）',
+};
+
+async function navigateToKeirisyoriView(I, classMemberPageShimamura) {
+  await toggleGroupmenu(I, { icon_id: KEIRI_SUBMENU.icon_id, menuname: KEIRI_SUBMENU.groupName });
+  await classMemberPageShimamura.clickSubMenuLink(KEIRI_SUBMENU.linkName, KEIRI_SUBMENU.linkName);
+}
 
 async function fillClassSearchForm(I, locators, className, options) {
   I.say('【クラス選択】検索条件入力');
@@ -116,7 +128,6 @@ async function ShouldBeOnStudentGroup(I, classMemberPageShimamura) {
 
 async function ShouldBeOnKouhoseiList(I, last_name) {
   const S = {
-    field: { lastName: 'last_name' },
     button: { search: '検索' },
     result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
   };
@@ -142,23 +153,14 @@ async function ShouldBeOnKouhouseiDetail(I, student_name) {
 }
 
 async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false } = {}) {
-  const S = {
-    submenu: {
-      icon_id: 'submenu__detailviews_sub',
-      groupName: '閲覧/登録・経理ビュー',
-      linkName: '受講生登録・経理ビュー（個人）'
-    },
-    button: { addUpdateClass: 'クラス追加/更新する' }
-  };
   if (!skipNav) {
     I.say('【画面遷移】受講生登録・経理ビュー');
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-    await toggleGroupmenu(I, { icon_id: S.submenu.icon_id, menuname: S.submenu.groupName });
-    await classMemberPageShimamura.clickSubMenuLink(S.submenu.linkName, S.submenu.linkName);
     await logScreenUrl(I, '受講生詳細');
+    await navigateToKeirisyoriView(I, classMemberPageShimamura);
   }
-  I.waitForElement(locate('body').withText(S.button.addUpdateClass), TIMEOUTS.SCREEN);
-  I.click(S.button.addUpdateClass);
+  I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
+  I.click('クラス追加/更新する');
 }
 
 async function ShouldBeOnClassSelectPopup(I, parentLocators, class_name01, course_category) {
@@ -197,19 +199,44 @@ async function ShouldBeOnKeirisyoriScreenE(I) {
   await logScreenUrl(I, '経理ビューE');
   await verifyNavigationByUrlChange(I, 5, 'DWConfirmCarteKeiri_AN', '確認完了（経理ビューへ）');
   await logScreenUrl(I, '経理ビューA');
+  I.saveScreenshot(`keiri_view_A_${Date.now()}.png`, true);
 }
 
 async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
-  I.say('【退会処理】最終在籍年月の入力');
+  const label = `${taikaiYear}${taikaiMonth}`;
+  I.say(`【退会処理】最終在籍年月 ${taikaiYear}/${taikaiMonth} を設定`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  await toggleGroupmenu(I, { icon_id: 'submenu__detailviews_sub', menuname: '閲覧/登録・経理ビュー' });
+  await toggleGroupmenu(I, { icon_id: KEIRI_SUBMENU.icon_id, menuname: KEIRI_SUBMENU.groupName });
   await classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
   I.click('退会処理');
-  await logScreenUrl(I, '退会処理');
+  I.waitForElement('#final_enrollment_year', TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '退会処理_入力前');
+  I.saveScreenshot(`taikai_01_before_${label}.png`);
   I.executeScript(([year, month]) => {
     document.querySelector('#final_enrollment_year').value = year;
     document.querySelector('#final_enrollment_month').value = month;
   }, [taikaiYear, taikaiMonth]);
+  // 退会画面のチェックボックスはユーザー操作しないと選択されないためスクリプトで全選択
+  I.executeScript(() => {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = true; });
+  });
+  await logScreenUrl(I, '退会処理_入力後');
+  I.saveScreenshot(`taikai_02_filled_${label}.png`);
+  await I.usePlaywrightTo('退会処理_更新ボタン押下', async ({ page }) => {
+    await Promise.all([
+      page.waitForLoadState('domcontentloaded', { timeout: 15000 }),
+      page.locator('input[value="更新"]').click(),
+    ]);
+  });
+  I.see('会員退会処理が完了しました。');
+  await logScreenUrl(I, '退会処理（更新後）');
+  I.saveScreenshot(`taikai_03_done_${label}.png`);
+
+  I.say('【退会後確認】経理ビューへ遷移');
+  await navigateToKeirisyoriView(I, classMemberPageShimamura);
+  I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '退会後_経理ビュー');
+  I.saveScreenshot(`keiri_after_taikai_${label}.png`, true);
 }
 
 async function runRegistrationFlow(I, classMemberPageShimamura, input) {
