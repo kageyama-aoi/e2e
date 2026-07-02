@@ -177,7 +177,16 @@ async function ShouldBeOnClassSelectPopup(I, parentLocators, class_name01, cours
   await logScreenUrl(I, 'クラス選択POP_UP');
   I.click(SS.button.search);
   I.waitForElement(SS.result.link, TIMEOUTS.RESULT);
-  I.click(locate(SS.result.link));
+
+  // クラス名検索は前方一致のため、意図しない別クラス（例: "ピアノ水曜日_02" 検索時の
+  // "ピアノ水曜日_02e"）が結果に混入することがある。1件目を無条件に選ばず、
+  // class_name01 と完全一致する行のみをクリックする。
+  const exactMatchXPath = `//a[contains(concat(" ", normalize-space(@class), " "), " listViewTdLinkS1 ") and normalize-space(text())="${class_name01}"]`;
+  const exactMatchCount = await I.grabNumberOfVisibleElements(locate({ xpath: exactMatchXPath }));
+  if (exactMatchCount === 0) {
+    throw new Error(`【クラス選択】完全一致するクラスが見つかりません（検索語: "${class_name01}"）。前方一致で類似クラスのみヒットしている可能性があります。`);
+  }
+  I.click(locate({ xpath: exactMatchXPath }));
 }
 
 async function ShouldBeOnKeirisyoriScreenB(I, {
