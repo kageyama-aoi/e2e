@@ -69,7 +69,15 @@ function saveToSession(SESSION_FILE, recordId, testName, row) {
   const withdrawn = !!(row.taikaiMonth && String(row.taikaiMonth).trim());
   let session = [];
   try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
-  session.push({ recordId, lastName: testName.lastName, firstName: testName.firstName, scenario: row.scenario, withdrawn });
+  session.push({
+    recordId,
+    lastName: testName.lastName,
+    firstName: testName.firstName,
+    scenario: row.scenario,
+    withdrawn,
+    expectedKanrihi:      row.expectedKanrihi || null,
+    expectedWinnerClass:  row.expectedWinnerClass || null,
+  });
   fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true });
   fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
   return withdrawn;
@@ -181,42 +189,32 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   return recordId;
 }
 
-// 経理カルテビュー上部の未払い金額バナー（#top_err_info_msg_div）から
-// 「月運営管理費（N月）」の確定額とクラス名を検証する。
-// 運営管理費は同一店舗内で最大額の1件のみ確定するロジックのため、
-// バナーには「未払分」（現在有効な確定額）と、赤処理で相殺された旧額の
-// 「未払分」「預り金」（マイナス）が両方表示されうる。ここでは「未払分」のうち
-// 最初に出現する行（＝最大額で確定した勝者）のみを比較対象とする。
-// バナーの金額は税込表示のため、期待値（税抜の運営管理費マスタ値）は1.1倍して比較する。
+// 経理カルテビューの入金明細テーブル（#tbl_carte）から、対象年月の「会費」列を検証する。
+// このテーブルは #top_err_info_msg_div（未払いバナー、当月以前の督促のみ表示）と異なり、
+// 未来月（月謝一括作成バッチが作成した翌月分）も含めて全月が表示されるため、
+// セットアップ時（画面トリガー・当月）とバッチ実行後（翌月）の両方の検証に使える。
+// 運営管理費は同一店舗内で最大額の1件のみ確定するロジックのため、テスト用クラスの
+// 月謝(course_kingaku)を0円にしておけば「会費」列＝確定した運営管理費そのものになる
+// （expectedClassName は勝者を示すログ用途で、金額の一致自体が勝者の証明になる）。
+// 金額は税込表示のため、期待値（税抜の運営管理費マスタ値）は1.1倍して比較する。
 async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName }) {
-  const label = `月運営管理費（${Number(targetMonth)}月）`;
-  I.say(`【運営管理費確認】record=${recordId} / ${targetYear}年${targetMonth}月 / 期待クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
+  const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
+  I.say(`【運営管理費確認】record=${recordId} / ${targetYearMonth} / 想定勝者クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
   I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  I.waitForElement('#top_err_info_msg_div', TIMEOUTS.SCREEN);
+  I.waitForElement('#tbl_carte', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '運営管理費確認_経理カルテビュー');
 
-  // #top_err_info_msg_div は画面内に同一IDで複数存在する（空のプレースホルダ＋実データ）ため、
-  // grabTextFrom（単一要素前提）ではなく querySelectorAll で全件のテキストを連結して取得する。
-  const bannerText = await I.executeScript(() => {
-    return Array.from(document.querySelectorAll('#top_err_info_msg_div')).map(el => el.innerText).join(' ');
-  });
-  const normalized = bannerText.replace(/[\s　]+/g, ' ');
-  const pattern = new RegExp(`料金名:\\s*${label}\\s*未払分:\\s*([\\d,]+)円\\s*クラス名:\\s*(\\S+)`);
-  const match = normalized.match(pattern);
-
-  if (!match) {
-    throw new Error(`【運営管理費不一致】${label} の請求行が見つかりません（未払い一覧: "${normalized}"）`);
-  }
-
-  const actualAmount = Number(match[1].replace(/,/g, ''));
-  const actualClassName = match[2];
+  const amountXPath = `//table[@id="tbl_carte"]//a[contains(text(), "${targetYearMonth}")]/ancestor::td[1]/following-sibling::td[1]`;
+  I.waitForElement(amountXPath, TIMEOUTS.SCREEN);
+  const amountText = (await I.grabTextFrom(amountXPath)).trim();
+  const actualAmount = Number(amountText.replace(/,/g, ''));
   const expectedAmount = Math.round(Number(expectedKanrihiBase) * 1.1);
 
-  if (actualAmount !== expectedAmount || actualClassName !== expectedClassName) {
-    throw new Error(`【運営管理費不一致】${label} 期待=${expectedAmount}円(クラス:${expectedClassName}) 実際=${actualAmount}円(クラス:${actualClassName})`);
+  if (actualAmount !== expectedAmount) {
+    throw new Error(`【運営管理費不一致】${targetYearMonth} 期待=${expectedAmount}円(想定勝者:${expectedClassName}) 実際=${actualAmount}円`);
   }
-  I.say(`  ✓ ${label} = ${actualAmount}円（クラス: ${actualClassName}）`);
+  I.say(`  ✓ ${targetYearMonth} 会費合計 = ${actualAmount}円（想定勝者クラス: ${expectedClassName}）`);
 }
 
 async function runMonthlyFeeCreation(I) {
@@ -248,7 +246,7 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
 
   I.say(`【月謝確認】${session.length}件 / 確認月: ${targetYearMonth}`);
 
-  for (const { recordId, lastName, firstName, scenario, withdrawn } of session) {
+  for (const { recordId, lastName, firstName, scenario, withdrawn, expectedKanrihi, expectedWinnerClass } of session) {
     if (withdrawn) {
       I.say(`  スキップ（退会済み）: ${lastName} ${firstName}（${scenario}）`);
       continue;
@@ -266,6 +264,17 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
 
     I.see(targetYearMonth);
     I.say(`  ✓ ${targetYearMonth} の料金を確認`);
+
+    // 運営管理費の期待値が設定されている場合、月謝一括作成バッチが翌月分にも
+    // 最大額確定ロジックを正しく適用していることを検証する
+    if (expectedKanrihi && expectedWinnerClass) {
+      await verifyKanrihiFee(I, recordId, {
+        targetYear:  next.getFullYear(),
+        targetMonth: next.getMonth() + 1,
+        expectedKanrihiBase: expectedKanrihi,
+        expectedClassName:   expectedWinnerClass,
+      });
+    }
   }
 }
 
