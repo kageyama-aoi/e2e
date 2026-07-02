@@ -58,6 +58,12 @@ const TARGETS = [
   { name: 'class_list',
     hint: 'クラス一覧',
     directUrl: `${BASE_URL}index.php?module=Course&action=ListView&course_list=true&query=true&initial_state` },
+  { name: 'shimacourse_register',
+    hint: 'コース登録（管理）',
+    directUrl: `${BASE_URL}index.php?module=ShimaCourse&action=EditView&return_module=ShimaCourse&return_action=DetailView` },
+  { name: 'course_register',
+    hint: 'クラス登録',
+    directUrl: `${BASE_URL}index.php?module=Course&action=EditView&return_module=Course&return_action=DetailView` },
 
   // ── 経理系 ──
   { name: 'keiri_invoices',

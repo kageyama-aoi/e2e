@@ -173,11 +173,50 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 
   const currentUrl = await I.grabCurrentUrl();
   const match = currentUrl.match(/[?&]record=([^&]+)/);
-  if (match) {
-    const recordId = match[1];
-    const withdrawn = saveToSession(SESSION_FILE, recordId, testName, row);
-    I.say(`  受講生 record=${recordId} をセッションファイルに保存${withdrawn ? '（退会済みフラグあり）' : ''}`);
+  if (!match) return null;
+
+  const recordId = match[1];
+  const withdrawn = saveToSession(SESSION_FILE, recordId, testName, row);
+  I.say(`  受講生 record=${recordId} をセッションファイルに保存${withdrawn ? '（退会済みフラグあり）' : ''}`);
+  return recordId;
+}
+
+// 経理カルテビュー上部の未払い金額バナー（#top_err_info_msg_div）から
+// 「月運営管理費（N月）」の確定額とクラス名を検証する。
+// 運営管理費は同一店舗内で最大額の1件のみ確定するロジックのため、
+// バナーには「未払分」（現在有効な確定額）と、赤処理で相殺された旧額の
+// 「未払分」「預り金」（マイナス）が両方表示されうる。ここでは「未払分」のうち
+// 最初に出現する行（＝最大額で確定した勝者）のみを比較対象とする。
+// バナーの金額は税込表示のため、期待値（税抜の運営管理費マスタ値）は1.1倍して比較する。
+async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName }) {
+  const label = `月運営管理費（${Number(targetMonth)}月）`;
+  I.say(`【運営管理費確認】record=${recordId} / ${targetYear}年${targetMonth}月 / 期待クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
+  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+  I.waitForElement('#top_err_info_msg_div', TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '運営管理費確認_経理カルテビュー');
+
+  // #top_err_info_msg_div は画面内に同一IDで複数存在する（空のプレースホルダ＋実データ）ため、
+  // grabTextFrom（単一要素前提）ではなく querySelectorAll で全件のテキストを連結して取得する。
+  const bannerText = await I.executeScript(() => {
+    return Array.from(document.querySelectorAll('#top_err_info_msg_div')).map(el => el.innerText).join(' ');
+  });
+  const normalized = bannerText.replace(/[\s　]+/g, ' ');
+  const pattern = new RegExp(`料金名:\\s*${label}\\s*未払分:\\s*([\\d,]+)円\\s*クラス名:\\s*(\\S+)`);
+  const match = normalized.match(pattern);
+
+  if (!match) {
+    throw new Error(`【運営管理費不一致】${label} の請求行が見つかりません（未払い一覧: "${normalized}"）`);
   }
+
+  const actualAmount = Number(match[1].replace(/,/g, ''));
+  const actualClassName = match[2];
+  const expectedAmount = Math.round(Number(expectedKanrihiBase) * 1.1);
+
+  if (actualAmount !== expectedAmount || actualClassName !== expectedClassName) {
+    throw new Error(`【運営管理費不一致】${label} 期待=${expectedAmount}円(クラス:${expectedClassName}) 実際=${actualAmount}円(クラス:${actualClassName})`);
+  }
+  I.say(`  ✓ ${label} = ${actualAmount}円（クラス: ${actualClassName}）`);
 }
 
 async function runMonthlyFeeCreation(I) {
@@ -230,4 +269,4 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, resolveRelativeMonth, SESSION_FILE };
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, resolveRelativeMonth, SESSION_FILE };

@@ -23,7 +23,7 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runStudentPaymentSetup, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runStudentPaymentSetup, verifyKanrihiFee, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
@@ -70,7 +70,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   });
 
   // Step1: 候補生検索 → 受講生へ移動（昇格） → 請求方法編集
-  await runStudentPaymentSetup(I, classMemberPageShimamura, current);
+  const recordId = await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
   // Step2: 経理ビューA/B でクラス登録（1クラス目）
   await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
@@ -84,6 +84,18 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
     await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
     await ShouldBeOnKeirisyoriScreenB(I, buildClassInput(current, '2'));
     await ShouldBeOnKeirisyoriScreenE(I);
+  }
+
+  // Step3.5: 運営管理費の金額確認（expectedKanrihi が指定されている場合のみ）
+  // 同一店舗内の複数スクールコース登録により、最大額1件のみ確定していることを検証する
+  if (current.expectedKanrihi && String(current.expectedKanrihi).trim() && recordId) {
+    const now = new Date();
+    await verifyKanrihiFee(I, recordId, {
+      targetYear:  now.getFullYear(),
+      targetMonth: now.getMonth() + 1,
+      expectedKanrihiBase: current.expectedKanrihi,
+      expectedClassName:   current.expectedWinnerClass,
+    });
   }
 
   // Step4: 退会処理（taikaiMonth が指定されている場合のみ）
