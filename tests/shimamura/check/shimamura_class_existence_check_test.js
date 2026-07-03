@@ -34,7 +34,7 @@ const uniqueClassRows = Array.from(
   ).values()
 );
 
-Feature('Dev sandbox (@dev)');
+Feature('クラス存在チェック（事前検知）');
 
 Before(beforeShimamura);
 

@@ -34,7 +34,7 @@ const {
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { toggleGroupmenu, verifyValidationErrors } = require('../../../support/shimamura/utils');
 
-Feature('Dev sandbox (@dev)');
+Feature('経理返金処理（ひな形）');
 
 const csvDataRaw = loadCsvWithProfile('keiri_hennkin_syori_data', 'shimamura');
 const validationErrorDataRaw = loadCsvWithProfile('keiri_hennkin_syori_validation_errors', 'shimamura');

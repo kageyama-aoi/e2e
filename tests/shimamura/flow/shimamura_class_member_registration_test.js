@@ -16,7 +16,7 @@
  */
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
-Feature('Dev sandbox (@dev)');
+Feature('クラス受講生登録');
 
 /**
  * テスト実行前のセットアップ

@@ -29,7 +29,7 @@ const validationErrorData = withScenarioLabel(loadCsvWithProfile('syokai_touroku
   return row.label || row.breakTarget || 'バリデーションエラー';
 });
 
-Feature('Dev sandbox (@dev)');
+Feature('新規受講生登録＋経理処理');
 
 Before(beforeShimamura);
 
