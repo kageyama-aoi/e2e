@@ -217,6 +217,58 @@ async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expected
   I.say(`  ✓ ${targetYearMonth} 会費合計 = ${actualAmount}円（想定勝者クラス: ${expectedClassName}）`);
 }
 
+// 未払いバナー（#top_err_info_msg_div）のテキストを、クラス名ごとの正味金額（未払分は+、預り金は-）に
+// 集計する。同一ページ内にIDが重複して存在する（空のプレースホルダ＋実データ）ため querySelectorAll で
+// 取得し、空文字を除外して結合してから解析する。
+// 例: 「料金名: 月運営管理費（7月） 未払分: 1,100円 クラス名: X」「料金名: 月運営管理費（7月） 預り金: -1,100円 クラス名: X」
+//     → netByClassName['X'] = 1100 + (-1100) = 0（負けたクラスは相殺されて実質0円になる）
+async function grabKanrihiNetByClassName(I) {
+  const bannerText = await I.executeScript(() => {
+    return Array.from(document.querySelectorAll('#top_err_info_msg_div'))
+      .map(el => el.innerText.trim())
+      .filter(Boolean)
+      .join('\n');
+  });
+
+  const netByClassName = {};
+  const lineRe = /(未払分|預り金)[:：]\s*(-?[\d,]+)円\s*クラス名[:：]\s*(.+)$/;
+  for (const rawLine of bannerText.split('\n')) {
+    const line = rawLine.trim();
+    const m = line.match(lineRe);
+    if (!m) continue;
+    const amount = Number(m[2].replace(/,/g, ''));
+    const className = m[3].trim();
+    netByClassName[className] = (netByClassName[className] || 0) + amount;
+  }
+  return netByClassName;
+}
+
+// 運営管理費が同額tie-breakとなるケースの勝者検証。#tbl_carte は月合計しか持たずクラス単位の
+// 内訳が取れないため（同額同士は合計だけでは区別できない）、未払いバナーのクラス別内訳を使う。
+// バナーは当月以前の督促のみ表示するため、この検証は「セットアップ時（当月）」専用。
+// 勝者クラス = 期待額（税込）がそのまま正味金額として残る／敗者クラス = 未払分と預り金が相殺され正味0円
+async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetMonth, expectedWinnerClass, expectedLoserClass, expectedKanrihiBase }) {
+  const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
+  I.say(`【運営管理費tie-break確認】record=${recordId} / ${targetYearMonth} / 勝者想定=${expectedWinnerClass} / 敗者想定=${expectedLoserClass}`);
+  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+  I.waitForElement('#top_err_info_msg_div', TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '運営管理費tie-break確認_経理カルテビュー');
+
+  const netByClassName = await grabKanrihiNetByClassName(I);
+  const expectedAmount = Math.round(Number(expectedKanrihiBase) * 1.1);
+  const winnerNet = netByClassName[expectedWinnerClass] || 0;
+  const loserNet  = netByClassName[expectedLoserClass] || 0;
+
+  if (winnerNet !== expectedAmount) {
+    throw new Error(`【tie-break勝者不一致】${targetYearMonth} 勝者想定=${expectedWinnerClass} 期待正味額=${expectedAmount}円 実際=${winnerNet}円\n内訳: ${JSON.stringify(netByClassName)}`);
+  }
+  if (loserNet !== 0) {
+    throw new Error(`【tie-break敗者不一致】${targetYearMonth} 敗者想定=${expectedLoserClass} 期待正味額=0円 実際=${loserNet}円\n内訳: ${JSON.stringify(netByClassName)}`);
+  }
+  I.say(`  ✓ 勝者 ${expectedWinnerClass} = ${winnerNet}円 / 敗者 ${expectedLoserClass} = ${loserNet}円（相殺済み）`);
+}
+
 async function runMonthlyFeeCreation(I) {
   I.say('【月謝一括作成】画面へ遷移');
   I.amOnPage(BASE_URL + 'index.php?module=Fee&action=LWMonthlyFeeCreation_AN');
@@ -278,4 +330,4 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, resolveRelativeMonth, SESSION_FILE };
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };

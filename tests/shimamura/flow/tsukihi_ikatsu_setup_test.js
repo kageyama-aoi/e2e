@@ -23,7 +23,7 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runStudentPaymentSetup, verifyKanrihiFee, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runStudentPaymentSetup, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
@@ -88,14 +88,26 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
 
   // Step3.5: 運営管理費の金額確認（expectedKanrihi が指定されている場合のみ）
   // 同一店舗内の複数スクールコース登録により、最大額1件のみ確定していることを検証する
+  // expectedLoserClass 指定時（同額tie-breakパターン）は、金額の一致だけでは勝者を区別できないため
+  // 未払いバナーのクラス別内訳で判定する verifyKanrihiWinnerByClassName を使う
   if (current.expectedKanrihi && String(current.expectedKanrihi).trim() && recordId) {
     const now = new Date();
-    await verifyKanrihiFee(I, recordId, {
-      targetYear:  now.getFullYear(),
-      targetMonth: now.getMonth() + 1,
-      expectedKanrihiBase: current.expectedKanrihi,
-      expectedClassName:   current.expectedWinnerClass,
-    });
+    if (current.expectedLoserClass && String(current.expectedLoserClass).trim()) {
+      await verifyKanrihiWinnerByClassName(I, recordId, {
+        targetYear:  now.getFullYear(),
+        targetMonth: now.getMonth() + 1,
+        expectedWinnerClass: current.expectedWinnerClass,
+        expectedLoserClass:  current.expectedLoserClass,
+        expectedKanrihiBase: current.expectedKanrihi,
+      });
+    } else {
+      await verifyKanrihiFee(I, recordId, {
+        targetYear:  now.getFullYear(),
+        targetMonth: now.getMonth() + 1,
+        expectedKanrihiBase: current.expectedKanrihi,
+        expectedClassName:   current.expectedWinnerClass,
+      });
+    }
   }
 
   // Step4: 退会処理（taikaiMonth が指定されている場合のみ）
