@@ -9,7 +9,7 @@
  * - 3. 各レコードで受講生検索 → 退会処理画面 → 最終在籍年月を入力して更新
  *
  * **動的日付フィールド**
- * - `finalYear`/`finalMonth`（退会最終在籍年月）は退会処理側のルール「先月まで許容・先々月以前はNG」に
+ * - `taikaiYear`/`taikaiMonth`（退会最終在籍年月）は退会処理側のルール「先月まで許容・先々月以前はNG」に
  *   対応するため、CSV記載値が範囲外の場合は `resolveDynamicDateIfPast`（graceMonths: 1）で
  *   本日日付に自動補正される（置換発生時は `I.say` でログに記録される）。
  *
@@ -133,10 +133,10 @@ async function navigateToTaikaiScreen(I, classMemberPageShimamura) {
  * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
  * @param {Object} data - テストデータ
  * @param {string} data.idnumber - 受講生番号
- * @param {string} data.finalYear - 最終在籍年
- * @param {string} data.finalMonth - 最終在籍月
+ * @param {string} data.taikaiYear - 最終在籍年
+ * @param {string} data.taikaiMonth - 最終在籍月
  */
-async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear, finalMonth }) {
+async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, taikaiYear, taikaiMonth }) {
   I.say(`--- テスト開始: 対象受講生 ${idnumber} ---`);
 
   // 管理タブ -> 受講生検索へ
@@ -151,8 +151,8 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, finalYear,
   // 退会処理は「先月まで許容・先々月以前はNG」のため graceMonths: 1 で補正
   const resolvedTaikaiDate = resolveDynamicDateIfPast(
     I,
-    `${finalYear}-${String(finalMonth).padStart(2, '0')}-01`,
-    'finalYear/finalMonth',
+    `${taikaiYear}-${String(taikaiMonth).padStart(2, '0')}-01`,
+    'taikaiYear/taikaiMonth',
     { graceMonths: 1 }
   );
   const [resolvedYear, resolvedMonth] = resolvedTaikaiDate.split('-');
@@ -173,7 +173,7 @@ Scenario('受講生退会 @dev', async ({ I, classMemberPageShimamura }) => {
   I.say(`CSVテストデータ件数: ${testDataList.length}件`);
 
   for (const data of testDataList) {
-    const { idnumber, finalYear, finalMonth } = data;
+    const { idnumber, taikaiYear, taikaiMonth } = data;
 
     if (!idnumber) {
       I.say('⚠️ idnumber が空の行をスキップ');
@@ -182,8 +182,8 @@ Scenario('受講生退会 @dev', async ({ I, classMemberPageShimamura }) => {
 
     await runTaikaiFlow(I, classMemberPageShimamura, {
       idnumber,
-      finalYear,
-      finalMonth,
+      taikaiYear,
+      taikaiMonth,
     });
   }
 
