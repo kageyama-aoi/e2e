@@ -114,15 +114,17 @@ const {
   toggleGroupmenu,
   verifyValidationErrors
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 // ローカルロケーター（この FlowPage だけで使うセレクタをまとめる）
+// エラーコンテナ・検索結果リンク等の全画面共通セレクタは SELECTORS（constants.js）を参照し、
+// このファイル内で文字列リテラルとして再定義しないこと（複数ファイルへの重複を防ぐため）。
 const LOCATORS = {
   textbox: { field1: '#field_id_1', field2: '#field_id_2' },
   pulldown: { area: '#area_id', school: '#school_id' },
   button:   { save: '更新', search: '検索' },
   screen:   { name: '〇〇画面' },
-  error:    { container: '#top_err_info_msg_div' }
+  error:    { container: SELECTORS.ERROR_CONTAINER }
 };
 
 // --------- 各ステップ（verbNoun パターン） ---------
@@ -387,11 +389,13 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 
 ```javascript
 // セレクタをファイル先頭にまとめる（ローカル定数）
+// エラーコンテナ等の全画面共通セレクタは SELECTORS（support/shimamura/constants.js）を参照する
+const { SELECTORS } = require('../../../support/shimamura/constants');
 const S = {
   fields:  { month: '#billing_month', school: '#school_id' },
   buttons: { search: '検索', save: '更新' },
   result:  { table: '.listView' },
-  error:   { container: '#top_err_info_msg_div' }
+  error:   { container: SELECTORS.ERROR_CONTAINER }
 };
 
 // 各ステップを async function で定義

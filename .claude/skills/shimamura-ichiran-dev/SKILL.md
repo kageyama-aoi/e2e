@@ -115,7 +115,9 @@ fill{ScreenName}SearchConditions(data) {
 click{ScreenName}SearchAndWait() {
   I.say('【{画面名}一覧】検索実行');
   I.click('input[type="button"][value="検索"]');
-  I.waitForElement('a.listViewTdLinkS1', 15);
+  // 検索結果リンクは SELECTORS.RESULT_LINK（support/shimamura/constants.js）を参照する
+  // ClassMemberPage.js は既にこの定数を import 済みなので、そのまま使ってよい
+  I.waitForElement(`a${SELECTORS.RESULT_LINK}`, 15);
 },
 
 /**
@@ -123,7 +125,7 @@ click{ScreenName}SearchAndWait() {
  */
 verify{ScreenName}ResultsExist() {
   I.say('【{画面名}一覧】検索結果が表示されることを確認');
-  I.seeElement('a.listViewTdLinkS1');
+  I.seeElement(`a${SELECTORS.RESULT_LINK}`);
 },
 
 /**
@@ -132,7 +134,7 @@ verify{ScreenName}ResultsExist() {
  */
 verify{ScreenName}RecordInResults(expectedText) {
   I.say(`【{画面名}一覧】"${expectedText}" が結果に表示されることを確認`);
-  I.see(expectedText, 'a.listViewTdLinkS1');
+  I.see(expectedText, `a${SELECTORS.RESULT_LINK}`);
 },
 ```
 
