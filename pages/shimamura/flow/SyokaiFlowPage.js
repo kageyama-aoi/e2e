@@ -84,7 +84,7 @@ function createActionExecutor(I, locators, input, expectedErrors) {
   const actions = {
     class_select: async () => {
       I.click(locators.button.class_select);
-      await ShouldBeOnClassSelectPopup(I, locators, input.class_name01, input.course_category);
+      await selectClassInPopup(I, locators, input.class_name01, input.course_category);
     },
     switch_to_detail: async () => {
       I.switchToNextTab();
@@ -119,14 +119,14 @@ function createActionExecutor(I, locators, input, expectedErrors) {
   };
 }
 
-async function ShouldBeOnStudentGroup(I, classMemberPageShimamura) {
+async function navigateToStudentGroup(I, classMemberPageShimamura) {
   I.say('【画面遷移】候補生検索 メニュー');
   await toggleGroupmenu(I, { icon_id: 'submenu__candidates_grp_sub', menuname: '候補生' });
   await classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
   await logScreenUrl(I, '候補生検索ページ');
 }
 
-async function ShouldBeOnKouhoseiList(I, last_name) {
+async function searchAndSelectKouhosei(I, last_name) {
   const S = {
     button: { search: '検索' },
     result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
@@ -143,7 +143,7 @@ async function ShouldBeOnKouhoseiList(I, last_name) {
   return student_name;
 }
 
-async function ShouldBeOnKouhouseiDetail(I, student_name) {
+async function promoteKouhoseiToStudent(I, student_name) {
   I.say('【候補生詳細】受講生へ移動');
   I.waitForElement(locate('body').withText('候補生詳細'), TIMEOUTS.SCREEN);
   await logScreenUrl(I, '候補生詳細');
@@ -152,7 +152,7 @@ async function ShouldBeOnKouhouseiDetail(I, student_name) {
   I.click('受講生へ移動');
 }
 
-async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false } = {}) {
+async function openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false } = {}) {
   if (!skipNav) {
     I.say('【画面遷移】受講生登録・経理ビュー');
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -163,7 +163,7 @@ async function ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNa
   I.click('クラス追加/更新する');
 }
 
-async function ShouldBeOnClassSelectPopup(I, parentLocators, class_name01, course_category) {
+async function selectClassInPopup(I, parentLocators, class_name01, course_category) {
   const resolvedCategory = (typeof course_category === 'string' && course_category.trim())
     ? course_category.trim()
     : 'スクール';
@@ -189,7 +189,7 @@ async function ShouldBeOnClassSelectPopup(I, parentLocators, class_name01, cours
   I.click(locate({ xpath: exactMatchXPath }));
 }
 
-async function ShouldBeOnKeirisyoriScreenB(I, {
+async function fillKeirisyoriScreenB(I, {
   class_name01, course_category, keiyaku_date, kaishi_date,
   mid_month, remaining_classes, breakTarget, breakValue, expectedErrors = []
 }) {
@@ -203,7 +203,7 @@ async function ShouldBeOnKeirisyoriScreenB(I, {
   }
 }
 
-async function ShouldBeOnKeirisyoriScreenE(I) {
+async function confirmKeirisyoriScreenE(I) {
   I.say('【確認完了】経理ビューへ戻る');
   await logScreenUrl(I, '経理ビューE');
   await verifyNavigationByUrlChange(I, 5, 'DWConfirmCarteKeiri_AN', '確認完了（経理ビューへ）');
@@ -211,7 +211,7 @@ async function ShouldBeOnKeirisyoriScreenE(I) {
   I.saveScreenshot(`keiri_view_A_${Date.now()}.png`, true);
 }
 
-async function ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
+async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
   const label = `${taikaiYear}${taikaiMonth}`;
   I.say(`【退会処理】最終在籍年月 ${taikaiYear}/${taikaiMonth} を設定`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -252,21 +252,21 @@ async function runRegistrationFlow(I, classMemberPageShimamura, input) {
   I.say('【管理メニュー】受講生 → 受講生登録');
   await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
   I.say('=== 候補生検索 開始 ===');
-  await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
-  const student_name = await ShouldBeOnKouhoseiList(I, input.lastName);
-  await ShouldBeOnKouhouseiDetail(I, student_name);
+  await navigateToStudentGroup(I, classMemberPageShimamura);
+  const student_name = await searchAndSelectKouhosei(I, input.lastName);
+  await promoteKouhoseiToStudent(I, student_name);
   I.say('=== 候補生検索 終了 ===');
   I.say('=== 経理ビューA/B 処理 開始 ===');
-  await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
-  await ShouldBeOnKeirisyoriScreenB(I, input);
+  await openKeirisyoriScreenA(I, classMemberPageShimamura);
+  await fillKeirisyoriScreenB(I, input);
   I.say('=== 経理ビューA/B 処理 終了 ===');
 }
 
 module.exports = {
   KEIRI_SCREEN_B_LOCATORS,
   runRegistrationFlow,
-  ShouldBeOnKeirisyoriScreenA,
-  ShouldBeOnKeirisyoriScreenB,
-  ShouldBeOnKeirisyoriScreenE,
-  ShouldBeOnTaikai
+  openKeirisyoriScreenA,
+  fillKeirisyoriScreenB,
+  confirmKeirisyoriScreenE,
+  executeTaikai
 };

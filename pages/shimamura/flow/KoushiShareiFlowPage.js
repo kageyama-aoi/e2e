@@ -46,7 +46,7 @@ const S = {
   }
 };
 
-async function ShouldBeOnTsuikaScreen(I) {
+async function navigateToTsuikaScreen(I) {
   I.say('【画面遷移】講師謝礼追加画面へ');
   if (process.env.SHIMAMURA_NAV === 'sidebar') {
     I.amOnPage(BASE_URL + NAV.sidebar.moduleUrl);
@@ -60,7 +60,7 @@ async function ShouldBeOnTsuikaScreen(I) {
   await logScreenUrl(I, '講師謝礼追加');
 }
 
-async function ShouldSelectTeacher(I) {
+async function selectTeacher(I) {
   I.say('【講師選択】ポップアップを開く');
   I.click(S.buttons.teacher_popup);
   I.switchToNextTab();
@@ -71,7 +71,7 @@ async function ShouldSelectTeacher(I) {
   I.switchToNextTab();
 }
 
-async function ShouldFillMainForm(I, input) {
+async function fillMainForm(I, input) {
   I.say('【フォーム入力】計上日・対象月・謝礼項目・金額');
   // グループ1: 計上日・対象月（常に入力）
   fillTextFieldsBySelector(I, [
@@ -94,7 +94,7 @@ async function ShouldFillMainForm(I, input) {
   ]);
 }
 
-async function ShouldSaveAndVerify(I, expectedErrors) {
+async function saveAndVerify(I, expectedErrors) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
   // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機
@@ -112,14 +112,14 @@ async function ShouldSaveAndVerify(I, expectedErrors) {
 }
 
 async function runKoushiShareiManualFlow(I, input) {
-  await ShouldBeOnTsuikaScreen(I);
-  await ShouldSelectTeacher(I);
-  await ShouldFillMainForm(I, input);
-  await ShouldSaveAndVerify(I, input.expectedErrors || []);
+  await navigateToTsuikaScreen(I);
+  await selectTeacher(I);
+  await fillMainForm(I, input);
+  await saveAndVerify(I, input.expectedErrors || []);
 }
 
 async function runKoushiShareiValidationFlow(I, input) {
-  await ShouldBeOnTsuikaScreen(I);
+  await navigateToTsuikaScreen(I);
   // 講師選択なしでバリデーションを確認するフロー（日付・金額のみ入力）
   fillTextFieldsBySelector(I, [
     [S.fields.keijoubi,      input.keijoubi],
@@ -127,7 +127,7 @@ async function runKoushiShareiValidationFlow(I, input) {
     [S.fields.houshugaku,    input.houshugaku],
   ]);
   if (input.sharei_komoku) I.selectOption(S.selects.sharei_komoku, input.sharei_komoku);
-  await ShouldSaveAndVerify(I, input.expectedErrors || []);
+  await saveAndVerify(I, input.expectedErrors || []);
 }
 
 async function navigateToTsuikaImportScreen(I) {

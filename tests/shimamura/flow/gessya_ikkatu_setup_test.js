@@ -25,10 +25,10 @@ const {
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { runStudentPaymentSetup, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/GessyaIkkatuFlowPage');
 const {
-  ShouldBeOnKeirisyoriScreenA,
-  ShouldBeOnKeirisyoriScreenB,
-  ShouldBeOnKeirisyoriScreenE,
-  ShouldBeOnTaikai,
+  openKeirisyoriScreenA,
+  fillKeirisyoriScreenB,
+  confirmKeirisyoriScreenE,
+  executeTaikai,
 } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 function buildClassInput(row, suffix = '') {
@@ -74,17 +74,17 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   const recordId = await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
   // Step2: 経理ビューA/B でクラス登録（1クラス目）
-  await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
-  await ShouldBeOnKeirisyoriScreenB(I, buildClassInput(current));
-  await ShouldBeOnKeirisyoriScreenE(I);
+  await openKeirisyoriScreenA(I, classMemberPageShimamura);
+  await fillKeirisyoriScreenB(I, buildClassInput(current));
+  await confirmKeirisyoriScreenE(I);
 
   // Step3: 2クラス目（UNNパターン等、className2 が指定されている場合のみ）
   // 経理ビューEから戻った後は既に経理ビューAにいるため skipNav: true でサイドバーナビをスキップ
   if (current.className2 && current.className2.trim()) {
     I.say(`【クラス登録 2本目】${current.className2}（${current.courseCategory2}）`);
-    await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
-    await ShouldBeOnKeirisyoriScreenB(I, buildClassInput(current, '2'));
-    await ShouldBeOnKeirisyoriScreenE(I);
+    await openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
+    await fillKeirisyoriScreenB(I, buildClassInput(current, '2'));
+    await confirmKeirisyoriScreenE(I);
   }
 
   // Step3.5: 運営管理費の金額確認（expectedKanrihi が指定されている場合のみ）
@@ -117,7 +117,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   if (current.taikaiMonth && String(current.taikaiMonth).trim()) {
     const resolved = resolveRelativeMonth(current.taikaiYear, current.taikaiMonth);
     I.say(`【退会処理】${current.taikaiMonth} → ${resolved.year}/${resolved.month}`);
-    await ShouldBeOnTaikai(I, classMemberPageShimamura, {
+    await executeTaikai(I, classMemberPageShimamura, {
       taikaiYear:  resolved.year,
       taikaiMonth: resolved.month,
     });

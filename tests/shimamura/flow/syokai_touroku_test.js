@@ -19,7 +19,7 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runRegistrationFlow, ShouldBeOnKeirisyoriScreenE, ShouldBeOnTaikai } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const { runRegistrationFlow, confirmKeirisyoriScreenE, executeTaikai } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data', 'shimamura'), (row) => {
   return row.className || row.class_name01 || row.lastName || row.last_name || 'データ行';
@@ -55,10 +55,10 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
   await runRegistrationFlow(I, classMemberPageShimamura, input);
 
   I.say('=== 確認完了 処理 開始 ===');
-  await ShouldBeOnKeirisyoriScreenE(I);
+  await confirmKeirisyoriScreenE(I);
   I.say('=== 確認完了 処理 終了 ===');
   I.say('=== 退会処理 開始 ===');
-  await ShouldBeOnTaikai(I, classMemberPageShimamura, { taikaiYear: current.taikaiYear, taikaiMonth: current.taikaiMonth });
+  await executeTaikai(I, classMemberPageShimamura, { taikaiYear: current.taikaiYear, taikaiMonth: current.taikaiMonth });
   I.say('=== 退会処理 終了 ===');
 
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');

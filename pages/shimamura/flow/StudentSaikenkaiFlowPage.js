@@ -47,7 +47,7 @@ const S = {
 
 // ── Step 1: 受講生検索 → DW_AN → DetailView ──────────────────
 
-async function ShouldSearchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) {
+async function searchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) {
   I.say('【受講生検索】会員番号で絞り込み');
   await ichiranPageShimamura.navigateToStudentSearchPage();
   ichiranPageShimamura.fillStudentSearchConditions({ idnumber });
@@ -73,7 +73,7 @@ async function ShouldSearchAndNavigateToDetailView(I, ichiranPageShimamura, idnu
 
 // ── Step 2: 受講生基本情報の事前入力（SMBCフォームの readonly 項目用） ──
 
-async function ShouldFillAndSaveStudentBasicInfo(I, input) {
+async function fillAndSaveStudentBasicInfo(I, input) {
   I.say('【受講生基本情報】編集ボタンをクリック');
   I.click(S.detail.editButton);
   I.waitForElement(S.edit.saveButton, TIMEOUTS.SCREEN);
@@ -138,7 +138,7 @@ async function ShouldFillAndSaveStudentBasicInfo(I, input) {
 
 // ── Step 4: 編集 → 請求方法変更 → 保存 ──────────────────────
 
-async function ShouldEditStudentPaymentType(I, input) {
+async function editStudentPaymentType(I, input) {
   I.say('【受講生編集】編集ボタンをクリック');
   I.click(S.detail.editButton);
   I.waitForElement(S.edit.saveButton, TIMEOUTS.SCREEN);
@@ -149,7 +149,7 @@ async function ShouldEditStudentPaymentType(I, input) {
   I.wait(1);
 }
 
-async function ShouldSaveStudentEdit(I, expectedErrors) {
+async function saveStudentEdit(I, expectedErrors) {
   I.say('【受講生編集】保存');
   I.click(S.edit.saveButton);
   await waitForSaveResult(I);
@@ -179,7 +179,7 @@ async function ShouldSaveStudentEdit(I, expectedErrors) {
 
 // ── Step 3: 債権買取顧客情報登録ボタン → SMBCフォーム ─────────
 
-async function ShouldClickSaikenkaiButton(I) {
+async function clickSaikenkaiButton(I) {
   I.say('【債権買取顧客情報登録】smbc_button をクリック');
   I.waitForElement(S.detail.saikenkaiBtn, TIMEOUTS.ELEMENT);
   I.click(S.detail.saikenkaiBtn);
@@ -187,7 +187,7 @@ async function ShouldClickSaikenkaiButton(I) {
   await logScreenUrl(I, '債権買取顧客情報登録フォーム(SmbcContacts EW_AN)');
 }
 
-async function ShouldFillSmbcForm(I, input) {
+async function fillSmbcForm(I, input) {
   I.say('【債権買取顧客情報登録】フォームに入力（editable フィールドのみ）');
   // readonly フィールド（gender, address, bank_* など）は受講生レコードから自動引用される
 
@@ -253,7 +253,7 @@ async function ShouldFillSmbcForm(I, input) {
   }
 }
 
-async function ShouldSaveSmbcForm(I, expectedErrors) {
+async function saveSmbcForm(I, expectedErrors) {
   I.say('【債権買取顧客情報登録】申込情報登録ボタンをクリック');
   I.click(S.smbc.saveButton);
   await waitForSaveResult(I);
@@ -273,19 +273,19 @@ async function ShouldSaveSmbcForm(I, expectedErrors) {
 
 async function runSaikenkaiFlow(I, ichiranPageShimamura, input) {
   // Step 1: 受講生を検索して DetailView へ
-  await ShouldSearchAndNavigateToDetailView(I, ichiranPageShimamura, input.idnumber);
+  await searchAndNavigateToDetailView(I, ichiranPageShimamura, input.idnumber);
 
   // Step 2: 受講生基本情報を先に登録（SMBCフォームの readonly 項目の事前準備）
-  await ShouldFillAndSaveStudentBasicInfo(I, input);
+  await fillAndSaveStudentBasicInfo(I, input);
 
   // Step 3: 債権買取顧客情報登録（smbc_button）
-  await ShouldClickSaikenkaiButton(I);
-  await ShouldFillSmbcForm(I, input);
-  await ShouldSaveSmbcForm(I, input.expectedErrors);
+  await clickSaikenkaiButton(I);
+  await fillSmbcForm(I, input);
+  await saveSmbcForm(I, input.expectedErrors);
 
   // Step 4: 受講生編集 → 請求方法：債権買取 → 保存（7日〜月末のみ成功）
-  await ShouldEditStudentPaymentType(I, input);
-  await ShouldSaveStudentEdit(I, input.expectedErrors);
+  await editStudentPaymentType(I, input);
+  await saveStudentEdit(I, input.expectedErrors);
 }
 
 module.exports = { runSaikenkaiFlow };
