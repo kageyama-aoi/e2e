@@ -49,12 +49,16 @@ shimamura には「フォームを1枚埋めて保存」という単純なパタ
 雛形: `pages/shimamura/flow/SyokaiFlowPage.js` + `tests/shimamura/flow/syokai_touroku_test.js`
 
 ```
-ShouldBeOnXxx() 関数（各ステップ）
+verbNoun() 関数（各ステップ。例: navigateToXxxScreen / fillXxxForm / confirmXxxSubmit）
     ↓
 runXxxFlow()（オーケストレーター）
     ↓
 テストファイル（Scenario から runXxxFlow() を呼ぶ）
 ```
+
+> **命名規則（AGENTS.md参照）**: 各ステップ関数は `ShouldBeOnXxx` ではなく `verbNoun`
+> （`navigateTo...` / `open...` / `fill...` / `confirm...` / `execute...` 等）で命名すること。
+> `ShouldBeOnXxx` は過去に混在していた旧パターンで、2026-07 に全廃済み（#issue参照）。
 
 ### パターン B: フォーム入力型（簡易）
 
@@ -84,6 +88,13 @@ runXxxFlow()（オーケストレーター）
 
 ### Step 1: 対象フローの確認
 
+0. **既存の類似フローが無いか確認する（必須・最優先）**
+   `pages/shimamura/flow/` と `tests/shimamura/flow/` を対象のキーワード（画面名・業務名の
+   日本語/ローマ字両方）で grep する。似た処理が既にあれば重複実装せず、既存関数を呼び出す
+   か拡張する（引数を増やす等）。
+   例: 過去に「退会処理」を `taikai_test.js` に独自実装したまま `SyokaiFlowPage.js` の
+   `executeTaikai` と重複していた事例あり（#issue参照）。同じ業務語で複数箇所にロジックが
+   分散していないか必ず確認すること。
 1. **フローを構成する画面を列挙する**（例: 受講生検索 → 詳細 → 経理ビュー A → クラス選択ポップアップ → 経理ビュー B）
 2. **各画面のフォームフィールドを確認する**（`/shimamura-html-fetch` で取得、または既存 HTML を参照）
 3. **ポップアップが別タブで開くか確認する**（開く場合は `I.switchToNextTab()` が必要）
@@ -114,9 +125,9 @@ const LOCATORS = {
   error:    { container: '#top_err_info_msg_div' }
 };
 
-// --------- 各ステップ（ShouldBeOn* パターン） ---------
+// --------- 各ステップ（verbNoun パターン） ---------
 
-async function ShouldBeOnStep1Screen(I, classMemberPageShimamura) {
+async function navigateToTargetScreen(I, classMemberPageShimamura) {
   I.say('【画面遷移】〇〇画面へ');
   // ナビゲーション
   await classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名');
@@ -124,7 +135,7 @@ async function ShouldBeOnStep1Screen(I, classMemberPageShimamura) {
   I.waitForElement(locate('body').withText(LOCATORS.screen.name), TIMEOUTS.SCREEN);
 }
 
-async function ShouldBeOnStep2Form(I, input) {
+async function fillTargetForm(I, input) {
   I.say('【フォーム入力】〇〇フォームへ入力');
   // テキスト入力: executeScript で一括セット（fillField の個別呼び出しより高速）
   const textFields = [
@@ -143,7 +154,7 @@ async function ShouldBeOnStep2Form(I, input) {
   if (input.area) I.selectOption(LOCATORS.pulldown.area, input.area);
 }
 
-async function ShouldBeOnStep3Submit(I, expectedErrors = []) {
+async function submitAndVerify(I, expectedErrors = []) {
   I.say('【確定/保存】');
   I.click(LOCATORS.button.save);
   if (expectedErrors.length > 0) {
@@ -156,9 +167,9 @@ async function ShouldBeOnStep3Submit(I, expectedErrors = []) {
 // --------- オーケストレーター ---------
 
 async function run{FlowName}Flow(I, classMemberPageShimamura, input) {
-  await ShouldBeOnStep1Screen(I, classMemberPageShimamura);
-  await ShouldBeOnStep2Form(I, input);
-  await ShouldBeOnStep3Submit(I, input.expectedErrors);
+  await navigateToTargetScreen(I, classMemberPageShimamura);
+  await fillTargetForm(I, input);
+  await submitAndVerify(I, input.expectedErrors);
 }
 
 module.exports = {
@@ -173,7 +184,7 @@ CodeceptJS は閉じたタブを参照し続けるため、**`I.switchToNextTab(
 戻らないと次のステップで `Target page, context or browser has been closed` エラーが発生する。
 
 ```javascript
-async function ShouldBeOnPopupTab(I) {
+async function selectFromPopupTab(I) {
   I.say('【ポップアップ】別タブへ切替');
   I.wait(TIMEOUTS.TAB_SWITCH);          // タブが開くまで待つ
   I.switchToNextTab();                  // ポップアップタブへ
@@ -238,7 +249,11 @@ scenario,field1,field2,area,expectedErrors
 - `scenario` 列は必須（シナリオラベル）
 - 正常系は `expectedErrors` を空にする
 - 異常系は `expectedErrors` に `|` 区切りで複数エラーを指定できる（`parseExpectedErrors()` で処理）
-- フィールド名は HTML の `name=` 属性または `id` 属性の値をそのまま列名にする
+- フィールド名は HTML の `name=` 属性または `id` 属性の値をそのまま列名にする（camelCase推奨。既存の
+  同一概念の列がある場合はそれに合わせる。例: 退会年月は `taikaiYear`/`taikaiMonth` で統一）
+- **契約日・開始日・退会年月など日付/年月を含む列は、固定日付を書くとテストが月をまたいで壊れる**。
+  テストファイル側で `resolveDynamicDateIfPast()`（`support/shimamura/utils.js`）を通して読み込むこと
+  （実装例は `tests/shimamura/flow/syokai_touroku_test.js` を参照）。
 
 #### expectedErrors 列に書くテキストの決め方
 
@@ -320,7 +335,7 @@ const validationErrorData = withScenarioLabel(
   (row) => row.label || row.scenario
 );
 
-Feature('{画面名}登録フロー');
+Feature('{画面名}登録フロー'); // 必ずテスト内容を表す名前にする。'Dev sandbox (@dev)' 等の仮名を残さない
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
@@ -480,7 +495,7 @@ if (textFields.length > 0) {
 > | ケース | 理由 | 対処 |
 > |---|---|---|
 > | `selectOption` | change イベントが必要 | 個別に `I.selectOption()` |
-> | 郵便番号・銀行コード（AJAX 連動） | API 補完を wait で待つ必要がある | `I.fillField()` + `I.wait(0.5)` |
+> | 郵便番号・銀行コード（AJAX 連動） | API 補完を wait で待つ必要がある | `I.fillField()` + `I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT)`（マジックナンバーを直書きしない） |
 > | `readonly` 属性の textarea | removeAttribute が必要 | executeScript 内で `el.removeAttribute('readonly'); el.value = value;` |
 
 #### shimamura の保存ボタン パターン一覧
@@ -543,7 +558,7 @@ const { TIMEOUTS } = require('../../support/shimamura/constants');
 **ページ遷移する場合の実装パターン:**
 
 ```javascript
-async function ShouldSaveAndVerify(I, expectedErrors) {
+async function saveAndVerify(I, expectedErrors) {
   I.click('input[name="save_button"]');
   I.wait(TIMEOUTS.RESULT);
   if (expectedErrors.length > 0) {
@@ -602,3 +617,8 @@ async function ShouldSaveAndVerify(I, expectedErrors) {
 | `expectedErrors` の検証でテストが失敗する | エラー文言が実際のメッセージと不一致 | CSV を空欄にして先に実行し、スクリーンショットでエラー文言を確認してから更新する |
 | ポップアップ後に `Target page, context or browser has been closed` エラー | 別タブが自動クローズ後も閉じたタブを参照し続けている | ポップアップ内で選択後 `I.wait(TIMEOUTS.TAB_SWITCH)` → `I.switchToNextTab()` を追加して元タブへ戻る |
 | 保存成功後に `Element "#top_err_info_msg_div" was not found` エラー | 成功時にページ遷移する画面で `grabTextFrom` を使用している | `I.executeScript(() => { const el = document.querySelector('#top_err_info_msg_div'); return el ? el.textContent.trim() : ''; })` に切替え |
+| 「開始日は当月以降で入力してください。」等の日付バリデーションエラー | CSVに固定日付（例: `2026-06-05`）を書いており月をまたいで過去日になった | `support/shimamura/utils.js` の `resolveDynamicDateIfPast(I, dateStr, fieldLabel, { graceMonths })` で当日日付に自動補正する。画面ごとに許容範囲が異なる（契約日/開始日は当月以降のみ=`graceMonths: 0`、退会処理は先月まで許容=`graceMonths: 1`）ため実機で確認すること |
+| 退会処理で「指定の退会日は選択できません。」エラー | 退会処理は「先月まで許容・先々月以前はNG」というルールを持つ（契約日/開始日の「当月以降のみ」とは別ルール） | 上記 `resolveDynamicDateIfPast` を `graceMonths: 1` で使う |
+| 退会処理で「退会する対象が選択されていません。」エラー | 対象受講生に有効なクラス・コースが存在しない（既に退会済み等） | テストデータ側の問題。別の受講生を使うか、テスト用受講生を新規作成する |
+| 経理カルテビュー等で「経理処理が完了してないデータがあります」の警告が出て後続操作（退会処理等）がブロックされる | 対象受講生に確定していない料金レコードが残っている | `SyokaiFlowPage.js` の `resolveUnfinishedKeiriDataIfPresent(I)` を呼ぶ（「未完了情報確認」→「確認完了（経理ビューへ）」を自動でクリックする）。解消後は経理ビューAに遷移するため、元のタブ状態に依存する後続処理がある場合は再遷移が必要（`taikai_test.js` の `navigateToTaikaiScreen` を参照） |
+| 月謝一括作成バッチ（`LWMonthlyFeeCreation_AN`）が何も作成しない | 収納業者のうち1つでも対象月の口座振替スケジュール（`module=ShimaSchedule&action=LWAccountTransferScheduleRegistration_AN`）が未登録だと、その収納業者だけでなく処理対象全体が作成されない | `support/shimamura/accountTransferSchedule.js` の `ensureAccountTransferSchedules` を実行前に呼ぶ（`GessyaIkkatuFlowPage.js` の `runMonthlyFeeCreation` は既に内蔵済み） |
