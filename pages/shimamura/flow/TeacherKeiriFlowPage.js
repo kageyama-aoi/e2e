@@ -94,7 +94,7 @@ async function setAccountingTab(I, recordId, input) {
         el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
       }
     }, input.bank_code);
-    I.wait(1);
+    I.wait(TIMEOUTS.AJAX_DEBOUNCE);
   }
 
   // 支店コード: 同様にkeyup発火でAJAX補完（bank_branch_name を自動入力）
@@ -106,7 +106,7 @@ async function setAccountingTab(I, recordId, input) {
         el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
       }
     }, input.bank_branch_code);
-    I.wait(1);
+    I.wait(TIMEOUTS.AJAX_DEBOUNCE);
   }
 
   // 口座番号・口座名義人: 既存値が残っている場合を考慮して clearField してから入力

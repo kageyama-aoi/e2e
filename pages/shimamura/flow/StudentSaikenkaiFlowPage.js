@@ -92,7 +92,7 @@ async function fillAndSaveStudentBasicInfo(I, input) {
   if (input.student_postalcode) {
     I.fillField('input[name="primary_address_postalcode"]', input.student_postalcode);
     I.click('input[value="〒"]');  // shimamura 郵便番号検索ボタン
-    I.wait(0.5); // 郵便番号 API 待ち
+    I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT); // 郵便番号 API 待ち
   }
 
   // ─ グループ2: 郵便番号API後の住所フィールド一括入力（自動補完の上書き含む）
@@ -117,7 +117,7 @@ async function fillAndSaveStudentBasicInfo(I, input) {
   // ─ 銀行コード AJAX（wait 必須）
   if (input.student_bank_code) {
     I.fillField('input[name="bank_code"]', input.student_bank_code);
-    I.wait(0.5); // 銀行名 AJAX 補完待ち
+    I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT); // 銀行名 AJAX 補完待ち
   }
 
   // ─ グループ3: 銀行コードAJAX後の口座フィールド一括入力
@@ -146,7 +146,7 @@ async function editStudentPaymentType(I, input) {
 
   I.say(`【受講生編集】請求方法を「債権買取」(${input.bank_payment_type}) に変更`);
   I.selectOption(S.edit.bankPaymentType, input.bank_payment_type);
-  I.wait(1);
+  I.wait(TIMEOUTS.AJAX_DEBOUNCE);
 }
 
 async function saveStudentEdit(I, expectedErrors) {
