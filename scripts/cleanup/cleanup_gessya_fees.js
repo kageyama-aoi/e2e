@@ -2,15 +2,15 @@
 /**
  * @fileoverview shimamura testgcp 月謝テスト受講生の料金・入出金クリーンアップ
  *
- * 月謝一括作成テスト（tsukihi_ikatsu_test.js）実行後に作成された
+ * 月謝一括作成テスト（gessya_ikkatu_test.js）実行後に作成された
  * テスト料金・入出金レコードを画面操作で一括削除する。
  *
  * 対象: last_name が SEARCH_NAME_PATTERN に一致する受講生の
  *       経理ビューB内「料金」「入出金」の全削除リンク
  *
  * 使い方:
- *   node scripts/cleanup/cleanup_tsukihi_fees.js
- *   node scripts/cleanup/cleanup_tsukihi_fees.js 月謝テスト0630   # 名前を絞り込み
+ *   node scripts/cleanup/cleanup_gessya_fees.js
+ *   node scripts/cleanup/cleanup_gessya_fees.js 月謝テスト0630   # 名前を絞り込み
  *
  * 注意:
  *   - 入金済みレコードは削除できない（削除ボタンが表示されない）

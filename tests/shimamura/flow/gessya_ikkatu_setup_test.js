@@ -11,7 +11,7 @@
  * 3. 受講生をクラスに登録（経理ビュー A/B 処理）
  *
  * **データソース**
- * - `data/shimamura/tsukihi_ikatsu_setup_data.csv`
+ * - `data/shimamura/gessya_ikkatu_setup_data.csv`
  */
 'use strict';
 
@@ -23,7 +23,7 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runStudentPaymentSetup, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runStudentPaymentSetup, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/GessyaIkkatuFlowPage');
 const {
   ShouldBeOnKeirisyoriScreenA,
   ShouldBeOnKeirisyoriScreenB,
@@ -41,7 +41,7 @@ function buildClassInput(row, suffix = '') {
 }
 
 const csvData = withScenarioLabel(
-  loadCsvWithProfile('tsukihi_ikatsu_setup_data', 'shimamura'),
+  loadCsvWithProfile('gessya_ikkatu_setup_data', 'shimamura'),
   (row) => row.scenario
 );
 

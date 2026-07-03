@@ -11,7 +11,7 @@ const { ensureAccountTransferSchedules } = require('../../../support/shimamura/a
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
-const SESSION_FILE = path.resolve(__dirname, '../../../output/tsukihi_ikatsu_session.json');
+const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
 
 const RESULT_LINK = 'a.listViewTdLinkS1';
 

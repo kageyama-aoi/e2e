@@ -27,6 +27,8 @@ npm install
 - `env/.env.shimamura.testgcp`
 - `env/.env.shimamura.testgcp2`
 - `env/.env.shimamura.traininggcp`
+- `env/.env.shimamura.MySQL84_dev`
+- `env/.env.shimamura.smbcpos_training`
 
 **T-Frame**
 - `env/.env.tframe.juku_test`
@@ -125,7 +127,7 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 ## 補助ツール
 
 ### Allure 結果アーカイブ
-`scripts/archive_allure_results.py` は、`allure-results/<profile>/<実行ディレクトリ>/` 単位で
+`scripts/allure/archive_allure_results.py` は、`allure-results/<profile>/<実行ディレクトリ>/` 単位で
 古いテスト結果をzip圧縮してアーカイブし、N日以上古いものを削除します。
 
 ```bash
@@ -133,22 +135,22 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 npm run allure:archive
 
 # 7日以上古いものを対象にする
-python scripts/archive_allure_results.py --days 7
+python scripts/allure/archive_allure_results.py --days 7
 
 # 削除せずに対象一覧だけ確認（dry-run）
-python scripts/archive_allure_results.py --dry-run
+python scripts/allure/archive_allure_results.py --dry-run
 ```
 
 - **IN**: `allure-results/<profile>/<timestamp_rundir>/`
 - **OUT**: `allure-results/archive/<profile>/<timestamp_rundir>.zip`
 
 ### サブメニュー抽出
-`scripts/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
+`scripts/html/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
 JSON/CSV で出力するための補助ツールです。スクレーピングや画面構造の把握に使えます。
 
 **使い方 (対話式)**
 ```bash
-python scripts/extract_submenus.py
+python scripts/html/extract_submenus.py
 ```
 
 **出力形式の選択**
@@ -168,14 +170,14 @@ python scripts/extract_submenus.py
 - 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
 
 ### サイドメニューグループ抽出
-`scripts/extract_side_menu_groups.py` は、サイドメニューHTMLから
+`scripts/html/extract_side_menu_groups.py` は、サイドメニューHTMLから
 「グループ名」と「配下のメニュー項目」を構造化して JSON/CSV で出力します。
 成果物はスクリプトの近くの `scripts/output/side_menu_extract/` 配下にまとめて出力します。
 既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成します。
 
 **使い方**
 ```bash
-python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html"
+python scripts/html/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html"
 ```
 
 **既定入力ファイル**
@@ -183,7 +185,7 @@ python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/so
 - このファイルにサイドメニューHTMLを貼り付けたうえで、引数なしで実行できます
 
 ```bash
-python scripts/extract_side_menu_groups.py
+python scripts/html/extract_side_menu_groups.py
 ```
 
 **JSON出力例**
@@ -194,7 +196,7 @@ python scripts/extract_side_menu_groups.py
 
 **日本語だけのJSON**
 ```bash
-python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --jp-only
+python scripts/html/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --jp-only
 ```
 
 - `groups[].name`: グループ名のみ
@@ -208,12 +210,12 @@ python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/so
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
 
 ### 画面フォーム要素抽出
-`scripts/extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
+`scripts/html/extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
 フォーム要素（`input` / `select` / `textarea` / `button`）を抽出し、JSON/CSV で出力します。
 
 **使い方 (対話式)**
 ```bash
-python scripts/extract_body_only_fields.py
+python scripts/html/extract_body_only_fields.py
 ```
 
 **出力形式の選択**
@@ -237,7 +239,7 @@ python scripts/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-06-15 15:38:08
+Last updated: 2026-07-03 14:38:37
 
 ```text
 e2e/
@@ -265,6 +267,13 @@ e2e/
 │   │   ├── 2026-06-05-1748.md
 │   │   ├── 2026-06-09-1708.md
 │   │   ├── 2026-06-15-1205.md
+│   │   ├── 2026-06-15-1534.md
+│   │   ├── 2026-06-15-1620.md
+│   │   ├── 2026-06-26-1433.md
+│   │   ├── 2026-06-29-1833.md
+│   │   ├── 2026-06-30-1441.md
+│   │   ├── 2026-06-30-1713.md
+│   │   ├── 2026-07-02-1802.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -282,10 +291,33 @@ e2e/
 │   │   ├── planner.md
 │   │   └── worker.md
 │   ├── commands/ 
-│   │   ├── doc-sync.md
 │   │   ├── handoff.md
 │   │   ├── newplan.md
 │   │   └── placement-gate.md
+│   ├── skills/ 
+│   │   ├── doc-sync/ 
+│   │   │   └── SKILL.md
+│   │   ├── launcher-review/ 
+│   │   │   └── SKILL.md
+│   │   ├── local-safe-move/ 
+│   │   │   └── SKILL.md
+│   │   ├── shimamura-download-verify/ 
+│   │   │   └── SKILL.md
+│   │   ├── shimamura-html-fetch/ 
+│   │   │   └── SKILL.md
+│   │   ├── shimamura-ichiran-dev/ 
+│   │   │   └── SKILL.md
+│   │   ├── shimamura-registration-dev/ 
+│   │   │   └── SKILL.md
+│   │   ├── shimamura-screen-diagram/ 
+│   │   │   └── SKILL.md
+│   │   ├── tframe-html-fetch/ 
+│   │   │   └── SKILL.md
+│   │   ├── tframe-ichiran-dev/ 
+│   │   │   └── SKILL.md
+│   │   └── tframe-registration-dev/ 
+│   │       └── SKILL.md
+│   ├── scheduled_tasks.lock
 │   └── settings.local.json
 ├── .github/ 
 │   └── workflows/ 
@@ -334,6 +366,7 @@ e2e/
 │   │   ├── contact_register_validation_errors.csv
 │   │   ├── course_by_student_ichiran_search_data.csv
 │   │   ├── course_ichiran_search_data.csv
+│   │   ├── gessya_ikkatu_setup_data.csv
 │   │   ├── keiri_hennkin_syori_data.csv
 │   │   ├── keiri_hennkin_syori_validation_errors.csv
 │   │   ├── keiri_invoices_ichiran_search_data.csv
@@ -354,8 +387,10 @@ e2e/
 │   │   ├── syokai_touroku_validation_errors.csv
 │   │   ├── taikai_testdata.csv
 │   │   ├── teacher_list_ichiran_search_data.csv
+│   │   ├── teacher_variants.csv
 │   │   ├── testgcp一括取込ファイル_20230402.txt
-│   │   └── transaction_ichiran_search_data.csv
+│   │   ├── transaction_ichiran_search_data.csv
+│   │   └── validity_data_output_data.csv
 │   └── tframe/ 
 │       ├── account_ichiran_search_data.csv
 │       ├── account_touroku_data.csv
@@ -411,9 +446,12 @@ e2e/
 │   │   ├── auth/ 
 │   │   │   └── LoginPage.js
 │   │   ├── flow/ 
+│   │   │   ├── CourseClassSetupFlowPage.js
+│   │   │   ├── GessyaIkkatuFlowPage.js
 │   │   │   ├── KoushiShareiFlowPage.js
 │   │   │   ├── StudentSaikenkaiFlowPage.js
-│   │   │   └── SyokaiFlowPage.js
+│   │   │   ├── SyokaiFlowPage.js
+│   │   │   └── TeacherKeiriFlowPage.js
 │   │   └── screens/ 
 │   │       ├── ClassMemberPage.js
 │   │       └── IchiranPage.js
@@ -467,6 +505,7 @@ e2e/
 │   │   ├── archive_allure_results.py
 │   │   └── serve_latest.js
 │   ├── cleanup/ 
+│   │   ├── cleanup_gessya_fees.js
 │   │   └── cleanup_output_logs.py
 │   ├── hooks/ 
 │   │   ├── archive_allure.py
@@ -477,6 +516,16 @@ e2e/
 │   │   │   ├── account_list.html
 │   │   │   ├── after_login.png
 │   │   │   ├── all_links.json
+│   │   │   ├── bank_code_0001_ajax.png
+│   │   │   ├── bank_code_0005_ajax.png
+│   │   │   ├── bank_code_9900_ajax.png
+│   │   │   ├── bank_payment_1_error.png
+│   │   │   ├── bank_payment_1_selected.png
+│   │   │   ├── bank_payment_2_error.png
+│   │   │   ├── bank_payment_2_selected.png
+│   │   │   ├── bank_payment_4_error.png
+│   │   │   ├── bank_payment_4_selected.png
+│   │   │   ├── bank_payment_validation.json
 │   │   │   ├── branch_list.html
 │   │   │   ├── branch_touroku.html
 │   │   │   ├── chosekin_list.html
@@ -514,8 +563,23 @@ e2e/
 │   │   │   ├── after_login.png
 │   │   │   ├── attendance_today.html
 │   │   │   ├── attendance_today_links.json
+│   │   │   ├── class1000_detail.html
+│   │   │   ├── class1000_final.html
+│   │   │   ├── class1000_final.png
+│   │   │   ├── class_after_course_link.html
+│   │   │   ├── class_after_course_link.png
+│   │   │   ├── class_course_tab_direct.html
+│   │   │   ├── class_course_tab_direct.png
+│   │   │   ├── class_detail_view.html
+│   │   │   ├── class_detail_view_0.html
+│   │   │   ├── class_detail_view_1.html
+│   │   │   ├── class_detail_view_2.html
 │   │   │   ├── class_list.html
 │   │   │   ├── class_list_links.json
+│   │   │   ├── class_own_detail.html
+│   │   │   ├── class_search_result.html
+│   │   │   ├── class_with_course_tab.html
+│   │   │   ├── class_with_course_tab.png
 │   │   │   ├── contact_list.html
 │   │   │   ├── contact_list_links.json
 │   │   │   ├── contact_module_list.html
@@ -524,13 +588,26 @@ e2e/
 │   │   │   ├── contact_register_links.json
 │   │   │   ├── course_by_student.html
 │   │   │   ├── course_by_student_links.json
+│   │   │   ├── course_created_detail.html
 │   │   │   ├── course_ichiran.html
 │   │   │   ├── course_ichiran_links.json
+│   │   │   ├── course_register.html
+│   │   │   ├── course_register_links.json
 │   │   │   ├── credit_purchase_edit.html
 │   │   │   ├── credit_purchase_edit_links.json
 │   │   │   ├── credit_purchase_list.html
 │   │   │   ├── credit_purchase_list_links.json
+│   │   │   ├── error_course_tab2.png
+│   │   │   ├── error_create_full.png
+│   │   │   ├── error_tmp2.png
+│   │   │   ├── event_shimacourse_contacts_edit.html
+│   │   │   ├── existing_class_schedule_tab.html
+│   │   │   ├── existing_class_schedule_tab.png
+│   │   │   ├── fee_detail.html
+│   │   │   ├── fee_detail.png
 │   │   │   ├── fetch_student_edit_flow.js
+│   │   │   ├── karte_before_delete.html
+│   │   │   ├── karte_for_verify_check.html
 │   │   │   ├── keiri_invoices.html
 │   │   │   ├── keiri_invoices_links.json
 │   │   │   ├── kousha_sharei_add.html
@@ -542,12 +619,23 @@ e2e/
 │   │   │   ├── nav__leftcol.html
 │   │   │   ├── nav_full_body.html
 │   │   │   ├── nav_links_with_class.json
+│   │   │   ├── new_class_schedule_tab.html
+│   │   │   ├── new_class_schedule_tab.png
 │   │   │   ├── ryokin_package_create.html
 │   │   │   ├── ryokin_package_create_links.json
+│   │   │   ├── schedule_after_save.html
+│   │   │   ├── schedule_after_save.png
+│   │   │   ├── schedule_before_save.png
+│   │   │   ├── schedule_create_form.html
+│   │   │   ├── schedule_create_form.png
 │   │   │   ├── sharei_ichiran.html
 │   │   │   ├── sharei_ichiran_links.json
 │   │   │   ├── sharei_nichibetsu_list.html
 │   │   │   ├── sharei_nichibetsu_list_links.json
+│   │   │   ├── shimacourse_popup.html
+│   │   │   ├── shimacourse_popup.png
+│   │   │   ├── shimacourse_register.html
+│   │   │   ├── shimacourse_register_links.json
 │   │   │   ├── smbc_state_import.html
 │   │   │   ├── smbc_state_import_links.json
 │   │   │   ├── student_detail.html
@@ -572,26 +660,58 @@ e2e/
 │   │   │   ├── student_smbc_detail.html
 │   │   │   ├── student_smbc_detail_buttons.json
 │   │   │   ├── student_smbc_detail_links.json
+│   │   │   ├── teacher_accounting_fields.json
+│   │   │   ├── teacher_detail.html
+│   │   │   ├── teacher_detail_keiri.html
+│   │   │   ├── teacher_edit.png
+│   │   │   ├── teacher_edit_accounting.html
+│   │   │   ├── teacher_edit_basic.html
+│   │   │   ├── teacher_edit_error.png
+│   │   │   ├── teacher_edit_ewan.html
+│   │   │   ├── teacher_edit_ewan_keiri.html
+│   │   │   ├── teacher_edit_keiri_fields.json
 │   │   │   ├── teacher_list.html
 │   │   │   ├── teacher_list_links.json
+│   │   │   ├── teacher_list_query.html
 │   │   │   ├── transaction_list.html
 │   │   │   └── transaction_list_links.json
 │   │   ├── _fetch_juku_lists.js
+│   │   ├── check_confirm_btn.js
+│   │   ├── check_schedule.js
 │   │   ├── compare_nav.js
+│   │   ├── confirm_btn.png
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py
 │   │   ├── extract_submenus.py
 │   │   ├── fetch_chosekin_person_id.js
 │   │   ├── fetch_shimamura_nav.js
 │   │   ├── fetch_shimamura_screens.js
+│   │   ├── fetch_teacher_edit.js
 │   │   ├── fetch_tframe_forms.js
-│   │   └── tframe_extract_form_fields.js
+│   │   ├── reg2_after.png
+│   │   ├── reg2_filled.png
+│   │   ├── reg2_reload.png
+│   │   ├── reg3_after.png
+│   │   ├── reg3_before.png
+│   │   ├── register_schedule.js
+│   │   ├── register_schedule2.js
+│   │   ├── register_schedule3.js
+│   │   ├── schedule_01_top.png
+│   │   ├── schedule_after_register.png
+│   │   ├── schedule_before_register.png
+│   │   ├── schedule_filled.png
+│   │   ├── schedule_final.png
+│   │   ├── tframe_extract_form_fields.js
+│   │   ├── verify_after_submit.png
+│   │   ├── verify_filled.png
+│   │   └── verify_schedule.js
 │   ├── input/ 
 │   │   └── side_menu_extract/ 
 │   │       └── source.html
 │   └── check_pause.js
 ├── support/ 
 │   ├── shimamura/ 
+│   │   ├── accountTransferSchedule.js
 │   │   ├── constants.js
 │   │   ├── hooks.js
 │   │   ├── syokai_helpers.js
@@ -611,6 +731,9 @@ e2e/
 │   │   │   └── shimamura_class_existence_check_test.js
 │   │   ├── flow/ 
 │   │   │   ├── contact_register_test.js
+│   │   │   ├── course_class_setup_test.js
+│   │   │   ├── gessya_ikkatu_setup_test.js
+│   │   │   ├── gessya_ikkatu_test.js
 │   │   │   ├── keiri_hennkin_syori_test.js
 │   │   │   ├── koushi_sharei_manual_test.js
 │   │   │   ├── koushi_sharei_tsuika_test.js
@@ -618,19 +741,23 @@ e2e/
 │   │   │   ├── smbc_state_import_test.js
 │   │   │   ├── student_saikenkai_test.js
 │   │   │   ├── syokai_touroku_test.js
-│   │   │   └── taikai_test.js
-│   │   └── page/ 
-│   │       ├── attendance_today_ichiran_test.js
-│   │       ├── class_list_ichiran_test.js
-│   │       ├── contact_list_ichiran_test.js
-│   │       ├── contact_module_list_ichiran_test.js
-│   │       ├── course_by_student_ichiran_test.js
-│   │       ├── course_ichiran_test.js
-│   │       ├── keiri_invoices_ichiran_test.js
-│   │       ├── mishukin_list_ichiran_test.js
-│   │       ├── student_search_ichiran_test.js
-│   │       ├── teacher_list_ichiran_test.js
-│   │       └── transaction_ichiran_test.js
+│   │   │   ├── taikai_test.js
+│   │   │   └── teacher_keiri_setup_test.js
+│   │   ├── page/ 
+│   │   │   ├── attendance_today_ichiran_test.js
+│   │   │   ├── class_list_ichiran_test.js
+│   │   │   ├── contact_list_ichiran_test.js
+│   │   │   ├── contact_module_list_ichiran_test.js
+│   │   │   ├── course_by_student_ichiran_test.js
+│   │   │   ├── course_ichiran_test.js
+│   │   │   ├── keiri_invoices_ichiran_test.js
+│   │   │   ├── mishukin_list_ichiran_test.js
+│   │   │   ├── student_search_ichiran_test.js
+│   │   │   ├── teacher_list_ichiran_test.js
+│   │   │   ├── transaction_ichiran_test.js
+│   │   │   └── validity_data_output_test.js
+│   │   └── util/ 
+│   │       └── login_and_hold.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
 │   ├── taskreport/ 
@@ -691,6 +818,8 @@ e2e/
 │           └── teByStudent_ichiran_test.js
 ├── .env
 ├── .gitignore
+├── _temp_refactor_run_gui.md
+├── _temp_refactoring_shimamura.md
 ├── _temp_review_汎用性.md
 ├── AGENTS.md
 ├── CHANGELOG.md

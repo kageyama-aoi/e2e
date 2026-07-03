@@ -5,7 +5,7 @@
  * 月謝一括作成画面から月謝を作成し、来月分の料金が作成されたことを経理ビューで確認する。
  *
  * **前提条件**
- * - tsukihi_ikatsu_setup_test.js による受講生の請求方法設定・クラス登録が完了していること
+ * - gessya_ikkatu_setup_test.js による受講生の請求方法設定・クラス登録が完了していること
  *
  * **処理フロー**
  * 1. 月謝一括作成画面へ遷移
@@ -16,7 +16,7 @@
 
 const { setBusinessLabels } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { runMonthlyFeeCreation, verifyMonthlyFees } = require('../../../pages/shimamura/flow/TsukihiIkatsuFlowPage');
+const { runMonthlyFeeCreation, verifyMonthlyFees } = require('../../../pages/shimamura/flow/GessyaIkkatuFlowPage');
 
 Feature('月謝一括作成');
 

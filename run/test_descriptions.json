@@ -140,8 +140,8 @@
       "feature_no": "1100_4_1"
     },
     "check/bank_payment_type_check_test.js":                    "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト",
-    "flow/tsukihi_ikatsu_setup_test.js":                        "月謝一括作成 準備（受講生請求方法設定）",
-    "flow/tsukihi_ikatsu_test.js":                              "月謝一括作成 実行",
+    "flow/gessya_ikkatu_setup_test.js":                         "月謝一括作成 準備（受講生請求方法設定）",
+    "flow/gessya_ikkatu_test.js":                                "月謝一括作成 実行",
     "flow/course_class_setup_test.js":                          "コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用）"
   },
   "taskreport": {
