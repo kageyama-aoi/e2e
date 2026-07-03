@@ -21,6 +21,7 @@ const S = {
     description:     'textarea[name="description"]',
     bankPaymentType: '#bank_payment_type',
     shimaStorageId:  '#shima_storage_id',
+    discount:        '#discount',
     saveButton:      'input[name="save_button"]',
     editButton:      'input[name="edit_button"]',
   },
@@ -173,6 +174,11 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   I.selectOption(S.kouhoseiEdit.bankPaymentType, row.bank_payment_type);
   I.selectOption(S.kouhoseiEdit.shimaStorageId,  row.shima_storage_id);
 
+  if (row.discount && String(row.discount).trim() === '1') {
+    I.say('【社割設定】割引有無をON');
+    I.checkOption(S.kouhoseiEdit.discount);
+  }
+
   I.say('【請求方法設定】保存');
   I.click(S.kouhoseiEdit.saveButton);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -197,13 +203,23 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 // 月謝(course_kingaku)を0円にしておけば「会費」列＝確定した運営管理費そのものになる
 // （expectedClassName は勝者を示すログ用途で、金額の一致自体が勝者の証明になる）。
 // 金額は税込表示のため、期待値（税抜の運営管理費マスタ値）は1.1倍して比較する。
-async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName }) {
+async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName, expectedDiscount }) {
   const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
   I.say(`【運営管理費確認】record=${recordId} / ${targetYearMonth} / 想定勝者クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
   I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   I.waitForElement('#tbl_carte', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '運営管理費確認_経理カルテビュー');
+
+  // 社割（個人情報1「社割」欄）の確認。CSVでdiscount=1が指定されたシナリオでのみ実施。
+  if (expectedDiscount !== undefined) {
+    const expectedDiscountText = expectedDiscount ? 'あり' : 'なし';
+    const actualDiscountText = (await I.grabTextFrom('#td_discount')).trim();
+    if (actualDiscountText !== expectedDiscountText) {
+      throw new Error(`【社割表示不一致】期待="${expectedDiscountText}" 実際="${actualDiscountText}"`);
+    }
+    I.say(`  ✓ 社割表示 = ${actualDiscountText}`);
+  }
 
   const amountXPath = `//table[@id="tbl_carte"]//a[contains(text(), "${targetYearMonth}")]/ancestor::td[1]/following-sibling::td[1]`;
   I.waitForElement(amountXPath, TIMEOUTS.SCREEN);

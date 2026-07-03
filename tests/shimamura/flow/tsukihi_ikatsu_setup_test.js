@@ -66,6 +66,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
       lastName:          current.lastName,
       bank_payment_type: current.bank_payment_type,
       shima_storage_id:  current.shima_storage_id,
+      discount:          current.discount,
     },
   });
 
@@ -101,11 +102,13 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
         expectedKanrihiBase: current.expectedKanrihi,
       });
     } else {
+      const hasDiscountFlag = current.discount && String(current.discount).trim() === '1';
       await verifyKanrihiFee(I, recordId, {
         targetYear:  now.getFullYear(),
         targetMonth: now.getMonth() + 1,
         expectedKanrihiBase: current.expectedKanrihi,
         expectedClassName:   current.expectedWinnerClass,
+        expectedDiscount:    hasDiscountFlag ? true : undefined,
       });
     }
   }
