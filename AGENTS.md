@@ -114,14 +114,26 @@
 | `/shimamura-ichiran-dev` | shimamura 一覧検索テストの新規作成・修正手順 |
 | `/shimamura-registration-dev` | shimamura 登録・処理フローテストの新規作成・修正手順 |
 | `/shimamura-download-verify` | shimamura ダウンロードボタンでファイルを取得・検証するテストの新規作成手順（CSV・固定長両対応） |
+| `/shimamura-screen-diagram` | shimamura の画面遷移図（Mermaid）の作成・更新手順 |
 | `/github-issue-dev` | 開発作業全般（バグ修正・機能追加・リファクタリング）を Issue 駆動で進める |
 | `/string-template-refactor` | 文字列テンプレートのリファクタリング手順を実施する（グローバルスキル） |
 
 ## コーディング規約・命名
 - JavaScript は既存のスタイルに合わせる（強制フォーマッタなし）。
 - 関数名は `verbNoun`（例: `openStudentTab`）、遷移系は `navigateTo...` / `open...` / `goTo...`。
+  - `ShouldBeOnXxx` のような独自パターンは使わない（過去に混在していたが `verbNoun` に統一済み）。
 - セレクタは Page Object に集約し、テスト内の直書きを避ける。
+  - セレクタオブジェクトのカテゴリ名は `fields`（テキスト入力）/ `selects`（プルダウン）/
+    `buttons`（ボタン）/ `checkboxes` / `error`（エラー表示）を基本とする。
+    画面固有の追加カテゴリ（`accordion` 等）が必要な場合はそのまま追加してよいが、
+    既存カテゴリと同じ意味のものを別名で作らない（例: `fields` と `textbox` を両方使わない）。
 - 待機は `I.waitForElement` / `I.waitForVisible` を優先し、`I.wait(秒)` は最小限。
+  - AJAX補完待ちなど繰り返し使う待機時間は `TIMEOUTS`（`support/shimamura/constants.js` 等）に
+    定数化する。マジックナンバーを直書きしない。
+- 新規ファイル・識別子のローマ字表記はヘボン式を基本とする（例: 一括=`ikkatsu`、対策=`taisaku`）。
+  - 既存ファイルで訓令式（例: `Ikkatu`）や画面名由来の慣用表記が既に定着している場合は、
+    無理に一括リネームせず現状を尊重する。ただし誤読・タイポ（例: 月謝を"tsukihi"と読む等）が
+    見つかった場合は、影響範囲を確認のうえ修正してよい。
 
 ## テスト運用ガイド
 - フレームワーク: CodeceptJS + Playwright、レポートは Allure。
