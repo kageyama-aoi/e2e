@@ -288,12 +288,16 @@ function fillTextFieldsByName(I, fieldMap) {
  * 呼び出し側で `resolveDynamicDateIfPast(I, current.keiyakuDate, 'keiyakuDate')` のように
  * 明示的に包むことで、どのCSV列が動的補正の対象かをコード上で分かるようにしている。
  *
+ * 画面によって許容される過去月幅が異なる（例: 契約日/開始日は当月以降のみ、退会処理は
+ * 先月まで許容・先々月以前はNG）ため、`graceMonths` で許容する遡り月数を指定できる。
+ *
  * @param {CodeceptJS.I} I
  * @param {string} dateStr - CSV由来の日付文字列（YYYY-MM-DD）
  * @param {string} fieldLabel - ログ表示用のフィールド名（例: 'keiyakuDate'）
- * @returns {string} 当月以降ならそのまま、過去月なら本日日付（YYYY-MM-DD）
+ * @param {{graceMonths?: number}} [options] - graceMonths: 当月から遡って許容する月数（既定0=当月以降のみ有効。退会処理は1=先月まで有効）
+ * @returns {string} 許容範囲内ならそのまま、範囲外（過去すぎる）なら本日日付（YYYY-MM-DD）
  */
-function resolveDynamicDateIfPast(I, dateStr, fieldLabel) {
+function resolveDynamicDateIfPast(I, dateStr, fieldLabel, { graceMonths = 0 } = {}) {
   if (!dateStr) return dateStr;
   const original = new Date(dateStr);
   if (isNaN(original.getTime())) return dateStr;
@@ -301,7 +305,7 @@ function resolveDynamicDateIfPast(I, dateStr, fieldLabel) {
   const now = new Date();
   const originalYm = original.getFullYear() * 12 + original.getMonth();
   const nowYm = now.getFullYear() * 12 + now.getMonth();
-  if (originalYm >= nowYm) return dateStr;
+  if (originalYm >= nowYm - graceMonths) return dateStr;
 
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   I.say(`⚠ 【動的日付補正】${fieldLabel}: CSV記載値 "${dateStr}" は過去月のため本日日付に自動補正 → "${todayStr}"`);

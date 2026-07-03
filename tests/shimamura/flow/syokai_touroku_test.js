@@ -7,10 +7,11 @@
  * - `syokai_touroku_data.csv`（または `--profile` に応じたファイル）
  *
  * **動的日付フィールド**
- * - `keiyakuDate`（契約日）・`kaishiDate`（開始日）・`taikaiYear`/`taikaiMonth`（退会最終在籍年月）は
- *   shimamura 側の「当月以降」バリデーションに対応するため、CSV記載値が過去月の場合は
- *   `resolveDynamicDateIfPast` で本日日付（年月）に自動補正される（置換発生時は `I.say` でログに記録される）。
- *   CSVの日付は毎月更新しなくてよい。
+ * - `keiyakuDate`（契約日）・`kaishiDate`（開始日）は shimamura 側の「当月以降」バリデーションに
+ *   対応するため、CSV記載値が過去月の場合は `resolveDynamicDateIfPast` で本日日付に自動補正される。
+ * - `taikaiYear`/`taikaiMonth`（退会最終在籍年月）は退会処理側のルールが異なり「先月まで許容・
+ *   先々月以前はNG」のため、`graceMonths: 1` を指定して補正している。
+ * - いずれも置換発生時は `I.say` でログに記録される。CSVの日付は毎月更新しなくてよい。
  *
  * **前提条件**
  * - 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
@@ -68,7 +69,8 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
   const resolvedTaikaiDate = resolveDynamicDateIfPast(
     I,
     `${current.taikaiYear}-${String(current.taikaiMonth).padStart(2, '0')}-01`,
-    'taikaiYear/taikaiMonth'
+    'taikaiYear/taikaiMonth',
+    { graceMonths: 1 } // 退会処理は先月までは許容・先々月以前がNG
   );
   const [resolvedTaikaiYear, resolvedTaikaiMonth] = resolvedTaikaiDate.split('-');
   await executeTaikai(I, classMemberPageShimamura, { taikaiYear: resolvedTaikaiYear, taikaiMonth: resolvedTaikaiMonth });
