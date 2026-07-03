@@ -24,7 +24,7 @@
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { toggleGroupmenu, resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { fillTaikaiFormAndSubmit, resolveUnfinishedKeiriDataIfPresent } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 Feature('退会処理 (@dev)');
@@ -42,7 +42,7 @@ async function ShouldBeOnZyukouseiList(I, idnumber) {
     screen: { name: '受講生一覧' },
     field: { idnumber: '#idnumber' },
     button: { search: '検索' },
-    result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
+    result: { list: SELECTORS.RESULT_LINK, link: `a${SELECTORS.RESULT_LINK}` }
   }
   await I.waitForElement(locate('body').withText(S.screen.name), TIMEOUTS.SCREEN);
   await I.waitForElement(S.field.idnumber, TIMEOUTS.ELEMENT);

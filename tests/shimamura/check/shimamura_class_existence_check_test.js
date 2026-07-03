@@ -21,7 +21,7 @@
  */
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const csvData = loadCsvWithProfile('syokai_touroku_data', 'shimamura');
 
@@ -54,7 +54,7 @@ const S = {
       ],
     },
     results: {
-      link: 'a.listViewTdLinkS1',
+      link: `a${SELECTORS.RESULT_LINK}`,
     },
   },
 };

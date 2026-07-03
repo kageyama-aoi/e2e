@@ -2,7 +2,7 @@
  * しまむらテスト専用ユーティリティ
  */
 const { parseEnvBoolean } = require('../utils');
-const { TIMEOUTS } = require('./constants');
+const { TIMEOUTS, SELECTORS } = require('./constants');
 
 /**
  * サイドメニューのトグルグループを開閉する
@@ -226,13 +226,13 @@ async function verifyValidationErrors(I, expectedErrors, containerSelector) {
  * @param {string} [context] - エラーメッセージのプレフィックス（例: '【受講生基本情報】保存'）
  */
 async function assertNoShimamuraError(I, context = '処理') {
-  const errorInfo = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
+  const errorInfo = await I.executeScript((selector) => {
+    const el = document.querySelector(selector);
     if (!el) return null;
     const text = el.innerText.trim();
     if (!text) return null;
     return { text, html: el.innerHTML.trim() };
-  });
+  }, SELECTORS.ERROR_CONTAINER);
   if (errorInfo) {
     throw new Error(`${context}エラー: ${errorInfo.text}\n[HTML] ${errorInfo.html}`);
   }

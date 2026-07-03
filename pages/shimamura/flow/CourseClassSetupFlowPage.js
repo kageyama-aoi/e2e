@@ -19,7 +19,7 @@
  */
 
 const { logScreenUrl } = require('../../../support/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
@@ -147,8 +147,8 @@ async function linkCourseToClass(I, { classRecordId, courseName }) {
   I.waitForElement('#course_name', TIMEOUTS.SCREEN);
   I.fillField('#course_name', courseName);
   I.click('検索');
-  I.waitForElement(locate('.listViewTdLinkS1').withText(courseName), TIMEOUTS.RESULT);
-  I.click(locate('.listViewTdLinkS1').withText(courseName));
+  I.waitForElement(locate(SELECTORS.RESULT_LINK).withText(courseName), TIMEOUTS.RESULT);
+  I.click(locate(SELECTORS.RESULT_LINK).withText(courseName));
   I.switchToNextTab();
 
   I.waitForElement(S.courseTab.applyButton, TIMEOUTS.SCREEN);

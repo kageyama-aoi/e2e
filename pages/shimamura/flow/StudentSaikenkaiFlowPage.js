@@ -2,14 +2,15 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 // ── 保存完了を動的検知するヘルパー ──────────────────────────────
 // エラーが出るか editButton が現れた時点で即座に次へ進む（固定待ちを排除）
 async function waitForSaveResult(I) {
   await I.waitForFunction(
-    () => document.querySelector('#top_err_info_msg_div')?.innerText.trim() ||
+    ([selector]) => document.querySelector(selector)?.innerText.trim() ||
           !!document.querySelector('input[name="edit_button"]'),
+    [SELECTORS.ERROR_CONTAINER],
     TIMEOUTS.RESULT
   );
 }
@@ -42,7 +43,7 @@ const S = {
       cityKana:             'input[name="primary_address_city_kana"]',
     },
   },
-  error: '#top_err_info_msg_div',
+  error: SELECTORS.ERROR_CONTAINER,
 };
 
 // ── Step 1: 受講生検索 → DW_AN → DetailView ──────────────────
@@ -54,7 +55,7 @@ async function searchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) 
   ichiranPageShimamura.clickStudentSearchAndWait();
 
   I.say('【受講生検索】最初の結果をクリック → DW_AN へ');
-  I.click('a.listViewTdLinkS1');
+  I.click(`a${SELECTORS.RESULT_LINK}`);
   I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
 
   // DW_AN URL から record ID を取得し DetailView へ切替
@@ -154,10 +155,10 @@ async function saveStudentEdit(I, expectedErrors) {
   I.click(S.edit.saveButton);
   await waitForSaveResult(I);
 
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
+  const errorText = await I.executeScript((selector) => {
+    const el = document.querySelector(selector);
     return el ? el.innerText.trim() : '';
-  });
+  }, SELECTORS.ERROR_CONTAINER);
 
   if (expectedErrors && expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);

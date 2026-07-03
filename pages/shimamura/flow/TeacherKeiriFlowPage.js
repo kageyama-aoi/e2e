@@ -2,15 +2,15 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const { assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 const S = {
-  list:       { search: 'input[name="search"]', firstLink: 'a.listViewTdLinkS1' },
+  list:       { search: 'input[name="search"]', firstLink: `a${SELECTORS.RESULT_LINK}` },
   basic:      { saveButton: 'input[name="save_button"]', editButton: 'input[name="edit_button"]' },
   accounting: { saveButton: 'input[name="save_button"]', editButton: 'input[name="edit_button"]' },
-  error:      '#top_err_info_msg_div',
+  error:      SELECTORS.ERROR_CONTAINER,
 };
 
 // 講師コードで検索して record ID を返す（存在しない場合は null）
@@ -125,8 +125,9 @@ async function setAccountingTab(I, recordId, input) {
   I.click(S.accounting.saveButton);
   // バリデーションエラーが出るか edit_button が現れるまで動的に待機
   await I.waitForFunction(
-    () => document.querySelector('#top_err_info_msg_div')?.textContent.trim() ||
+    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
           !!document.querySelector('input[name="edit_button"]'),
+    [SELECTORS.ERROR_CONTAINER],
     TIMEOUTS.RESULT
   );
   await assertNoShimamuraError(I, '【経理タブ】保存');

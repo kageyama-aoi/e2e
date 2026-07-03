@@ -11,7 +11,7 @@ const {
   fillTextFieldsByName,
   fillTextFieldsBySelector,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { prepareInput, buildExecutionPlan } = require('../../../support/shimamura/syokai_helpers');
 
 const KEIRI_SCREEN_B_LOCATORS = {
@@ -20,7 +20,7 @@ const KEIRI_SCREEN_B_LOCATORS = {
   checkbox: { mid_month: '#ltd_mid_month' },
   button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
   screen:   { name: '受講生詳細' },
-  error:    { container: '#top_err_info_msg_div' }
+  error:    { container: SELECTORS.ERROR_CONTAINER }
 };
 
 const KEIRI_SUBMENU = {
@@ -129,7 +129,7 @@ async function navigateToStudentGroup(I, classMemberPageShimamura) {
 async function searchAndSelectKouhosei(I, last_name) {
   const S = {
     button: { search: '検索' },
-    result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
+    result: { list: SELECTORS.RESULT_LINK, link: `a${SELECTORS.RESULT_LINK}` }
   };
   I.say('【候補生検索】一覧表示＆検索実行');
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
@@ -169,7 +169,7 @@ async function selectClassInPopup(I, parentLocators, class_name01, course_catego
     : 'スクール';
   const SS = {
     button: { search: '検索' },
-    result: { link: '.listViewTdLinkS1' },
+    result: { link: SELECTORS.RESULT_LINK },
     options: { couse_category: resolvedCategory, area: 'すべて', tenpo: 'すべて' }
   };
   I.say('【クラス選択】ポップアップ検索');

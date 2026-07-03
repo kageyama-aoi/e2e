@@ -15,6 +15,7 @@
  * - 2026-01-27
  */
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { SELECTORS } = require('../../../support/shimamura/constants');
 
 Feature('クラス受講生登録');
 
@@ -48,8 +49,8 @@ const S = {
       search: '検索',
     },
     results: {
-      row: '.listViewTdLinkS1',
-      link: 'a.listViewTdLinkS1',
+      row: SELECTORS.RESULT_LINK,
+      link: `a${SELECTORS.RESULT_LINK}`,
       linkIndex: 2,
     },
   },

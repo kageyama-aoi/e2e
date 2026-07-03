@@ -3,9 +3,9 @@
 const { I } = inject();
 const { toggleGroupmenu, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const menus = require('../_common/sideMenus');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
-const RESULT_LINK = 'a.listViewTdLinkS1';
+const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
 module.exports = {
 

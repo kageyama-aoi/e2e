@@ -1,5 +1,6 @@
 const { I } = inject();
 const { attachScreenshotFromOutput, parseEnvBoolean } = require('../../../support/utils');
+const { SELECTORS } = require('../../../support/shimamura/constants');
 
 module.exports = {
   /**
@@ -37,7 +38,7 @@ module.exports = {
     courseCategorySelect: { name: 'course_category' },
     searchButton: { css: 'input[type="button"][value="検索"]' },
     searchResultsContainer: '#search_result_list', // 検索結果が表示されるコンテナ
-    searchResultLink: (className) => ({ css: `a.listViewTdLinkS1:has-text("${className}")` }),
+    searchResultLink: (className) => ({ css: `a${SELECTORS.RESULT_LINK}:has-text("${className}")` }),
   },
 
   /**

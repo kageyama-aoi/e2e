@@ -5,7 +5,7 @@ const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
 const { toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
@@ -13,7 +13,7 @@ const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
 
-const RESULT_LINK = 'a.listViewTdLinkS1';
+const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
 const S = {
   kouhoseiEdit: {
@@ -240,12 +240,12 @@ async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expected
 // 例: 「料金名: 月運営管理費（7月） 未払分: 1,100円 クラス名: X」「料金名: 月運営管理費（7月） 預り金: -1,100円 クラス名: X」
 //     → netByClassName['X'] = 1100 + (-1100) = 0（負けたクラスは相殺されて実質0円になる）
 async function grabKanrihiNetByClassName(I) {
-  const bannerText = await I.executeScript(() => {
-    return Array.from(document.querySelectorAll('#top_err_info_msg_div'))
+  const bannerText = await I.executeScript((selector) => {
+    return Array.from(document.querySelectorAll(selector))
       .map(el => el.innerText.trim())
       .filter(Boolean)
       .join('\n');
-  });
+  }, SELECTORS.ERROR_CONTAINER);
 
   const netByClassName = {};
   const lineRe = /(未払分|預り金)[:：]\s*(-?[\d,]+)円\s*クラス名[:：]\s*(.+)$/;
@@ -269,7 +269,7 @@ async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetM
   I.say(`【運営管理費tie-break確認】record=${recordId} / ${targetYearMonth} / 勝者想定=${expectedWinnerClass} / 敗者想定=${expectedLoserClass}`);
   I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  I.waitForElement('#top_err_info_msg_div', TIMEOUTS.SCREEN);
+  I.waitForElement(SELECTORS.ERROR_CONTAINER, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '運営管理費tie-break確認_経理カルテビュー');
 
   const netByClassName = await grabKanrihiNetByClassName(I);

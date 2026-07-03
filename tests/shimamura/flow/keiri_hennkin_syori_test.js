@@ -33,6 +33,7 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { toggleGroupmenu, verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { SELECTORS } = require('../../../support/shimamura/constants');
 
 Feature('経理返金処理（ひな形）');
 
@@ -94,7 +95,7 @@ const S = {
     table: '.listView'
   },
   error: {
-    container: '#top_err_info_msg_div'
+    container: SELECTORS.ERROR_CONTAINER
   }
 };
 

@@ -32,13 +32,13 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 // ── セレクタ定数 ─────────────────────────────────────────────
 const S = {
   fileInput:   'input[name="import_file1"]', // ファイル選択 (type="file")
   importBtn:   'input[name="save_button"]',  // 買取保留/解除ファイル読込ボタン（#import_btn）
-  error:       '#top_err_info_msg_div',
+  error:       SELECTORS.ERROR_CONTAINER,
   resultTable: '.listView',
 };
 

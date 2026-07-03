@@ -16,7 +16,7 @@
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, URLS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, URLS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const S = {
   fields: {
@@ -27,7 +27,7 @@ const S = {
     bankPaymentType:   'select[name="bank_payment_type"]',
   },
   button: { save: 'input[name="save_button"]' },
-  error:  { container: '#top_err_info_msg_div' },
+  error:  { container: SELECTORS.ERROR_CONTAINER },
 };
 
 const BASE_INPUT = {
@@ -61,10 +61,10 @@ Data(csvData).Scenario('請求方法ごとの必須フィールドを確認す�
 
   I.saveScreenshotWithTimestamp(`bank_payment_type_${current.bank_payment_type}_result`, true);
 
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
+  const errorText = await I.executeScript((selector) => {
+    const el = document.querySelector(selector);
     return el ? el.innerText.trim() : '';
-  });
+  }, SELECTORS.ERROR_CONTAINER);
 
   if (errorText) {
     I.say(`【探索結果】bank_payment_type=${current.bank_payment_type}: ${errorText}`);

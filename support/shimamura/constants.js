@@ -27,4 +27,17 @@ const URLS = {
     + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true',
 };
 
-module.exports = { TIMEOUTS, URLS };
+/**
+ * 全画面共通で使われるセレクタ（画面固有ではないもののみ）
+ * - ERROR_CONTAINER: バリデーションエラー等を表示するコンテナ（ほぼ全画面共通）
+ * - RESULT_LINK: 検索結果一覧のリンク（一覧画面共通）
+ *
+ * 画面固有のセレクタ（フォームフィールド等）は各 Flow Page のローカル定義のままでよい。
+ * ここに追加するのは「複数ファイルで同じ値が重複している」ことを確認できたものに限る。
+ */
+const SELECTORS = {
+  ERROR_CONTAINER: '#top_err_info_msg_div',
+  RESULT_LINK: '.listViewTdLinkS1',
+};
+
+module.exports = { TIMEOUTS, URLS, SELECTORS };

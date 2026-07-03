@@ -22,7 +22,7 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, URLS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, URLS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const S = {
   screen:  { name: '問合せ' },
@@ -44,7 +44,7 @@ const S = {
     expisDate:          'expis_date',
   },
   button: { save: 'input[name="save_button"]' },
-  error:  { container: '#top_err_info_msg_div' },
+  error:  { container: SELECTORS.ERROR_CONTAINER },
 };
 
 const csvData = withScenarioLabel(

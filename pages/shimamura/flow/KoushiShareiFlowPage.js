@@ -2,7 +2,7 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector } = require('../../../support/shimamura/utils');
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
@@ -20,7 +20,7 @@ const S = {
     fileInput: 'input[name="import_file"]',
     button:    'input[name="batch_import"]',
     success:   '#top_message_div_id',
-    error:     '#top_err_info_msg_div',
+    error:     SELECTORS.ERROR_CONTAINER,
   },
   fields: {
     keijoubi:      '#keijoubi',
@@ -39,10 +39,10 @@ const S = {
     save:          'input[name="save_button"]'
   },
   teacher_popup: {
-    result: 'a.listViewTdLinkS1'
+    result: `a${SELECTORS.RESULT_LINK}`
   },
   message: {
-    error: '#top_err_info_msg_div'
+    error: SELECTORS.ERROR_CONTAINER
   }
 };
 
@@ -98,9 +98,11 @@ async function saveAndVerify(I, expectedErrors) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
   // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機
+  // codeceptjs の waitForFunction は第2引数が配列でないと args として渡されないため注意
   await I.waitForFunction(
-    () => document.querySelector('#top_err_info_msg_div')?.textContent.trim() ||
+    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
           !document.querySelector('input[name="save_button"]'),
+    [SELECTORS.ERROR_CONTAINER],
     TIMEOUTS.RESULT
   );
   if (expectedErrors.length > 0) {
@@ -143,8 +145,9 @@ async function executeImport(I, filePath) {
   I.say('【一括取込実行】講師謝礼一括取込ボタンをクリック');
   I.click(S.import.button);
   await I.waitForFunction(
-    () => document.querySelector('#top_message_div_id')?.textContent.trim() ||
-          document.querySelector('#top_err_info_msg_div')?.textContent.trim(),
+    ([errorSelector]) => document.querySelector('#top_message_div_id')?.textContent.trim() ||
+          document.querySelector(errorSelector)?.textContent.trim(),
+    [SELECTORS.ERROR_CONTAINER],
     TIMEOUTS.RESULT
   );
 }
