@@ -37,7 +37,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 | 目的 | 参照先 |
 |---|---|
-| ナビゲーションメソッドのパターン | `pages/shimamura/screens/ClassMemberPage.js` |
+| ナビゲーションメソッドのパターン | `pages/shimamura/_common/ClassMemberPage.js` |
 | ログイン処理のパターン | `tests/shimamura/check/shimamura_class_existence_check_test.js` |
 | テストファイルの雛形 | `tests/shimamura/check/shimamura_class_existence_check_test.js` |
 | CSV の形式 | `data/shimamura/syokai_touroku_data.csv` |
@@ -61,7 +61,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
    - Phase 0/1 で確認済みのパターン: `index.php?module=X&action=Y&extra_params`
 
 3. **Page Object の追記先を決める**
-   - `pages/shimamura/screens/ClassMemberPage.js` が既に存在する
+   - `pages/shimamura/_common/ClassMemberPage.js` が既に存在する
    - 検索メソッドが 4 つ程度なら `ClassMemberPage.js` に追記してよい
    - 画面固有のメソッドが多い場合は `pages/shimamura/{ScreenName}Page.js` を新規作成する
 
@@ -69,7 +69,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ### Step 2: Page Object にメソッドを追記
 
-`pages/shimamura/screens/ClassMemberPage.js`（または新規ファイル）の末尾に追記する。
+`pages/shimamura/_common/ClassMemberPage.js`（または新規ファイル）の末尾に追記する。
 
 ```javascript
 // ----------------------------------------------------------------

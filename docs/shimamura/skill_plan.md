@@ -131,7 +131,7 @@ support/shimamura/
 | Page Object の置き場 | `pages/tframe/screens/` (画面単位) | `pages/shimamura/{auth,screens,flow}/` (役割別) |
 | サブディレクトリ | `screens/` `auth/` `api/` `_common/` の 4 分類 | `auth/` `screens/` `flow/` `_common/` の 4 分類 |
 | ログイン PO | `auth/LoginKannrisyaPage.js` | `auth/LoginPage.js` |
-| 画面 PO | `screens/KoshiPage.js` など | `screens/ClassMemberPage.js`（共通ナビ） / `screens/IchiranPage.js`（一覧ベース） |
+| 画面 PO | `screens/KoshiPage.js` など | `_common/ClassMemberPage.js`（共通ナビ） / `screens/IchiranPage.js`（一覧ベース） |
 | フロー関数 | テストファイル内 or Page Object メソッド | `flow/SyokaiFlowPage.js` など（フロー専用ファイル） |
 
 shimamura の `SyokaiFlowPage.js` は tframe の Page Object と異なり、画面単位ではなく業務フロー単位の関数集。これは shimamura の画面遷移が複数タブ・ポップアップをまたぐ複雑なフローのため。

@@ -160,7 +160,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
     jsonInputPage:        './pages/tframe/api/JsonInputPage.js',
 
     loginPageShimamura: './pages/shimamura/auth/LoginPage.js',
-    classMemberPageShimamura: './pages/shimamura/screens/ClassMemberPage.js',
+    classMemberPageShimamura: './pages/shimamura/_common/ClassMemberPage.js',
     ichiranPageShimamura: './pages/shimamura/screens/IchiranPage.js',
 
     taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',

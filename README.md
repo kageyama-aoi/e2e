@@ -239,7 +239,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-07-03 14:38:37
+Last updated: 2026-07-03 17:05:14
 
 ```text
 e2e/
@@ -442,6 +442,7 @@ e2e/
 ├── pages/ 
 │   ├── shimamura/ 
 │   │   ├── _common/ 
+│   │   │   ├── ClassMemberPage.js
 │   │   │   └── sideMenus.js
 │   │   ├── auth/ 
 │   │   │   └── LoginPage.js
@@ -453,7 +454,6 @@ e2e/
 │   │   │   ├── SyokaiFlowPage.js
 │   │   │   └── TeacherKeiriFlowPage.js
 │   │   └── screens/ 
-│   │       ├── ClassMemberPage.js
 │   │       └── IchiranPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js

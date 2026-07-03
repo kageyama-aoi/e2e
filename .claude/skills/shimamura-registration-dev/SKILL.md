@@ -77,7 +77,7 @@ runXxxFlow()（オーケストレーター）
 | フロー型テストの書き方 | `tests/shimamura/flow/syokai_touroku_test.js` |
 | フォーム型テストの書き方 | `tests/shimamura/flow/keiri_hennkin_syori_test.js` |
 | 退会フローの書き方（タブ遷移なし） | `tests/shimamura/flow/taikai_test.js` |
-| ナビゲーションメソッド | `pages/shimamura/screens/ClassMemberPage.js` |
+| ナビゲーションメソッド | `pages/shimamura/_common/ClassMemberPage.js` |
 | shimamura 固有ユーティリティ | `support/shimamura/utils.js` |
 | TIMEOUTS 定数 | `support/shimamura/constants.js` |
 | CSV の形式 | `data/shimamura/syokai_touroku_data.csv` |
