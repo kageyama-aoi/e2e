@@ -6,6 +6,7 @@ const path = require('path');
 const { logScreenUrl } = require('../../../support/utils');
 const { toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
@@ -285,30 +286,6 @@ async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetM
   I.say(`  ✓ 勝者 ${expectedWinnerClass} = ${winnerNet}円 / 敗者 ${expectedLoserClass} = ${loserNet}円（相殺済み）`);
 }
 
-// 月謝一括作成バッチは、収納業者のうち1つでも「対象月の口座振替スケジュール」が
-// 未登録だと、その収納業者だけでなく処理対象全体が作成されない（#169で判明）。
-// テスト実行環境（testgcp）に実在する収納業者のうち、判明している既知の収納業者について
-// 対象月のスケジュールを事前に確保しておく。登録済みでも重複登録エラーにならない
-// （既存レコードが上書きされるだけ）ため、毎回無条件に登録して問題ない。
-const KNOWN_STORAGE_VENDORS = [
-  { shimaStorageId: '00120211112', label: '001:イオン収納' },        // テストデータの収納業者
-  { shimaStorageId: '1434050501',  label: '143:T_JF収納業者143' },   // testgcp環境に実在する他収納業者。未登録だとバッチ全体が止まる
-];
-
-async function ensureAccountTransferSchedules(I, { claimMonth, debitDate, depositDate }) {
-  for (const vendor of KNOWN_STORAGE_VENDORS) {
-    I.say(`【口座振替スケジュール確保】${vendor.label} / ${claimMonth}`);
-    I.amOnPage(`${BASE_URL}index.php?module=ShimaSchedule&action=LWAccountTransferScheduleRegistration_AN`);
-    I.waitForElement('#shima_storage_id', TIMEOUTS.SCREEN);
-    I.selectOption('#shima_storage_id', vendor.shimaStorageId);
-    I.fillField('#claim_month', claimMonth);
-    I.fillField('#data_date', debitDate);
-    I.fillField('#t_date', depositDate);
-    I.click('input[name="register_button"]');
-    I.wait(TIMEOUTS.TAB_SWITCH);
-  }
-}
-
 async function runMonthlyFeeCreation(I) {
   const now  = new Date();
   const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -379,4 +356,4 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, ensureAccountTransferSchedules, resolveRelativeMonth, SESSION_FILE };
+module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
