@@ -281,6 +281,33 @@ function fillTextFieldsByName(I, fieldMap) {
   }
 }
 
+/**
+ * CSV由来の日付が過去月の場合、本日日付に自動補正する（動的日付フィールド）。
+ * shimamuraの経理ビューBは「開始日は当月以降で入力してください」という当月以降バリデーションを
+ * 持つため、CSVに固定日付（例: 2026-06-05）を書いておくと月をまたいだ瞬間にテストが落ちる。
+ * 呼び出し側で `resolveDynamicDateIfPast(I, current.keiyakuDate, 'keiyakuDate')` のように
+ * 明示的に包むことで、どのCSV列が動的補正の対象かをコード上で分かるようにしている。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {string} dateStr - CSV由来の日付文字列（YYYY-MM-DD）
+ * @param {string} fieldLabel - ログ表示用のフィールド名（例: 'keiyakuDate'）
+ * @returns {string} 当月以降ならそのまま、過去月なら本日日付（YYYY-MM-DD）
+ */
+function resolveDynamicDateIfPast(I, dateStr, fieldLabel) {
+  if (!dateStr) return dateStr;
+  const original = new Date(dateStr);
+  if (isNaN(original.getTime())) return dateStr;
+
+  const now = new Date();
+  const originalYm = original.getFullYear() * 12 + original.getMonth();
+  const nowYm = now.getFullYear() * 12 + now.getMonth();
+  if (originalYm >= nowYm) return dateStr;
+
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  I.say(`⚠ 【動的日付補正】${fieldLabel}: CSV記載値 "${dateStr}" は過去月のため本日日付に自動補正 → "${todayStr}"`);
+  return todayStr;
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -292,4 +319,5 @@ module.exports = {
   assertNoShimamuraError,
   fillTextFieldsByName,
   fillTextFieldsBySelector,
+  resolveDynamicDateIfPast,
 };

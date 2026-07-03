@@ -12,6 +12,11 @@
  *
  * **データソース**
  * - `data/shimamura/gessya_ikkatu_setup_data.csv`
+ *
+ * **動的日付フィールド**
+ * - `keiyakuDate`/`kaishiDate`（`className2`用は末尾に2）は shimamura 側の「当月以降」バリデーションに
+ *   対応するため、CSV記載値が過去月の場合は `resolveDynamicDateIfPast` で本日日付に自動補正される
+ *   （置換発生時は `I.say` でログに記録される）。CSVの日付は毎月更新しなくてよい。
  */
 'use strict';
 
@@ -23,6 +28,7 @@ const {
   attachBusinessContext,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
 const { runStudentPaymentSetup, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE } = require('../../../pages/shimamura/flow/GessyaIkkatuFlowPage');
 const {
   openKeirisyoriScreenA,
@@ -31,12 +37,12 @@ const {
   executeTaikai,
 } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
-function buildClassInput(row, suffix = '') {
+function buildClassInput(I, row, suffix = '') {
   return {
     class_name01:    row[`className${suffix}`],
     course_category: row[`courseCategory${suffix}`],
-    keiyaku_date:    row[`keiyakuDate${suffix}`],
-    kaishi_date:     row[`kaishiDate${suffix}`],
+    keiyaku_date:    resolveDynamicDateIfPast(I, row[`keiyakuDate${suffix}`], `keiyakuDate${suffix}`),
+    kaishi_date:     resolveDynamicDateIfPast(I, row[`kaishiDate${suffix}`], `kaishiDate${suffix}`),
   };
 }
 
@@ -75,7 +81,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
 
   // Step2: 経理ビューA/B でクラス登録（1クラス目）
   await openKeirisyoriScreenA(I, classMemberPageShimamura);
-  await fillKeirisyoriScreenB(I, buildClassInput(current));
+  await fillKeirisyoriScreenB(I, buildClassInput(I, current));
   await confirmKeirisyoriScreenE(I);
 
   // Step3: 2クラス目（UNNパターン等、className2 が指定されている場合のみ）
@@ -83,7 +89,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   if (current.className2 && current.className2.trim()) {
     I.say(`【クラス登録 2本目】${current.className2}（${current.courseCategory2}）`);
     await openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
-    await fillKeirisyoriScreenB(I, buildClassInput(current, '2'));
+    await fillKeirisyoriScreenB(I, buildClassInput(I, current, '2'));
     await confirmKeirisyoriScreenE(I);
   }
 

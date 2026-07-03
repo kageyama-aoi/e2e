@@ -6,6 +6,12 @@
  * **データソース**
  * - `syokai_touroku_data.csv`（または `--profile` に応じたファイル）
  *
+ * **動的日付フィールド**
+ * - `keiyakuDate`（契約日）・`kaishiDate`（開始日）・`taikaiYear`/`taikaiMonth`（退会最終在籍年月）は
+ *   shimamura 側の「当月以降」バリデーションに対応するため、CSV記載値が過去月の場合は
+ *   `resolveDynamicDateIfPast` で本日日付（年月）に自動補正される（置換発生時は `I.say` でログに記録される）。
+ *   CSVの日付は毎月更新しなくてよい。
+ *
  * **前提条件**
  * - 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
  * - 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
@@ -19,6 +25,7 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
 const { runRegistrationFlow, confirmKeirisyoriScreenE, executeTaikai } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data', 'shimamura'), (row) => {
@@ -41,8 +48,8 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
     lastName: current.lastName,
     class_name01: current.className,
     course_category: current.courseCategory,
-    keiyaku_date: current.keiyakuDate,
-    kaishi_date: current.kaishiDate,
+    keiyaku_date: resolveDynamicDateIfPast(I, current.keiyakuDate, 'keiyakuDate'),
+    kaishi_date: resolveDynamicDateIfPast(I, current.kaishiDate, 'kaishiDate'),
     mid_month: current.mid_month,
     remaining_classes: current.remaining_classes,
     breakTarget: current.breakTarget,
@@ -58,7 +65,13 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
   await confirmKeirisyoriScreenE(I);
   I.say('=== 確認完了 処理 終了 ===');
   I.say('=== 退会処理 開始 ===');
-  await executeTaikai(I, classMemberPageShimamura, { taikaiYear: current.taikaiYear, taikaiMonth: current.taikaiMonth });
+  const resolvedTaikaiDate = resolveDynamicDateIfPast(
+    I,
+    `${current.taikaiYear}-${String(current.taikaiMonth).padStart(2, '0')}-01`,
+    'taikaiYear/taikaiMonth'
+  );
+  const [resolvedTaikaiYear, resolvedTaikaiMonth] = resolvedTaikaiDate.split('-');
+  await executeTaikai(I, classMemberPageShimamura, { taikaiYear: resolvedTaikaiYear, taikaiMonth: resolvedTaikaiMonth });
   I.say('=== 退会処理 終了 ===');
 
   I.saveScreenshotWithTimestamp('CLASS_MEMBER_REGISTRATION_Success.png');
@@ -74,8 +87,8 @@ Data(validationErrorData).Scenario('経理日付バリデーションエラー @
     lastName: current.lastName,
     class_name01: current.className,
     course_category: current.courseCategory,
-    keiyaku_date: current.keiyakuDate,
-    kaishi_date: current.kaishiDate,
+    keiyaku_date: resolveDynamicDateIfPast(I, current.keiyakuDate, 'keiyakuDate'),
+    kaishi_date: resolveDynamicDateIfPast(I, current.kaishiDate, 'kaishiDate'),
     mid_month: current.mid_month,
     remaining_classes: current.remaining_classes,
     breakTarget: current.breakTarget,
