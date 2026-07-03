@@ -211,13 +211,32 @@ async function confirmKeirisyoriScreenE(I) {
   I.saveScreenshot(`keiri_view_A_${Date.now()}.png`, true);
 }
 
-async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
-  const label = `${taikaiYear}${taikaiMonth}`;
-  I.say(`【退会処理】最終在籍年月 ${taikaiYear}/${taikaiMonth} を設定`);
+const UNFINISHED_KEIRI_WARNING = '経理処理が完了してないデータがあります';
+
+// 受講生詳細/経理ビュー系の画面に「経理処理が完了してないデータがあります」という警告バナーが
+// 出ている場合、退会処理などの操作が「指定の退会日は選択できません」等でブロックされることがある。
+// 「未完了情報確認」→「確認完了（経理ビューへ）」の順にクリックして未処理データを確定させることで解消する。
+// 警告が出ていない場合は何もしない（false を返す）。
+async function resolveUnfinishedKeiriDataIfPresent(I) {
+  const warningCount = await I.grabNumberOfVisibleElements(locate('body').withText(UNFINISHED_KEIRI_WARNING));
+  if (!warningCount) return false;
+
+  I.say('【経理処理未完了データ検知】未完了情報確認 → 確認完了で解消');
+  await logScreenUrl(I, '経理処理未完了データあり');
+  I.click('未完了情報確認');
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
-  await toggleGroupmenu(I, { icon_id: KEIRI_SUBMENU.icon_id, menuname: KEIRI_SUBMENU.groupName });
-  await classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
-  I.click('退会処理');
+  I.click('確認完了（経理ビューへ）');
+  I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
+  await logScreenUrl(I, '経理処理未完了データ解消後');
+  return true;
+}
+
+// 退会処理画面（#final_enrollment_year が表示された状態）にいることを前提に、
+// 最終在籍年月の入力・全チェックボックス選択・更新ボタン押下・完了確認までを行う。
+// 「退会処理画面への遷移方法」は呼び出し元ごとに異なりうる（新規登録直後の継続 / 会員番号検索など）ため、
+// このフォーム操作部分だけを共通化している。
+async function fillTaikaiFormAndSubmit(I, { taikaiYear, taikaiMonth }) {
+  const label = `${taikaiYear}${taikaiMonth}`;
   I.waitForElement('#final_enrollment_year', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '退会処理_入力前');
   I.saveScreenshot(`taikai_01_before_${label}.png`);
@@ -240,6 +259,17 @@ async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMo
   I.see('会員退会処理が完了しました。');
   await logScreenUrl(I, '退会処理（更新後）');
   I.saveScreenshot(`taikai_03_done_${label}.png`);
+}
+
+async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
+  const label = `${taikaiYear}${taikaiMonth}`;
+  I.say(`【退会処理】最終在籍年月 ${taikaiYear}/${taikaiMonth} を設定`);
+  I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
+  await toggleGroupmenu(I, { icon_id: KEIRI_SUBMENU.icon_id, menuname: KEIRI_SUBMENU.groupName });
+  await classMemberPageShimamura.clickSubMenuLink('受講生詳細', '個人情報１');
+  I.click('退会処理');
+
+  await fillTaikaiFormAndSubmit(I, { taikaiYear, taikaiMonth });
 
   I.say('【退会後確認】経理ビューへ遷移');
   await navigateToKeirisyoriView(I, classMemberPageShimamura);
@@ -268,5 +298,7 @@ module.exports = {
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
   confirmKeirisyoriScreenE,
-  executeTaikai
+  executeTaikai,
+  fillTaikaiFormAndSubmit,
+  resolveUnfinishedKeiriDataIfPresent
 };
