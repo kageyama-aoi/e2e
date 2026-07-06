@@ -129,7 +129,7 @@
     画面固有の追加カテゴリ（`accordion` 等）が必要な場合はそのまま追加してよいが、
     既存カテゴリと同じ意味のものを別名で作らない（例: `fields` と `textbox` を両方使わない）。
 - 待機は `I.waitForElement` / `I.waitForVisible` を優先し、`I.wait(秒)` は最小限。
-  - AJAX補完待ちなど繰り返し使う待機時間は `TIMEOUTS`（`support/shimamura/constants.js` 等）に
+  - AJAX補完待ちなど繰り返し使う待機時間は `TIMEOUTS`（`support/<product>/constants.js`）に
     定数化する。マジックナンバーを直書きしない。
 - 新規ファイル・識別子のローマ字表記はヘボン式を基本とする（例: 一括=`ikkatsu`、対策=`taisaku`）。
   - 既存ファイルで訓令式（例: `Ikkatu`）や画面名由来の慣用表記が既に定着している場合は、

@@ -1,5 +1,7 @@
 'use strict';
 
+const { TIMEOUTS } = require('./constants');
+
 /**
  * juku 環境のみ TFRAME_LANGUAGE=en が設定される。culture は常に日本語。
  * @returns {boolean}
@@ -19,7 +21,7 @@ function isEnglish() {
  */
 async function submitTframeFormAndVerify(I, expectedName) {
   I.click('#ewSaveButton');
-  I.wait(2); // 保存レスポンスを待機（サーバーサイドバリデーション）
+  I.wait(TIMEOUTS.SAVE); // 保存レスポンスを待機（サーバーサイドバリデーション）
 
   const errorText = await I.executeScript(() => {
     const el = document.getElementById('tf-message-summary');
