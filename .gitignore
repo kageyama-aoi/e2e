@@ -4,9 +4,14 @@ output/
 allure-results/
 allure-report/
 docs/generated/
-docs/learning/bash_*.md
+docs/common/learning/bash_*.md
+logs/
 scripts/__pycache__/
+scripts/hooks/__pycache__/
+run/__pycache__/
 scripts/html/shimamura/
+scripts/html/**/*.png
+scripts/html/**/*.json
 
 # Environment variables
 .env
