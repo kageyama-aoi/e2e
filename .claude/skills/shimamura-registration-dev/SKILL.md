@@ -304,7 +304,7 @@ Feature('{画面名}登録フロー'); // 必ずテスト内容を表す名前�
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
+  await login('shimamuraUser');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 
@@ -388,7 +388,7 @@ async function fillTargetForm(I, input) {
 // Before / Scenario は通常通り
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
+  await login('shimamuraUser');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 

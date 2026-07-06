@@ -201,12 +201,14 @@ AllureResultsDir=${runtimeAllureResultsDir}
       screenshotsForAllSteps: true,
       deleteSuccessful: false,
     },
+    // autoLogin は現状 shimamura 専用（tframe 等の他サイトは各テストで手動ログインしている）。
+    // 新サイトで autoLogin を使いたい場合は users に別ロールを追加すること（既存の shimamuraUser は変えない）。
     autoLogin: {
       enabled: true,       // ← 有効化スイッチ
       saveToFile: true,    // ← Cookieをファイルに保存して再利用
       inject: 'login',     // ← テスト内で { login } として使えるようになる
       users: {
-        user: {
+        shimamuraUser: {
           // ログイン処理
           login: () => {
             // ページオブジェクト側で inject() を使っている前提なので require の位置は現状維持

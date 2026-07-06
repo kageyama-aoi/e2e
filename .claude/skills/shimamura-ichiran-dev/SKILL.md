@@ -28,7 +28,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 検索結果 | `.tf-group-body-search-result tr` | `a.listViewTdLinkS1` |
 | URL | `index.php?r=X%2Fsw%2F_default` | `index.php?module=X&action=Y&...` |
 | Page Object 置き場 | `pages/tframe/screens/` | `pages/shimamura/screens/` |
-| 認証 | `loginKannrisyaPage.login()` | `validateShimamuraEnv()` + `login('user')` + `enterTantousyaNumberAndProceed()` |
+| 認証 | `loginKannrisyaPage.login()` | `validateShimamuraEnv()` + `login('shimamuraUser')` + `enterTantousyaNumberAndProceed()` |
 | CSV dataDir | `'tframe'` を明示 | `'shimamura'` を明示（デフォルト値なし） |
 | エラー表示 | `#tf-message-summary` | `#top_err_info_msg_div` |
 
@@ -241,7 +241,7 @@ Feature('{画面名}一覧検索');
 
 Before(async ({ login, loginPageShimamura }) => {
   const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
+  await login('shimamuraUser');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 });
 

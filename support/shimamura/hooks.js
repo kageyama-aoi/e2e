@@ -2,7 +2,7 @@ const { validateShimamuraEnv } = require('./utils');
 
 async function beforeShimamura({ login, loginPageShimamura }) {
   const tantousyaNumber = validateShimamuraEnv();
-  await login('user');
+  await login('shimamuraUser');
   await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
 }
 
