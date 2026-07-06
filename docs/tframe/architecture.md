@@ -72,8 +72,7 @@ T-Frame では、ここで読み込まれた環境変数がそのまま使われ
 - `ADMIN_PASSWORD`
 - `BASE_URL`
 - `HEADLESS`
-- `TFRAME_VIEWPORT_WIDTH`
-- `TFRAME_VIEWPORT_HEIGHT`
+- `VIEWPORT_WIDTH` / `VIEWPORT_HEIGHT`（全プロファイル共通。旧名 `TFRAME_VIEWPORT_*` もフォールバックとして読まれる）
 
 ### `codecept.conf.js`
 

@@ -59,8 +59,9 @@ const runTarget = detectRunTargetFromArgs(process.argv);
 const runDirName = `${runTimestamp}_${runTarget}`;
 const runtimeOutputDir = `./output/${runProfile}/${runDirName}`;
 const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runDirName}`;
-const viewportWidth = Number(process.env.TFRAME_VIEWPORT_WIDTH || 1600);
-const viewportHeight = Number(process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
+// 全プロファイル共通のビューポート設定（旧名 TFRAME_VIEWPORT_* もフォールバックとして読む）
+const viewportWidth  = Number(process.env.VIEWPORT_WIDTH  || process.env.TFRAME_VIEWPORT_WIDTH  || 1600);
+const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
 const windowSize = `${viewportWidth}x${viewportHeight}`;
 
 fs.mkdirSync(path.resolve(__dirname, runtimeOutputDir), { recursive: true });
