@@ -9,7 +9,7 @@ description: |
 
   ワークフロー: フォーム確認（/shimamura-html-fetch） → Page Object にメソッド追記 → CSV → テストファイル → 実行確認
 
-  ※ 登録・編集テストは /shimamura-registration-dev スキルを使うこと（Phase 4 で作成予定）
+  ※ 登録・処理フローのテストは /shimamura-registration-dev スキルを使うこと
 ---
 
 # shimamura 一覧検索テスト開発スキル

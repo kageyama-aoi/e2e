@@ -25,7 +25,7 @@ description: |
 | **B** `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
 | **C** 配置ルールの変更・新カテゴリの追加 | `AGENTS.md` のディレクトリ配置ルール表 |
 | **D** 新スキルの追加 | `AGENTS.md` のスキル一覧 |
-| **E** `tests/tframe/` に新テストファイルを追加 | `run/test_descriptions.json` |
+| **E** `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json` |
 
 ---
 
@@ -124,15 +124,16 @@ npm run docs:update-readme-map
 
 ---
 
-#### カテゴリ E: tests/tframe/ への新テスト追加
+#### カテゴリ E: tests/ 配下への新テスト追加（全プロダクト対象）
 
 **run/test_descriptions.json（手動更新）**
 
-`run/test_descriptions.json` を読み込み、`"tframe"` セクションに追記する：
+`run/test_descriptions.json` を読み込み、該当プロダクトのセクション（`"tframe"` / `"shimamura"` 等）に追記する：
 
 ```json
 "page/{module}_ichiran_test.js":  "{画面名}一覧の空検索と条件絞り込み検索を確認",
 "page/{module}_touroku_test.js":  "{画面名}の新規登録フォームへの入力・保存を確認",
+"flow/{prefix}_touroku_test.js":  "{業務名}の登録フローを確認",
 ```
 
 登録とフォーマット：
@@ -164,6 +165,9 @@ npm run docs:update-readme-map
 |---|---|
 | `/tframe-registration-dev` でテスト追加 | B, E |
 | `/tframe-ichiran-dev` でテスト追加 | B, E |
+| `/shimamura-registration-dev` でテスト追加 | E |
+| `/shimamura-ichiran-dev` でテスト追加 | E |
+| `/shimamura-download-verify` でテスト追加 | E |
 | `/local-safe-move` でファイル移動 | A（変更量による） |
 | 新しいスキルを作成した | D |
 | `pages/` や `tests/` に新ディレクトリを追加した | A, C |

@@ -9,8 +9,8 @@ description: |
 
   ワークフロー: TARGETS に追記 → fetch 実行 → フィールド解析 → 呼び出し元スキルに返す
 
-  ※ このスキルは単体でも使えるが、将来作成する /shimamura-ichiran-dev や
-     /shimamura-registration-dev の Step 1（フォーム確認）として内部的に呼ばれることを想定している
+  ※ このスキルは単体でも使えるが、/shimamura-ichiran-dev や /shimamura-registration-dev の
+     Step 1（フォーム確認）として内部的に呼ばれることも想定している
 ---
 
 # shimamura-html-fetch スキル — フォーム HTML 取得 & フィールド解析

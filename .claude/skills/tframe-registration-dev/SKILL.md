@@ -23,9 +23,9 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 
 | 目的 | 参照先 |
 |---|---|
-| Page Object の実装パターン | `pages/tframe/KoshiPage.js`（最も完成度が高い） |
-| シンプルな Page Object（MenuNav なし） | `pages/tframe/AccountPage.js` または `StaffPage.js` |
-| ポップアップピッカーの実装例 | `pages/tframe/ChosekinPage.js`（personId popup 対応済み） |
+| Page Object の実装パターン | `pages/tframe/screens/KoshiPage.js`（最も完成度が高い） |
+| シンプルな Page Object（MenuNav なし） | `pages/tframe/screens/AccountPage.js` または `StaffPage.js` |
+| ポップアップピッカーの実装例 | `pages/tframe/screens/ChosekinPage.js`（personId popup 対応済み） |
 | 共通ユーティリティの API | `support/utils.js` の exports |
 | テストファイルの書き方 | `tests/tframe/page/koshi_touroku_test.js` |
 | CSV の形式 | `data/tframe/koshi_touroku_data.csv` |
@@ -86,7 +86,7 @@ index.php?r={module}%2Fsw%2F_default  → 一覧画面（sw = SearchView）
 
 ### Step 3: Page Object の作成/更新
 
-**必ず `pages/tframe/AccountPage.js` か `StaffPage.js` を雛形にコピーして改変すること。**（ゼロから書かない）
+**必ず `pages/tframe/screens/AccountPage.js` か `StaffPage.js` を雛形にコピーして改変すること。**（ゼロから書かない）
 
 #### 標準構成
 
@@ -162,7 +162,7 @@ if (process.env.USE_MENU_NAV === 'true') {
 ### Step 4: codecept.conf.js への登録
 
 ```javascript
-{moduleName}Page: './pages/tframe/{PageName}.js',
+{moduleName}Page: './pages/tframe/screens/{PageName}.js',
 ```
 
 ---

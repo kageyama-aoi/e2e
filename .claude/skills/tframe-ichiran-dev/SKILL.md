@@ -25,8 +25,8 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 
 | 目的 | 参照先 |
 |---|---|
-| 一覧検索メソッドの実装パターン | `pages/tframe/KoshiPage.js`（`navigateToListPage` 以降） |
-| シンプルな Page Object（アイコンなし） | `pages/tframe/StaffPage.js` |
+| 一覧検索メソッドの実装パターン | `pages/tframe/screens/KoshiPage.js`（`navigateToListPage` 以降） |
+| シンプルな Page Object（アイコンなし） | `pages/tframe/screens/StaffPage.js` |
 | テストファイルの雛形 | `tests/tframe/page/koshi_ichiran_test.js` |
 | CSV の形式 | `data/tframe/koshi_ichiran_search_data.csv` |
 | ENV 変数一覧 | `env/.env.tframe.template` |
@@ -42,7 +42,7 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 まず以下を確認する：
 
 1. **既存 Page Object があるか**  
-   `pages/tframe/` を確認し、対象の Page Object が存在するか確認する。
+   `pages/tframe/screens/` を確認し、対象の Page Object が存在するか確認する。
    - 存在する → そのファイルにメソッドを追記する
    - 存在しない → `/tframe-registration-dev` スキルでまず Page Object を作ること
 
