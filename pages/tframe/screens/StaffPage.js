@@ -137,9 +137,11 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【スタッフ一覧】検索条件を入力');
-    if (data.lastName)     I.fillField('#lastName', data.lastName);
-    if (data.firstName)    I.fillField('#firstName', data.firstName);
-    if (data.idnumber)     I.fillField('#idnumber', data.idnumber);
+    fillTextFields(I, {
+      lastName:  data.lastName,
+      firstName: data.firstName,
+      idnumber:  data.idnumber,
+    });
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },

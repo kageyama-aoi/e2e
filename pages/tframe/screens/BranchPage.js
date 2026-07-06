@@ -106,8 +106,10 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【校舎一覧】検索条件を入力');
-    if (data.schoolName)   I.fillField('#schoolName', data.schoolName);
-    if (data.SchoolCode)   I.fillField('#SchoolCode', data.SchoolCode);
+    fillTextFields(I, {
+      schoolName: data.schoolName,
+      SchoolCode: data.SchoolCode,
+    });
     if (data.area_area_id) I.selectOption('#area_area_id', data.area_area_id);
   },
 

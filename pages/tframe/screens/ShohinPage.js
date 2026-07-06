@@ -126,7 +126,7 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【商品一覧】検索条件を入力');
-    if (data.name) I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
     selectAreaThenBranch(I, {
       areaSelector: '#branchId_area_id',
       branchSelector: '#branchId_branch_id',

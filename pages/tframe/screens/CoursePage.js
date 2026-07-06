@@ -191,7 +191,7 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【コース一覧】検索条件を入力');
-    if (data.name)         I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
     if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
     if (data.nendoYear)    I.selectOption('#nendoYear', data.nendoYear);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
@@ -218,8 +218,10 @@ module.exports = {
    */
   fillProByCourseSearchConditions(data) {
     I.say('【コース別商品一覧】検索条件を入力');
-    if (data.name)        I.fillField('#name', data.name);
-    if (data.productName) I.fillField('#productName', data.productName);
+    fillTextFields(I, {
+      name:        data.name,
+      productName: data.productName,
+    });
   },
 
   ...createMenuNavigationMixin('tframe_course'),

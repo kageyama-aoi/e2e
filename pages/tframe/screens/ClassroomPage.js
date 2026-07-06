@@ -86,7 +86,7 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【教室一覧】検索条件を入力');
-    if (data.name) I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
 

@@ -91,7 +91,7 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【料金マスタ一覧】検索条件を入力');
-    if (data.name)           I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
     if (data.feeSubcategory) I.selectOption('#feeSubcategory', data.feeSubcategory);
     if (data.gesshaKubun)    I.selectOption('#gesshaKubun', data.gesshaKubun);
     if (data.packageId)      I.selectOption('#packageId', data.packageId);

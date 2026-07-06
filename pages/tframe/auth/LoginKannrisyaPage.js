@@ -3,6 +3,7 @@
  */
 
 const { I } = inject();
+const { fillTextFields } = require('../../../support/utils');
 
 module.exports = {
   /** ログインページの各入力要素セレクタ */
@@ -23,8 +24,8 @@ module.exports = {
     I.amOnPage(process.env.BASE_URL);
     I.waitForElement(this.locators.usernameField, 5);
     this.selectLanguage(process.env.TFRAME_LANGUAGE);
-    I.fillField(this.locators.usernameField, username);
-    I.fillField(this.locators.passwordField, secret(password));
+    fillTextFields(I, { 'loginmodel-username': username });
+    I.fillField(this.locators.passwordField, secret(password)); // secret() マスキング維持のため fillField を使用
     I.click(this.locators.loginButton);
   },
 

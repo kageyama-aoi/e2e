@@ -32,7 +32,7 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【対応履歴一覧】検索条件を入力');
-    if (data.name)         I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
     if (data.categoryMain) I.selectOption('#categoryMain', data.categoryMain);
   },
 
@@ -58,7 +58,7 @@ module.exports = {
    */
   fillTemplateSearchConditions(data) {
     I.say('【対応履歴テンプレート一覧】検索条件を入力');
-    if (data.name) I.fillField('#name', data.name);
+    fillTextFields(I, { name: data.name });
   },
 
   // ----------------------------------------------------------------

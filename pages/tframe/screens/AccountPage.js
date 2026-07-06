@@ -113,8 +113,10 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【アカウント一覧】検索条件を入力');
-    if (data.name)     I.fillField('#name', data.name);
-    if (data.idnumber) I.fillField('#idnumber', data.idnumber);
+    fillTextFields(I, {
+      name:     data.name,
+      idnumber: data.idnumber,
+    });
   },
 
   ...createIchiranMixin('アカウント一覧'),
