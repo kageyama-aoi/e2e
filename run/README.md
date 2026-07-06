@@ -28,6 +28,13 @@ run/run_gui.bat をダブルクリック
 
 ---
 
+## 起動時のスプラッシュスクリーン
+
+起動直後に `SplashScreen`（400×160px のモーダル）が画面中央に表示される。  
+初期化完了（プロファイル・テスト一覧のスキャン終了）と同時に自動で閉じ、メインウィンドウが表示される。
+
+---
+
 ## 画面構成
 
 ```
@@ -37,7 +44,7 @@ run/run_gui.bat をダブルクリック
 │  Test File   ← *_test.js 一覧  │  Log（色付きリアルタイム）│
 │  Profile     ← .env.* 一覧     │                           │
 │  Grep（任意）                  │                           │
-│  [Run] [Stop] [Open Allure] [Open CSV]                     │
+│  [Run] [Stop] [Open Allure] [Open CSV] [Settings (.env)]  │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -60,6 +67,7 @@ run/run_gui.bat をダブルクリック
 | **Stop** | 実行中プロセスを `terminate()` で停止。停止後にログを自動保存 |
 | **Open Allure** | `allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
 | **Open CSV** | テストファイルに対応する `data/<product>/*_data*.csv` をデフォルトアプリで開く |
+| **Settings (.env)** | 選択中プロファイルの `.env` ファイルをGUIで編集する（`EnvSettingsWindow`）。設定項目は HEADLESS / SCREENSHOT_ON_NAVIGATION / CHECKBOX_DEBUG / FORM_FILL_FAST / SHIMAMURA_NAV の5項目。Save で即時書き込み |
 | **Login & Hold (shimamura)** | shimamura プロファイル専用。新しいコンソールウィンドウでブラウザを起動し、ログイン後に手動操作できる状態で待機させる。ターミナルに `resume` を入力するか Ctrl+C × 2 で終了 |
 
 ### 右ペイン
@@ -165,7 +173,7 @@ CustomTkinter への全面移行は以下の理由で見送った：
 
 ### ログクリーンアップの日数を変更する
 
-`run_gui.py` の 34 行目：
+`run_gui.py` の 38 行目：
 
 ```python
 LOG_CLEANUP_DAYS = 30
@@ -173,7 +181,7 @@ LOG_CLEANUP_DAYS = 30
 
 ### ログのフォント・サイズを変更する
 
-`run_gui.py` の 35 行目：
+`run_gui.py` の 39 行目：
 
 ```python
 LOG_FONT = ('Courier New', 9)
@@ -181,7 +189,7 @@ LOG_FONT = ('Courier New', 9)
 
 ### ログの色設定を変更する
 
-`_LOG_TAGS` 辞書（38 行目付近）で各タグの色・太字を指定している：
+`_LOG_TAGS` 辞書（42 行目付近）で各タグの色・太字を指定している：
 
 ```python
 _LOG_TAGS = {
@@ -192,7 +200,7 @@ _LOG_TAGS = {
 ```
 
 色は HTML カラーコード（`#RRGGBB`）で指定する。  
-新しいタグを追加する場合は `_get_log_tag()` メソッド（967 行目付近）にも判定条件を追加すること。
+新しいタグを追加する場合は `_get_log_tag()` メソッド（1193 行目付近）にも判定条件を追加すること。
 
 ### 新プロダクトを追加する
 
@@ -206,11 +214,11 @@ GUI 側のコード変更は不要。
 
 ### ウィンドウサイズを変更する
 
-`RunnerApp.__init__` の 2 行（664 行目付近）：
+`RunnerApp.__init__` の 2 行（844 行目付近）：
 
 ```python
-self.geometry('960x640')   # 初期サイズ（幅×高さ）
-self.minsize(760, 520)     # 最小サイズ
+self.geometry('1100x720')  # 初期サイズ（幅×高さ）
+self.minsize(860, 600)     # 最小サイズ
 ```
 
 ### Open Allure が動かない場合
@@ -238,7 +246,7 @@ run/
 
 ## 主要な内部関数（修正時の参照用）
 
-| 関数 | 役割 |
+| 関数 / クラス | 役割 |
 |---|---|
 | `find_products(tests_dir)` | `tests/` サブフォルダ名をスキャン |
 | `find_all_tests(tests_dir)` | `*_test.js` を再帰収集 |
@@ -250,6 +258,8 @@ run/
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
 | `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |
 | `_analyze_download_file()` | ダウンロードファイルの件数・エンコードを解析 |
+| `SplashScreen` | 起動中スプラッシュ（400×160px）。初期化完了後に自動クローズ |
+| `EnvSettingsWindow` | 選択プロファイルの `.env` を GUI 編集するサブウィンドウ |
 | `RunnerApp._run_process()` | テストをサブスレッドで実行してログをキューに流す |
 | `RunnerApp._drain_log_queue()` | 100ms ごとにキューを消費して UI に反映 |
 | `RunnerApp._show_downloads_panel()` | テスト完了後に新着ダウンロードファイルを検出して表示 |
