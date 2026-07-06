@@ -95,6 +95,7 @@ index.php?r={module}%2Fsw%2F_default  → 一覧画面（sw = SearchView）
 ```javascript
 const { I } = inject();
 const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../support/utils');
+const { selectAreaThenBranch } = require('../../../support/tframe/utils');
 
 module.exports = {
   navigateToRegisterPage() { /* USE_MENU_NAV 対応 */ },
@@ -113,12 +114,16 @@ fillTextFields(I, { fieldId: data.fieldId, ... });
 // ── ドロップダウン（value 属性の値を使う。表示テキストではない）
 if (data.someSelect) I.selectOption('#someSelect', data.someSelect);
 
-// ── AJAX連動ドロップダウン（エリア→校舎など）
-if (data.branchId_area_id) {
-  I.selectOption('#branchId_area_id', data.branchId_area_id);
-  I.wait(1); // AJAX待ち
-}
-if (data.branchId_branch_id) I.selectOption('#branchId_branch_id', data.branchId_branch_id);
+// ── AJAX連動ドロップダウン（エリア→校舎）: support/tframe/utils.js の selectAreaThenBranch を使う
+// ID体系は #school_area_id/#school_branch_id（デフォルト）と #branchId_area_id/#branchId_branch_id の2種
+selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
+// branchId_ 系の場合は areaSelector/branchSelector を明示指定
+selectAreaThenBranch(I, {
+  areaSelector: '#branchId_area_id',
+  branchSelector: '#branchId_branch_id',
+  area: data.branchId_area_id,
+  branch: data.branchId_branch_id,
+});
 
 // ── 郵便番号ボタン（都道府県・市区町村を自動入力）
 if (data.primaryAddressPostalcode) {

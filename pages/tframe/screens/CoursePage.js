@@ -6,7 +6,7 @@ const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
@@ -144,11 +144,7 @@ module.exports = {
       name:      data.name,
       shortname: data.shortname,
     });
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id)     I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
     if (data.calendarColorSetting) I.selectOption('#calendarColorSetting', data.calendarColorSetting);
     if (data.subtype)              I.selectOption('#subtype', data.subtype);
     if (data.courseCategory)       I.selectOption('#courseCategory', data.courseCategory);
@@ -198,11 +194,7 @@ module.exports = {
     if (data.name)         I.fillField('#name', data.name);
     if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
     if (data.nendoYear)    I.selectOption('#nendoYear', data.nendoYear);
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
 
   ...createIchiranMixin('コース一覧'),

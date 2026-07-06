@@ -5,7 +5,7 @@
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 
 module.exports = {
@@ -46,11 +46,12 @@ module.exports = {
       name:        data.name,
       productCode: data.productCode,
     });
-    if (data.branchId_area_id) {
-      I.selectOption('#branchId_area_id', data.branchId_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.branchId_branch_id) I.selectOption('#branchId_branch_id', data.branchId_branch_id);
+    selectAreaThenBranch(I, {
+      areaSelector: '#branchId_area_id',
+      branchSelector: '#branchId_branch_id',
+      area: data.branchId_area_id,
+      branch: data.branchId_branch_id,
+    });
     if (data.productCategory)    I.selectOption('#productCategory', data.productCategory);
   },
 
@@ -126,11 +127,12 @@ module.exports = {
   fillSearchConditions(data) {
     I.say('【商品一覧】検索条件を入力');
     if (data.name) I.fillField('#name', data.name);
-    if (data.branchId_area_id) {
-      I.selectOption('#branchId_area_id', data.branchId_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.branchId_branch_id) I.selectOption('#branchId_branch_id', data.branchId_branch_id);
+    selectAreaThenBranch(I, {
+      areaSelector: '#branchId_area_id',
+      branchSelector: '#branchId_branch_id',
+      area: data.branchId_area_id,
+      branch: data.branchId_branch_id,
+    });
     if (data.productCategory) I.selectOption('#productCategory', data.productCategory);
     if (data.courseValid)     I.selectOption('#courseValid', data.courseValid);
   },

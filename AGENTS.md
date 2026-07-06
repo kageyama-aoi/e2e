@@ -191,7 +191,7 @@
 特殊フィールドの操作：
 - 郵便番号 → `I.click('#zipCodeBtn')` + `I.wait(1)` で都道府県・市区町村を自動入力（番地・カナは手動）
 - 銀行コード → `I.fillField('#bankCode', val)` + `I.wait(1)` で銀行名を AJAX 自動補完（bankName 列は CSV 不要）
-- AJAX 連動ドロップダウン（エリア→校舎）→ エリア選択後に `I.wait(1)` してから校舎を選択
+- AJAX 連動ドロップダウン（エリア→校舎）→ `support/tframe/utils.js` の `selectAreaThenBranch(I, { area, branch })` を使う（ID体系が `#school_area_id`/`#school_branch_id` と `#branchId_area_id`/`#branchId_branch_id` の2種あるため、後者は `areaSelector`/`branchSelector` を明示指定する）
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 

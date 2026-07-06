@@ -32,4 +32,22 @@ async function submitTframeFormAndVerify(I, expectedName) {
   I.waitForText(expectedName, 10);
 }
 
-module.exports = { isEnglish, submitTframeFormAndVerify };
+/**
+ * エリア→校舎の AJAX 連動ドロップダウンを選択する。
+ * エリア選択後、校舎リストが AJAX で更新されるため待機を挟む。
+ * @param {object} I - CodeceptJS の I
+ * @param {object} opts
+ * @param {string} [opts.areaSelector='#school_area_id']
+ * @param {string} [opts.branchSelector='#school_branch_id']
+ * @param {string} opts.area   - エリアの選択値（falsy ならスキップ）
+ * @param {string} opts.branch - 校舎の選択値（falsy ならスキップ）
+ */
+function selectAreaThenBranch(I, { areaSelector = '#school_area_id', branchSelector = '#school_branch_id', area, branch }) {
+  if (area) {
+    I.selectOption(areaSelector, area);
+    I.wait(TIMEOUTS.AJAX_SELECT); // AJAX: エリア選択後に校舎ドロップダウンを更新
+  }
+  if (branch) I.selectOption(branchSelector, branch);
+}
+
+module.exports = { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch };

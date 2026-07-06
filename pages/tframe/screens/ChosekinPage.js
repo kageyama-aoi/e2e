@@ -5,7 +5,7 @@
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 
 module.exports = {
@@ -54,11 +54,7 @@ module.exports = {
     }
 
     // 校舎はAJAX連動ドロップダウン（エリア→校舎）
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
 
     fillTextFields(I, {
       fromDatetime: data.fromDatetime,
@@ -98,11 +94,7 @@ module.exports = {
     I.say('【調整金一覧】検索条件を入力');
     if (data.keijouMonthYear)  I.selectOption('#keijouMonthYear', data.keijouMonthYear);
     if (data.keijouMonthMonth) I.selectOption('#keijouMonthMonth', data.keijouMonthMonth);
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
     if (data.rewardItem) I.selectOption('#rewardItem', data.rewardItem);
     if (data.calType)    I.selectOption('#calType', data.calType);
   },

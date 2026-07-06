@@ -6,7 +6,7 @@ const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 
 module.exports = {
   /** 受講生アイコンのセレクタ（日英） */
@@ -90,11 +90,7 @@ module.exports = {
       enrollDate:  data.enrollDate,
     });
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
     if (data.grade)            I.selectOption('#grade', data.grade);
   },
 
@@ -158,11 +154,7 @@ module.exports = {
     if (data.firstName)    I.fillField('#firstName', data.firstName);
     if (data.idnumber)     I.fillField('#idnumber', data.idnumber);
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
-    if (data.school_area_id) {
-      I.selectOption('#school_area_id', data.school_area_id);
-      I.wait(1); // AJAX: エリア選択後に校舎ドロップダウンを更新
-    }
-    if (data.school_branch_id) I.selectOption('#school_branch_id', data.school_branch_id);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
 
   ...createIchiranMixin('受講生一覧'),
