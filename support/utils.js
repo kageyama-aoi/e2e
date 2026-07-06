@@ -133,6 +133,45 @@ function loadCsvWithProfile(baseName, dataDir) {
 }
 
 /**
+ * CSV の idnumber 列を検索して値を書き換える（ID番号重複 retry 後のメンテ用）
+ * @param {string} baseName - CSVファイルのベース名
+ * @param {string} dataDir  - data/ 以下のサブディレクトリ名
+ * @param {string} originalId - 元の idnumber
+ * @param {string} newId      - 更新後の idnumber
+ */
+function updateCsvIdnumber(baseName, dataDir, originalId, newId) {
+  if (originalId === newId) return;
+  const profile = getProfileFromArgs();
+  const defaultPath = path.join(__dirname, `../data/${dataDir}/${baseName}.csv`);
+  const profilePath = profile
+    ? path.join(__dirname, `../data/${dataDir}/${baseName}_${profile}.csv`)
+    : null;
+  const filePath = (profilePath && fs.existsSync(profilePath)) ? profilePath : defaultPath;
+
+  const raw = fs.readFileSync(filePath, 'utf8');
+  const lines = raw.split(/\r?\n/);
+  const headers = lines[0].split(',').map(h => h.trim());
+  const idCol = headers.indexOf('idnumber');
+  if (idCol === -1) return;
+
+  let updated = false;
+  const newLines = lines.map(line => {
+    if (!line.trim() || line.trim().startsWith('#')) return line;
+    const values = line.split(',');
+    if (values[idCol] && values[idCol].trim() === originalId) {
+      values[idCol] = newId;
+      updated = true;
+    }
+    return values.join(',');
+  });
+
+  if (updated) {
+    fs.writeFileSync(filePath, newLines.join('\n'), 'utf8');
+    console.log(`[CSV更新] idnumber: ${originalId} → ${newId} (${path.basename(filePath)})`);
+  }
+}
+
+/**
  * データ駆動テスト用にシナリオ名を付与する
  * @param {Array<Object>} data - CSVから読み込んだデータ配列
  * @param {function(Object): string} labelResolver - 各行からラベルを生成する関数
@@ -204,6 +243,7 @@ module.exports = {
   getProfileFromArgs,
   parseEnvBoolean,
   loadCsvWithProfile,
+  updateCsvIdnumber,
   withScenarioLabel,
   parseExpectedErrors,
   logScreenUrl,

@@ -55,6 +55,7 @@ module.exports = {
   fillRegistrationForm(data) {
     this.fillPersonalInfo1(data);
     this.fillPersonalInfo2(data);
+    this.fillBankInfo(data);
     this.fillAddressInfo(data);
     this.fillMemoInfo(data);
   },
@@ -95,6 +96,33 @@ module.exports = {
   },
 
   /**
+   * 引落金融機関情報を入力する（bankPaymentType のみ対応。口座振替は別途拡張）
+   * @param {object} data
+   */
+  fillBankInfo(data) {
+    if (!data.bankPaymentType) return;
+    I.say('【受講生登録】引落金融機関情報 を入力');
+    I.selectOption('#bankPaymentType', data.bankPaymentType);
+    if (data.bankCode) {
+      I.fillField('#bankCode', data.bankCode);
+      // oninput で AJAX 補完が走るため executeScript で手動発火
+      I.executeScript(() => document.getElementById('bankCode').dispatchEvent(new Event('input', { bubbles: true })));
+      I.wait(2); // AJAX: 金融機関コード → 金融機関名を自動補完
+    }
+    if (data.bankBranchCode) {
+      I.fillField('#bankBranchCode', data.bankBranchCode);
+      I.executeScript(() => document.getElementById('bankBranchCode').dispatchEvent(new Event('input', { bubbles: true })));
+      I.wait(2); // AJAX: 支店コード → 支店名を自動補完
+    }
+    if (data.bankAccountType) I.selectOption('#bankAccountType', data.bankAccountType);
+    fillTextFields(I, {
+      bankAccountNo:   data.bankAccountNo,
+      bankAccountName: data.bankAccountName,
+      bankCustomerNo:  data.bankCustomerNo,
+    });
+  },
+
+  /**
    * 住所情報を入力する（郵便番号ボタンで都道府県・市区町村を自動入力）
    * @param {object} data
    */
@@ -131,6 +159,52 @@ module.exports = {
     await submitTframeFormAndVerify(I, expectedName);
   },
 
+  /**
+   * 保存し、ID番号重複エラーが出たら idnumber を +1 してリトライする（最大10回）
+   * @param {string} expectedName - 保存後の確認に使用する受講生の姓
+   * @param {string} idnumber - 最初の ID 番号
+   */
+  async submitAndVerifyWithIdRetry(expectedName, idnumber) {
+    const MAX_RETRY = 10;
+    let currentId = idnumber;
+
+    for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+      I.say(`【受講生登録】保存ボタンをクリック（試行 ${attempt}/${MAX_RETRY}、ID: ${currentId}）`);
+      I.click('#ewSaveButton');
+      I.wait(2);
+
+      const errorText = await I.executeScript(() => {
+        const el = document.getElementById('tf-message-summary');
+        return el ? el.innerText.trim() : '';
+      });
+
+      if (!errorText) {
+        // エラーなし → 保存成功
+        I.waitForText(expectedName, 10);
+        return currentId; // カウントアップした場合はここで返す
+      }
+
+      if (!errorText.includes('ID番号重複')) {
+        // ID重複以外のエラーはそのまま失敗
+        throw new Error(`登録バリデーションエラー:\n${errorText}`);
+      }
+
+      // ID重複 → idnumber を +1 してリトライ
+      const numPart = currentId.match(/\d+$/);
+      if (numPart) {
+        const nextNum = String(Number(numPart[0]) + 1).padStart(numPart[0].length, '0');
+        currentId = currentId.slice(0, -numPart[0].length) + nextNum;
+      } else {
+        currentId = currentId + '1';
+      }
+      I.say(`  ID番号重複のためリトライ → 新ID: ${currentId}`);
+      I.clearField('#idnumber');
+      I.fillField('#idnumber', currentId);
+    }
+
+    throw new Error(`ID番号重複リトライが上限（${MAX_RETRY}回）に達しました。最終試行ID: ${currentId}`);
+  },
+
   // ----------------------------------------------------------------
   //  受講生一覧（SW）
   // ----------------------------------------------------------------
@@ -150,9 +224,11 @@ module.exports = {
    */
   fillSearchConditions(data) {
     I.say('【受講生一覧】検索条件を入力');
-    if (data.lastName)     I.fillField('#lastName', data.lastName);
-    if (data.firstName)    I.fillField('#firstName', data.firstName);
-    if (data.idnumber)     I.fillField('#idnumber', data.idnumber);
+    fillTextFields(I, {
+      lastName:  data.lastName,
+      firstName: data.firstName,
+      idnumber:  data.idnumber,
+    });
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
@@ -178,8 +254,10 @@ module.exports = {
    */
   fillStByCourseSearchConditions(data) {
     I.say('【コース別受講生一覧】検索条件を入力');
-    if (data.courseName) I.fillField('#name', data.courseName);
-    if (data.lastName)   I.fillField('#lastName', data.lastName);
+    fillTextFields(I, {
+      name:     data.courseName,
+      lastName: data.lastName,
+    });
   },
 
   // ----------------------------------------------------------------
@@ -201,8 +279,10 @@ module.exports = {
    */
   fillCourseByStSearchConditions(data) {
     I.say('【受講生別コース一覧】検索条件を入力');
-    if (data.lastName)   I.fillField('#lastName', data.lastName);
-    if (data.courseName) I.fillField('#name', data.courseName);
+    fillTextFields(I, {
+      lastName: data.lastName,
+      name:     data.courseName,
+    });
   },
 
   ...createMenuNavigationMixin('tframe_student'),

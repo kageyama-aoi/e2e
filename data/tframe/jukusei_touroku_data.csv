@@ -1,3 +1,7 @@
-lastName,firstName,lastNameFurigana,firstNameFurigana,phone1Number,gender,birthdateYear,birthdateMonth,birthdateDay,email1,idnumber,personStatus,school_area_id,school_branch_id,enrollDate,primaryAddressPostalcode,primaryAddressStreet,primaryAddressKana,description
-テスト,受講生A,てすと,じゅこうせいA,09011111111,female,2010,04,01,test.student.a@example.com,JSA001,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026/05/01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録A
-テスト,受講生B,てすと,じゅこうせいB,09022222222,male,2012,08,15,test.student.b@example.com,JSB002,1,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026/05/01,1500001,渋谷1-1,トウキョウトシブヤク,自動テスト登録B
+lastName,firstName,lastNameFurigana,firstNameFurigana,phone1Number,gender,birthdateYear,birthdateMonth,birthdateDay,email1,idnumber,personStatus,school_area_id,school_branch_id,enrollDate,primaryAddressPostalcode,primaryAddressStreet,primaryAddressKana,description,bankPaymentType,bankCode,bankBranchCode,bankAccountType,bankAccountNo,bankAccountName,bankCustomerNo
+テスト,受講生A,てすと,じゅこうせいA,09011111111,female,2010,04,01,test.student.a@example.com,JSA006,1,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録A（設定なし・体験生）,,,,,,,
+テスト,受講生B,てすと,じゅこうせいB,09022222222,male,2012,08,15,test.student.b@example.com,JSB007,1,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1500001,渋谷1-1,トウキョウトシブヤク,自動テスト登録B（設定なし・体験生）,,,,,,,
+テスト,受講生C,てすと,じゅこうせいC,09033333333,female,2011,06,20,test.student.c@example.com,JSC007,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録C（現金）,3,,,,,,
+テスト,受講生D,てすと,じゅこうせいD,09044444444,male,2009,11,03,test.student.d@example.com,JSD008,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録D（手続き不備）,2,,,,,,
+テスト,受講生E,てすと,じゅこうせいE,09055555555,female,2013,03,25,test.student.e@example.com,JSE010,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録E（口座振替）,1,0001,001,1,1234567,テストジュコウセイイー,
+テスト,受講生F,てすと,じゅこうせいF,09066666666,male,2010,09,10,test.student.f@example.com,JSF010,2,a2,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,2026-05-01,1000001,千代田1-1,トウキョウトチヨダク,自動テスト登録F（Web申込）,4,,,,,,
