@@ -239,7 +239,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-07-06 15:54:35
+Last updated: 2026-07-06 17:05:03
 
 ```text
 e2e/
@@ -825,9 +825,6 @@ e2e/
 ├── .env
 ├── .gitignore
 ├── _temp_refactor_run_gui.md
-├── _temp_refactoring_e2e_20260706.md
-├── _temp_refactoring_shimamura.md
-├── _temp_review_汎用性.md
 ├── AGENTS.md
 ├── CHANGELOG.md
 ├── CLAUDE.md
@@ -838,8 +835,7 @@ e2e/
 ├── package-lock.json
 ├── package.json
 ├── README.md
-├── steps.d.ts
-└── ショートかっと暗記.png
+└── steps.d.ts
 ```
 <!-- TREE_END -->
 
