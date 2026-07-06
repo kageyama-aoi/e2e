@@ -15,6 +15,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const repoRoot = require('../../support/repoRoot');
 
 Feature('Taskreport 機能');
 
@@ -29,9 +30,9 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
 
   
   I.fillField('bugsearch','shima28s');
-  I.wait(3);
+  I.wait(3); // TODO: 固定待機。待つべき要素が特定できたら waitForElement に置換
   I.click('>');
-  I.wait(3);
+  I.wait(3); // TODO: 固定待機。待つべき要素が特定できたら waitForElement に置換
 
   I.say('ページを開いてテーブルを解析します');
   
@@ -41,7 +42,7 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
   I.say(`抽出行数: ${table2D.length}`);
   console.log(JSON.stringify(table2D, null, 2));
 
-  const outDir = path.join(__dirname, '../../output/taskreport');
+  const outDir = path.join(repoRoot, 'output/taskreport');
   const outPath = path.join(outDir, 'table2d.json');
 
   fs.mkdirSync(outDir, { recursive: true });
