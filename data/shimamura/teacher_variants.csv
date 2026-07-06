@@ -1,5 +1,5 @@
-scenario,last_name,first_name,last_name_furigana,first_name_furigana,idnumber,belong,contact_status,zei_kubun,t_bank_payment_type,bank_account_type,bank_account_no,bank_account_name,tax_class,reward_rate_1
-内部_課税,E2Eテスト,内部課税,えーとーいー,ないぶかぜい,99901,10,21,2,1,1,1234567,ﾅｲﾌﾞｶｾﾞｲ,1,30
-内部_免税,E2Eテスト,内部免税,えーとーいー,ないぶめんぜい,99902,10,21,2,1,1,1234567,ﾅｲﾌﾞﾒﾝｾﾞｲ,0,
-外注_課税,E2Eテスト,外注課税,えーとーいー,がいちゅうかぜい,99903,20,21,2,1,1,1234567,ｶﾞｲﾁｭｳｶｾﾞｲ,1,30
-外注_免税,E2Eテスト,外注免税,えーとーいー,がいちゅうめんぜい,99904,20,21,2,1,1,1234567,ｶﾞｲﾁｭｳﾒﾝｾﾞｲ,0,
+scenario,last_name,first_name,last_name_furigana,first_name_furigana,idnumber,belong,contact_status,zei_kubun,t_bank_payment_type,bank_code,bank_branch_code,bank_account_type,bank_account_no,bank_account_name,tax_class,reward_rate_1
+内部_課税,E2Eテスト,内部課税,えーとーいー,ないぶかぜい,99901,10,21,2,1,0001,001,1,1234567,ﾅｲﾌﾞｶｾﾞｲ,1,30
+内部_免税,E2Eテスト,内部免税,えーとーいー,ないぶめんぜい,99902,10,21,2,1,0001,001,1,1234567,ﾅｲﾌﾞﾒﾝｾﾞｲ,0,
+外注_課税,E2Eテスト,外注課税,えーとーいー,がいちゅうかぜい,99903,20,21,2,1,0001,001,1,1234567,ｶﾞｲﾁｭｳｶｾﾞｲ,1,30
+外注_免税,E2Eテスト,外注免税,えーとーいー,がいちゅうめんぜい,99904,20,21,2,1,0001,001,1,1234567,ｶﾞｲﾁｭｳﾒﾝｾﾞｲ,0,

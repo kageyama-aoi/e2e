@@ -66,6 +66,7 @@
       "feature_no": "1000_2_2"
     },
     "flow/contact_register_test.js":                            "候補生詳細（詳細タブ）フォームへの入力・保存の正常系とバリデーションエラーを確認",
+    "flow/teacher_keiri_setup_test.js":                         "講師謝礼テスト用の講師バリエーション登録・経理タブ設定を準備",
     "flow/keiri_hennkin_syori_test.js": {
       "description": "経理の返金処理フローを確認",
       "feature_no": "1600_17_1"
