@@ -3,12 +3,14 @@ name: tframe-registration-dev
 description: |
   tframe の登録・編集画面に対する E2E テストを新規作成・修正するスキル。
   以下のような依頼があったら使用すること：
-  - tframe の特定画面（登録・編集・一覧など）のテストを新規作成したい
-  - 既存の tframe Page Object / CSV / テストファイルを修正・追加したい
+  - tframe の特定画面（登録・編集）のテストを新規作成したい
+  - 既存の登録・編集系の Page Object / CSV / テストファイルを修正・追加したい
   - input.html に HTML が貼り付けてあるのでテストを作ってほしい
   - 「自分でログインしてフィールドを取得して」という依頼
 
   ワークフロー: HTML取得 → フィールド解析 → Page Object → CSV → テストファイル → 実行確認
+
+  ※ 一覧検索テスト（「〇〇一覧のテストを作って」等）は /tframe-ichiran-dev スキルを使うこと
 ---
 
 # tframe 登録系テスト開発スキル

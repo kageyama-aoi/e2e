@@ -5,6 +5,8 @@ description: |
   以下のような依頼があったら使用すること：
   - tframe の特定画面（一覧・検索）のテストを新規作成したい
   - 既存の一覧検索 Page Object メソッド / CSV / テストファイルを修正・追加したい
+    （対象: tests/tframe/ 配下の *_ichiran_test.js、data/tframe/ の *_ichiran_search_data.csv。
+     koshi_ / jukusei_ / course_ 等のプレフィックスは tframe の画面）
   - 「〇〇一覧のテストを作って」という依頼
 
   ワークフロー: 検索フィールド確認 → Page Object にメソッド追記 → CSV → テストファイル → 実行確認

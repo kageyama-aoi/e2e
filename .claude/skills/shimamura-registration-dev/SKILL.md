@@ -11,6 +11,7 @@ description: |
                FlowPage 作成 or 追記 → CSV → テストファイル → 実行確認
 
   ※ 一覧検索テストは /shimamura-ichiran-dev スキルを使うこと
+  ※ 処理フローでも、出力されたファイルのダウンロード・中身検証が主目的なら /shimamura-download-verify を使うこと
 ---
 
 # shimamura 登録・処理フロー テスト開発スキル
