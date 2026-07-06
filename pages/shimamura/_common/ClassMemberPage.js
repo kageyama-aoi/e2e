@@ -1,5 +1,5 @@
 const { I } = inject();
-const { attachScreenshotFromOutput, parseEnvBoolean } = require('../../../support/utils');
+const { attachScreenshotFromOutput, parseEnvBoolean, logScreenUrl } = require('../../../support/utils');
 const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { toggleGroupmenu } = require('../../../support/shimamura/utils');
 const { resolveUnfinishedKeiriDataIfPresent } = require('../flow/SyokaiFlowPage');
@@ -94,6 +94,13 @@ module.exports = {
       studentTabActive: '#tab_li_student_tab.active',
       coursePulldown: '#cs_course_seletion_pulldown',
       selectButton: '発表会選択',
+    },
+
+    // 経理返金処理: 経理メニュー→返金一覧
+    keiriRefundList: {
+      submenuIconId: 'submenu__transaction_sub',
+      submenuMenuName: '入出金',
+      linkName: '返金一覧',
     },
   },
 
@@ -280,6 +287,21 @@ module.exports = {
     I.selectOption(l.coursePulldown, courseName);
     I.click(l.selectButton);
     I.say(`Presentation Selection Page\nURL: ${await I.grabCurrentUrl()}`);
+  },
+
+  /**
+   * 経理メニューから返金一覧画面へ遷移します。
+   */
+  async openRefundListFromKeiriMenu() {
+    const l = this.locators.keiriRefundList;
+    I.say('【画面遷移】経理メニュー → 返金一覧');
+    await toggleGroupmenu(I, {
+      icon_id: l.submenuIconId,
+      menuname: l.submenuMenuName,
+    });
+    I.see(l.linkName);
+    this.clickSubMenuLink(l.linkName, l.linkName);
+    await logScreenUrl(I, l.linkName);
   },
 
   // TODO: これ以降のクラス受講生登録に関する操作（例: registerNewMember）をメソッドとして追加してください。

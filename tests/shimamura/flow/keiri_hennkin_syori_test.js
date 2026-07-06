@@ -32,7 +32,7 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { toggleGroupmenu, verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors } = require('../../../support/shimamura/utils');
 const { SELECTORS } = require('../../../support/shimamura/constants');
 
 Feature('経理返金処理（ひな形）');
@@ -51,30 +51,6 @@ const validationErrorData = withScenarioLabel(validationErrorDataRaw, (row) => {
 
 function isPauseEnabled() {
   return parseEnvBoolean('PAUSE_ON_KEIRI');
-}
-
-/**
- * 経理メニューから返金一覧へ遷移する
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
- */
-async function ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura) {
-  const S = {
-    screen: { name: '経理メニュー' },
-    submenu: {
-      icon_id: 'submenu__transaction_sub',
-      menuname: '入出金'
-    },
-    link: { name: '返金一覧' }
-  };
-  I.say('【画面遷移】経理メニュー → 返金一覧');
-  await toggleGroupmenu(I, {
-    icon_id: S.submenu.icon_id,
-    menuname: S.submenu.menuname
-  });
-  I.see(S.link.name);
-  classMemberPageShimamura.clickSubMenuLink(S.link.name, S.link.name);
-  await logScreenUrl(I, S.link.name);
 }
 
 Before(beforeShimamura);
@@ -138,7 +114,7 @@ Data(csvData).Scenario('経理：返金処理 正常系 @dev @normal', async ({ 
   I.say('【管理メニュー】経理 → 経理メニュー');
   await classMemberPageShimamura.navigateToAdminTab(I, '経理', '月謝一括作成');
   await logScreenUrl(I, '経理メニュー');
-  await ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura);
+  await classMemberPageShimamura.openRefundListFromKeiriMenu();
 
   // まずは月謝一括作成の画面遷移のみ確認するため、必要に応じて一時停止
   if (isPauseEnabled()) {
@@ -190,7 +166,7 @@ Data(validationErrorData).Scenario('経理：返金処理 異常系 @dev @error'
   I.say('【管理メニュー】経理 → 経理メニュー');
   await classMemberPageShimamura.navigateToAdminTab(I, '経理', '月謝一括作成');
   await logScreenUrl(I, '経理メニュー');
-  await ShouldBeOnKeiriMenuAndOpenRefundList(I, classMemberPageShimamura);
+  await classMemberPageShimamura.openRefundListFromKeiriMenu();
 
   if (isPauseEnabled()) {
     // pause();
