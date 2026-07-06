@@ -20,7 +20,7 @@ OUT: output/archive/<profile>/<rundir>.zip（N日より新しい場合はアー�
      削除: N日以上古いもの（元ファイル・元ディレクトリ）
 
 使い方:
-  # 30日より古いものをアーカイブ＋削除（既定）
+  # 14日より古いものをアーカイブ＋削除（既定）
   python scripts/cleanup/cleanup_output_logs.py
 
   # 7日より古いものを対象にする
@@ -63,8 +63,8 @@ def parse_args() -> argparse.Namespace:
         description="output/ と logs/ の古い実行結果をアーカイブ・削除します。"
     )
     parser.add_argument(
-        "--days", type=int, default=30,
-        help="何日以上古いものを対象にするか（デフォルト: 30）",
+        "--days", type=int, default=14,
+        help="何日以上古いものを対象にするか（デフォルト: 14）",
     )
     parser.add_argument(
         "--dry-run", action="store_true",
