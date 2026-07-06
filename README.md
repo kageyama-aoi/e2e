@@ -239,7 +239,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-07-03 17:05:14
+Last updated: 2026-07-06 15:22:15
 
 ```text
 e2e/
@@ -274,6 +274,8 @@ e2e/
 │   │   ├── 2026-06-30-1441.md
 │   │   ├── 2026-06-30-1713.md
 │   │   ├── 2026-07-02-1802.md
+│   │   ├── 2026-07-03-1435.md
+│   │   ├── 2026-07-06-1038.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -308,6 +310,9 @@ e2e/
 │   │   ├── shimamura-ichiran-dev/ 
 │   │   │   └── SKILL.md
 │   │   ├── shimamura-registration-dev/ 
+│   │   │   ├── references/ 
+│   │   │   │   ├── patterns.md
+│   │   │   │   └── troubleshooting.md
 │   │   │   └── SKILL.md
 │   │   ├── shimamura-screen-diagram/ 
 │   │   │   └── SKILL.md
@@ -317,7 +322,6 @@ e2e/
 │   │   │   └── SKILL.md
 │   │   └── tframe-registration-dev/ 
 │   │       └── SKILL.md
-│   ├── scheduled_tasks.lock
 │   └── settings.local.json
 ├── .github/ 
 │   └── workflows/ 
@@ -454,6 +458,7 @@ e2e/
 │   │   │   ├── SyokaiFlowPage.js
 │   │   │   └── TeacherKeiriFlowPage.js
 │   │   └── screens/ 
+│   │       ├── ContactRegisterPage.js
 │   │       └── IchiranPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
@@ -717,6 +722,7 @@ e2e/
 │   │   ├── syokai_helpers.js
 │   │   └── utils.js
 │   ├── tframe/ 
+│   │   ├── constants.js
 │   │   └── utils.js
 │   ├── envLoader.js
 │   ├── repoRoot.js
@@ -819,6 +825,7 @@ e2e/
 ├── .env
 ├── .gitignore
 ├── _temp_refactor_run_gui.md
+├── _temp_refactoring_e2e_20260706.md
 ├── _temp_refactoring_shimamura.md
 ├── _temp_review_汎用性.md
 ├── AGENTS.md

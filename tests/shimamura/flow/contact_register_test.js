@@ -22,7 +22,7 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, URLS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const S = {
   screen:  { name: '問合せ' },
@@ -61,12 +61,6 @@ Feature('問合せ登録（候補生登録）');
 
 Before(beforeShimamura);
 
-async function navigateToContactRegister(I) {
-  I.say('【問合せ登録】URL 直遷移');
-  I.amOnPage(process.env.BASE_URL + URLS.CONTACT_REGISTER);
-  I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
-}
-
 async function fillContactForm(I, data) {
   I.say('【問合せ登録】フォーム入力');
   // テキストフィールド一括入力（bank_code は AJAX 自動補完のため除外）
@@ -89,12 +83,12 @@ async function fillContactForm(I, data) {
   if (data.bank_code)         I.fillField(S.fields.bankCode,           data.bank_code);
 }
 
-Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, current }) => {
+Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, current, contactRegisterPageShimamura }) => {
   setBusinessLabels({ epic: '受講生管理', feature: '問合せ登録', story: '正常フロー' });
 
   attachBusinessContext({ label: '正常フロー', input: current });
 
-  await navigateToContactRegister(I);
+  contactRegisterPageShimamura.navigateToContactRegister();
   await fillContactForm(I, current);
 
   I.say('【問合せ登録】保存');
@@ -108,7 +102,7 @@ Data(csvData).Scenario('候補生を登録できる @dev @normal', async ({ I, c
   I.say('【問合せ登録】完了');
 });
 
-Data(validationErrorData).Scenario('必須項目未入力でエラーが出る @dev @error', async ({ I, current }) => {
+Data(validationErrorData).Scenario('必須項目未入力でエラーが出る @dev @error', async ({ I, current, contactRegisterPageShimamura }) => {
   const storyLabel = current.scenario;
   setBusinessLabels({ epic: '受講生管理', feature: '問合せ登録', story: storyLabel });
 
@@ -119,7 +113,7 @@ Data(validationErrorData).Scenario('必須項目未入力でエラーが出る @
   };
   attachBusinessContext({ label: storyLabel, input, expectedErrors });
 
-  await navigateToContactRegister(I);
+  contactRegisterPageShimamura.navigateToContactRegister();
   await fillContactForm(I, input);
 
   I.say('【問合せ登録】保存（エラー確認）');

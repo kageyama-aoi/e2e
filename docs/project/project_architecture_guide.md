@@ -1,7 +1,7 @@
 # プロジェクト設計・アーキテクチャガイド
 
 本リポジトリは、テスト自動化プロジェクトにおける「関心の分離」と「運用効率」を追求した構成です。  
-最終更新: 2026-06-15
+最終更新: 2026-07-06
 
 ---
 
@@ -47,13 +47,17 @@ pages/
 │   ├── auth/                   # ログイン系
 │   │   └── LoginPage.js
 │   ├── flow/                   # 複数画面をまたぐ処理フロー
+│   │   ├── CourseClassSetupFlowPage.js
+│   │   ├── GessyaIkkatuFlowPage.js
 │   │   ├── KoushiShareiFlowPage.js
 │   │   ├── StudentSaikenkaiFlowPage.js
-│   │   └── SyokaiFlowPage.js
+│   │   ├── SyokaiFlowPage.js
+│   │   └── TeacherKeiriFlowPage.js
 │   ├── screens/                # 画面操作 Page Object
-│   │   ├── ClassMemberPage.js
+│   │   ├── ContactRegisterPage.js
 │   │   └── IchiranPage.js
-│   └── _common/                # 共通ユーティリティ
+│   └── _common/                # 共通ユーティリティ・複数画面で共有する Page Object
+│       ├── ClassMemberPage.js  # クラス受講生関連の操作（管理タブ遷移・検索・退会処理など）
 │       └── sideMenus.js        # サイドメニュー定義
 ├── tframe/           # tframe 固有の Page Object
 │   ├── auth/                   # ログイン・認証系

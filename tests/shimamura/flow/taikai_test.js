@@ -23,109 +23,12 @@
  */
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { toggleGroupmenu, resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
-const { fillTaikaiFormAndSubmit, resolveUnfinishedKeiriDataIfPresent } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
+const { fillTaikaiFormAndSubmit } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 
 Feature('退会処理 (@dev)');
 
 Before(beforeShimamura);
-
-/**
- * 受講生一覧画面で検索を行い、詳細画面へ遷移する
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {string} idnumber - 受講生番号
- * @returns {Promise<string>} 取得した受講生氏名
- */
-async function ShouldBeOnZyukouseiList(I, idnumber) {
-  const S = {
-    screen: { name: '受講生一覧' },
-    field: { idnumber: '#idnumber' },
-    button: { search: '検索' },
-    result: { list: SELECTORS.RESULT_LINK, link: `a${SELECTORS.RESULT_LINK}` }
-  }
-  await I.waitForElement(locate('body').withText(S.screen.name), TIMEOUTS.SCREEN);
-  await I.waitForElement(S.field.idnumber, TIMEOUTS.ELEMENT);
-  await I.fillField(S.field.idnumber, idnumber);
-  await I.click(S.button.search);
-  await I.waitForElement(S.result.list, TIMEOUTS.RESULT);
-
-  await I.say(`${S.screen.name}\nURL: ${await I.grabCurrentUrl()}`);
-
-  const student_name = await I.grabTextFrom(S.result.link);
-  await I.click(locate(S.result.list));
-  await I.say(`★link_: ${student_name}`);
-
-  return student_name;
-}
-
-const TAIKAI_NAV = {
-  screen: {
-    detailTitle: '受講生詳細',
-  },
-  submenu: {
-    iconId: 'submenu__detailviews_sub',
-    menuName: '閲覧/登録・経理ビュー',
-  },
-  accordion: {
-    paymentGroup: 'div[onclick*="payment_det_group"]',
-    kojin1: 'div[onclick*="kojin_1"]',
-  },
-  submenuLink: {
-    mainTitle: '受講生詳細',
-    subTitle: '個人情報１',
-  },
-  buttons: {
-    taikai: '退会処理',
-  },
-};
-
-/**
- * 受講生詳細画面から「個人情報１」タブへ移動する
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
- */
-async function navigateToKojin1Tab(I, classMemberPageShimamura) {
-  // 受講生詳細 画面にいることを確認
-  I.waitForElement(locate('body').withText(TAIKAI_NAV.screen.detailTitle), TIMEOUTS.SCREEN);
-
-  // サブメニューグループ「閲覧/登録・経理ビュー」を開く
-  await toggleGroupmenu(I, {
-    icon_id: TAIKAI_NAV.submenu.iconId,
-    menuname: TAIKAI_NAV.submenu.menuName,
-  });
-
-  // アコーディオンの閉じるリンクをクリック
-  I.click(TAIKAI_NAV.accordion.paymentGroup);
-  I.click(TAIKAI_NAV.accordion.kojin1);
-
-  // 受講生詳細へ移動（個人情報1タブ）
-  classMemberPageShimamura.clickSubMenuLink(
-    TAIKAI_NAV.submenuLink.mainTitle,
-    TAIKAI_NAV.submenuLink.subTitle
-  );
-}
-
-/**
- * 受講生詳細画面から退会処理画面まで画面遷移
- * 「経理処理が完了してないデータがあります」警告が出ていると退会処理ボタンが
- * 表示されないため、警告を検知したら解消してから個人情報1タブへ遷移し直す
- * （解消操作自体が経理ビューAへ遷移してしまい個人情報1タブの状態が崩れるため）。
- * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {Object} classMemberPageShimamura - ClassMember ページオブジェクト
- */
-async function navigateToTaikaiScreen(I, classMemberPageShimamura) {
-  await navigateToKojin1Tab(I, classMemberPageShimamura);
-
-  const resolved = await resolveUnfinishedKeiriDataIfPresent(I);
-  if (resolved) {
-    await navigateToKojin1Tab(I, classMemberPageShimamura);
-  }
-
-  // 退会画面へ遷移
-  I.click(TAIKAI_NAV.buttons.taikai);
-  I.say(`退会処理\nURL: ${await I.grabCurrentUrl()}`);
-}
 
 /**
  * 一連の退会処理フローを実行する
@@ -144,8 +47,8 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, taikaiYear
 
   // 受講生検索 → 詳細 → 退会画面へ
   // （経理処理未完了データの警告解消は navigateToTaikaiScreen 内で行う）
-  await ShouldBeOnZyukouseiList(I, idnumber);
-  await navigateToTaikaiScreen(I, classMemberPageShimamura);
+  await classMemberPageShimamura.searchStudentAndOpenDetail(idnumber);
+  await classMemberPageShimamura.navigateToTaikaiScreen();
 
   // 退会入力 & 更新（フォーム操作は SyokaiFlowPage.js と共通化）
   // 退会処理は「先月まで許容・先々月以前はNG」のため graceMonths: 1 で補正
