@@ -115,6 +115,7 @@
 | `/shimamura-registration-dev` | shimamura 登録・処理フローテストの新規作成・修正手順 |
 | `/shimamura-download-verify` | shimamura ダウンロードボタンでファイルを取得・検証するテストの新規作成手順（CSV・固定長両対応） |
 | `/shimamura-screen-diagram` | shimamura の画面遷移図（Mermaid）の作成・更新手順 |
+| `/flow-explain` | flow系E2Eテストのロジックを散文＋Mermaidフローチャートで解説する（画面遷移図の /shimamura-screen-diagram とは別視点） |
 | `/launcher-review` | `run/run_gui.py` 修正後にレイアウトの整合性を静的レビューする |
 | `/github-issue-dev` | 開発作業全般（バグ修正・機能追加・リファクタリング）を Issue 駆動で進める |
 | `/string-template-refactor` | 文字列テンプレートのリファクタリング手順を実施する（グローバルスキル） |
