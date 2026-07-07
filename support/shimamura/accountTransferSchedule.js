@@ -30,6 +30,10 @@ async function ensureAccountTransferSchedules(I, { claimMonth, debitDate, deposi
     I.fillField('#claim_month', claimMonth);
     I.fillField('#data_date', debitDate);
     I.fillField('#t_date', depositDate);
+    // 既存データがある場合など、押下後に非同期でconfirm/alertが出ることがある。
+    // CodeceptJSはポップアップの既定アクションが未設定だと内部エラーになりダイアログが
+    // 解決されないままページがブロックされることがあるため、事前に既定アクションを設定する。
+    I.amAcceptingPopups();
     I.click('input[name="register_button"]');
     I.wait(TIMEOUTS.TAB_SWITCH);
   }

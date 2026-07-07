@@ -143,7 +143,9 @@
     "check/bank_payment_type_check_test.js":                    "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト",
     "flow/gessya_ikkatu_setup_test.js":                         "月謝一括作成 準備（受講生請求方法設定）",
     "flow/gessya_ikkatu_test.js":                                "月謝一括作成 実行",
-    "flow/course_class_setup_test.js":                          "コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用）"
+    "flow/course_class_setup_test.js":                          "コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用）",
+    "flow/happyoukai_setup_test.js":                             "発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加）",
+    "flow/happyoukai_touroku_test.js":                           "発表会 参加者更新の実行と画面反映の検証"
   },
   "taskreport": {
     "taskreport_sample_test.js":                       "Taskreport 機能のサンプルテスト"

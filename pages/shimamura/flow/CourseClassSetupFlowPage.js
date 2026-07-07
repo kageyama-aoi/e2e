@@ -29,6 +29,7 @@ const S = {
     name:     '#course_name',
     category: '#course_category',
     kanrihi:  '#course_kanrihi',
+    kingaku:  '#course_kingaku',
     save:     'input[name="save_button"]',
   },
   class: {
@@ -51,6 +52,9 @@ const S = {
   scheduleTab: {
     tabLink:      '#tab_link_schedule_tab',
     bulkCreate:   'input[value*="全体スケジュール"]',
+    startYear:    '#event_start_year',
+    startMonth:   '#event_start_month',
+    startDay:     '#event_start_day',
     endYear:      '#event_end_year',
     endMonth:     '#event_end_month',
     endDay:       '#event_end_day',
@@ -66,18 +70,20 @@ function extractRecordId(url) {
 /**
  * コース(ShimaCourse)を新規作成する。
  * @param {object} I
- * @param {{courseCd: string, courseName: string, courseCategory?: string, kanrihi: number|string}} params
- *   courseCategory は選択肢の表示テキスト（既定値: 'スクール'）
+ * @param {{courseCd: string, courseName: string, courseCategory?: string, kanrihi?: number|string, kingaku?: number|string}} params
+ *   courseCategory は選択肢の表示テキスト（既定値: 'スクール'）。
+ *   kingaku（コース金額/参加費）は発表会カテゴリなど月謝以外の料金体系で使う。省略時は未設定のまま。
  * @returns {Promise<string>} 作成したコースの record ID
  */
-async function createShimaCourse(I, { courseCd, courseName, courseCategory = 'スクール', kanrihi }) {
-  I.say(`【コース作成】${courseName}（${courseCd}） / 運営管理費(税抜): ${kanrihi}`);
+async function createShimaCourse(I, { courseCd, courseName, courseCategory = 'スクール', kanrihi, kingaku }) {
+  I.say(`【コース作成】${courseName}（${courseCd}） / 運営管理費(税抜): ${kanrihi ?? '未設定'} / 金額: ${kingaku ?? '未設定'}`);
   I.amOnPage(`${BASE_URL}index.php?module=ShimaCourse&action=EditView&return_module=ShimaCourse&return_action=DetailView`);
   I.waitForElement(S.course.cd, TIMEOUTS.SCREEN);
   I.fillField(S.course.cd, courseCd);
   I.fillField(S.course.name, courseName);
   I.selectOption(S.course.category, courseCategory);
-  I.fillField(S.course.kanrihi, String(kanrihi));
+  if (kanrihi !== undefined) I.fillField(S.course.kanrihi, String(kanrihi));
+  if (kingaku !== undefined) I.fillField(S.course.kingaku, String(kingaku));
   I.click(S.course.save);
   I.waitForElement(locate('body').withText(courseName), TIMEOUTS.SCREEN);
   await logScreenUrl(I, 'コース作成完了');
@@ -133,9 +139,13 @@ async function createClass(I, {
 /**
  * クラスの「コース」タブから、指定したコースを検索・紐づけする。
  * @param {object} I
- * @param {{classRecordId: string, courseName: string}} params
+ * @param {{classRecordId: string, courseName: string, courseCategory?: string}} params
+ *   courseCategory はポップアップ内の「コースカテゴリー」フィルタ（既定値: 'スクール'、
+ *   選択肢に「すべて」は無いため対象コースのカテゴリーと必ず一致させる必要がある。
+ *   実機確認: 既定値が固定で「スクール」になっているため、スクール以外のコースを
+ *   検索する場合は明示的に一致するカテゴリーを渡さないと検索結果が0件になる）。
  */
-async function linkCourseToClass(I, { classRecordId, courseName }) {
+async function linkCourseToClass(I, { classRecordId, courseName, courseCategory = 'スクール' }) {
   I.say(`【コース紐づけ】クラス(${classRecordId}) に「${courseName}」を紐づけ`);
   I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
   I.waitForElement(S.courseTab.tabLink, TIMEOUTS.SCREEN);
@@ -145,6 +155,7 @@ async function linkCourseToClass(I, { classRecordId, courseName }) {
   I.click(S.courseTab.selectPopupBtn);
   I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();
   I.waitForElement('#course_name', TIMEOUTS.SCREEN);
+  I.selectOption('#course_category', courseCategory);
   I.fillField('#course_name', courseName);
   I.click('検索');
   I.waitForElement(locate(SELECTORS.RESULT_LINK).withText(courseName), TIMEOUTS.RESULT);
@@ -159,13 +170,22 @@ async function linkCourseToClass(I, { classRecordId, courseName }) {
 
 /**
  * クラスの「スケジュール」タブで「全体スケジュールの作成・変更」を実行し、
- * デフォルト設定（週単位・曜日は既定値）のままスケジュール終了日だけを
- * 指定月数後に変更して保存する。これにより経理ビューでの登録が可能になる。
+ * デフォルト設定（週単位・曜日は既定値）のままスケジュール終了日を指定月数後に
+ * 変更して保存する。これにより経理ビューでの登録が可能になる。
  * @param {object} I
- * @param {{classRecordId: string, monthsUntilEnd?: number}} params
+ * @param {{classRecordId: string, monthsUntilEnd?: number, monthsUntilStart?: number, daysAfterStart?: number}} params
+ *   monthsUntilStart を指定すると開始日も今日からその月数後にずらす（既定は今日のまま）。
+ *   monthsUntilStart 指定時は、終了日は monthsUntilEnd ではなく
+ *   「開始日 + daysAfterStart（既定6日）」で計算する。開始日と終了日を同日にすると
+ *   実機確認でスケジュールが1件も作成されない（0件）ため、選択曜日が必ず1回含まれる
+ *   1週間程度の幅を持たせる必要がある（発表会クラスは「1スケジュール＝1クラス」が
+ *   基本で、スクール/サロンのような長期の週次繰り返しではないため、この幅で実質1回のみになる）。
+ *   なお発表会クラスは「開催月の前月18日」が参加登録締切になる画面があるため、
+ *   開催日が当月のままだと締切が既に過去になり操作不可になる。最短でも翌々月（2）を
+ *   指定して締切を回避すること（実機確認済みの制約）。
  */
-async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6 }) {
-  I.say(`【スケジュール作成】クラス(${classRecordId}) / 終了日: ${monthsUntilEnd}ヶ月後`);
+async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, monthsUntilStart = 0, daysAfterStart = 6 }) {
+  I.say(`【スケジュール作成】クラス(${classRecordId}) / 開始: ${monthsUntilStart}ヶ月後 / 終了: ${monthsUntilStart > 0 ? `開始+${daysAfterStart}日` : `${monthsUntilEnd}ヶ月後`}`);
   I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
   I.waitForElement(S.scheduleTab.tabLink, TIMEOUTS.SCREEN);
   I.click(S.scheduleTab.tabLink);
@@ -173,13 +193,28 @@ async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6 }) {
   I.click(S.scheduleTab.bulkCreate);
   I.waitForElement(S.scheduleTab.endYear, TIMEOUTS.SCREEN);
 
-  const end = new Date();
-  end.setMonth(end.getMonth() + monthsUntilEnd);
+  let end;
+  if (monthsUntilStart > 0) {
+    const start = new Date();
+    start.setMonth(start.getMonth() + monthsUntilStart);
+    I.selectOption(S.scheduleTab.startYear, String(start.getFullYear()));
+    I.selectOption(S.scheduleTab.startMonth, String(start.getMonth() + 1));
+    I.selectOption(S.scheduleTab.startDay, String(start.getDate()));
+
+    end = new Date(start);
+    end.setDate(end.getDate() + daysAfterStart);
+  } else {
+    end = new Date();
+    end.setMonth(end.getMonth() + monthsUntilEnd);
+  }
   I.selectOption(S.scheduleTab.endYear, String(end.getFullYear()));
   I.selectOption(S.scheduleTab.endMonth, String(end.getMonth() + 1));
   I.selectOption(S.scheduleTab.endDay, String(end.getDate()));
 
-  // 保存ボタンの onclick は window.confirm() を呼ぶ（codeceptjs の既定ダイアログ自動承認に依存）
+  // 保存ボタンの onclick は window.confirm() を呼ぶ。CodeceptJSはポップアップの既定アクションが
+  // 未設定だと内部エラーになりダイアログが解決されないままになることがあるため、
+  // amAcceptingPopups() で事前に既定アクションを設定しておく。
+  I.amAcceptingPopups();
   I.click(S.scheduleTab.saveButton);
   I.wait(TIMEOUTS.TAB_SWITCH);
   await logScreenUrl(I, 'スケジュール作成完了');
@@ -201,6 +236,7 @@ async function setupLinkedCourseAndClass(I, params) {
     courseName:     params.courseName,
     courseCategory: params.courseCategory,
     kanrihi:        params.kanrihi,
+    kingaku:        params.kingaku,
   });
 
   const className = params.className || params.courseName;
@@ -217,8 +253,13 @@ async function setupLinkedCourseAndClass(I, params) {
     teiin:           params.teiin,
   });
 
-  await linkCourseToClass(I, { classRecordId, courseName: params.courseName });
-  await createClassSchedule(I, { classRecordId, monthsUntilEnd: params.monthsUntilEnd });
+  await linkCourseToClass(I, { classRecordId, courseName: params.courseName, courseCategory: params.courseCategory });
+  await createClassSchedule(I, {
+    classRecordId,
+    monthsUntilEnd: params.monthsUntilEnd,
+    monthsUntilStart: params.monthsUntilStart,
+    daysAfterStart: params.daysAfterStart,
+  });
 
   return { courseRecordId, classRecordId };
 }

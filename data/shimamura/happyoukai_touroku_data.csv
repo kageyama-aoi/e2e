@@ -1,0 +1,4 @@
+scenario,checked,expectedParticipating
+参加予定01,1,1
+参加予定02,1,1
+不参加のまま03,0,0

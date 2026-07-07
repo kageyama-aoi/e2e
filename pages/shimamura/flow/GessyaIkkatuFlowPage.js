@@ -356,4 +356,4 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
+module.exports = { navigateToKouhosei, runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
