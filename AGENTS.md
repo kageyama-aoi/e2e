@@ -98,6 +98,15 @@
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
 | `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須） |
 
+### docs/shimamura/ のサブフォルダ規約
+
+shimamura の docs は「業務としてどう動くか」と「テストがどう検証するか」で置き場所を分ける。
+
+| サブフォルダ | 置くもの | 例 |
+|---|---|---|
+| `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説） | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md` |
+| `docs/shimamura/flow/` | E2Eテストの流れ解説（`/flow-explain` が出力する `<テスト名>_flow.md`） | `gessya_ikkatu_flow.md` |
+
 ### 利用可能なスキル一覧
 
 | スキル | 用途 |
