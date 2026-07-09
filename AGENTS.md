@@ -126,6 +126,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `/shimamura-screen-diagram` | shimamura の画面遷移図（Mermaid）の作成・更新手順 |
 | `/flow-explain` | flow系E2Eテストのロジックを散文＋Mermaidフローチャートで解説する（画面遷移図の /shimamura-screen-diagram とは別視点） |
 | `/launcher-review` | `run/run_gui.py` 修正後にレイアウトの整合性を静的レビューする |
+| `/launcher-gui-design` | `run/run_gui.py` を含むTkinterランチャーGUIの設計判断（サブプロセス実行方式、スレッド安全性、Windowsパス問題等）を検討する（グローバルスキル） |
 | `/github-issue-dev` | 開発作業全般（バグ修正・機能追加・リファクタリング）を Issue 駆動で進める |
 | `/string-template-refactor` | 文字列テンプレートのリファクタリング手順を実施する（グローバルスキル） |
 
