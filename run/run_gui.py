@@ -17,6 +17,11 @@ try:
     _SV_TTK = True
 except ImportError:
     _SV_TTK = False
+try:
+    import pywinstyles as _pywinstyles
+    _PYWINSTYLES = True
+except ImportError:
+    _PYWINSTYLES = False
 import sys
 import queue
 import zipfile
@@ -38,6 +43,23 @@ _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
 LOG_FONT = ('Courier New', 9)
 
+# フォント・ボタンスタイルの一元定義（RunnerApp._setup_style() でテーマ適用後に反映）
+UI_FONT_FAMILY = 'Segoe UI'
+UI_FONT       = (UI_FONT_FAMILY, 9)          # 標準ウィジェット共通
+UI_FONT_BOLD  = (UI_FONT_FAMILY, 9, 'bold')  # 見出し・ラベル
+UI_FONT_SMALL = (UI_FONT_FAMILY, 8)          # 補足・ヒント文
+UI_FONT_TITLE = (UI_FONT_FAMILY, 14, 'bold') # ウィンドウ見出し
+
+# ボタン3段階ヒエラルキー: Primary（主操作1つだけ）/ Secondary（標準）/ Tertiary（Cancel等）
+BTN_PRIMARY   = 'Primary.Accent.TButton'   # sv_ttk の Accent.TButton を継承（未導入時は TButton にフォールバック）
+BTN_SECONDARY = 'Secondary.TButton'
+BTN_TERTIARY  = 'Tertiary.Toolbutton'
+_BUTTON_SPECS = {
+    BTN_PRIMARY:   {'font': (UI_FONT_FAMILY, 11, 'bold'), 'height': 34, 'hpad': 16},
+    BTN_SECONDARY: {'font': (UI_FONT_FAMILY, 9),          'height': 28, 'hpad': 10},
+    BTN_TERTIARY:  {'font': (UI_FONT_FAMILY, 9),          'height': 24, 'hpad': 6},
+}
+
 # ログ行の色定義（foreground / font を指定）
 _LOG_TAGS = {
     'header': {'foreground': '#4a9eff'},                                      # blue  : === lines
@@ -47,6 +69,19 @@ _LOG_TAGS = {
     'error':  {'foreground': '#ff7777'},                                      # pink  : × / Error
     'warn':   {'foreground': '#ffb347'},                                      # orange: warnings
 }
+
+
+def _style_titlebar(window):
+    """タイトルバーを sv_ttk ライトテーマの背景色に揃える（pywinstyles があるときだけ。失敗しても無害）。
+    Windows 11 のみヘッダー色を直接指定できる。Windows 10 は既定でも大きく浮かないため何もしない。"""
+    if not (_SV_TTK and _PYWINSTYLES):
+        return
+    try:
+        version = sys.getwindowsversion()
+        if version.major == 10 and version.build >= 22000:  # Windows 11
+            _pywinstyles.change_header_color(window, '#fafafa')
+    except Exception:
+        pass
 
 
 def _format_filesize(size_bytes):
@@ -327,7 +362,7 @@ class _Tooltip:
         self._tip.wm_geometry(f'+{x}+{y}')
         tk.Label(
             self._tip, text=text, background='#ffffe0', relief='solid',
-            borderwidth=1, font=('Segoe UI', 8), justify='left', padx=6, pady=3,
+            borderwidth=1, font=UI_FONT_SMALL, justify='left', padx=6, pady=3,
         ).pack()
 
     def _hide(self, _event):
@@ -352,6 +387,7 @@ class CsvEditorWindow(tk.Toplevel):
         self._date_cols = set()
         self._load_csv()
         self._build_ui()
+        _style_titlebar(self)
 
     # ── ヘルパー ──────────────────────────────────────
 
@@ -438,13 +474,13 @@ class CsvEditorWindow(tk.Toplevel):
     def _build_ui(self):
         if not self._headers:
             ttk.Label(self, text='CSVが空です。').pack(padx=16, pady=16)
-            ttk.Button(self, text='閉じる', command=self.destroy).pack()
+            ttk.Button(self, text='閉じる', style=BTN_TERTIARY, command=self.destroy).pack()
             return
 
         # ヘッダー行を太字・青字に
         style = ttk.Style(self)
         style.configure('CsvEditor.Treeview.Heading',
-                         font=('Segoe UI', 9, 'bold'), foreground='#3a7dc8')
+                         font=UI_FONT_BOLD, foreground='#3a7dc8')
 
         tbl = ttk.Frame(self)
         tbl.pack(fill=tk.BOTH, expand=True, padx=8, pady=(8, 4))
@@ -487,16 +523,16 @@ class CsvEditorWindow(tk.Toplevel):
 
         btns = ttk.Frame(self)
         btns.pack(fill=tk.X, padx=8, pady=(0, 2))
-        ttk.Button(btns, text='行を追加', command=self._add_row).pack(side=tk.LEFT, padx=2)
-        ttk.Button(btns, text='行を削除', command=self._delete_row).pack(side=tk.LEFT, padx=2)
-        ttk.Button(btns, text='Save', command=self._save).pack(side=tk.RIGHT, padx=2)
-        ttk.Button(btns, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=2)
+        ttk.Button(btns, text='行を追加', style=BTN_SECONDARY, command=self._add_row).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text='行を削除', style=BTN_SECONDARY, command=self._delete_row).pack(side=tk.LEFT, padx=2)
+        ttk.Button(btns, text='Save', style=BTN_PRIMARY, command=self._save).pack(side=tk.RIGHT, padx=2)
+        ttk.Button(btns, text='Cancel', style=BTN_TERTIARY, command=self.destroy).pack(side=tk.RIGHT, padx=2)
 
         # ステータスバー
         self._status_var = tk.StringVar()
         ttk.Label(
             self, textvariable=self._status_var,
-            foreground='#888888', font=('Segoe UI', 8),
+            foreground='#888888', font=UI_FONT_SMALL,
         ).pack(anchor='w', padx=10, pady=(0, 6))
         self._update_status()
 
@@ -687,6 +723,7 @@ class EnvSettingsWindow(tk.Toplevel):
         self.resizable(False, False)
         self._vars = {}
         self._load_and_build()
+        _style_titlebar(self)
 
     def _load_env(self):
         result = {}
@@ -709,7 +746,7 @@ class EnvSettingsWindow(tk.Toplevel):
         # ヘッダー
         ttk.Label(
             self, text=os.path.basename(self.env_path),
-            font=('Segoe UI', 10, 'bold'),
+            font=UI_FONT_BOLD,
         ).pack(padx=16, pady=(14, 6), anchor='w')
         ttk.Separator(self, orient='horizontal').pack(fill=tk.X, padx=12)
 
@@ -722,7 +759,7 @@ class EnvSettingsWindow(tk.Toplevel):
             pady_label = (12, 0) if i > 0 else (0, 0)
 
             # ラベル（左）＋ コントロール（右）を同じ行に並べる
-            ttk.Label(frame, text=label, font=('Segoe UI', 9, 'bold')).grid(
+            ttk.Label(frame, text=label, font=UI_FONT_BOLD).grid(
                 row=row_base, column=0, sticky='w', pady=pady_label)
             if typ == 'bool':
                 var = tk.BooleanVar(value=values.get(key, 'false').lower() == 'true')
@@ -741,15 +778,15 @@ class EnvSettingsWindow(tk.Toplevel):
             # ヒント文（2列にまたがる、ラベルの直下）
             ttk.Label(
                 frame, text=hint,
-                foreground='#888888', font=('Segoe UI', 8),
+                foreground='#888888', font=UI_FONT_SMALL,
                 wraplength=440, justify='left',
             ).grid(row=row_base + 1, column=0, columnspan=2, sticky='w', padx=(2, 0), pady=(2, 0))
 
         ttk.Separator(self, orient='horizontal').pack(fill=tk.X, padx=12, pady=(8, 0))
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill=tk.X, padx=16, pady=(8, 14))
-        ttk.Button(btn_frame, text='Cancel', command=self.destroy).pack(side=tk.RIGHT, padx=(4, 0))
-        ttk.Button(btn_frame, text='Save', command=self._save).pack(side=tk.RIGHT)
+        ttk.Button(btn_frame, text='Cancel', style=BTN_TERTIARY, command=self.destroy).pack(side=tk.RIGHT, padx=(4, 0))
+        ttk.Button(btn_frame, text='Save', style=BTN_PRIMARY, command=self._save).pack(side=tk.RIGHT)
 
     def _save(self):
         try:
@@ -820,12 +857,12 @@ class SplashScreen(tk.Toplevel):
         self.resizable(False, False)
         tk.Label(
             self, text='CodeceptJS Test Runner',
-            font=('Segoe UI', 16, 'bold'),
+            font=(UI_FONT_FAMILY, 16, 'bold'),
             foreground='#4a9eff', background='#1e2a3a',
         ).pack(pady=(30, 4))
         tk.Label(
             self, text='起動中...',
-            font=('Segoe UI', 9),
+            font=UI_FONT,
             foreground='#aaaaaa', background='#1e2a3a',
         ).pack()
         self._bar = ttk.Progressbar(self, mode='indeterminate', length=340)
@@ -841,8 +878,8 @@ class RunnerApp(tk.Tk):
         self.withdraw()  # 初期化完了まで非表示
         self._splash = SplashScreen(self)
         self.title('CodeceptJS Test Runner')
-        self.geometry('1100x720')
-        self.minsize(860, 600)
+        self.geometry('1100x760')
+        self.minsize(860, 640)
 
         self.repo_root = repo_root
         self.env_dir = os.path.join(repo_root, 'env')
@@ -874,6 +911,7 @@ class RunnerApp(tk.Tk):
         self._build_ui()
         if _SV_TTK:
             _sv_ttk.set_theme('light')
+        self._setup_style()
         self._all_tests = find_all_tests(self.tests_dir)
         self._all_profiles = find_all_profiles(self.env_dir)
         self._load_products()
@@ -881,9 +919,32 @@ class RunnerApp(tk.Tk):
         self.after(300, self._auto_cleanup_on_start)
         self._splash.destroy()
         self.deiconify()
+        _style_titlebar(self)
+
+    def _setup_style(self):
+        """フォント・ボタン3段階スタイルの一元適用。テーマ（sv_ttk）適用後に呼ぶこと。"""
+        style = ttk.Style(self)
+        for name in ('TLabel', 'TButton', 'TCheckbutton', 'TRadiobutton',
+                     'TEntry', 'TCombobox', 'TSpinbox'):
+            style.configure(name, font=UI_FONT)
+        style.configure('TLabelframe.Label', font=UI_FONT_BOLD)  # セクション見出し
+        style.configure('Treeview.Heading', font=UI_FONT_BOLD)
+
+        # ボタン3段階: 目標高さ(px)に合わせて縦paddingを実測較正する
+        # （フォント行高・テーマのchromeはDPI/テーマ依存で数px揺れるため、プローブで実測して補正する）
+        for style_name, spec in _BUTTON_SPECS.items():
+            style.configure(style_name, font=spec['font'], padding=(spec['hpad'], 0))
+            probe = ttk.Button(self, text='あ', style=style_name)
+            self.update_idletasks()
+            base_h = probe.winfo_reqheight()
+            probe.destroy()
+            extra = max(0, spec['height'] - base_h)
+            top, bottom = extra // 2, extra - extra // 2
+            style.configure(style_name, padding=(spec['hpad'], top, spec['hpad'], bottom))
+        style.configure(BTN_TERTIARY, foreground='#888888')
 
     def _build_ui(self):
-        ttk.Label(self, text='CodeceptJS Test Runner', font=('Segoe UI', 14, 'bold')).pack(pady=8)
+        ttk.Label(self, text='CodeceptJS Test Runner', font=UI_FONT_TITLE).pack(pady=8)
 
         body = ttk.Frame(self)
         body.pack(fill=tk.BOTH, expand=True, padx=12, pady=4)
@@ -891,29 +952,37 @@ class RunnerApp(tk.Tk):
         # ---- 左ペイン ----
         left = ttk.Frame(body)
         left.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 12))
+        left.columnconfigure(0, weight=1)
+        left.rowconfigure(0, weight=2)  # テスト選択グループが高さを吸収
+        left.rowconfigure(1, weight=1)  # 実行条件グループも少し伸び縮み
 
-        # 上部：選択エリア（ウィンドウ高さに合わせて伸び縮みする）
-        left_top = ttk.Frame(left)
-        left_top.pack(fill=tk.BOTH, expand=True)
-        left_top.columnconfigure(0, weight=1)
-        left_top.rowconfigure(3, weight=2)  # テストリストが高さを吸収
-        left_top.rowconfigure(7, weight=1)  # プロファイルリストも少し伸び縮み
+        # ---- テスト選択（グルーピング） ----
+        test_group = ttk.LabelFrame(left, text='テスト選択', padding=8)
+        test_group.grid(row=0, column=0, sticky='nsew', pady=(0, 8))
+        test_group.columnconfigure(0, weight=1)
+        test_group.rowconfigure(3, weight=1)  # テストリストが高さを吸収
+
+        # ---- 実行条件（グルーピング） ----
+        cond_group = ttk.LabelFrame(left, text='実行条件', padding=8)
+        cond_group.grid(row=1, column=0, sticky='nsew', pady=(0, 8))
+        cond_group.columnconfigure(0, weight=1)
+        cond_group.rowconfigure(1, weight=1)  # プロファイルリストも少し伸び縮み
 
         # 下部：ボタン（常に見える固定エリア）
         left_bot = ttk.Frame(left)
-        left_bot.pack(fill=tk.X, pady=(6, 0))
+        left_bot.grid(row=2, column=0, sticky='ew')
 
         # Product
-        ttk.Label(left_top, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
-        self.product_combo = ttk.Combobox(left_top, textvariable=self.product_var, width=46, state='readonly')
+        ttk.Label(test_group, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
+        self.product_combo = ttk.Combobox(test_group, textvariable=self.product_var, width=46, state='readonly')
         self.product_combo.grid(row=1, column=0, columnspan=2, sticky='ew')
         self.product_combo.bind('<<ComboboxSelected>>', self._on_product_select)
 
         # Test File
-        ttk.Label(left_top, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.test_list = tk.Listbox(left_top, width=48, height=8, exportselection=False, font=('Courier New', 9))
-        tsb_y = ttk.Scrollbar(left_top, orient='vertical', command=self.test_list.yview)
-        tsb_x = ttk.Scrollbar(left_top, orient='horizontal', command=self.test_list.xview)
+        ttk.Label(test_group, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
+        self.test_list = tk.Listbox(test_group, width=48, height=8, exportselection=False, font=('Courier New', 9))
+        tsb_y = ttk.Scrollbar(test_group, orient='vertical', command=self.test_list.yview)
+        tsb_x = ttk.Scrollbar(test_group, orient='horizontal', command=self.test_list.xview)
         self.test_list.configure(yscrollcommand=tsb_y.set, xscrollcommand=tsb_x.set)
         self.test_list.grid(row=3, column=0, sticky='nsew')
         tsb_y.grid(row=3, column=1, sticky='ns')
@@ -923,36 +992,36 @@ class RunnerApp(tk.Tk):
         # Test description
         self.desc_var = tk.StringVar(value='')
         desc_label = ttk.Label(
-            left_top, textvariable=self.desc_var,
+            test_group, textvariable=self.desc_var, font=UI_FONT_SMALL,
             foreground='#555555', wraplength=340, justify='left',
         )
         desc_label.grid(row=5, column=0, columnspan=2, sticky='w', pady=(2, 0))
 
         # Profile
-        self.profile_label = ttk.Label(left_top, text='Profile')
-        self.profile_label.grid(row=6, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.profile_list = tk.Listbox(left_top, width=48, height=3, exportselection=False)
-        psb = ttk.Scrollbar(left_top, orient='vertical', command=self.profile_list.yview)
+        self.profile_label = ttk.Label(cond_group, text='Profile')
+        self.profile_label.grid(row=0, column=0, columnspan=2, sticky='w')
+        self.profile_list = tk.Listbox(cond_group, width=48, height=3, exportselection=False)
+        psb = ttk.Scrollbar(cond_group, orient='vertical', command=self.profile_list.yview)
         self.profile_list.configure(yscrollcommand=psb.set)
-        self.profile_list.grid(row=7, column=0, sticky='nsew')
-        psb.grid(row=7, column=1, sticky='ns')
+        self.profile_list.grid(row=1, column=0, sticky='nsew')
+        psb.grid(row=1, column=1, sticky='ns')
         self.profile_list.bind('<<ListboxSelect>>', self._on_profile_select)
 
         # Grep filter
-        ttk.Label(left_top, text='Grep (任意)').grid(row=8, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.grep_combo = ttk.Combobox(left_top, textvariable=self.grep_var, width=46)
-        self.grep_combo.grid(row=9, column=0, columnspan=2, sticky='ew')
+        ttk.Label(cond_group, text='Grep (任意)').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
+        self.grep_combo = ttk.Combobox(cond_group, textvariable=self.grep_var, width=46)
+        self.grep_combo.grid(row=3, column=0, columnspan=2, sticky='ew')
         self.grep_combo.bind('<KeyRelease>', lambda _: self._update_cmd_display())
         self.grep_combo.bind('<<ComboboxSelected>>', lambda _: self._update_cmd_display())
         self.grep_hint_var = tk.StringVar(value='')
         ttk.Label(
-            left_top, textvariable=self.grep_hint_var,
+            cond_group, textvariable=self.grep_hint_var, font=UI_FONT_SMALL,
             foreground='#4a9eff', wraplength=340, justify='left',
-        ).grid(row=10, column=0, columnspan=2, sticky='w')
+        ).grid(row=4, column=0, columnspan=2, sticky='w')
 
         # 機能番号フィルター
-        feature_filter_frame = ttk.Frame(left_top)
-        feature_filter_frame.grid(row=11, column=0, columnspan=2, sticky='ew', pady=(8, 0))
+        feature_filter_frame = ttk.Frame(cond_group)
+        feature_filter_frame.grid(row=5, column=0, columnspan=2, sticky='ew', pady=(8, 0))
         ttk.Label(feature_filter_frame, text='機能番号フィルター').pack(side=tk.LEFT)
         ttk.Entry(feature_filter_frame, textvariable=self.feature_filter_var, width=20).pack(side=tk.LEFT, padx=(4, 8))
         self.feature_filter_var.trace_add('write', lambda *_: self._apply_test_filter())
@@ -963,7 +1032,7 @@ class RunnerApp(tk.Tk):
 
         # Buttons（2列グリッド・常に下部に固定表示）
         btn_frame = ttk.Frame(left_bot)
-        btn_frame.pack(fill=tk.X)
+        btn_frame.pack(fill=tk.X, pady=(6, 0))
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
 
@@ -973,27 +1042,27 @@ class RunnerApp(tk.Tk):
         )
         debug_cb.grid(row=0, column=0, columnspan=2, sticky='w', pady=(0, 4))
 
-        self.run_btn = ttk.Button(btn_frame, text='Run Test', command=self._on_run)
+        self.run_btn = ttk.Button(btn_frame, text='Run Test', style=BTN_PRIMARY, command=self._on_run)
         self.run_btn.grid(row=1, column=0, sticky='ew', padx=(0, 2), pady=2)
-        self.stop_btn = ttk.Button(btn_frame, text='Stop', command=self._on_stop)
+        self.stop_btn = ttk.Button(btn_frame, text='Stop', style=BTN_SECONDARY, command=self._on_stop)
         self.stop_btn.grid(row=1, column=1, sticky='ew', padx=(2, 0), pady=2)
         self.stop_btn.state(['disabled'])
 
-        self.allure_btn = ttk.Button(btn_frame, text='Open Allure', command=self._on_open_allure)
+        self.allure_btn = ttk.Button(btn_frame, text='Open Allure', style=BTN_SECONDARY, command=self._on_open_allure)
         self.allure_btn.grid(row=2, column=0, sticky='ew', padx=(0, 2), pady=2)
-        self.csv_btn = ttk.Button(btn_frame, text='Open CSV', command=self._on_open_csv)
+        self.csv_btn = ttk.Button(btn_frame, text='Open CSV', style=BTN_SECONDARY, command=self._on_open_csv)
         self.csv_btn.grid(row=2, column=1, sticky='ew', padx=(2, 0), pady=2)
         self.csv_btn.state(['disabled'])
         self.csv_hint_var = tk.StringVar(value='')
         _Tooltip(self.csv_btn, self.csv_hint_var)
 
         self.login_hold_btn = ttk.Button(
-            btn_frame, text='Login & Hold  (shimamura)',
+            btn_frame, text='Login & Hold  (shimamura)', style=BTN_SECONDARY,
             command=self._on_login_and_hold,
         )
         self.login_hold_btn.grid(row=3, column=0, columnspan=2, sticky='ew', pady=(4, 2))
 
-        self.settings_btn = ttk.Button(btn_frame, text='Settings (.env)', command=self._on_open_settings)
+        self.settings_btn = ttk.Button(btn_frame, text='Settings (.env)', style=BTN_SECONDARY, command=self._on_open_settings)
         self.settings_btn.grid(row=4, column=0, columnspan=2, sticky='ew', pady=(2, 2))
 
         # ---- 右ペイン ----
@@ -1026,8 +1095,8 @@ class RunnerApp(tk.Tk):
         self._dl_tree.pack(fill=tk.X, padx=4, pady=(4, 2))
         dl_btn = ttk.Frame(self._dl_frame)
         dl_btn.pack(fill=tk.X, padx=4, pady=(0, 4))
-        ttk.Button(dl_btn, text='フォルダを開く', command=self._open_downloads_folder).pack(side=tk.LEFT, padx=(0, 4))
-        ttk.Button(dl_btn, text='Excelで開く', command=self._open_selected_dl_file).pack(side=tk.LEFT)
+        ttk.Button(dl_btn, text='フォルダを開く', style=BTN_SECONDARY, command=self._open_downloads_folder).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(dl_btn, text='Excelで開く', style=BTN_SECONDARY, command=self._open_selected_dl_file).pack(side=tk.LEFT)
 
         ttk.Label(self, textvariable=self.status_var, anchor='w').pack(fill=tk.X, padx=8, pady=(0, 4))
 

@@ -40,13 +40,22 @@ run/run_gui.bat をダブルクリック
 ```
 ┌────────────────────────────────────────────────────────────┐
 │  [左ペイン]                    │  [右ペイン]               │
-│  Product     ← tests/ のサブフォルダ  │  Command（参照用）        │
-│  Test File   ← *_test.js 一覧  │  Log（色付きリアルタイム）│
-│  Profile     ← .env.* 一覧     │                           │
-│  Grep（任意）                  │                           │
-│  [Run] [Stop] [Open Allure] [Open CSV] [Settings (.env)]  │
+│  ┌─ テスト選択 ────────────┐  │  Command（参照用）        │
+│  │ Product ← tests/ サブフォルダ│                           │
+│  │ Test File ← *_test.js 一覧 │  Log（色付きリアルタイム）│
+│  └──────────────────────────┘  │                           │
+│  ┌─ 実行条件 ──────────────┐  │                           │
+│  │ Profile ← .env.* 一覧      │                           │
+│  │ Grep（任意）                │                           │
+│  └──────────────────────────┘  │                           │
+│  [Run Test] [Stop] [Open Allure] [Open CSV] [Settings]    │
 └────────────────────────────────────────────────────────────┘
 ```
+
+左ペインは `ttk.LabelFrame` で「テスト選択」「実行条件」の2グループに分けている
+（`RunnerApp._build_ui()` の `test_group` / `cond_group`）。ボタンは
+Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階スタイル
+（`BTN_PRIMARY` / `BTN_SECONDARY` / `BTN_TERTIARY`、詳細は後述の「UI テーマについて」）。
 
 ### 左ペイン
 
@@ -133,6 +142,28 @@ Run 終了（正常終了・Stop・エラー）後に `logs/<testname>_<YYYYMMDD
 - `pip install sv-ttk` でインストール済みの場合のみ有効
 - 未インストールでも標準 ttk テーマにフォールバックし、動作に影響なし
 
+### フォント・ボタンスタイルの一元化
+
+`UI_FONT` / `UI_FONT_BOLD` / `UI_FONT_SMALL` / `UI_FONT_TITLE`（モジュール先頭）でフォントを一元定義し、
+`RunnerApp._setup_style()` で `ttk.Style` に一括適用している（**sv_ttk のテーマ適用後に呼ぶこと**。先に呼ぶとテーマ側の
+デフォルトで上書きされる）。
+
+ボタンは3段階のスタイルタグを使い分ける（`BTN_PRIMARY` / `BTN_SECONDARY` / `BTN_TERTIARY`）：
+
+| スタイル | 用途 | 見た目 |
+|---|---|---|
+| `BTN_PRIMARY` | 各ウィンドウの主操作1つだけ（Run Test、CSV編集の Save 等） | sv_ttk の `Accent.TButton` を継承、大きめ・太字 |
+| `BTN_SECONDARY` | 標準の操作ボタン（Stop、Open Allure 等） | 通常の枠付きボタン |
+| `BTN_TERTIARY` | Cancel・閉じる等の控えめな操作 | 小さめ・グレー文字 |
+
+新しいボタンを追加する際は、この3種のどれかを必ず `style=` で指定すること（無指定の素の `ttk.Button` は使わない）。
+
+### タイトルバーの統一（pywinstyles・任意依存）
+
+`pip install pywinstyles` がある環境では、`_style_titlebar()` が Windows 11 のタイトルバー色を
+sv_ttk ライトテーマの背景色（`#fafafa`）に合わせる。未インストールでも例外を握りつぶして通常表示にフォールバックする。
+Windows 10 は既定のタイトルバーでも大きく浮かないため未対応。
+
 ### 不採用：CustomTkinter
 
 CustomTkinter への全面移行は以下の理由で見送った：
@@ -214,12 +245,16 @@ GUI 側のコード変更は不要。
 
 ### ウィンドウサイズを変更する
 
-`RunnerApp.__init__` の 2 行（844 行目付近）：
+`RunnerApp.__init__` の 2 行：
 
 ```python
-self.geometry('1100x720')  # 初期サイズ（幅×高さ）
-self.minsize(860, 600)     # 最小サイズ
+self.geometry('1100x760')  # 初期サイズ（幅×高さ）
+self.minsize(860, 640)     # 最小サイズ
 ```
+
+左ペインを LabelFrame（テスト選択・実行条件）でグルーピングしているため、
+ボタンやラベルを追加する場合はこのサイズで `Ready` ステータスバーまで欠けずに収まるか確認すること
+（`python -c "..."` で `RunnerApp` を `withdraw()` した状態で `winfo_reqheight()` を測ると目視なしで確認できる）。
 
 ### Open Allure が動かない場合
 
