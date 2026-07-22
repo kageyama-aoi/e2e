@@ -114,6 +114,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `/placement-gate` | 新ファイル作成前に性質を分類し、配置先を確定するゲート |
 | `/tframe-registration-dev` | tframe 登録・編集テストの新規作成・修正手順 |
 | `/tframe-ichiran-dev` | tframe 一覧検索テストの新規作成・修正手順 |
+| `/tframe-flow-dev` | tframe 業務フロー（複数画面をまたぐシナリオ）テストの新規作成・修正手順 |
 | `/local-safe-move` | ファイル移動時のプロトコル（参照修正・パス見直し・doc-sync）を一括実施（e2e 専用） |
 | `/doc-sync` | 開発作業後のドキュメント連動更新チェックリストを実施 |
 | `/handoff` | セッション終了時のハンドオフ文書作成 |
@@ -205,6 +206,14 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - AJAX 連動ドロップダウン（エリア→校舎）→ `support/tframe/utils.js` の `selectAreaThenBranch(I, { area, branch })` を使う（ID体系が `#school_area_id`/`#school_branch_id` と `#branchId_area_id`/`#branchId_branch_id` の2種あるため、後者は `areaSelector`/`branchSelector` を明示指定する）
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
+
+### tframe 業務フロー（複数画面をまたぐシナリオ）のFlowPageパターン
+
+1画面完結ではなく「受講生登録→コース紐付け」のように複数画面・ポップアップをまたぐシナリオは
+`pages/tframe/flow/{機能名}FlowPage.js` に集約する（shimamura の `pages/shimamura/flow/*FlowPage.js`
+と同じ役割。ただし tframe 規約に合わせて書き直す）。雛形は `pages/tframe/flow/JukuseiCourseFlowPage.js`
+と対応するテスト `tests/tframe/flow/jukusei_course_link_flow_test.js`。詳細な手順は
+`/tframe-flow-dev` スキルを参照。
 
 ## コミット・PR ガイドライン
 - Conventional Commits 形式を使用: `<type>(<scope>): <summary> #<issue>`

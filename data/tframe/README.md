@@ -26,6 +26,12 @@
 | `tests/tframe/page/ryokin_package_touroku_test.js` | `ryokin_package_touroku_data.csv` | — | 実装済み（juku_test のみ） |
 | `tests/tframe/page/infoHistoryTemplate_touroku_test.js` | `infoHistoryTemplate_touroku_data.csv` | — | 実装済み。menuModule=student で登録。 |
 
+## 業務フローテスト — CSV対応表
+
+| テストファイル | CSV | 説明 |
+|---|---|---|
+| `tests/tframe/flow/jukusei_course_link_flow_test.js` | `jukusei_course_link_flow_data.csv` | コース新規登録→受講生新規登録→受講生詳細「コース」タブでのコース紐付けを確認。`courseNameBase` はテスト側でタイムスタンプを付与し一意化。校舎（`school_area_id`）は環境側フォームの都合により未指定 |
+
 ## 一覧検索テスト — CSV対応表
 
 | テストファイル | CSV | 説明 |

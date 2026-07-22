@@ -17,6 +17,7 @@
     "flow/navigation_after_login_test.js":             "管理者ログイン後にメニュー各画面へ遷移できるか確認",
     "flow/navigation_after_login_student_test.js":     "受講生アカウントでログイン後の画面遷移を確認",
     "flow/96-60_teacher_payment_report_test.js":       "講師への支払調書データ取得APIの動作確認",
+    "flow/jukusei_course_link_flow_test.js":           "コース新規登録→受講生新規登録→受講生詳細のコースタブでのコース紐付けを確認",
     "page/home_test.js":                               "ログイン後のホーム画面の表示を確認",
     "page/calendar_test.js":                           "カレンダー画面の表示・基本操作を確認",
     "page/course_test.js":                             "コース一覧・詳細画面の表示を確認",
