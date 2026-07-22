@@ -33,13 +33,8 @@ Scenario('ログイン後にAPIを実行し受講生トークンを抽出する'
   I.say('Step 4: 実行結果のスクリーンショットを保存します');
   I.saveScreenshotWithTimestamp('API_GET.png');
 
-
-
-
-
 });
 
-// ./tests/tframe/navigation_after_login_student_test.js の末尾など
 After(() => {
   if (process.env.KEEP_BROWSER_OPEN === '1') {
     pause();

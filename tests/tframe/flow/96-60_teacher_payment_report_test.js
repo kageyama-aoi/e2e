@@ -77,7 +77,6 @@ Data(headerPatternData).Scenario(
 
     // API 実行
     jsonInputPage.executeApi(apiParams);
-    pause();
 
     I.say('Step 4: レスポンスをログ保存');
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
