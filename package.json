@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "CodeceptJS E2E Tests",
   "scripts": {
+    "postinstall": "node scripts/hooks/install_git_hooks.js",
+
     "gui":    "python run/run_gui.py",
 
     "test": "npx codeceptjs run",

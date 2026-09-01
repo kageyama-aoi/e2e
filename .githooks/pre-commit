@@ -1,0 +1,23 @@
+#!/bin/sh
+# tests/ または run/test_descriptions.json に変更があるコミットで、
+# ディレクトリツリー(README) とテストカタログ(docs/project/test_catalog.md) を
+# 自動再生成して stage する。ドキュメントのドリフト防止。
+#
+# 有効化: npm install（postinstall で core.hooksPath=.githooks を設定）
+#         もしくは手動で `git config core.hooksPath .githooks`
+
+changed=$(git diff --cached --name-only)
+
+echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
+
+if ! command -v python >/dev/null 2>&1; then
+  echo "[pre-commit] python 未検出のため docs 再生成をスキップ"
+  exit 0
+fi
+
+echo "[pre-commit] docs 再生成（tree + test catalog）..."
+python scripts/docs/tree_generator.py -u    || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }
+python scripts/docs/gen_test_catalog.py     || { echo "[pre-commit] gen_test_catalog.py 失敗"; exit 1; }
+
+git add README.md docs/project/test_catalog.md
+echo "[pre-commit] README.md / docs/project/test_catalog.md を更新・stage しました"

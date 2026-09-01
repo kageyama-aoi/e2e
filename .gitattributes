@@ -1,0 +1,4 @@
+# シェルスクリプト / git フックは常に LF。
+# CRLF になると `#!/bin/sh` が `bad interpreter` で壊れる。
+*.sh text eol=lf
+.githooks/** text eol=lf
