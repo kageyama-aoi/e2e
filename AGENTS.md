@@ -8,17 +8,18 @@
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
 - `output/`, `allure-results/`, `allure-report/` は生成物。
-- `docs/` に学習資料・設計メモ。
+- `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別）。
 
 ## ビルド・テスト・開発コマンド
 
 ### テスト実行
 - `npm install` 依存関係のインストール。
+- `npm run gui` テスト実行ランチャー（GUI）を起動（= `python run/run_gui.py`）。
 - `npm test` 全テスト実行（CodeceptJS）。
-- `npm run test_s` しまむらテスト。
+- `npm run test_s` しまむらテスト（実行前に `pretest_s` フックが `pause()` 残存をチェック）。
 - `npm run test_t` T-Frame テスト一式。
 - `npm run test_taskreport` Taskreport テスト。
-- `npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
+- `npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
 
 ### Allure レポート
 - `run/run_gui.py` → `Open Allure` ボタン（推奨）。選択中プロファイルの最新結果を自動検出してブラウザ表示。
@@ -40,7 +41,7 @@
 
 | ディレクトリ | 置いてよいもの | 置いてはいけないもの |
 |---|---|---|
-| `tests/` | テストシナリオ（`*_test.js`）のみ | Page Object、ユーティリティ、データ |
+| `tests/` | テストシナリオ（`*_test.js`）。`<product>/util/` にのみ GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾）を許可 | Page Object、汎用ユーティリティ、データ |
 | `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`） | テスト入力データ、汎用ユーティリティ |
 | `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
 | `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
@@ -104,7 +105,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 | サブフォルダ | 置くもの | 例 |
 |---|---|---|
-| `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説） | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md` |
+| `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説） | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md`, `経理ビューの概念.md`, `退会機能の概念.md` |
 | `docs/shimamura/flow/` | E2Eテストの流れ解説（`/flow-explain` が出力する `<テスト名>_flow.md`） | `gessya_ikkatu_flow.md` |
 
 ### 利用可能なスキル一覧
@@ -165,6 +166,17 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `flow/` | 複数画面をまたぐ遷移・シナリオ | navigation_after_login_test |
 | `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
 | `api/` | API系 | get_personal_info_api_test |
+
+### shimamura テストのフォルダ分類
+`tests/shimamura/` 配下も性質別サブフォルダで管理する（#100 で分類済み）。
+
+| フォルダ | 対象 | 例 |
+|---|---|---|
+| `auth/` | ログイン・認証系 | shimamura_login_test |
+| `page/` | 一覧・検索画面の操作／表示確認（`*_ichiran_test.js`）、ファイル出力検証 | student_search_ichiran_test, validity_data_output_test |
+| `flow/` | 登録・処理フロー（複数画面・バッチ処理をまたぐ） | syokai_touroku_test, gessya_ikkatu_test |
+| `check/` | 表示・設定の確認系 | bank_payment_type_check_test |
+| `util/` | GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾。テストスイートには含まれない） | login_and_hold.js |
 
 ### tframe 画面名 ↔ ファイル名 対照表
 
@@ -255,6 +267,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
   - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録等）
+  - `input/`, `output/` : 抽出スクリプトの入出力作業ディレクトリ（用途ごとにサブフォルダで区切る）
+- カテゴリに収まらない単発スクリプトのみ直下に置く（例: `check_pause.js` = `npm run pretest_s` フック）。
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。
 
 ## パス解決のルール（JS テストファイル）
