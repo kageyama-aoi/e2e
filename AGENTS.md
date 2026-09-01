@@ -1,5 +1,8 @@
 # リポジトリガイドライン
 
+> 久々にプロジェクトへ戻ったときは [`docs/project/orientation.md`](docs/project/orientation.md) を起点にすると、
+> 全体像・テスト一覧・前回の続きを順に把握できる。
+
 ## プロジェクト構成・モジュール整理
 - `tests/` にプロダクト別のシナリオ（`shimamura/`, `tframe/`, `taskreport/`, `smoke/`）を配置。
 - `pages/` は Page Object（画面操作・セレクタ）を集約。
@@ -34,6 +37,9 @@
 - `npm run docs:jsdoc` JSDoc 生成（tests/ pages/ support/ 全対象）。
 - `npm run docs:update-readme-map` README のディレクトリツリーを自動更新。
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
+- `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
+- `npm run docs:all` ツリー＋カタログをまとめて更新。
+- ツリーとカタログは `.githooks/pre-commit` で `tests/` 変更時に自動再生成される（`npm install` の postinstall で有効化）。
 
 ## ディレクトリ配置ルール
 
@@ -97,7 +103,7 @@
 | `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
-| `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須） |
+| `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
 
 ### docs/shimamura/ のサブフォルダ規約
 

@@ -3,6 +3,10 @@
 本プロジェクトは、[CodeceptJS](https://codecept.io/) と [Playwright](https://playwright.dev/) を使用した E2E (End-to-End) テストフレームワークです。
 `shimamura`（しまむら）、`tframe`（T-Frame）、`taskreport` などの複数のプロジェクト/プロファイルに対応しています。
 
+> 🧭 **久々に戻ってきた方は [docs/project/orientation.md](./docs/project/orientation.md) から。**
+> 全体像・テスト一覧・前回の続きを順番に確認できます。
+> 全テストの1行説明は [docs/project/test_catalog.md](./docs/project/test_catalog.md)（自動生成）。
+
 ## 前提条件
 
 - Node.js (推奨: 最新のLTSバージョン)
@@ -68,10 +72,10 @@ npm install
 npx codeceptjs run --profile shimamura.testgcp
 
 # しまむら初回登録テストを直接指定して実行
-npx codeceptjs run ./tests/shimamura/syokai_touroku_test.js --profile shimamura.testgcp
+npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp
 
 # フォルダ内の全テストを実行（複数テスト）
-npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
+npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 ```
 
 ### 3. npm コマンドでの実行
@@ -104,6 +108,8 @@ npx codeceptjs run "./tests/shimamura/*_test.js" --profile shimamura.testgcp
 | :--- | :--- |
 | `npm run docs:jsdoc` | JSDoc HTML生成（`docs/generated/` に出力） |
 | `npm run docs:update-readme-map` | READMEのディレクトリツリーを更新 |
+| `npm run docs:catalog` | テストカタログ（`docs/project/test_catalog.md`）を再生成 |
+| `npm run docs:all` | ディレクトリツリー＋テストカタログをまとめて更新 |
 
 ## 学習リソース (Learning Resources)
 
@@ -239,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-07-07 10:42:16
+Last updated: 2026-09-01 16:01:53
 
 ```text
 e2e/
@@ -276,6 +282,7 @@ e2e/
 │   │   ├── 2026-07-02-1802.md
 │   │   ├── 2026-07-03-1435.md
 │   │   ├── 2026-07-06-1038.md
+│   │   ├── 2026-07-06-1418.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -318,6 +325,8 @@ e2e/
 │   │   │   └── SKILL.md
 │   │   ├── shimamura-screen-diagram/ 
 │   │   │   └── SKILL.md
+│   │   ├── tframe-flow-dev/ 
+│   │   │   └── SKILL.md
 │   │   ├── tframe-html-fetch/ 
 │   │   │   └── SKILL.md
 │   │   ├── tframe-ichiran-dev/ 
@@ -325,6 +334,8 @@ e2e/
 │   │   └── tframe-registration-dev/ 
 │   │       └── SKILL.md
 │   └── settings.local.json
+├── .githooks/ 
+│   └── pre-commit
 ├── .github/ 
 │   └── workflows/ 
 │       └── documentation_update.yaml
@@ -373,6 +384,8 @@ e2e/
 │   │   ├── course_by_student_ichiran_search_data.csv
 │   │   ├── course_ichiran_search_data.csv
 │   │   ├── gessya_ikkatu_setup_data.csv
+│   │   ├── happyoukai_setup_data.csv
+│   │   ├── happyoukai_touroku_data.csv
 │   │   ├── keiri_hennkin_syori_data.csv
 │   │   ├── keiri_hennkin_syori_validation_errors.csv
 │   │   ├── keiri_invoices_ichiran_search_data.csv
@@ -411,6 +424,7 @@ e2e/
 │       ├── infoHistory_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_touroku_data.csv
+│       ├── jukusei_course_link_flow_data.csv
 │       ├── jukusei_ichiran_search_data.csv
 │       ├── jukusei_touroku_data.csv
 │       ├── koshi_ichiran_search_data.csv
@@ -442,6 +456,7 @@ e2e/
 │   ├── .env.taskreport
 │   ├── .env.tframe.culture_beta
 │   ├── .env.tframe.culture_test
+│   ├── .env.tframe.demojuku_beta
 │   ├── .env.tframe.juku_beta
 │   ├── .env.tframe.juku_test
 │   └── .env.tframe.template
@@ -455,6 +470,7 @@ e2e/
 │   │   ├── flow/ 
 │   │   │   ├── CourseClassSetupFlowPage.js
 │   │   │   ├── GessyaIkkatuFlowPage.js
+│   │   │   ├── HappyoukaiFlowPage.js
 │   │   │   ├── KoushiShareiFlowPage.js
 │   │   │   ├── StudentSaikenkaiFlowPage.js
 │   │   │   ├── SyokaiFlowPage.js
@@ -478,6 +494,8 @@ e2e/
 │       │   ├── LoginKannrisyaPage.js
 │       │   ├── LoginMyPageStudentPage.js
 │       │   └── LoginMyPageTeacherPage.js
+│       ├── flow/ 
+│       │   └── JukuseiCourseFlowPage.js
 │       └── screens/ 
 │           ├── AccountPage.js
 │           ├── BranchPage.js
@@ -517,6 +535,7 @@ e2e/
 │   ├── hooks/ 
 │   │   ├── archive_allure.py
 │   │   ├── check_placement.py
+│   │   ├── install_git_hooks.js
 │   │   └── log_bash.py
 │   ├── html/ 
 │   │   ├── input/ 
@@ -607,12 +626,21 @@ e2e/
 │   │   │   ├── error_course_tab2.png
 │   │   │   ├── error_create_full.png
 │   │   │   ├── error_tmp2.png
+│   │   │   ├── error_verify_happyoukai.png
 │   │   │   ├── event_shimacourse_contacts_edit.html
 │   │   │   ├── existing_class_schedule_tab.html
 │   │   │   ├── existing_class_schedule_tab.png
 │   │   │   ├── fee_detail.html
 │   │   │   ├── fee_detail.png
 │   │   │   ├── fetch_student_edit_flow.js
+│   │   │   ├── happyoukai_after_course_select.html
+│   │   │   ├── happyoukai_after_course_select_buttons.json
+│   │   │   ├── happyoukai_class_detail.html
+│   │   │   ├── happyoukai_course_pulldown_options.json
+│   │   │   ├── happyoukai_participant_list.html
+│   │   │   ├── happyoukai_participant_list_buttons.json
+│   │   │   ├── happyoukai_student_tab.html
+│   │   │   ├── happyoukai_student_tab_buttons.json
 │   │   │   ├── karte_before_delete.html
 │   │   │   ├── karte_for_verify_check.html
 │   │   │   ├── keiri_invoices.html
@@ -628,6 +656,8 @@ e2e/
 │   │   │   ├── nav_links_with_class.json
 │   │   │   ├── new_class_schedule_tab.html
 │   │   │   ├── new_class_schedule_tab.png
+│   │   │   ├── prospectlist_detail.html
+│   │   │   ├── prospectlist_detail_buttons.json
 │   │   │   ├── ryokin_package_create.html
 │   │   │   ├── ryokin_package_create_links.json
 │   │   │   ├── schedule_after_save.html
@@ -645,6 +675,7 @@ e2e/
 │   │   │   ├── shimacourse_register_links.json
 │   │   │   ├── smbc_state_import.html
 │   │   │   ├── smbc_state_import_links.json
+│   │   │   ├── smsmemo_list.html
 │   │   │   ├── student_detail.html
 │   │   │   ├── student_detail_after_saikenkai.html
 │   │   │   ├── student_detail_after_saikenkai_buttons.json
@@ -681,7 +712,16 @@ e2e/
 │   │   │   ├── teacher_list_links.json
 │   │   │   ├── teacher_list_query.html
 │   │   │   ├── transaction_list.html
-│   │   │   └── transaction_list_links.json
+│   │   │   ├── transaction_list_links.json
+│   │   │   ├── verify_after_add_to_class.html
+│   │   │   ├── verify_after_course_selected.html
+│   │   │   ├── verify_after_update2.html
+│   │   │   ├── verify_candidate_create_result.html
+│   │   │   ├── verify_class_select_popup.html
+│   │   │   ├── verify_class_select_popup_after_search.html
+│   │   │   ├── verify_course_select_popup.html
+│   │   │   ├── verify_prospectlist_after_save.html
+│   │   │   └── verify_schedule_bulk_form.html
 │   │   ├── _fetch_juku_lists.js
 │   │   ├── check_confirm_btn.js
 │   │   ├── check_schedule.js
@@ -742,6 +782,8 @@ e2e/
 │   │   │   ├── course_class_setup_test.js
 │   │   │   ├── gessya_ikkatu_setup_test.js
 │   │   │   ├── gessya_ikkatu_test.js
+│   │   │   ├── happyoukai_setup_test.js
+│   │   │   ├── happyoukai_touroku_test.js
 │   │   │   ├── keiri_hennkin_syori_test.js
 │   │   │   ├── koushi_sharei_manual_test.js
 │   │   │   ├── koushi_sharei_tsuika_test.js
@@ -767,6 +809,7 @@ e2e/
 │   │   └── util/ 
 │   │       └── login_and_hold.js
 │   ├── smoke/ 
+│   │   ├── _dummy_test.js
 │   │   └── smoke_test.js
 │   ├── taskreport/ 
 │   │   └── taskreport_sample_test.js
@@ -782,6 +825,7 @@ e2e/
 │       │   └── token_usage_test.js
 │       ├── flow/ 
 │       │   ├── 96-60_teacher_payment_report_test.js
+│       │   ├── jukusei_course_link_flow_test.js
 │       │   ├── navigation_after_login_student_test.js
 │       │   └── navigation_after_login_test.js
 │       └── page/ 
