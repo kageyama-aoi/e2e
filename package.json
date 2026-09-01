@@ -34,7 +34,9 @@
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
     "docs:jsdoc": "jsdoc -c jsdoc.json",
     "docs:update-readme-map": "python scripts/docs/tree_generator.py -u",
-    "docs:tree:file": "python scripts/docs/tree_generator.py -o docs/tree.md"
+    "docs:tree:file": "python scripts/docs/tree_generator.py -o docs/tree.md",
+    "docs:catalog": "python scripts/docs/gen_test_catalog.py",
+    "docs:all": "npm run docs:update-readme-map && npm run docs:catalog"
   },
   "keywords": [
     "codeceptjs",
