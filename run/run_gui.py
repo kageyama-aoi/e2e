@@ -42,9 +42,12 @@ _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 
 _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
 LOG_FONT = ('Courier New', 9)
+MAX_FLUSH_LINES = 300  # _drain_log_queue が1回のafterサイクルで処理する上限行数
 
 # フォント・ボタンスタイルの一元定義（RunnerApp._setup_style() でテーマ適用後に反映）
-UI_FONT_FAMILY = 'Segoe UI'
+# Segoe UI はLatin専用のため日本語ラベルがOSの暗黙フォールバックに依存していた。
+# 明示的に日本語対応の Meiryo UI を使う。
+UI_FONT_FAMILY = 'Meiryo UI'
 UI_FONT       = (UI_FONT_FAMILY, 9)          # 標準ウィジェット共通
 UI_FONT_BOLD  = (UI_FONT_FAMILY, 9, 'bold')  # 見出し・ラベル
 UI_FONT_SMALL = (UI_FONT_FAMILY, 8)          # 補足・ヒント文
@@ -891,6 +894,7 @@ class RunnerApp(tk.Tk):
         self.thread = None
         self.is_running = False
         self._run_start_time = 0.0
+        self._drain_after_id = None  # _drain_log_queue の予約id（閉じるときにcancelするため保持）
 
         self._all_tests = []
         self._all_profiles = []
@@ -915,11 +919,24 @@ class RunnerApp(tk.Tk):
         self._all_tests = find_all_tests(self.tests_dir)
         self._all_profiles = find_all_profiles(self.env_dir)
         self._load_products()
-        self.after(100, self._drain_log_queue)
+        self._drain_after_id = self.after(100, self._drain_log_queue)
         self.after(300, self._auto_cleanup_on_start)
+        self.protocol('WM_DELETE_WINDOW', self._on_close)
         self._splash.destroy()
         self.deiconify()
         _style_titlebar(self)
+
+    def _on_close(self):
+        """ウィンドウを閉じる前に、予約済みの _drain_log_queue タイマーをcancelする。
+        cancelせずに閉じると、destroy後にafterが発火してdestroy済みウィジェットへ
+        アクセスし TclError（invalid command name）がコンソールに出る。"""
+        if self._drain_after_id is not None:
+            try:
+                self.after_cancel(self._drain_after_id)
+            except tk.TclError:
+                pass
+            self._drain_after_id = None
+        self.destroy()
 
     def _setup_style(self):
         """フォント・ボタン3段階スタイルの一元適用。テーマ（sv_ttk）適用後に呼ぶこと。"""
@@ -980,7 +997,7 @@ class RunnerApp(tk.Tk):
 
         # Test File
         ttk.Label(test_group, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
-        self.test_list = tk.Listbox(test_group, width=48, height=8, exportselection=False, font=('Courier New', 9))
+        self.test_list = tk.Listbox(test_group, width=48, height=8, exportselection=False, font=LOG_FONT)
         tsb_y = ttk.Scrollbar(test_group, orient='vertical', command=self.test_list.yview)
         tsb_x = ttk.Scrollbar(test_group, orient='horizontal', command=self.test_list.xview)
         self.test_list.configure(yscrollcommand=tsb_y.set, xscrollcommand=tsb_x.set)
@@ -1278,22 +1295,34 @@ class RunnerApp(tk.Tk):
         return None
 
     def _append_log(self, text):
+        self._append_log_batch([text])
+
+    def _append_log_batch(self, lines):
+        """複数行をまとめて1回のstate切替でinsertする（1行ずつのstate切替・see(END)を避ける）。"""
+        if not lines:
+            return
         self.log_text.configure(state='normal')
-        tag = self._get_log_tag(text)
-        if tag:
-            self.log_text.insert(tk.END, text, tag)
-        else:
-            self.log_text.insert(tk.END, text)
+        for text in lines:
+            tag = self._get_log_tag(text)
+            if tag:
+                self.log_text.insert(tk.END, text, tag)
+            else:
+                self.log_text.insert(tk.END, text)
         self.log_text.see(tk.END)
         self.log_text.configure(state='disabled')
 
     def _drain_log_queue(self):
+        """1回のafterサイクルで処理する行数に上限(MAX_FLUSH_LINES)を設ける。
+        上限を超えた分は次の100ms後のサイクルに持ち越すことで、大量ログでもUIへ制御を戻し続ける。"""
+        lines = []
         try:
-            while True:
-                self._append_log(self.log_queue.get_nowait())
+            for _ in range(MAX_FLUSH_LINES):
+                lines.append(self.log_queue.get_nowait())
         except queue.Empty:
             pass
-        self.after(100, self._drain_log_queue)
+        if lines:
+            self._append_log_batch(lines)
+        self._drain_after_id = self.after(100, self._drain_log_queue)
 
     def _auto_cleanup_on_start(self):
         """起動時に LOG_CLEANUP_DAYS 日以上古いログを自動アーカイブ・削除する。"""
