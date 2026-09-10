@@ -1,6 +1,6 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-10（初版・Issue #196）
+最終更新: 2026-09-10（初版・Issue #196 / PO無し画面のパターン分類を追記・Issue #197）
 
 実機採取: `tframe.culture_beta`（`https://newculture.e-school.jp/beta/`）/ `tframe.juku_beta`（`https://newsms.e-school.jp/beta/`）を
 管理者アカウントでログインし、左サイドメニュー（`#sideBar`）を全アイコン展開して採取。
@@ -256,6 +256,100 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 
 - 講師謝礼 計算・合計・明細・支払調書（`shareiDetail/sw/teRewardCalc` ほか8画面）※ 計算実行は副作用あり、明細は表示確認のみで可
 - 対応履歴テンプレート登録（講師メニュー）… PO 対応済み。CSV に `menuModule=teacher` 行を足すだけ
+
+---
+
+## PO無し画面のパターン分類（フェーズ1.5・2026-09-10 実機偵察 / Issue #197）
+
+PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム / 入力フォーム / ファイル入力 / 実行ボタン / 結果テーブル）から
+着手パターンを分類。**A→B→C** の順で標準パターンによる量産が可能。**D・E** は副作用・ファイル操作のため個別設計。
+
+### A. 一覧検索系 — `/tframe-ichiran-dev` ＋ `IchiranMixin` で量産可（20画面）
+
+検索/クリアボタン＋結果テーブルの標準構造。CSV は「空検索 / 主要条件で絞り込み」の2行が基本。
+
+| 画面 | route | 環境 | 備考 |
+|---|---|---|---|
+| 出席表一覧 | `attendance/sw/_default` | 両 | 「出席表編集」ボタンあり（編集導線は対象外で可） |
+| 名簿リスト一覧 | `prospectList/sw/_default` | 両 | |
+| お知らせ一覧 | `announcement/sw/_default` | 両 | |
+| アンケート一覧 | `poll/sw/_default` | 両 | |
+| Eメール一覧 | `email/sw/_default` | 両 | `EmailPage` に ichiran メソッドを追加する形 |
+| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | 両 | |
+| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | 両 | |
+| 料金一覧 | `smsFee/sw/_default` | 両 | 検索条件多め（select 6） |
+| 契約一覧 | `smsContract/sw/_default` | 両 | |
+| 入金一覧 | `smsPayment/sw/_default` | 両 | |
+| 未収金一覧 | `smsTransaction/sw/unpaidAmountList` | 両 | 「検索結果を名簿リストにする」ボタンあり（対象外で可） |
+| 入出金一覧 | `smsTransaction/sw/_default` | 両 | 検索条件多め |
+| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | 両 | シンプル |
+| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | 両 | 集計表示 |
+| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | 両 | 組合せ条件多め（select 9） |
+| 受講生スケジュールレポート | `report/sw/stScheduleReport` | 両 | |
+| 講師スケジュールレポート | `report/sw/teScheduleReport` | 両 | |
+| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | culture | |
+| 入退記録一覧 | `entranceLog/sw/_default` | juku | |
+| 連絡一覧 | `contact/sw/_default` | juku | 検索条件多め |
+
+**推奨サブグループ（1弾＝1テーマ）**: ①名簿リスト/お知らせ/アンケート一覧　②Eメール系一覧　③経理一覧系　④レポート4種　⑤juku入退記録・連絡
+
+### B. 登録・編集フォーム系 — `/tframe-registration-dev` ＋ `KoshiPage` 雛形（6画面）
+
+保存/キャンセルボタンの標準フォーム。
+
+| 画面 | route | 環境 | 備考 |
+|---|---|---|---|
+| 名簿リスト編集 | `prospectList/ew/_default` | 両 | 小（input2 / select2 / textarea1） |
+| お知らせ編集 | `announcement/ew/_default` | 両 | textarea1（本文） |
+| Eメールテンプレートカテゴリ編集 | `emailTemplateCategory/ew/_default` | 両 | 小 |
+| Eメールテンプレート編集 | `emailTemplate/ew/_default` | 両 | 「挿入」ボタン＝差込変数。本文 textarea |
+| アンケート編集 | `poll/ew/_default` | 両 | textarea2・設問行の動的追加あり（**やや複雑**・設計注意） |
+| 入退記録編集 | `entranceLog/ew/_default` | juku | input4 / select2 |
+
+### C. 帳票出力系 — 検索フォーム＋出力ボタン（6画面）
+
+検索は A と同じだが、主アクションが「出力/印刷」。**出力結果（PDF/CSV/帳票画面）の検証方式を先に決める**必要あり
+（`/shimamura-download-verify` 相当が使えるか要確認）。当面は「検索→出力ボタン押下→エラーが出ないこと＋スクショ」で可。
+
+| 画面 | route | 環境 | 出力ボタン |
+|---|---|---|---|
+| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 両 | 出席表印刷 |
+| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | culture | 謝礼明細出力 |
+| 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | culture | 謝礼明細出力 |
+| 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | culture | 謝礼明細出力 |
+| 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | culture | 謝礼明細出力 |
+| 支払調書 | `shareiTotal/sw/paymentStatement` | culture | 支払調書出力 |
+
+### D. 一括処理・計算系 — 副作用あり・個別設計（5画面）
+
+単一の実行ボタンでDB更新やファイル生成。**実行条件・冪等性・テスト環境の状態依存**の設計が必要。
+`tests/shimamura/flow/gessya_ikkatu_test.js`（月謝一括作成）の設計が参考になる。
+
+| 画面 | route | 環境 | アクション |
+|---|---|---|---|
+| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | 両 | 対象月選択→一括作成（DB更新） |
+| 一括入金処理 | `smsPayment/sw/batchPayment` | 両 | 検索→対象選択→一括入金実行 |
+| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | 両 | 条件選択→請求データ生成（ファイル） |
+| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | culture | 対象選択→謝礼計算実行 |
+| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | culture | 合計計算実行 |
+
+### E. インポート系 — ファイルアップロード（3画面）
+
+`input[type=file]` ＋「データ取込」ボタン。テスト用の取込CSVを `data/tframe/` に用意し、`file_upload` で流し込む。
+`/shimamura-download-verify` の逆（アップロード版）に相当。
+
+| 画面 | route | 環境 | 備考 |
+|---|---|---|---|
+| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | 両 | 振替結果ファイルの取込 |
+| 口座情報データ取込 | `student/ew/accountInfoDataImport` | juku | |
+| 問合せデータ取込 | `student/ew/stInquiryDataImport` | juku | select3（取込種別など）＋ファイル |
+
+### 着手順の提案
+
+1. **第1弾**: バケット A の①〜⑤（サブグループ単位で 取得→PO→CSV→テスト を一気通貫）
+2. **第2弾**: バケット B（アンケート編集は最後に回す）
+3. **第3弾**: バケット C（出力検証方式を決めてから）
+4. **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 
 ---
 
