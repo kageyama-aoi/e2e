@@ -19,9 +19,8 @@
  */
 
 const { logScreenUrl } = require('../../../support/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+const { extractRecordId } = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
   course: {
@@ -61,11 +60,6 @@ const S = {
     saveButton:   'input[name="new_save_button"]',
   },
 };
-
-function extractRecordId(url) {
-  const match = url.match(/[?&]record=([^&]+)/);
-  return match ? match[1] : null;
-}
 
 /**
  * コース(ShimaCourse)を新規作成する。

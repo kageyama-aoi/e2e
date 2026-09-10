@@ -3,7 +3,7 @@
 const { I } = inject();
 const { toggleGroupmenu, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const menus = require('../_common/sideMenus');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
@@ -31,7 +31,8 @@ module.exports = {
   // ----------------------------------------------------------------
 
   _navigateToModule(moduleRelUrl) {
-    I.amOnPage(process.env.BASE_URL + moduleRelUrl);
+    // sideMenus.js の URL は先頭 '/' 付きでも無しでもよい（BASE_URL が末尾 '/' 付きのため重複を除く）
+    I.amOnPage(BASE_URL + String(moduleRelUrl).replace(/^\//, ''));
     I.waitForElement('a[class*="subMenuLink"]', TIMEOUTS.ELEMENT);
   },
 

@@ -1,19 +1,13 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const {
+  verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult,
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
-// ── 保存完了を動的検知するヘルパー ──────────────────────────────
-// エラーが出るか editButton が現れた時点で即座に次へ進む（固定待ちを排除）
-async function waitForSaveResult(I) {
-  await I.waitForFunction(
-    ([selector]) => document.querySelector(selector)?.innerText.trim() ||
-          !!document.querySelector('input[name="edit_button"]'),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
-}
+// 保存完了の動的検知（エラーが出るか edit_button が現れた時点で次へ進む）は
+// support/shimamura/utils.js の waitForSaveResult（既定: edit_button 出現）を使う
 
 // ── ローカルロケーター ────────────────────────────────────────
 const S = {
@@ -60,13 +54,12 @@ async function searchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) 
 
   // DW_AN URL から record ID を取得し DetailView へ切替
   const url = await I.grabCurrentUrl();
-  const match = url.match(/[?&]record=([^&]+)/);
-  if (!match) throw new Error(`record ID が URL から取得できませんでした: ${url}`);
-  const recordId = match[1];
+  const recordId = extractRecordId(url);
+  if (!recordId) throw new Error(`record ID が URL から取得できませんでした: ${url}`);
   I.say(`【受講生詳細】DetailView へ切替 (record=${recordId})`);
   // detailview=1 が必須: これがないと smbc_button が表示されない
-  I.amOnPage(process.env.BASE_URL
-    + `/index.php?detailview=1&module=Student&action=DetailView`
+  I.amOnPage(BASE_URL
+    + `index.php?detailview=1&module=Student&action=DetailView`
     + `&return_module=Student&return_action=DetailView&record=${recordId}`);
   I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生詳細(DetailView)');

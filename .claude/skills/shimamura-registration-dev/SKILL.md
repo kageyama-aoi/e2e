@@ -134,8 +134,10 @@ const {
   fillTextFieldsBySelector,    // #id 等のセレクタ指定版
   verifyValidationErrors,      // 異常系: 期待エラー文言の検証
   assertNoShimamuraError,      // 成功系: エラーコンテナが空であることの確認
+  waitForSaveResult,           // 保存後「エラー or 成功状態」まで動的に待つ
+  extractRecordId,             // URL から record= を取り出す（詳細画面へ直遷移するとき）
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 // ローカルロケーター（この FlowPage だけで使うセレクタをまとめる）
 // エラーコンテナ・検索結果リンク等の全画面共通セレクタは SELECTORS（constants.js）を参照し、
@@ -152,7 +154,7 @@ const S = {
 
 async function navigateToTargetScreen(I) {
   I.say('【画面遷移】〇〇画面へ');
-  I.amOnPage(process.env.BASE_URL + '/index.php?module={Module}&action={Action}');
+  I.amOnPage(BASE_URL + 'index.php?module={Module}&action={Action}');   // BASE_URL は constants.js（末尾 / 付き）
   I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '〇〇画面');
 }
@@ -168,16 +170,12 @@ async function fillTargetForm(I, input) {
 }
 
 // 保存 → 「エラーが出るか、保存ボタンが消える（ページ遷移）」まで動的に待つ → 判定
-// 実装は KoushiShareiFlowPage.saveAndVerify をそのまま真似る（waitForFunction の第2引数は配列で渡す）
+// 実装は KoushiShareiFlowPage.saveAndVerify をそのまま真似る
 async function saveAndVerify(I, expectedErrors = []) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
-  await I.waitForFunction(
-    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
-          !document.querySelector('input[name="save_button"]'),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
+  // 保存後に詳細画面へ戻る画面は successMode を省略（既定: edit_button 出現）
+  await waitForSaveResult(I, { successSelector: S.buttons.save, successMode: 'disappears' });
   if (expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);
     return;
@@ -365,7 +363,7 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 // エラーコンテナ等の全画面共通セレクタは SELECTORS（support/shimamura/constants.js）を参照する
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
   fields:  { field1: 'field1_name', field2: 'field2_name' },   // name= 属性
@@ -376,7 +374,7 @@ const S = {
 
 // 各ステップを async function で定義（テストファイル内）
 async function navigateToTargetScreen(I) {
-  I.amOnPage(process.env.BASE_URL + '/index.php?module={Module}&action={Action}');
+  I.amOnPage(BASE_URL + 'index.php?module={Module}&action={Action}');   // BASE_URL は constants.js（末尾 / 付き）
   I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '対象画面');
 }

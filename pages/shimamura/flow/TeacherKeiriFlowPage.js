@@ -1,10 +1,10 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+const {
+  assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult,
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
   list:       { search: 'input[name="search"]', firstLink: `a${SELECTORS.RESULT_LINK}` },
@@ -29,9 +29,8 @@ async function findTeacherRecordId(I, idnumber) {
   }
 
   const href = await I.grabAttributeFrom(locate(S.list.firstLink).first(), 'href');
-  const match = href.match(/[?&]record=([^&]+)/);
-  if (!match) throw new Error(`講師詳細 URL から record ID が取得できませんでした: ${href}`);
-  const recordId = match[1];
+  const recordId = extractRecordId(href);
+  if (!recordId) throw new Error(`講師詳細 URL から record ID が取得できませんでした: ${href}`);
   I.say(`【講師検索】既存レコード発見 (record=${recordId})`);
   return recordId;
 }
@@ -60,9 +59,8 @@ async function createTeacher(I, input) {
   await assertNoShimamuraError(I, '【講師新規登録】保存');
 
   const url = await I.grabCurrentUrl();
-  const match = url.match(/[?&]record=([^&]+)/);
-  if (!match) throw new Error(`講師登録後の URL から record ID が取得できませんでした: ${url}`);
-  const recordId = match[1];
+  const recordId = extractRecordId(url);
+  if (!recordId) throw new Error(`講師登録後の URL から record ID が取得できませんでした: ${url}`);
   I.say(`【講師新規登録】完了 (record=${recordId})`);
   return recordId;
 }
@@ -124,12 +122,7 @@ async function setAccountingTab(I, recordId, input) {
   I.say('【経理タブ】保存');
   I.click(S.accounting.saveButton);
   // バリデーションエラーが出るか edit_button が現れるまで動的に待機
-  await I.waitForFunction(
-    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
-          !!document.querySelector('input[name="edit_button"]'),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
+  await waitForSaveResult(I, { successSelector: S.accounting.editButton });
   await assertNoShimamuraError(I, '【経理タブ】保存');
   I.say('【経理タブ】設定完了');
   await logScreenUrl(I, '経理タブ設定後');

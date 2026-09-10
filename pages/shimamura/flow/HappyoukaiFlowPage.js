@@ -28,13 +28,13 @@ const fs   = require('fs');
 const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
-const { fillTextFieldsByName, assertNoShimamuraError } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const {
+  fillTextFieldsByName, assertNoShimamuraError, extractRecordId, buildTestName,
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { navigateToKouhosei } = require('./GessyaIkkatuFlowPage');
 const { setupLinkedCourseAndClass } = require('./CourseClassSetupFlowPage');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 // setupテストと本体テスト間でクラス・受講生の情報を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/happyoukai_session.json');
@@ -82,22 +82,6 @@ const S = {
     updateButton: 'input[name="update_button"]',
   },
 };
-
-function extractRecordId(url) {
-  const match = url.match(/[?&]record=([^&]+)/);
-  return match ? match[1] : null;
-}
-
-function buildTestName(row) {
-  const now  = new Date();
-  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-  const hhmm = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
-  return {
-    lastName:    `発表会テスト${mmdd}`,
-    firstName:   `${row.testNo}${row.scenario.replace(/_/g, '')}`,
-    description: `テスト実行 ${mmdd}_${hhmm} | ${row.scenario}`,
-  };
-}
 
 function loadSession() {
   try { return JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch { return { classRecordId: null, className: null, courseName: null, students: [] }; }
@@ -151,7 +135,7 @@ async function promoteAndRenameStudent(I, classMemberPageShimamura, row) {
   I.waitForElement(S.studentEdit.lastName, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生編集');
 
-  const testName = buildTestName(row);
+  const testName = buildTestName('発表会テスト', row);
   I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
   fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
   I.fillField(S.studentEdit.description, testName.description);

@@ -16,7 +16,7 @@
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, URLS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, URLS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
   fields: {
@@ -49,7 +49,7 @@ Before(beforeShimamura);
 Data(csvData).Scenario('請求方法ごとの必須フィールドを確認する @dev @explore', async ({ I, current }) => {
   I.say(`【探索】bank_payment_type=${current.bank_payment_type} (${current.scenario})`);
 
-  I.amOnPage(process.env.BASE_URL + URLS.CONTACT_REGISTER);
+  I.amOnPage(BASE_URL + URLS.CONTACT_REGISTER);
   I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
 
   fillTextFieldsByName(I, BASE_INPUT);

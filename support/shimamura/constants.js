@@ -22,8 +22,16 @@ const TIMEOUTS = {
   AJAX_DEBOUNCE_SHORT: 0.5
 };
 
+/**
+ * テスト対象のベース URL（末尾スラッシュ付きに正規化）
+ * env の BASE_URL は「https://example.com/testgcp」のように末尾スラッシュなしで書かれるため、
+ * 各 FlowPage で `BASE_URL + 'index.php?...'` と連結できるようここで1回だけ整える。
+ * `process.env.BASE_URL + '/index.php?...'` のような別流儀を各ファイルに書かない。
+ */
+const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+
 const URLS = {
-  CONTACT_REGISTER: '/index.php?module=Student&action=EditView'
+  CONTACT_REGISTER: 'index.php?module=Student&action=EditView'
     + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true',
 };
 
@@ -40,4 +48,4 @@ const SELECTORS = {
   RESULT_LINK: '.listViewTdLinkS1',
 };
 
-module.exports = { TIMEOUTS, URLS, SELECTORS };
+module.exports = { TIMEOUTS, BASE_URL, URLS, SELECTORS };

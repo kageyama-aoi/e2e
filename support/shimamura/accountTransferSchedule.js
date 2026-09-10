@@ -10,9 +10,7 @@
  * だけ）ため、毎回無条件に登録して問題ない。
  */
 
-const { TIMEOUTS } = require('./constants');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+const { TIMEOUTS, BASE_URL } = require('./constants');
 
 // testgcp環境に実在する収納業者のうち判明しているもの。
 // 001はテストデータの収納業者、143はtestgcp環境に実在する他収納業者（未登録だとバッチ全体が止まる）。

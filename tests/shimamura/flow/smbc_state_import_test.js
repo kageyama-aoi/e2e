@@ -32,7 +32,7 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 // ── セレクタ定数 ─────────────────────────────────────────────
 const S = {
@@ -60,7 +60,7 @@ Before(beforeShimamura);
 
 async function navigateToImportScreen(I) {
   I.say('【画面遷移】債権買取状態読込画面へ');
-  I.amOnPage(process.env.BASE_URL + '/index.php?module=SmbcStateSummary&action=EWSMBCPurchaseStatusImport_AN');
+  I.amOnPage(BASE_URL + 'index.php?module=SmbcStateSummary&action=EWSMBCPurchaseStatusImport_AN');
   I.waitForElement(S.fileInput, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '債権買取状態読込');
 }

@@ -1,10 +1,10 @@
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
-const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
+const {
+  verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector, waitForSaveResult,
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const NAV = {
   directUrl: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
@@ -98,13 +98,7 @@ async function saveAndVerify(I, expectedErrors) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
   // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機
-  // codeceptjs の waitForFunction は第2引数が配列でないと args として渡されないため注意
-  await I.waitForFunction(
-    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
-          !document.querySelector('input[name="save_button"]'),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
+  await waitForSaveResult(I, { successSelector: S.buttons.save, successMode: 'disappears' });
   if (expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.message.error);
     return;
@@ -144,12 +138,8 @@ async function executeImport(I, filePath) {
   I.attachFile(S.import.fileInput, filePath);
   I.say('【一括取込実行】講師謝礼一括取込ボタンをクリック');
   I.click(S.import.button);
-  await I.waitForFunction(
-    ([errorSelector]) => document.querySelector('#top_message_div_id')?.textContent.trim() ||
-          document.querySelector(errorSelector)?.textContent.trim(),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
+  // 成功メッセージ（#top_message_div_id）かエラーのどちらかが出るまで待つ
+  await waitForSaveResult(I, { successSelector: S.import.success, successMode: 'hasText' });
 }
 
 async function verifyImportResult(I) {

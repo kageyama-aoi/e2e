@@ -64,7 +64,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 2. **URL（module / action）とサイドバー経路を特定する**
    - `scripts/html/shimamura/main_menu_links.json` または `*_links.json` を参照
-   - URL は `index.php?module=X&action=Y&...` 形式。`sideMenus.js` には**先頭 `/` 付き**で書く（`_navigateToModule` が `BASE_URL + moduleRelUrl` で結合するため）
+   - URL は `index.php?module=X&action=Y&...` 形式。`sideMenus.js` の先頭 `/` は有無どちらでもよい（`_navigateToModule` が `constants.js` の `BASE_URL`（末尾 `/` 付き）と結合する際に重複を除く）
    - サイドバー経路（`moduleUrl` + `shortcut`、折りたたみがあれば `collapseToggle`）も分かれば書く。分からなければ `directUrl` だけでよい
 
 3. **既存の類似画面が無いか確認する**
@@ -244,6 +244,6 @@ npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shi
 | 空検索で結果ゼロ | 日付範囲フィールドが既定で今日に絞られている | `navigateTo…` 内で `this._clearDateRangeFields()` を呼ぶ |
 | 条件検索でヒットしない | `expectedName` がテスト環境データと不一致 | CSV の値をテスト環境の実データに合わせる |
 | `SHIMAMURA_TANTOUSYA` エラー | 環境変数が未設定 | `env/.env.{profile}` に `SHIMAMURA_TANTOUSYA=番号` を追加 |
-| 遷移後に URL が `testgcpindex.php?...` になる | `sideMenus.js` の URL に先頭 `/` がない | `directUrl: '/index.php?...'` と `/` を付ける |
+| 遷移後に URL が `testgcpindex.php?...` になる | `process.env.BASE_URL`（末尾 `/` なし）を直接連結している | `constants.js` の `BASE_URL`（末尾 `/` 付き）を使う。`IchiranPage._navigateToModule` 経由なら起きない |
 | サイドバー経路（`SHIMAMURA_NAV=sidebar`）で検索状態が残る | サイドバーリンクに `top_menu=1` がない画面 | `courseIchiran` と同様に `directUrl` のみ定義する |
 | 検索ボタンが AJAX のため結果が出ない | ボタンの onclick が `ajax_AN()` 呼び出し | `_clickSearchAndWait` の `waitForElement` で十分。出ない場合は日付フィルタを疑う |

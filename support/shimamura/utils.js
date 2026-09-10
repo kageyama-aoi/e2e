@@ -312,6 +312,68 @@ function resolveDynamicDateIfPast(I, dateStr, fieldLabel, { graceMonths = 0 } = 
   return todayStr;
 }
 
+/**
+ * URL（または href）から shimamura の record ID を取り出す
+ * 例: `index.php?module=Student&action=DetailView&record=48e65bdd-...` → `48e65bdd-...`
+ * @param {string} url
+ * @returns {string|null} 見つからなければ null
+ */
+function extractRecordId(url) {
+  const match = String(url || '').match(/[?&]record=([^&]+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * 保存ボタン押下後、「エラーが表示される」か「成功を示す状態になる」まで動的に待つ
+ * （固定 I.wait を排除するための共通待機）。
+ *
+ * 成功判定は画面によって違うため successMode で選ぶ:
+ * - 'appears'    : successSelector が出現する（例: 編集画面→詳細画面に戻り edit_button が出る）
+ * - 'disappears' : successSelector が消える（例: 保存後にページ遷移し save_button が無くなる）
+ * - 'hasText'    : successSelector にテキストが入る（例: #top_message_div_id に完了メッセージ）
+ *
+ * ※ codeceptjs の waitForFunction は第2引数を配列で渡さないと args として届かない。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {{successSelector?: string, successMode?: 'appears'|'disappears'|'hasText', timeout?: number}} [options]
+ */
+async function waitForSaveResult(I, {
+  successSelector = 'input[name="edit_button"]',
+  successMode = 'appears',
+  timeout = TIMEOUTS.RESULT,
+} = {}) {
+  await I.waitForFunction(
+    ([errorSelector, okSelector, mode]) => {
+      const err = document.querySelector(errorSelector);
+      if (err && err.innerText.trim()) return true;
+      const ok = document.querySelector(okSelector);
+      if (mode === 'disappears') return !ok;
+      if (mode === 'hasText') return !!(ok && ok.textContent.trim());
+      return !!ok;
+    },
+    [SELECTORS.ERROR_CONTAINER, successSelector, successMode],
+    timeout
+  );
+}
+
+/**
+ * セットアップ系テストで受講生の名前を「実行日時＋シナリオ名」に書き換えるための名前を組み立てる。
+ * 同じ姓（prefix+MMDD）でまとめて検索できるようにし、名にはシナリオを埋め込んで区別する。
+ * @param {string} prefix - 姓のプレフィックス（例: '月謝テスト', '発表会テスト'）
+ * @param {{testNo: string, scenario: string}} row - CSV の1行
+ * @returns {{lastName: string, firstName: string, description: string}}
+ */
+function buildTestName(prefix, row) {
+  const now  = new Date();
+  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+  const hhmm = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+  return {
+    lastName:    `${prefix}${mmdd}`,
+    firstName:   `${row.testNo}${String(row.scenario || '').replace(/_/g, '')}`,
+    description: `テスト実行 ${mmdd}_${hhmm} | ${row.scenario}`,
+  };
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -324,4 +386,7 @@ module.exports = {
   fillTextFieldsByName,
   fillTextFieldsBySelector,
   resolveDynamicDateIfPast,
+  extractRecordId,
+  waitForSaveResult,
+  buildTestName,
 };

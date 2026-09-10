@@ -4,11 +4,11 @@ const fs   = require('fs');
 const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
-const { toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const {
+  toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName, extractRecordId, buildTestName,
+} = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
-
-const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
@@ -37,17 +37,6 @@ function resolveRelativeMonth(taikaiYear, taikaiMonth) {
     return { year: String(d.getFullYear()), month: String(d.getMonth() + 1).padStart(2, '0') };
   }
   return { year: String(taikaiYear).trim(), month: String(taikaiMonth).trim().padStart(2, '0') };
-}
-
-function buildTestName(row) {
-  const now  = new Date();
-  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-  const hhmm = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
-  return {
-    lastName:    `月謝テスト${mmdd}`,
-    firstName:   `${row.testNo}${row.scenario.replace(/_/g, '')}`,
-    description: `テスト実行 ${mmdd}_${hhmm} | ${row.scenario}`,
-  };
 }
 
 function buildDuplicateCheckSQL(lastName) {
@@ -167,7 +156,7 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   I.waitForElement(S.kouhoseiEdit.bankPaymentType, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生編集');
 
-  const testName = buildTestName(row);
+  const testName = buildTestName('月謝テスト', row);
   I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
   fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
   I.fillField(S.kouhoseiEdit.description, testName.description);
@@ -186,11 +175,9 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
   await assertNoShimamuraError(I, '【請求方法設定】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');
 
-  const currentUrl = await I.grabCurrentUrl();
-  const match = currentUrl.match(/[?&]record=([^&]+)/);
-  if (!match) return null;
+  const recordId = extractRecordId(await I.grabCurrentUrl());
+  if (!recordId) return null;
 
-  const recordId = match[1];
   const withdrawn = saveToSession(SESSION_FILE, recordId, testName, row);
   I.say(`  受講生 record=${recordId} をセッションファイルに保存${withdrawn ? '（退会済みフラグあり）' : ''}`);
   return recordId;

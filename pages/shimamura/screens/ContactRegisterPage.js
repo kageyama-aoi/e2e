@@ -1,7 +1,7 @@
 'use strict';
 
 const { I } = inject();
-const { URLS, TIMEOUTS } = require('../../../support/shimamura/constants');
+const { URLS, TIMEOUTS, BASE_URL } = require('../../../support/shimamura/constants');
 
 module.exports = {
 
@@ -14,7 +14,7 @@ module.exports = {
    */
   navigateToContactRegister() {
     I.say('【問合せ登録】URL 直遷移');
-    I.amOnPage(process.env.BASE_URL + URLS.CONTACT_REGISTER);
+    I.amOnPage(BASE_URL + URLS.CONTACT_REGISTER);
     I.waitForElement(this.locators.saveButton, TIMEOUTS.SCREEN);
   },
 

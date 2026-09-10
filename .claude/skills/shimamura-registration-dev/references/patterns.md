@@ -68,7 +68,7 @@ async function selectTeacher(I) {
 | テキスト入力（`#id` / 複合セレクタ） | `fillTextFieldsBySelector(I, [['#keijoubi', v], ['#houshugaku', v]])` |
 | セレクト | `I.selectOption('select[name="field"]', value)`（個別。change イベントが必要） |
 | ボタンクリック | `I.click('input[name="save_button"]')` または `I.click('ボタンラベル')` |
-| URL 直遷移 | `I.amOnPage(process.env.BASE_URL + '/index.php?module=X&action=Y')` |
+| URL 直遷移 | `I.amOnPage(BASE_URL + 'index.php?module=X&action=Y')`（`BASE_URL` は `constants.js`。末尾 `/` 付き） |
 
 ### テキスト入力: 共通ユーティリティを使う（標準）
 
@@ -206,16 +206,12 @@ await ensureAccountTransferSchedules(I, { claimMonth: '2026-10', debitDate: '202
 **ページ遷移する場合の実装パターン**（`KoushiShareiFlowPage.saveAndVerify` より）:
 
 ```javascript
+const { waitForSaveResult, verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+
 async function saveAndVerify(I, expectedErrors) {
   I.click(S.buttons.save);
   // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機。固定 I.wait は使わない
-  // codeceptjs の waitForFunction は第2引数が配列でないと args として渡されないため注意
-  await I.waitForFunction(
-    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
-          !document.querySelector('input[name="save_button"]'),
-    [SELECTORS.ERROR_CONTAINER],
-    TIMEOUTS.RESULT
-  );
+  await waitForSaveResult(I, { successSelector: S.buttons.save, successMode: 'disappears' });
   if (expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.message.error);
     return;
@@ -226,8 +222,13 @@ async function saveAndVerify(I, expectedErrors) {
 }
 ```
 
-保存後に編集画面から詳細画面へ戻る画面は、`'input[name="save_button"]'` が消える代わりに
-`'input[name="edit_button"]'` が現れるのを待つ（`StudentSaikenkaiFlowPage.waitForSaveResult` / `TeacherKeiriFlowPage.setAccountingTab`）。
+`waitForSaveResult` の `successMode` は画面に合わせて選ぶ:
+
+| 画面の挙動 | 呼び方 | 実例 |
+|---|---|---|
+| 保存後に編集画面から詳細画面へ戻る（`edit_button` が現れる） | `waitForSaveResult(I)`（既定） | `StudentSaikenkaiFlowPage` / `TeacherKeiriFlowPage.setAccountingTab` |
+| 保存後にページ遷移して保存ボタンが消える | `{ successSelector: S.buttons.save, successMode: 'disappears' }` | `KoushiShareiFlowPage.saveAndVerify` |
+| 同一画面に完了メッセージが出る | `{ successSelector: '#top_message_div_id', successMode: 'hasText' }` | `KoushiShareiFlowPage.executeImport` |
 
 > **なぜ try-catch では解決しないか:**
 > CodeceptJS の Recorder は `grabTextFrom` の ElementNotFound を "Uncaught" エラーとして処理するため、
