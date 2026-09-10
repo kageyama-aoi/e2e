@@ -7,9 +7,9 @@
  * 受講生登録フローの途中で「クラスが無い」ことに気付くのを避けるための事前検知用テストです。
  *
  * **処理フロー**
- * - 1. 担当者アカウントでログイン（autoLogin）
- * - 2. 管理 > コース > クラス一覧へ遷移
- * - 3. CSVの `className` を検索して、検索結果に表示されることを確認
+ * - 1. 担当者アカウントでログイン（beforeShimamura）
+ * - 2. クラス一覧へ遷移（IchiranPage.navigateToClassListPage）
+ * - 3. CSV の `className` を検索して、検索結果に表示されることを確認
  *
  * **前提条件**
  * - 環境変数 `SHIMAMURA_TANTOUSYA` が設定されていること
@@ -17,11 +17,10 @@
  * - 実行時に `--profile` を指定する場合は `env/.env.<profile>` が存在すること
  *
  * **最終更新日**
- * - 2026-01-27
+ * - 2026-09-10
  */
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 const csvData = loadCsvWithProfile('syokai_touroku_data', 'shimamura');
 
@@ -38,75 +37,14 @@ Feature('クラス存在チェック（事前検知）');
 
 Before(beforeShimamura);
 
-const S = {
-  classList: {
-    screenTitle: 'クラス一覧',
-    buttons: {
-      search: '検索',
-    },
-    // しまむら画面の実装差分に備えて「クラス名」の入力候補を複数用意
-    fields: {
-      classNameCandidates: [
-        '#course_name', // クラス選択POP_UPで使われている想定
-        'input[name="course_name"]',
-        'input[name="name"]', // 既存テストで使用されている想定（実画面により異なる）
-        'name',
-      ],
-    },
-    results: {
-      link: `a${SELECTORS.RESULT_LINK}`,
-    },
-  },
-};
-
-async function fillFirstVisibleField(I, candidates, value) {
-  for (const locator of candidates) {
-    try {
-      const count = await I.grabNumberOfVisibleElements(locator);
-      if (count > 0) {
-        I.fillField(locator, value);
-        return locator;
-      }
-    } catch (_) {
-      // ignore invalid selector types in some drivers and continue
-    }
-  }
-  throw new Error(`クラス名入力欄が見つかりませんでした（候補: ${candidates.join(', ')}）`);
-}
-
-async function assertClassExistsOnClassList(I, className) {
-  I.waitForElement(locate('body').withText(S.classList.screenTitle), TIMEOUTS.ELEMENT);
-
-  const usedLocator = await fillFirstVisibleField(I, S.classList.fields.classNameCandidates, className);
-  I.say(`クラス名入力欄: ${usedLocator}`);
-
-  I.click(S.classList.buttons.search);
-
-  // 何かしら結果が出るまで待つ。見つからなければ明示エラー。
-  try {
-    I.waitForElement(S.classList.results.link, TIMEOUTS.RESULT);
-  } catch (err) {
-    I.saveScreenshotWithTimestamp(`CLASS_EXISTENCE_NOT_FOUND_${className}.png`);
-    throw new Error(`❌ クラス一覧で検索結果が見つかりませんでした: ${className}`);
-  }
-
-  const texts = await I.grabTextFromAll(S.classList.results.link);
-  const found = texts.some((t) => String(t).includes(className));
-  if (!found) {
-    I.saveScreenshotWithTimestamp(`CLASS_EXISTENCE_MISMATCH_${className}.png`);
-    throw new Error(`❌ 検索結果に className が含まれませんでした: ${className}`);
-  }
-}
-
-Data(uniqueClassRows).Scenario('クラス存在チェック（事前検知） @dev', async ({ I, classMemberPageShimamura, current }) => {
+Data(uniqueClassRows).Scenario('クラス存在チェック（事前検知） @dev', async ({ I, ichiranPageShimamura, current }) => {
   const className = current.className;
   I.say(`--- クラス存在チェック開始: ${className} ---`);
 
-  await classMemberPageShimamura.navigateToAdminTab(I, 'コース', 'コース一覧');
-  classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
-
-  await assertClassExistsOnClassList(I, className);
+  await ichiranPageShimamura.navigateToClassListPage();
+  ichiranPageShimamura.fillClassListSearchConditions({ name: className });
+  ichiranPageShimamura.clickClassListSearchAndWait();  // 0件なら結果リンク待ちで失敗＝クラス未登録
+  ichiranPageShimamura.verifyClassListRecordInResults(className);
 
   I.say(`✅ クラス存在OK: ${className}`);
 });
-

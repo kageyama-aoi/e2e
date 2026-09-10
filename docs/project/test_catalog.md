@@ -1,7 +1,7 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-10 17:19 (JST)
+> 最終更新: 2026-09-10 17:26 (JST)
 
 **合計 93 テスト**（shimamura 30 / tframe 61 / taskreport 1 / smoke 1）
 
@@ -30,10 +30,10 @@
 | `gessya_ikkatu_test.js` | — | 月謝一括作成 実行 |
 | `happyoukai_setup_test.js` | — | 発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加） |
 | `happyoukai_touroku_test.js` | — | 発表会 参加者更新の実行と画面反映の検証 |
-| `keiri_hennkin_syori_test.js` | 1600_17_1 | 経理の返金処理フローを確認 |
+| `keiri_hennkin_syori_test.js` | 1600_17_1 | [WIP] 経理の返金処理フロー（ひな形・未実装。@wip で既定実行から除外） |
 | `koushi_sharei_manual_test.js` | 1600_19_1 | 講師謝礼の手動入力登録フローを確認 |
 | `koushi_sharei_tsuika_test.js` | 1600_19_1 | 講師謝礼のCSVファイル一括取込フローを確認 |
-| `shimamura_class_member_registration_test.js` | 1100_15_1 | クラスへのメンバー登録フローを確認 |
+| `shimamura_class_member_registration_test.js` | 1100_15_1 | [WIP] クラスへのメンバー登録フロー（pause 待ちで未完成。@wip で既定実行から除外） |
 | `smbc_state_import_test.js` | 4000_3_1 | 債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認 |
 | `student_saikenkai_test.js` | — | SMBC債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認 |
 | `syokai_touroku_test.js` | — | 受講生の新規登録および経理処理フローの正常系・バリデーションエラーを確認 |

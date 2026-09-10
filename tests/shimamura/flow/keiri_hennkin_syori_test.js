@@ -35,7 +35,9 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors } = require('../../../support/shimamura/utils');
 const { SELECTORS } = require('../../../support/shimamura/constants');
 
-Feature('経理返金処理（ひな形）');
+// @wip: 全編ひな形（「（仮）」）。返金一覧の実フィールド・ボタンが未確定のため
+// npm test / GUI の既定実行から除外している。実装時に @wip を外すこと（追跡: 親Issue #200 / #206 の隣）。
+Feature('経理返金処理（ひな形） @wip');
 
 const csvDataRaw = loadCsvWithProfile('keiri_hennkin_syori_data', 'shimamura');
 const validationErrorDataRaw = loadCsvWithProfile('keiri_hennkin_syori_validation_errors', 'shimamura');

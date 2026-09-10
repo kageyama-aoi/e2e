@@ -276,6 +276,10 @@ def build_command(test_file, profile, grep=None, debug=False):
     cmd = ['npx', 'codeceptjs', 'run', test_file, '--profile', profile]
     if grep:
         cmd += ['--grep', grep]
+    else:
+        # 既定では @wip（ひな形・未実装）タグ付きシナリオを除外する。
+        # 実行したい場合は grep 欄に "@wip" を入力する。
+        cmd += ['--grep', '@wip', '--invert']
     if debug:
         cmd += ['--steps', '--debug']
     return cmd
