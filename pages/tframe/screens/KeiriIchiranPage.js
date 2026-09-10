@@ -19,40 +19,19 @@
  */
 
 const { I } = inject();
-const assert = require('assert');
 const { fillTextFields } = require('../../../support/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
 
 /**
- * 日付入力欄に値を直接セットして change を発火する（datepicker / readonly を回避）
- * @param {string} id - input の id（`#` なし）。存在しなければ何もしない
- * @param {string} value - `YYYY-MM-DD`。空ならスキップ
- */
-function setDateField(id, value) {
-  if (!value) return;
-  I.executeScript(({ fieldId, v }) => {
-    const el = document.getElementById(fieldId);
-    if (!el) return;
-    el.value = v;
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-  }, { fieldId: id, v: value });
-}
-
-/**
- * 経理系の一覧はエリア・ステイタス等の絞り込みがサーバー側にセッション記憶されるため、
- * 検索前に主要な絞り込みセレクトを「すべて」（空値）へ戻して結果を決定的にする。
- * 画面に無いセレクトは無視される。
+ * 経理系一覧でセッション記憶される主要な絞り込みセレクトを「すべて」へ戻す。
+ * エリアを変えると校舎ドロップダウンが AJAX で再構築されるため、
+ * エリア → 待機 → 校舎 の順にリセットする。
  */
 function resetStickyFilters() {
-  I.executeScript(() => {
-    ['branchId_area_id', 'branchId_branch_id', 'personStatus', 'paymentType', 'claimType', 'feeSubcategory']
-      .forEach((id) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.value = '';
-        el.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-  });
+  resetSelects(['branchId_area_id', 'personStatus', 'paymentType', 'claimType', 'feeSubcategory']);
+  I.wait(1);
+  resetSelects(['branchId_branch_id']);
 }
 
 module.exports = {
@@ -186,18 +165,10 @@ module.exports = {
   // ----------------------------------------------------------------
 
   /**
-   * 検索結果テーブルに実データ行（tbody の空展開行を除く）が1件以上あることを確認する。
-   * IchiranMixin の `verifyResultsExist` は thead の行にもマッチしてしまうため、
-   * 経理系ではこちらで「実際に結果が返ったこと」を担保する。
+   * 検索結果テーブルに実データ行が1件以上あることを確認する（`IchiranSearchMixin` へ委譲）。
    */
   async verifyResultRowsExist() {
-    I.say('【経理一覧】検索結果に実データ行があることを確認');
-    const count = await I.executeScript(() => {
-      const table = document.querySelector('.tf-group-body-search-result table.tf-data-table-table');
-      if (!table) return 0;
-      return Array.from(table.querySelectorAll('tbody tr')).filter((tr) => tr.innerText.trim()).length;
-    });
-    assert(count > 0, `検索結果に実データ行がありません（count=${count}）`);
+    await verifyResultRowsExist('経理一覧');
   },
 
   ...createIchiranMixin('経理一覧'),

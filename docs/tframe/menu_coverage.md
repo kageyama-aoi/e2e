@@ -1,6 +1,6 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-10（初版 #196 / PO無し画面のパターン分類 #197 / 経理一覧系5画面テスト実装 #198）
+最終更新: 2026-09-10（初版 #196 / パターン分類 #197 / 経理一覧系5画面 #198 / Eメール系一覧6画面 #199）
 
 実機採取: `tframe.culture_beta`（`https://newculture.e-school.jp/beta/`）/ `tframe.juku_beta`（`https://newsms.e-school.jp/beta/`）を
 管理者アカウントでログインし、左サイドメニュー（`#sideBar`）を全アイコン展開して採取。
@@ -141,18 +141,18 @@
 
 | 画面名 | route | C | J | Page Object | テスト |
 |---|---|:-:|:-:|---|---|
-| Eメール一覧 | `email/sw/_default` | ● | ● | △ EmailPage（menu-nav） | △ `email_test.js`（表示・メニュー構造検証） |
+| Eメール一覧 | `email/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_ichiran_test.js`（juku_beta 主。menu-nav は `EmailPage`） |
 | Eメールテンプレート登録 | `emailTemplate/ew/_default` | ● | ● | ✗ | △ （`email_test.js` のメニュー巡回のみ） |
-| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | ● | ● | ✗ | △ |
+| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_template_ichiran_test.js`（juku_beta 主） |
 | Eメールテンプレートカテゴリ登録 | `emailTemplateCategory/ew/_default` | ● | ● | ✗ | △ |
-| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | ● | ● | ✗ | △ |
+| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_template_category_ichiran_test.js`（juku_beta 主） |
 | 名簿リスト登録 | `prospectList/ew/_default` | ● | ● | ✗ | ✗ |
-| 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✗ | ✗ |
+| 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `prospect_list_ichiran_test.js`（juku_beta 主） |
 | お知らせ登録 | `announcement/ew/_default` | ● | ● | ✗ | ✗ |
-| お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✗ | ✗ |
+| お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `announcement_ichiran_test.js`（juku_beta 主） |
 | 連絡一覧 | `contact/sw/_default` | (空) | ● | ✗ | ✗ |
 | アンケート登録 | `poll/ew/_default` | ● | ● | ✗ | ✗ |
-| アンケート一覧 | `poll/sw/_default` | ● | ● | ✗ | ✗ |
+| アンケート一覧 | `poll/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `poll_ichiran_test.js`（juku_beta 主） |
 
 ### 経理（icon: `smsFee`）
 
@@ -268,19 +268,19 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 検索/クリアボタン＋結果テーブルの標準構造。CSV は「空検索 / 主要条件で絞り込み」の2行が基本。
 
-> **経理一覧系5画面（料金 / 契約 / 入金 / 未収金 / 入出金）は実装済み（Issue #198・`KeiriIchiranPage.js`）**。
-> 経理系は日付レンジ既定が「当月」＋エリア/ステイタスがサーバー側にセッション記憶されるため、
-> PO 側で検索前にレンジ拡大＋主要セレクトを「すべて」へリセットしている。
+> **経理一覧系5画面（#198・`KeiriIchiranPage.js`）と Eメールアイコン配下の一覧6画面（#199・`EmailIchiranPage.js`）は実装済み。**
+> これらは日付レンジ既定が「当月」＋エリア/対象区分/ステイタスがサーバー側にセッション記憶されるため、
+> 検索前にレンジ拡大＋主要セレクトのリセットが必要（共通ヘルパー `pages/tframe/_common/IchiranSearchMixin.js`）。
 
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
 | 出席表一覧 | `attendance/sw/_default` | 両 | 「出席表編集」ボタンあり（編集導線は対象外で可） |
-| 名簿リスト一覧 | `prospectList/sw/_default` | 両 | |
-| お知らせ一覧 | `announcement/sw/_default` | 両 | |
-| アンケート一覧 | `poll/sw/_default` | 両 | |
-| Eメール一覧 | `email/sw/_default` | 両 | `EmailPage` に ichiran メソッドを追加する形 |
-| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | 両 | |
-| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | 両 | |
+| ~~名簿リスト一覧~~ | `prospectList/sw/_default` | 両 | ✓ 実装済み `prospect_list_ichiran_test.js` |
+| ~~お知らせ一覧~~ | `announcement/sw/_default` | 両 | ✓ 実装済み `announcement_ichiran_test.js` |
+| ~~アンケート一覧~~ | `poll/sw/_default` | 両 | ✓ 実装済み `poll_ichiran_test.js` |
+| ~~Eメール一覧~~ | `email/sw/_default` | 両 | ✓ 実装済み `email_ichiran_test.js` |
+| ~~Eメールテンプレート一覧~~ | `emailTemplate/sw/_default` | 両 | ✓ 実装済み `email_template_ichiran_test.js` |
+| ~~Eメールテンプレートカテゴリ一覧~~ | `emailTemplateCategory/sw/_default` | 両 | ✓ 実装済み `email_template_category_ichiran_test.js` |
 | ~~料金一覧~~ | `smsFee/sw/_default` | 両 | ✓ 実装済み `fee_ichiran_test.js` |
 | ~~契約一覧~~ | `smsContract/sw/_default` | 両 | ✓ 実装済み `contract_ichiran_test.js`（姓は `#last_name`） |
 | ~~入金一覧~~ | `smsPayment/sw/_default` | 両 | ✓ 実装済み `payment_ichiran_test.js` |
@@ -350,8 +350,9 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 ### 着手順の提案 / 進捗
 
-- ~~**第1弾（経理一覧系5画面）**~~ … ✓ 完了（Issue #198・`KeiriIchiranPage.js` ＋ `fee_` / `contract_` / `payment_` / `unpaid_amount_` / `transaction_` の各 `*_ichiran_test.js`。juku_beta 主）
-- **次弾**: バケット A の残り（名簿リスト / お知らせ / アンケート一覧、Eメール系一覧、出席表一覧、レポート4種、口座振替データ履歴、juku 入退記録一覧・連絡一覧）
+- ~~**第1弾（経理一覧系5画面）**~~ … ✓ 完了（Issue #198・`KeiriIchiranPage.js`。juku_beta 主）
+- ~~**第2弾（Eメールアイコン配下の一覧6画面）**~~ … ✓ 完了（Issue #199・`EmailIchiranPage.js` ＋ 共通ヘルパー `IchiranSearchMixin.js`。juku_beta 主）
+- **次弾**: バケット A の残り（出席表一覧、レポート4種、口座振替データ履歴、講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
 - **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 

@@ -53,6 +53,12 @@
 | `tests/tframe/page/payment_ichiran_test.js` | `payment_ichiran_search_data.csv` | 入金一覧（経理）。※juku_beta 主 |
 | `tests/tframe/page/unpaid_amount_ichiran_test.js` | `unpaid_amount_ichiran_search_data.csv` | 未収金一覧（経理 `smsTransaction/sw/unpaidAmountList`）。※juku_beta 主 |
 | `tests/tframe/page/transaction_ichiran_test.js` | `transaction_ichiran_search_data.csv` | 入出金一覧（経理 `smsTransaction/sw/_default`）。※juku_beta 主 |
+| `tests/tframe/page/email_ichiran_test.js` | `email_ichiran_search_data.csv` | Eメール一覧。dateFrom/dateTo で送信日レンジを広げる（既定は当月）。※juku_beta 主 |
+| `tests/tframe/page/email_template_ichiran_test.js` | `email_template_ichiran_search_data.csv` | Eメールテンプレート一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/email_template_category_ichiran_test.js` | `email_template_category_ichiran_search_data.csv` | Eメールテンプレートカテゴリ一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/prospect_list_ichiran_test.js` | `prospect_list_ichiran_search_data.csv` | 名簿リスト一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/announcement_ichiran_test.js` | `announcement_ichiran_search_data.csv` | お知らせ一覧。dateFrom/dateTo で掲載日レンジを広げる。title で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/poll_ichiran_test.js` | `poll_ichiran_search_data.csv` | アンケート一覧。dateFrom/dateTo で回答期間レンジを広げる。title で絞り込み。※juku_beta 主 |
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |

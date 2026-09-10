@@ -186,7 +186,8 @@ AllureResultsDir=${runtimeAllureResultsDir}
     branchPage:        './pages/tframe/screens/BranchPage.js',
     ryokinPackagePage: './pages/tframe/screens/RyokinPackagePage.js',
     infoHistoryPage:   './pages/tframe/screens/InfoHistoryPage.js',
-    keiriIchiranPage:  './pages/tframe/screens/KeiriIchiranPage.js'
+    keiriIchiranPage:  './pages/tframe/screens/KeiriIchiranPage.js',
+    emailIchiranPage:  './pages/tframe/screens/EmailIchiranPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定

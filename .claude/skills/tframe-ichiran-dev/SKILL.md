@@ -136,6 +136,35 @@ verifyRecordInResults(expectedName) {
 | 検索結果エリア | `.tf-group-body-search-result tr` |
 | 検索結果確認 | `.tf-group-body-search-result` |
 
+#### 経理系・Eメール系などクセのある一覧（`IchiranSearchMixin` を使う）
+
+`smsFee` / `smsContract` / `smsPayment` / `smsTransaction` / `email` / `announcement` / `poll` などは
+次の2つのクセがあり、素直に空検索しても結果が0件・不安定になる。既存 `KeiriIchiranPage.js` /
+`EmailIchiranPage.js` を雛形にすること。
+
+1. **日付レンジの既定値が「当月」** → 検索前に広げる。CSV に `dateFrom` / `dateTo` 列を持たせ、
+   `setDateField('rangeFromDate', data.dateFrom)` 等で直接セット（画面により `rangeFromField` / `rangeToField`）。
+2. **エリア / 対象区分 / ステイタス等の絞り込みがサーバー側にセッション記憶される**
+   → 検索前に `resetSelects([...])` で主要セレクトを空値（「すべて」）へ戻す。
+
+```javascript
+const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
+
+fillXxxSearchConditions(data) {
+  resetSelects(['branchId_area_id', 'branchId_branch_id', 'personStatus', /* 画面のセレクトid */]);
+  setDateField('rangeFromDate', data.dateFrom);
+  setDateField('rangeToDate', data.dateTo);
+  fillTextFields(I, { lastName: data.lastName });
+},
+
+// テスト側: verifyResultsExist は thead 行にもマッチして空振り判定できないため、
+// 「実際に結果が返ったこと」を担保したいときは verifyResultRowsExist を使う
+async verifyResultRowsExist() { await verifyResultRowsExist('画面名'); },
+```
+
+> どのセレクトがセッション記憶されるかは実機で確認する（フレッシュな画面表示で
+> 既に値が入っているセレクト＝記憶対象）。日付欄の既定値も同様に実機で確認。
+
 ---
 
 ### Step 3: CSV の作成

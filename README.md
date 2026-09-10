@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-10 15:37:04
+Last updated: 2026-09-10 16:39:48
 
 ```text
 e2e/
@@ -283,6 +283,7 @@ e2e/
 │   │   ├── 2026-07-03-1435.md
 │   │   ├── 2026-07-06-1038.md
 │   │   ├── 2026-07-06-1418.md
+│   │   ├── 2026-07-07-1619.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -340,9 +341,13 @@ e2e/
 │   └── workflows/ 
 │       └── documentation_update.yaml
 ├── .spec/ 
+│   ├── KNOWLEDGE-2026-09-10.md
 │   ├── KNOWLEDGE.md
+│   ├── PLAN-2026-09-10.md
 │   ├── PLAN.md
+│   ├── SPEC-2026-09-10.md
 │   ├── SPEC.md
+│   ├── TODO-2026-09-10.md
 │   └── TODO.md
 ├── data/ 
 │   ├── shimamura/ 
@@ -414,6 +419,7 @@ e2e/
 │       ├── account_ichiran_search_data.csv
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
+│       ├── announcement_ichiran_search_data.csv
 │       ├── branch_ichiran_search_data.csv
 │       ├── branch_touroku_data.csv
 │       ├── chosekin_ichiran_search_data.csv
@@ -422,6 +428,9 @@ e2e/
 │       ├── course_ichiran_search_data.csv
 │       ├── course_touroku_data.csv
 │       ├── courseBySt_ichiran_search_data.csv
+│       ├── email_ichiran_search_data.csv
+│       ├── email_template_category_ichiran_search_data.csv
+│       ├── email_template_ichiran_search_data.csv
 │       ├── fee_ichiran_search_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
@@ -436,7 +445,9 @@ e2e/
 │       ├── kyoshitsu_ichiran_search_data.csv
 │       ├── kyoshitsu_touroku_data.csv
 │       ├── payment_ichiran_search_data.csv
+│       ├── poll_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
+│       ├── prospect_list_ichiran_search_data.csv
 │       ├── README.md
 │       ├── ryokin_master_ichiran_search_data.csv
 │       ├── ryokin_master_touroku_data.csv
@@ -490,6 +501,7 @@ e2e/
 │       ├── _common/ 
 │       │   ├── _urlPath.js
 │       │   ├── IchiranMixin.js
+│       │   ├── IchiranSearchMixin.js
 │       │   ├── MenuNavigationMixin.js
 │       │   └── sideMenus.js
 │       ├── api/ 
@@ -509,6 +521,7 @@ e2e/
 │           ├── ChosekinPage.js
 │           ├── ClassroomPage.js
 │           ├── CoursePage.js
+│           ├── EmailIchiranPage.js
 │           ├── EmailPage.js
 │           ├── HelpPage.js
 │           ├── HomePage.js
@@ -837,6 +850,7 @@ e2e/
 │       └── page/ 
 │           ├── account_ichiran_test.js
 │           ├── account_touroku_test.js
+│           ├── announcement_ichiran_test.js
 │           ├── branch_ichiran_test.js
 │           ├── branch_touroku_test.js
 │           ├── calendar_test.js
@@ -847,6 +861,9 @@ e2e/
 │           ├── course_test.js
 │           ├── course_touroku_test.js
 │           ├── courseBySt_ichiran_test.js
+│           ├── email_ichiran_test.js
+│           ├── email_template_category_ichiran_test.js
+│           ├── email_template_ichiran_test.js
 │           ├── email_test.js
 │           ├── fee_ichiran_test.js
 │           ├── help_test.js
@@ -866,7 +883,9 @@ e2e/
 │           ├── kyoshitsu_touroku_test.js
 │           ├── master_menu_test.js
 │           ├── payment_ichiran_test.js
+│           ├── poll_ichiran_test.js
 │           ├── proByCourse_ichiran_test.js
+│           ├── prospect_list_ichiran_test.js
 │           ├── report_test.js
 │           ├── ryokin_master_ichiran_test.js
 │           ├── ryokin_master_touroku_test.js

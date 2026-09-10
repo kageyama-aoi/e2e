@@ -63,6 +63,12 @@
     "page/payment_ichiran_test.js":                   "入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
     "page/unpaid_amount_ichiran_test.js":             "未収金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
     "page/transaction_ichiran_test.js":               "入出金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/email_ichiran_test.js":                     "Eメール一覧の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/email_template_ichiran_test.js":            "Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主）",
+    "page/email_template_category_ichiran_test.js":   "Eメールテンプレートカテゴリ一覧の空検索と名称での絞り込み検索を確認（juku_beta 主）",
+    "page/prospect_list_ichiran_test.js":             "名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主）",
+    "page/announcement_ichiran_test.js":              "お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主）",
+    "page/poll_ichiran_test.js":                      "アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

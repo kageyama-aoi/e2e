@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-10 15:37 (JST)
+> 最終更新: 2026-09-10 16:39 (JST)
 
-**合計 87 テスト**（shimamura 30 / tframe 55 / taskreport 1 / smoke 1）
+**合計 93 テスト**（shimamura 30 / tframe 61 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（55件）
+## tframe（61件）
 
 ### api/（1件）
 
@@ -89,12 +89,13 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（45件）
+### page/（51件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
+| `announcement_ichiran_test.js` | — | お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `branch_ichiran_test.js` | — | 校舎一覧の空検索と校舎名での絞り込み検索を確認 |
 | `branch_touroku_test.js` | — | 校舎の新規登録フォームへの入力・保存を確認 |
 | `calendar_test.js` | — | カレンダー画面の表示・基本操作を確認 |
@@ -105,6 +106,9 @@
 | `course_ichiran_test.js` | — | コース一覧の空検索とコース名での絞り込み検索を確認 |
 | `course_test.js` | — | コース一覧・詳細画面の表示を確認 |
 | `course_touroku_test.js` | — | コースの新規登録フォームへの入力・保存を確認 |
+| `email_ichiran_test.js` | — | Eメール一覧の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `email_template_category_ichiran_test.js` | — | Eメールテンプレートカテゴリ一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
+| `email_template_ichiran_test.js` | — | Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
 | `fee_ichiran_test.js` | — | 料金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `help_test.js` | — | ヘルプページの表示を確認 |
@@ -124,7 +128,9 @@
 | `kyoshitsu_touroku_test.js` | — | 教室の新規登録フォームへの入力・保存を確認 |
 | `master_menu_test.js` | — | マスター設定メニューの各項目への遷移を確認 |
 | `payment_ichiran_test.js` | — | 入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
+| `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `report_test.js` | — | レポート画面の表示・出力操作を確認 |
 | `ryokin_master_ichiran_test.js` | — | 料金マスタ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_master_touroku_test.js` | — | 料金マスタの新規作成フォームへの入力・保存を確認（juku_test のみ） |
