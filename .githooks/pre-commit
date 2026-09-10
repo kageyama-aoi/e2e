@@ -1,19 +1,30 @@
 #!/bin/sh
-# tests/ または run/test_descriptions.json に変更があるコミットで、
-# ディレクトリツリー(README) とテストカタログ(docs/project/test_catalog.md) を
-# 自動再生成して stage する。ドキュメントのドリフト防止。
+# ドキュメントのドリフト防止フック。
+#
+# 1) docs/ .claude/skills/ pages/ support/ AGENTS.md に変更があるコミットで、
+#    ドキュメントが名指ししているパス・関数名が実在するかを確認する（警告のみ・commit は止めない）。
+# 2) tests/ または run/test_descriptions.json に変更があるコミットで、
+#    ディレクトリツリー(README) とテストカタログ(docs/project/test_catalog.md) を自動再生成して stage する。
 #
 # 有効化: npm install（postinstall で core.hooksPath=.githooks を設定）
 #         もしくは手動で `git config core.hooksPath .githooks`
 
 changed=$(git diff --cached --name-only)
 
-echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
-
 if ! command -v python >/dev/null 2>&1; then
-  echo "[pre-commit] python 未検出のため docs 再生成をスキップ"
+  echo "[pre-commit] python 未検出のため docs チェック・再生成をスキップ"
   exit 0
 fi
+
+# --- 1) 参照ドリフト検出（警告モード） ---------------------------------------
+if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|pages/|support/|AGENTS\.md$)'; then
+  echo "[pre-commit] docs/skills の参照パス・関数名チェック..."
+  # 警告のみ。fail にする場合は --check を付ける（npm run docs:check-refs と同じ）
+  python scripts/docs/check_doc_refs.py --quiet || echo "[pre-commit] check_doc_refs.py 実行失敗（無視して続行）"
+fi
+
+# --- 2) tree + test catalog 再生成 ---------------------------------------------
+echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
 
 echo "[pre-commit] docs 再生成（tree + test catalog）..."
 python scripts/docs/tree_generator.py -u    || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }

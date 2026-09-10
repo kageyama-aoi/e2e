@@ -1,0 +1,5 @@
+# check_doc_refs.py の除外リスト（1行1参照。# 以降はコメント）
+# 「意図的に実在しないもの」だけを書く。古くなった参照はここに足さず、ドキュメント側を直すこと。
+
+docs/tree.md                   # npm run docs:tree:file の出力先（生成物・未コミット）
+data/tframe/teacherSideMenu    # AGENTS.md「ファイル移動時のプロトコル」の過去例（移動済み）
