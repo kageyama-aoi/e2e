@@ -1,8 +1,5 @@
 # TODO - タスクリスト
 
-## 優先度：高（Phase 2 — コード集約）
-- [ ] #e IchiranPage.js の Mixin 化（9画面ファクトリ、未収金・受注売上・出席表は例外）+ SKILL.md 追従
-
 ## 優先度：中（Phase 3 — 整理・判断もの）
 - [ ] #f デッドコード削除・命名整理（ClassMemberPage.searchClass 等 / LoginPage の locators_2, promt / shimamura_login_test の引数ずれ）
 - [ ] #g ひな形テスト @wip 化（keiri_hennkin_syori / class_member_registration）+ class_existence_check を IchiranPage に置換
@@ -13,6 +10,7 @@
 - #206 koushi_sharei_manual がサイドバー経路で「講師謝礼」グループ未展開のため全件失敗（既存）
 - #207 koushi_sharei_tsuika の「謝礼項目なし」「報酬額なし」が期待エラー文言不一致で失敗（既存）
 - #99 講師謝礼一括取込の正常系テストデータ未整備（既存）
+- #209 course_by_student_ichiran の「サロン」絞り込みが結果0件（testgcp データ・既存）
 
 ## 完了済み
 - [x] 診断（2026-09-10）— artifact bcca3599
@@ -21,3 +19,4 @@
 - [x] #b check_doc_refs.py + pre-commit + npm run docs:check-refs — #202 / a4efac5
 - [x] #c docs/shimamura 4本 + スキル3ファイル + codeceptjs_api_reference.md を現行に追従 — #204 / f74786b（スクリプトのディレクトリ対応 1fddf35）
 - [x] #d extractRecordId / BASE_URL / waitForSaveResult / buildTestName を support/shimamura に集約 — #205 / 8540c21
+- [x] #e IchiranPage.js を STANDARD_SCREENS ファクトリ化（438→292行、8標準画面）+ shimamura-ichiran-dev スキル追従 — 実機 18/19 pass（1件は #209 の既存データ不整合）

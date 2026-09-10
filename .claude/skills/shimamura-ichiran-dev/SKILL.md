@@ -42,9 +42,9 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 目的 | 参照先 |
 |---|---|
 | **テストファイルの雛形** | `tests/shimamura/page/transaction_ichiran_test.js` |
-| **Page Object の雛形**（1画面ぶんのブロック） | `pages/shimamura/screens/IchiranPage.js` の「入出金一覧 (transaction_list)」ブロック |
+| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/IchiranPage.js` の `STANDARD_SCREENS` 配列（入出金一覧のエントリ） |
 | メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `pages/shimamura/_common/sideMenus.js` |
-| 結果セレクタが特殊な画面の例 | `IchiranPage.js` の「未収金一覧」「受注・売上」「出席表検索」ブロック |
+| 結果セレクタが特殊な画面の例 | `IchiranPage.js` の `specialScreens`（未収金一覧・受注売上・出席表検索・有効性データ出力） |
 | ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
 | 共通ユーティリティ・定数 | `support/shimamura/utils.js`（`fillTextFieldsByName`）、`support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
 | CSV の形式 | `data/shimamura/transaction_ichiran_search_data.csv` |
@@ -68,7 +68,11 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
    - サイドバー経路（`moduleUrl` + `shortcut`、折りたたみがあれば `collapseToggle`）も分かれば書く。分からなければ `directUrl` だけでよい
 
 3. **既存の類似画面が無いか確認する**
-   - `IchiranPage.js` を画面名で grep。同じ画面のブロックが既にあればメソッド追記だけで済む
+   - `IchiranPage.js` の `STANDARD_SCREENS` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
+
+4. **標準一覧画面か・特殊画面かを判定する**
+   - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → `STANDARD_SCREENS` にエントリを1つ足す（Step 3）
+   - **特殊**: 検索ボタンが `input[name="button"][value="表示"]` 等、または結果が `.listViewPaginationTdS1` 等 → `specialScreens` に個別メソッドを書く（未収金一覧・受注売上・出席表を雛形にする）
 
 ---
 
@@ -89,63 +93,43 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ---
 
-### Step 3: `IchiranPage.js` にメソッドを追記
+### Step 3: `IchiranPage.js` に画面を追加
 
-`pages/shimamura/screens/IchiranPage.js` の既存ブロック（例: 「入出金一覧 (transaction_list)」）をコピーして末尾に追記する。
-1画面 = 5メソッド（`navigateTo` / `fill` / `click…SearchAndWait` / `verify…ResultsExist` / `verify…RecordInResults`）。
+#### 標準一覧画面 → `STANDARD_SCREENS` にエントリを1つ足すだけ
+
+`createIchiranScreen` ファクトリが `navigateTo{navKey}Page` / `fill{coreKey}SearchConditions` /
+`click{coreKey}SearchAndWait` / `verify{coreKey}ResultsExist` / `verify{coreKey}RecordInResults` の5メソッドを自動生成する。
 
 ```javascript
-// ----------------------------------------------------------------
-//  {画面名} ({snake_name})
-// ----------------------------------------------------------------
-
-async navigateTo{ScreenName}Page() {
-  I.say('【{画面名}】一覧画面へ遷移');
-  await this._navigateViaMenu(menus.{camelCaseName});
-  I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
-  // 日付範囲フィールド（date_group1_rstart/rend）が既定で今日に絞られる画面は空検索が0件になるためクリアする
-  // this._clearDateRangeFields();
-},
-
-fill{ScreenName}SearchConditions(data) {
-  I.say('【{画面名}】検索条件を入力');
-  fillTextFieldsByName(I, {
-    {field1}: data.{field1},
-    {field2}: data.{field2},
-  });
-  if (data.{selectField}) I.selectOption('select[name="{selectField}"]', data.{selectField});
-},
-
-click{ScreenName}SearchAndWait() {
-  I.say('【{画面名}】検索実行');
-  this._clickSearchAndWait();          // input[name="search"] → SELECTORS.RESULT_LINK を待つ
-},
-
-verify{ScreenName}ResultsExist() {
-  I.say('【{画面名}】検索結果が表示されることを確認');
-  this._verifyResultsExist();
-},
-
-verify{ScreenName}RecordInResults(expectedText) {
-  I.say(`【{画面名}】"${expectedText}" が結果に表示されることを確認`);
-  this._verifyRecordInResults(expectedText);
+{
+  label: '{画面名}', menu: menus.{camelCaseName},
+  navKey: '{XxxList}',   // navigateTo{navKey}Page の Xxx（テストが呼ぶ名前に合わせる）
+  coreKey: '{Xxx}',      // fill/click/verify の接頭辞（navKey と違う場合あり。例: 入出金は navKey=TransactionList / coreKey=Transaction）
+  clearDateRange: true,  // 日付範囲が既定で今日に絞られる画面のみ（空検索が0件になるため）
+  fill: (d) => {
+    fillTextFieldsByName(I, { {field1}: d.{field1}, {field2}: d.{field2} });
+    selectIfSet('{selectField}', d.{selectField});   // select[name="..."] に値があるときだけ選択
+  },
 },
 ```
 
-**共通ヘルパー**（ファイル先頭に定義済み。再実装しない）:
+- `navKey` / `coreKey` はテストが呼ぶメソッド名から逆算する（テストは既存の `*_ichiran_test.js` を雛形にする）
+- `fill` は `fillTextFieldsByName`（テキスト）+ `selectIfSet`（セレクト）で書く。`executeScript` を直書きしない
+- CSV 列名とフィールド `name=` が違う場合は `fill` 内で吸収する（例: コース一覧は CSV 列 `name` → フィールド `course_name`）
+
+#### 特殊画面（標準の共通形に乗らない） → `specialScreens` に個別メソッド
+
+検索ボタンが `input[name="button"][value="表示"]` 等、または結果テーブルが `.listViewPaginationTdS1` 等の画面は
+`specialScreens` に navigate / fill / click / verify を手書きする。雛形は既存の未収金一覧・受注売上・出席表検索。
+
+**base の共通ヘルパー**（`this._xxx()` で呼ぶ。再実装しない）:
 
 | ヘルパー | 役割 |
 |---|---|
 | `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移 |
-| `_clearDateRangeFields()` | `date_group1_rstart` / `rend` を空にする（既定で今日に絞られる画面用） |
+| `_clearDateRangeFields()` | `date_group1_rstart` / `rend` を空にする |
 | `_clickSearchAndWait()` | `input[name="search"]` をクリックし `a.listViewTdLinkS1` を待つ |
 | `_verifyResultsExist()` / `_verifyRecordInResults(text)` | 結果リンクの存在・文言確認 |
-
-**結果セレクタや検索ボタンが標準と違う画面**（未収金一覧・受注売上・出席表など）は、
-共通ヘルパーを使わず画面固有の `click…AndWait` / `verify…` を書く。雛形は `IchiranPage.js` の該当ブロック。
-
-> テキスト入力は `fillTextFieldsByName`（`FORM_FILL_FAST` で高速/安全を自動切替）。`executeScript` を Page Object に直書きしない。
-> `selectOption` は change イベントが必要なため個別に呼ぶ。
 
 ---
 
