@@ -28,8 +28,8 @@
     # ズレがあれば exit 1（npm run docs:check-refs / CI 用）
     python scripts/docs/check_doc_refs.py --check
 
-    # 特定ファイルだけ
-    python scripts/docs/check_doc_refs.py docs/shimamura/syokai_flow_page_guide.md
+    # 特定ファイル・ディレクトリだけ（ディレクトリは配下の *.md を再帰的に対象にする）
+    python scripts/docs/check_doc_refs.py docs/shimamura .claude/skills/shimamura-ichiran-dev
 
 作成日: 2026-09-10（Issue #202）
 """
@@ -208,7 +208,15 @@ def check_functions(doc: Path, lines: list[str], defined: set[str], ignored: set
 
 def iter_docs(explicit: list[str]) -> list[Path]:
     if explicit:
-        return [Path(p).resolve() if Path(p).is_absolute() else (ROOT / p).resolve() for p in explicit]
+        docs: list[Path] = []
+        for p in explicit:
+            target = Path(p).resolve() if Path(p).is_absolute() else (ROOT / p).resolve()
+            # ディレクトリ指定は配下の *.md を再帰的に展開する
+            if target.is_dir():
+                docs.extend(sorted(target.rglob("*.md")))
+            else:
+                docs.append(target)
+        return docs
     docs: list[Path] = []
     for pattern in DOC_GLOBS:
         for doc in sorted(ROOT.glob(pattern)):
