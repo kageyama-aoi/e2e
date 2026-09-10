@@ -38,8 +38,9 @@
 - `npm run docs:update-readme-map` README のディレクトリツリーを自動更新。
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
-- `npm run docs:all` ツリー＋カタログをまとめて更新。
-- ツリーとカタログは `.githooks/pre-commit` で `tests/` 変更時に自動再生成される（`npm install` の postinstall で有効化）。
+- `npm run docs:menu-coverage` tframe アイコン別マッピング表（`docs/tframe/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。
+- `npm run docs:all` ツリー＋カタログ＋メニュー表をまとめて更新。
+- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。
 
 ## ディレクトリ配置ルール
 
@@ -48,7 +49,7 @@
 | ディレクトリ | 置いてよいもの | 置いてはいけないもの |
 |---|---|---|
 | `tests/` | テストシナリオ（`*_test.js`）。`<product>/util/` にのみ GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾）を許可 | Page Object、汎用ユーティリティ、データ |
-| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`） | テスト入力データ、汎用ユーティリティ |
+| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`）、実機採取メニュースナップショット（`tframe/_common/menuSnapshot/*.json`） | テスト入力データ、汎用ユーティリティ |
 | `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
 | `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
 | `scripts/` | 単体で起動する補助ツール（Python・Node） | テスト実行中に `require()` されるJS |
@@ -104,6 +105,7 @@
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
 | `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
+| tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
 | **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
 
 > 参照パス・関数名のドリフトは `npm run docs:check-refs`（`scripts/docs/check_doc_refs.py`）で機械的に検出できる。
@@ -205,6 +207,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 ### tframe 画面名 ↔ ファイル名 対照表
 
 特定画面のコードを探すときに使う。`Feature('教室一覧')` で grep しても見つかる。
+
+> **route から PO/テスト/CSV を逆引きしたいときは `docs/tframe/menu_coverage.md` の
+> 「アイコン別 マッピング表」（自動生成・全画面網羅）を見ること。**
+> 下表は prefix 命名の慣習（PO 名とズレるもの等）を手短にまとめた補助。
 
 | 画面名（日本語） | テスト/CSV prefix | Page Object | URL module | 備考 |
 |---|---|---|---|---|

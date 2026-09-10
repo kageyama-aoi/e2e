@@ -1,0 +1,177 @@
+{
+  "capturedAt": "2026-09-10",
+  "profile": "tframe.juku_beta",
+  "product": "juku",
+  "baseUrl": "https://newsms.e-school.jp/beta/",
+  "uiLanguage": "ja",
+  "note": "管理者アカウントでログイン（ログイン画面の言語選択で日本語を指定）し #sideBar li.dropdown を走査して採取。route は index.php?r= の値（デコード済み）。",
+  "topMenu": [
+    { "label": "受講生", "route": "student/sw/_default" },
+    { "label": "コース", "route": "course/sw/_default" },
+    { "label": "講師", "route": "teacher/sw/_default" },
+    { "label": "マスター", "route": "staff/sw/_default" },
+    { "label": "カレンダー", "route": "calendar/sw/_default" },
+    { "label": "Eメール", "route": "email/sw/_default" },
+    { "label": "経理", "route": "smsFee/sw/_default" },
+    { "label": "レポート", "route": "report/sw/inquiryEnrollCancelReport" },
+    { "label": "ホーム", "route": "home/gw/_default" },
+    { "label": "ヘルプ", "route": "help/sw/manualList" }
+  ],
+  "sideMenu": {
+    "student": {
+      "iconLabel": "受講生",
+      "groups": [
+        { "name": "受講生", "items": [
+          { "label": "受講生登録", "route": "student/ew/_default" },
+          { "label": "受講生一覧", "route": "student/sw/_default" },
+          { "label": "コース別受講生一覧", "route": "student/sw/stByCourse" },
+          { "label": "受講生別コース一覧", "route": "student/sw/courseBySt" }
+        ] },
+        { "name": "取込", "items": [
+          { "label": "口座情報データ取込", "route": "student/ew/accountInfoDataImport" },
+          { "label": "問合せデータ取込", "route": "student/ew/stInquiryDataImport" }
+        ] },
+        { "name": "対応履歴", "items": [
+          { "label": "対応履歴一覧", "route": "infoHistory/sw/_default?menuModule=student" },
+          { "label": "対応履歴テンプレート登録", "route": "infoHistoryTemplate/ew/_default?menuModule=student" },
+          { "label": "対応履歴テンプレート一覧", "route": "infoHistoryTemplate/sw/_default?menuModule=student" }
+        ] }
+      ]
+    },
+    "course": {
+      "iconLabel": "コース",
+      "groups": [
+        { "name": "コース", "items": [
+          { "label": "コース登録", "route": "course/ew/_default" },
+          { "label": "コース一覧", "route": "course/sw/_default" },
+          { "label": "本日の出席表一覧", "route": "attendance/sw/_default" },
+          { "label": "出席表一括出力", "route": "attendance/sw/attendanceBulkOutput" }
+        ] }
+      ]
+    },
+    "teacher": {
+      "iconLabel": "講師",
+      "groups": [
+        { "name": "講師", "items": [
+          { "label": "講師登録", "route": "teacher/ew/_default" },
+          { "label": "講師一覧", "route": "teacher/sw/_default" },
+          { "label": "講師別受講生一覧", "route": "teacher/sw/teByStudent" }
+        ] },
+        { "name": "対応履歴", "items": [
+          { "label": "対応履歴一覧", "route": "infoHistory/sw/_default?menuModule=teacher" },
+          { "label": "対応履歴テンプレート登録", "route": "infoHistoryTemplate/ew/_default?menuModule=teacher" },
+          { "label": "対応履歴テンプレート一覧", "route": "infoHistoryTemplate/sw/_default?menuModule=teacher" }
+        ] }
+      ]
+    },
+    "staff": {
+      "iconLabel": "マスター",
+      "groups": [
+        { "name": "スタッフ", "items": [
+          { "label": "スタッフ登録", "route": "staff/ew/_default" },
+          { "label": "スタッフ一覧", "route": "staff/sw/_default" }
+        ] },
+        { "name": "校舎", "items": [
+          { "label": "校舎登録", "route": "branch/ew/_default" },
+          { "label": "校舎一覧", "route": "branch/sw/_default" }
+        ] },
+        { "name": "教室", "items": [
+          { "label": "教室登録", "route": "classroom/ew/_default" },
+          { "label": "教室一覧", "route": "classroom/sw/_default" }
+        ] },
+        { "name": "法人・団体", "items": [
+          { "label": "法人・団体登録", "route": "account/ew/_default" },
+          { "label": "法人・団体一覧", "route": "account/sw/_default" }
+        ] }
+      ]
+    },
+    "calendar": {
+      "iconLabel": "カレンダー",
+      "groups": [
+        { "name": "カレンダー", "items": [
+          { "label": "今日のコーススケジュール", "route": "calendar/sw/_default?calRowType=course" },
+          { "label": "今日の講師スケジュール", "route": "calendar/sw/_default?calRowType=teacher" },
+          { "label": "今日の教室スケジュール", "route": "calendar/sw/_default?calRowType=classroom" }
+        ] },
+        { "name": "入退室", "items": [
+          { "label": "入退記録登録", "route": "entranceLog/ew/_default" },
+          { "label": "入退記録一覧", "route": "entranceLog/sw/_default" }
+        ] }
+      ]
+    },
+    "email": {
+      "iconLabel": "Eメール",
+      "groups": [
+        { "name": "Eメール", "items": [
+          { "label": "Eメール一覧", "route": "email/sw/_default" },
+          { "label": "Eメールテンプレート登録", "route": "emailTemplate/ew/_default" },
+          { "label": "Eメールテンプレート一覧", "route": "emailTemplate/sw/_default" },
+          { "label": "Eメールテンプレートカテゴリ登録", "route": "emailTemplateCategory/ew/_default" },
+          { "label": "Eメールテンプレートカテゴリ一覧", "route": "emailTemplateCategory/sw/_default" }
+        ] },
+        { "name": "名簿リスト", "items": [
+          { "label": "名簿リスト登録", "route": "prospectList/ew/_default" },
+          { "label": "名簿リスト一覧", "route": "prospectList/sw/_default" }
+        ] },
+        { "name": "お知らせ", "items": [
+          { "label": "お知らせ登録", "route": "announcement/ew/_default" },
+          { "label": "お知らせ一覧", "route": "announcement/sw/_default" }
+        ] },
+        { "name": "連絡", "items": [
+          { "label": "連絡一覧", "route": "contact/sw/_default" }
+        ] },
+        { "name": "アンケート", "items": [
+          { "label": "アンケート登録", "route": "poll/ew/_default" },
+          { "label": "アンケート一覧", "route": "poll/sw/_default" }
+        ] }
+      ]
+    },
+    "smsFee": {
+      "iconLabel": "経理",
+      "groups": [
+        { "name": "経理", "items": [
+          { "label": "料金一覧", "route": "smsFee/sw/_default" },
+          { "label": "契約一覧", "route": "smsContract/sw/_default" },
+          { "label": "入金一覧", "route": "smsPayment/sw/_default" },
+          { "label": "未収金", "route": "smsTransaction/sw/unpaidAmountList" },
+          { "label": "翌月月謝一括作成", "route": "smsFee/ew/tuitionFeeBulkCreate" },
+          { "label": "一括入金処理", "route": "smsPayment/sw/batchPayment" }
+        ] },
+        { "name": "料金マスタ作成", "items": [
+          { "label": "料金マスタ作成", "route": "smsFeeMaster/ew/_default" },
+          { "label": "料金マスタ一覧", "route": "smsFeeMaster/sw/_default" },
+          { "label": "料金パッケージ作成", "route": "smsFeeMasterPackage/ew/_default" },
+          { "label": "料金パッケージ一覧", "route": "smsFeeMasterPackage/sw/_default" }
+        ] },
+        { "name": "入出金", "items": [
+          { "label": "入出金一覧", "route": "smsTransaction/sw/_default" },
+          { "label": "口座振替請求データ作成", "route": "bankTransfer/ew/bankTransferExport" },
+          { "label": "口座振替請求データ読込", "route": "bankTransfer/ew/bankTransferImport" },
+          { "label": "口座振替データ履歴", "route": "bankActionsHistory/sw/_default" }
+        ] }
+      ]
+    },
+    "report": {
+      "iconLabel": "レポート",
+      "groups": [
+        { "name": "受講生レポート", "items": [
+          { "label": "問合せ・入学・退学レポート", "route": "report/sw/inquiryEnrollCancelReport" },
+          { "label": "受講生データ組合せレポート", "route": "report/sw/stDataCombinedReport" },
+          { "label": "受講生スケジュールレポート", "route": "report/sw/stScheduleReport" }
+        ] },
+        { "name": "講師レポート", "items": [
+          { "label": "講師スケジュールレポート", "route": "report/sw/teScheduleReport" }
+        ] }
+      ]
+    },
+    "help": {
+      "iconLabel": "ヘルプ",
+      "groups": [
+        { "name": "ヘルプ", "items": [
+          { "label": "全体説明", "route": "cmn/gw/help" },
+          { "label": "マニュアル一覧", "route": "help/sw/manualList" }
+        ] }
+      ]
+    }
+  }
+}

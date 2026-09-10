@@ -38,8 +38,9 @@
     "docs:update-readme-map": "python scripts/docs/tree_generator.py -u",
     "docs:tree:file": "python scripts/docs/tree_generator.py -o docs/tree.md",
     "docs:catalog": "python scripts/docs/gen_test_catalog.py",
+    "docs:menu-coverage": "node scripts/docs/gen_tframe_menu_coverage.js",
     "docs:check-refs": "python scripts/docs/check_doc_refs.py --check",
-    "docs:all": "npm run docs:update-readme-map && npm run docs:catalog"
+    "docs:all": "npm run docs:update-readme-map && npm run docs:catalog && npm run docs:menu-coverage"
   },
   "keywords": [
     "codeceptjs",

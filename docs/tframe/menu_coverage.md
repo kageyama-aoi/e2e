@@ -1,10 +1,12 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-10（初版 #196 / パターン分類 #197 / 経理一覧系5画面 #198 / Eメール系一覧6画面 #199）
+最終更新: 2026-09-10（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化）
 
-実機採取: `tframe.culture_beta`（`https://newculture.e-school.jp/beta/`）/ `tframe.juku_beta`（`https://newsms.e-school.jp/beta/`）を
-管理者アカウントでログインし、左サイドメニュー（`#sideBar`）を全アイコン展開して採取。
-生データは `scripts/output/tframe_menus/culture_beta.json` / `juku_beta.json`（※ `output/` は gitignore のため付録として本ファイル末尾にも全文を保持）。
+- **アイコン別 マッピング表は自動生成**（`node scripts/docs/gen_tframe_menu_coverage.js` / commit 時にも自動再生成）。
+  入力 = `pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`（実機採取・採取日は各 JSON の `capturedAt`）
+  × `pages/tframe/screens/*.js` の route 参照 × `tests/tframe/page/*_test.js`。
+- 散文セクション（差分サマリ / `sideMenus.js` とのズレ / PO無し画面のバケット分類 / フェーズ2 / 付録）は手動メンテ。
+- メニューが改定されたら `menuSnapshot/*.json` を実機採取し直す（将来 `scripts/html/fetch_tframe_menus.js` で自動化予定）。
 
 ---
 
@@ -79,138 +81,139 @@
 
 ## アイコン別 マッピング表
 
+<!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_tframe_menu_coverage.js。手で編集しない -->
+
+> この表は `pages/tframe/_common/menuSnapshot/*.json`（実機採取・採取日は各 JSON の `capturedAt`）×
+> `pages/tframe/screens/*.js` の route 参照 × `tests/tframe/page/*_test.js` から自動生成。
+> **手で編集しない** — メニューが変わったらスナップショットを更新して `npm run docs:menu-coverage`。
+
+- **C / J** … その画面が culture_beta / juku_beta の左メニューに項目として存在するか（`●` 有 / `-` 無）
+- **Page Object** … その route へ遷移するメソッドを持つ `pages/tframe/screens/*.js`
+- **登録 / 一覧テスト** … その画面を対象にした `*_touroku_test.js` / `*_ichiran_test.js`
+
 ### 受講生（icon: `student`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 受講生登録 | `student/ew/_default` | ● | ● | ✓ JukuseiPage | ✓ `jukusei_touroku_test.js` |
-| 受講生一覧 | `student/sw/_default` | ● | ● | ✓ JukuseiPage | ✓ `jukusei_ichiran_test.js` / `jukusei_test.js` / `jukusei_ichiran_extract_test.js`(POC) |
-| コース別受講生一覧 | `student/sw/stByCourse` | ● | ● | ✓ JukuseiPage | ✓ `stByCourse_ichiran_test.js` |
-| 受講生別コース一覧 | `student/sw/courseBySt` | ● | ● | ✓ JukuseiPage | ✓ `courseBySt_ichiran_test.js` |
-| 口座情報データ取込 | `student/ew/accountInfoDataImport` | - | ● | ✗ | ✗ |
-| 問合せデータ取込 | `student/ew/stInquiryDataImport` | - | ● | ✗ | ✗ |
-| 対応履歴一覧（受講生） | `infoHistory/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistory_ichiran_test.js` |
-| 対応履歴テンプレート登録（受講生） | `infoHistoryTemplate/ew/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_touroku_test.js` |
-| 対応履歴テンプレート一覧（受講生） | `infoHistoryTemplate/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_ichiran_test.js` |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 受講生登録 | `student/ew/_default` | ● | ● | ✓ JukuseiPage | ✓ `jukusei_touroku_test.js` | ✗ |  |
+| 受講生一覧 | `student/sw/_default` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `jukusei_ichiran_test.js` | `jukusei_ichiran_extract_test.js` |
+| コース別受講生一覧 | `student/sw/stByCourse` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `stByCourse_ichiran_test.js` |  |
+| 受講生別コース一覧 | `student/sw/courseBySt` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `courseBySt_ichiran_test.js` |  |
+| 対応履歴一覧 | `infoHistory/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistory_ichiran_test.js` |  |
+| 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_touroku_test.js` | ✗ |  |
+| 対応履歴テンプレート一覧 | `infoHistoryTemplate/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistoryTemplate_ichiran_test.js` |  |
+| 口座情報データ取込 | `student/ew/accountInfoDataImport` | - | ● | ✗ | ✗ | ✗ |  |
+| 問合せデータ取込 | `student/ew/stInquiryDataImport` | - | ● | ✗ | ✗ | ✗ |  |
 
 ### コース（icon: `course`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| コース登録 | `course/ew/_default` | ● | ● | ✓ CoursePage | ✓ `course_touroku_test.js` |
-| コース一覧 | `course/sw/_default` | ● | ● | ✓ CoursePage | ✓ `course_ichiran_test.js` / `course_test.js` |
-| コース別商品一覧 | `course/sw/proByCourse` | ● | - | ✓ CoursePage | ✓ `proByCourse_ichiran_test.js` |
-| 本日の出席表一覧 | `attendance/sw/_default` | ● | ● | ✗ | ✗ |
-| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | ● | ● | ✗ | ✗ |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| コース登録 | `course/ew/_default` | ● | ● | ✓ CoursePage | ✓ `course_touroku_test.js` | ✗ |  |
+| コース一覧 | `course/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `course_ichiran_test.js` |  |
+| コース別商品一覧 | `course/sw/proByCourse` | ● | - | ✓ CoursePage | ✗ | ✓ `proByCourse_ichiran_test.js` |  |
+| 本日の出席表一覧 | `attendance/sw/_default` | ● | ● | ✗ | ✗ | ✗ |  |
+| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | ● | ● | ✗ | ✗ | ✗ |  |
 
 ### 講師（icon: `teacher`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 講師登録 | `teacher/ew/_default` | ● | ● | ✓ KoshiPage | ✓ `koshi_touroku_test.js` |
-| 講師一覧 | `teacher/sw/_default` | ● | ● | ✓ KoshiPage | ✓ `koshi_ichiran_test.js` / `koshi_test.js` |
-| 講師別受講生一覧 | `teacher/sw/teByStudent` | ● | ● | ✓ KoshiPage | ✓ `teByStudent_ichiran_test.js` |
-| 対応履歴一覧（講師） | `infoHistory/sw/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistory_ichiran_test.js` |
-| 対応履歴テンプレート登録（講師） | `infoHistoryTemplate/ew/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✗ （CSV に `menuModule=teacher` 行が無い。PO は対応済み） |
-| 対応履歴テンプレート一覧（講師） | `infoHistoryTemplate/sw/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_ichiran_test.js` |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 講師登録 | `teacher/ew/_default` | ● | ● | ✓ KoshiPage | ✓ `koshi_touroku_test.js` | ✗ |  |
+| 講師一覧 | `teacher/sw/_default` | ● | ● | ✓ KoshiPage | ✗ | ✓ `koshi_ichiran_test.js` |  |
+| 講師別受講生一覧 | `teacher/sw/teByStudent` | ● | ● | ✓ KoshiPage | ✗ | ✓ `teByStudent_ichiran_test.js` |  |
+| 対応履歴一覧 | `infoHistory/sw/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistory_ichiran_test.js` |  |
+| 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_touroku_test.js` | ✗ |  |
+| 対応履歴テンプレート一覧 | `infoHistoryTemplate/sw/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistoryTemplate_ichiran_test.js` |  |
 
 ### マスター（icon: `staff`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| スタッフ登録 | `staff/ew/_default` | ● | ● | ✓ StaffPage | ✓ `staff_touroku_test.js` |
-| スタッフ一覧 | `staff/sw/_default` | ● | ● | ✓ StaffPage | ✓ `staff_ichiran_test.js` |
-| 校舎登録 | `branch/ew/_default` | - | ● | ✓ BranchPage | ✓ `branch_touroku_test.js` |
-| 校舎一覧 | `branch/sw/_default` | ● | ● | ✓ BranchPage | ✓ `branch_ichiran_test.js` |
-| 教室登録 | `classroom/ew/_default` | ● | ● | ✓ ClassroomPage | ✓ `kyoshitsu_touroku_test.js` |
-| 教室一覧 | `classroom/sw/_default` | ● | ● | ✓ ClassroomPage | ✓ `kyoshitsu_ichiran_test.js` |
-| 法人・団体登録 | `account/ew/_default` | ● | ● | ✓ AccountPage | ✓ `account_touroku_test.js` |
-| 法人・団体一覧 | `account/sw/_default` | ● | ● | ✓ AccountPage | ✓ `account_ichiran_test.js` |
-
-> マスターメニュー全体の遷移確認は `master_menu_test.js`（MasterMenuPage）。
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| スタッフ登録 | `staff/ew/_default` | ● | ● | ✓ StaffPage | ✓ `staff_touroku_test.js` | ✗ |  |
+| スタッフ一覧 | `staff/sw/_default` | ● | ● | ✓ StaffPage | ✗ | ✓ `staff_ichiran_test.js` |  |
+| 校舎一覧 | `branch/sw/_default` | ● | ● | ✓ BranchPage | ✗ | ✓ `branch_ichiran_test.js` |  |
+| 校舎登録 | `branch/ew/_default` | - | ● | ✓ BranchPage | ✓ `branch_touroku_test.js` | ✗ |  |
+| 教室登録 | `classroom/ew/_default` | ● | ● | ✓ ClassroomPage | ✓ `kyoshitsu_touroku_test.js` | ✗ |  |
+| 教室一覧 | `classroom/sw/_default` | ● | ● | ✓ ClassroomPage | ✗ | ✓ `kyoshitsu_ichiran_test.js` |  |
+| 法人・団体登録 | `account/ew/_default` | ● | ● | ✓ AccountPage | ✓ `account_touroku_test.js` | ✗ |  |
+| 法人・団体一覧 | `account/sw/_default` | ● | ● | ✓ AccountPage | ✗ | ✓ `account_ichiran_test.js` |  |
 
 ### カレンダー（icon: `calendar`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 今日のコース／講師／教室スケジュール | `calendar/sw/_default?calRowType=course\|teacher\|classroom` | ● | ● | △ CalendarPage（menu-nav） | ✓ `calendar_test.js`（表示・基本操作） |
-| 入退記録登録 | `entranceLog/ew/_default` | (空) | ● | ✗ | ✗ |
-| 入退記録一覧 | `entranceLog/sw/_default` | (空) | ● | ✗ | ✗ |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
+| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
+| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
+| 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
+| 入退記録一覧 | `entranceLog/sw/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
 
 ### Eメール（icon: `email`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| Eメール一覧 | `email/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_ichiran_test.js`（juku_beta 主。menu-nav は `EmailPage`） |
-| Eメールテンプレート登録 | `emailTemplate/ew/_default` | ● | ● | ✗ | △ （`email_test.js` のメニュー巡回のみ） |
-| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_template_ichiran_test.js`（juku_beta 主） |
-| Eメールテンプレートカテゴリ登録 | `emailTemplateCategory/ew/_default` | ● | ● | ✗ | △ |
-| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `email_template_category_ichiran_test.js`（juku_beta 主） |
-| 名簿リスト登録 | `prospectList/ew/_default` | ● | ● | ✗ | ✗ |
-| 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `prospect_list_ichiran_test.js`（juku_beta 主） |
-| お知らせ登録 | `announcement/ew/_default` | ● | ● | ✗ | ✗ |
-| お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `announcement_ichiran_test.js`（juku_beta 主） |
-| 連絡一覧 | `contact/sw/_default` | (空) | ● | ✗ | ✗ |
-| アンケート登録 | `poll/ew/_default` | ● | ● | ✗ | ✗ |
-| アンケート一覧 | `poll/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✓ `poll_ichiran_test.js`（juku_beta 主） |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| Eメール一覧 | `email/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_ichiran_test.js` |  |
+| Eメールテンプレート登録 | `emailTemplate/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| Eメールテンプレート一覧 | `emailTemplate/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_template_ichiran_test.js` |  |
+| Eメールテンプレートカテゴリ登録 | `emailTemplateCategory/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_template_category_ichiran_test.js` |  |
+| 名簿リスト登録 | `prospectList/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `prospect_list_ichiran_test.js` |  |
+| お知らせ登録 | `announcement/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `announcement_ichiran_test.js` |  |
+| 連絡一覧 | `contact/sw/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| アンケート登録 | `poll/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| アンケート一覧 | `poll/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `poll_ichiran_test.js` |  |
 
 ### 経理（icon: `smsFee`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 料金一覧 | `smsFee/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `fee_ichiran_test.js`（juku_beta 主） |
-| 契約一覧 | `smsContract/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `contract_ichiran_test.js`（juku_beta 主） |
-| 入金一覧 | `smsPayment/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `payment_ichiran_test.js`（juku_beta 主） |
-| 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | ✓ KeiriIchiranPage | ✓ `unpaid_amount_ichiran_test.js`（juku_beta 主） |
-| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | △ menu-nav | △ |
-| 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | △ menu-nav | △ |
-| 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `transaction_ichiran_test.js`（juku_beta 主） |
-| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ |
-| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ |
-| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✗ | ✗ |
-| **商品登録** | `product/ew/_default` | ● | - | ✓ ShohinPage | ✓ `shohin_touroku_test.js` |
-| **商品一覧** | `product/sw/_default` | ● | - | ✓ ShohinPage | ✓ `shohin_ichiran_test.js` |
-| **料金マスタ作成** | `smsFeeMaster/ew/_default` | - | ● | ✓ RyokinMasterPage | ✓ `ryokin_master_touroku_test.js` |
-| **料金マスタ一覧** | `smsFeeMaster/sw/_default` | - | ● | ✓ RyokinMasterPage | ✓ `ryokin_master_ichiran_test.js` |
-| **料金パッケージ作成** | `smsFeeMasterPackage/ew/_default` | - | ● | ✓ RyokinPackagePage | ✓ `ryokin_package_touroku_test.js` |
-| **料金パッケージ一覧** | `smsFeeMasterPackage/sw/_default` | - | ● | ✓ RyokinPackagePage | ✓ `ryokin_package_ichiran_test.js` |
-| **調整金登録** | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` |
-| **講師謝礼一覧** | `shareiDetail/sw/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_ichiran_test.js` |
-| **講師謝礼計算** | `shareiDetail/sw/teRewardCalc` | ● | - | ✗ | ✗ |
-| **講師謝礼合計計算** | `shareiTotal/sw/teRewardTotalCalc` | ● | - | ✗ | ✗ |
-| **講師謝礼合計一覧** | `shareiTotal/sw/_default` | ● | - | ✗ | ✗ |
-| **講師謝礼明細（個人）** | `shareiDetail/sw/teacherRewardStatement` | ● | - | ✗ | ✗ |
-| **講師謝礼明細（法人）** | `shareiDetail/sw/companyRewardStatement` | ● | - | ✗ | ✗ |
-| **当月謝礼明細（個人）** | `shareiDetail/sw/monthRewardStatement` | ● | - | ✗ | ✗ |
-| **当月謝礼明細（法人）** | `shareiDetail/sw/companyMonthRewardStatement` | ● | - | ✗ | ✗ |
-| **支払調書** | `shareiTotal/sw/paymentStatement` | ● | - | ✗ | △ 支払調書データ取得 API のみ（`flow/96-60_teacher_payment_report_test.js`） |
-
-> culture_beta の経理グループ構成 = 経理 / 商品 / 入出金 / 講師謝礼
-> juku_beta の経理グループ構成 = 経理 / 料金マスタ作成 / 入出金
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 料金一覧 | `smsFee/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `fee_ichiran_test.js` |  |
+| 契約一覧 | `smsContract/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `contract_ichiran_test.js` |  |
+| 入金一覧 | `smsPayment/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `payment_ichiran_test.js` |  |
+| 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `unpaid_amount_ichiran_test.js` |  |
+| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 商品登録 | `product/ew/_default` | ● | - | ✓ ShohinPage | ✓ `shohin_touroku_test.js` | ✗ |  |
+| 商品一覧 | `product/sw/_default` | ● | - | ✓ ShohinPage | ✗ | ✓ `shohin_ichiran_test.js` |  |
+| 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `transaction_ichiran_test.js` |  |
+| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 調整金登録 | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` | ✗ |  |
+| 講師謝礼一覧 | `shareiDetail/sw/_default` | ● | - | ✓ ChosekinPage | ✗ | ✓ `chosekin_ichiran_test.js` |  |
+| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 支払調書 | `shareiTotal/sw/paymentStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 料金マスタ作成 | `smsFeeMaster/ew/_default` | - | ● | ✓ RyokinMasterPage | ✓ `ryokin_master_touroku_test.js` | ✗ |  |
+| 料金マスタ一覧 | `smsFeeMaster/sw/_default` | - | ● | ✓ RyokinMasterPage | ✗ | ✓ `ryokin_master_ichiran_test.js` |  |
+| 料金パッケージ作成 | `smsFeeMasterPackage/ew/_default` | - | ● | ✓ RyokinPackagePage | ✓ `ryokin_package_touroku_test.js` | ✗ |  |
+| 料金パッケージ一覧 | `smsFeeMasterPackage/sw/_default` | - | ● | ✓ RyokinPackagePage | ✗ | ✓ `ryokin_package_ichiran_test.js` |  |
 
 ### レポート（icon: `report`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | ● | ● | △ ReportPage（menu-nav） | △ `report_test.js` |
-| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | ● | ● | △ menu-nav | △ |
-| 受講生スケジュールレポート | `report/sw/stScheduleReport` | ● | ● | △ menu-nav | △ |
-| 講師スケジュールレポート | `report/sw/teScheduleReport` | ● | ● | △ menu-nav | △ |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
+| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
+| 受講生スケジュールレポート | `report/sw/stScheduleReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
+| 講師スケジュールレポート | `report/sw/teScheduleReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
 
 ### ヘルプ（icon: `help`）
 
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| 全体説明 | `cmn/gw/help` | ● | ● | △ HelpPage（menu-nav） | △ `help_test.js` |
-| マニュアル一覧 | `help/sw/manualList` | ● | ● | △ HelpPage（menu-nav） | △ `help_test.js` |
+| 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
+|---|---|:-:|:-:|---|---|---|---|
+| 全体説明 | `cmn/gw/help` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `help_test.js` |
+| マニュアル一覧 | `help/sw/manualList` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `help_test.js` |
 
-### ホーム（icon: `home` / 左サイドメニュー無し）
-
-| 画面名 | route | C | J | Page Object | テスト |
-|---|---|:-:|:-:|---|---|
-| My Home | `home/gw/_default` | ● | ● | ✓ HomePage | ✓ `home_test.js` |
-
----
+<!-- AUTOGEN:menu-table END -->
 
 ## `sideMenus.js` との差分（コード修正の入口）
 

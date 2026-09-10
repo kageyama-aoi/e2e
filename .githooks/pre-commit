@@ -23,7 +23,16 @@ if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|pages/|support/|AGENTS\.
   python scripts/docs/check_doc_refs.py --quiet || echo "[pre-commit] check_doc_refs.py 実行失敗（無視して続行）"
 fi
 
-# --- 2) tree + test catalog 再生成 ---------------------------------------------
+# --- 2) tframe アイコン別マッピング表 再生成 ---------------------------------
+if echo "$changed" | grep -qE '^(pages/tframe/screens/|pages/tframe/_common/menuSnapshot/|tests/tframe/page/|codecept\.conf\.js$)'; then
+  if command -v node >/dev/null 2>&1; then
+    echo "[pre-commit] docs/tframe/menu_coverage.md のアイコン別表を再生成..."
+    node scripts/docs/gen_tframe_menu_coverage.js && git add docs/tframe/menu_coverage.md \
+      || echo "[pre-commit] gen_tframe_menu_coverage.js 実行失敗（無視して続行）"
+  fi
+fi
+
+# --- 3) tree + test catalog 再生成 ---------------------------------------------
 echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
 
 echo "[pre-commit] docs 再生成（tree + test catalog）..."
