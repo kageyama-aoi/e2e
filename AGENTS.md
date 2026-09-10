@@ -104,6 +104,20 @@
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
 | `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
+| **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
+
+> 参照パス・関数名のドリフトは `npm run docs:check-refs`（`scripts/docs/check_doc_refs.py`）で機械的に検出できる。
+> `docs/` `.claude/skills/` `pages/` `support/` を含むコミットでは pre-commit が警告モードで自動実行する。
+
+### 計画資料（`docs/**/*_plan.md`）のステータス表記（必須）
+
+調査・導入計画の md は、半年後に読み返したとき「今の話か終わった話か」で迷わないよう、冒頭に必ず状態を書く。
+
+```
+状態: 進行中（YYYY-MM 開始） / 完了（YYYY-MM） / 廃止（理由）
+```
+
+完了した計画は削除せず、`状態: 完了` を付けて歴史資料として残してよい。
 
 ### docs/shimamura/ のサブフォルダ規約
 
@@ -159,6 +173,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - フレームワーク: CodeceptJS + Playwright、レポートは Allure。
 - テストファイル名は `*_test.js`、配置は `tests/<product>/`。
 - 1 Scenario = 1 フロー、Arrange → Act → Assert の順を意識。
+- **未完成テストは `@wip` タグで隔離する。** ひな形・「（仮）」・`pause()` 待ちなど動作が確定していないテストは
+  Scenario 名に `@wip` を付け、`run/test_descriptions.json` の説明を `[WIP] ` で始める。
+  `@wip` は `npm test` 系の既定実行と GUI の通常一覧から除外する（実行したいときは `--grep @wip` で明示）。
+  コメントに「ひな形」と書くだけでは GUI からは完成品と区別がつかない。
 - CSV の読み込みは共通ユーティリティに統一。
 - Allure 結果の構造: `allure-results/<profile>/<YYYYMMDD_HHMMSS_testname>/`。
 
@@ -206,6 +224,12 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 入金一覧（経理） | `payment_` | `KeiriIchiranPage.js` | `smsPayment` | 一覧検索のみ・juku_beta 主 |
 | 未収金一覧（経理） | `unpaid_amount_` | `KeiriIchiranPage.js` | `smsTransaction` | `sw/unpaidAmountList`・juku_beta 主 |
 | 入出金一覧（経理） | `transaction_` | `KeiriIchiranPage.js` | `smsTransaction` | `sw/_default`・juku_beta 主 |
+| Eメール一覧 | `email_` | `EmailIchiranPage.js` | `email` | 一覧検索のみ（menu-nav は `EmailPage.js`）・juku_beta 主 |
+| Eメールテンプレート一覧 | `email_template_` | `EmailIchiranPage.js` | `emailTemplate` | juku_beta 主 |
+| Eメールテンプレートカテゴリ一覧 | `email_template_category_` | `EmailIchiranPage.js` | `emailTemplateCategory` | juku_beta 主 |
+| 名簿リスト一覧 | `prospect_list_` | `EmailIchiranPage.js` | `prospectList` | juku_beta 主 |
+| お知らせ一覧 | `announcement_` | `EmailIchiranPage.js` | `announcement` | juku_beta 主 |
+| アンケート一覧 | `poll_` | `EmailIchiranPage.js` | `poll` | juku_beta 主 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
@@ -237,6 +261,40 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 と同じ役割。ただし tframe 規約に合わせて書き直す）。雛形は `pages/tframe/flow/JukuseiCourseFlowPage.js`
 と対応するテスト `tests/tframe/flow/jukusei_course_link_flow_test.js`。詳細な手順は
 `/tframe-flow-dev` スキルを参照。
+
+### shimamura テストの共通パターン
+
+**雛形は実ファイルを正とする**（SKILL.md のテンプレは骨格のみ。書き方に迷ったら以下を読む）。
+
+| 種類 | 雛形（テスト） | 雛形（Page Object / FlowPage） |
+|---|---|---|
+| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/IchiranPage.js`（メニュー定義は `pages/shimamura/_common/sideMenus.js`） |
+| 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | — |
+| 複数画面フロー | `tests/shimamura/flow/koushi_sharei_manual_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
+| セットアップ→本体の2段構成（セッションファイル受け渡し） | `tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `pages/shimamura/flow/HappyoukaiFlowPage.js` |
+
+共通ユーティリティ（**あるものを使う。FlowPage 内で再実装しない**）：
+
+| 関数 / 定数 | 置き場 | 用途 |
+|---|---|---|
+| `beforeShimamura` | `support/shimamura/hooks.js` | `Before(beforeShimamura)` でログイン＋担当者番号入力 |
+| `fillTextFieldsByName(I, fieldMap)` | `support/shimamura/utils.js` | `name=` 属性のテキスト一括入力（`FORM_FILL_FAST` で高速/安全切替） |
+| `fillTextFieldsBySelector(I, pairs)` | 同上 | `#id` 等の CSS セレクタ指定版 |
+| `assertNoShimamuraError(I, context)` | 同上 | 保存後に `#top_err_info_msg_div` が空であることを確認 |
+| `verifyValidationErrors(I, errors, container)` | 同上 | 期待エラー文言の検証 |
+| `resolveDynamicDateIfPast(I, date, label, {graceMonths})` | 同上 | CSV の過去日付を当月に自動補正（契約日=0、退会=1） |
+| `toggleGroupmenu(I, {icon_id, menuname})` | 同上 | サイドメニューの折りたたみ開閉 |
+| `clickCheckboxByLabelOrName` / `verifyCheckboxCheckedByLabelOrName` | 同上 | 特殊 DOM のチェックボックス操作 |
+| `ensureAccountTransferSchedules(I, {claimMonth, …})` | `support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
+| `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
+| `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
+
+ナビゲーション：
+- 一覧画面へは `sideMenus.js` に定義を足し、`IchiranPage._navigateViaMenu(menus.xxx)` 経由で遷移する（`SHIMAMURA_NAV=sidebar` でサイドバー経路、既定は directUrl）。
+- 管理タブ経由の遷移は `classMemberPageShimamura.navigateToAdminTab(I, tab, title)` + `clickSubMenuLink(link, title)`。
+- URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。
+
+詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。
 
 ## コミット・PR ガイドライン
 - Conventional Commits 形式を使用: `<type>(<scope>): <summary> #<issue>`

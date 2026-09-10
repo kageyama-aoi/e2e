@@ -26,6 +26,10 @@ description: |
 | **C** 配置ルールの変更・新カテゴリの追加 | `AGENTS.md` のディレクトリ配置ルール表 |
 | **D** 新スキルの追加 | `AGENTS.md` のスキル一覧 |
 | **E** `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json` |
+| **F** Page Object / utils の**共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`、`docs/<product>/` の学習ガイド、`AGENTS.md` の共通ユーティリティ一覧 |
+
+> **カテゴリ F を見落とすと何が起きるか**：コードだけ整理してスキルを放置すると、次に「〇〇テストを作って」と
+> 頼まれた瞬間に古いパターンのコードが量産され、せっかく消した重複が復活する（2026-09 shimamura 診断で実際に発生）。
 
 ---
 
@@ -41,7 +45,13 @@ git diff --stat HEAD
 git status
 ```
 
-作業内容から変更カテゴリ（A〜E）を特定する。複数該当することもある。
+作業内容から変更カテゴリ（A〜F）を特定する。複数該当することもある。
+
+カテゴリ F の判定は `git diff` に以下が含まれるかで行う：
+- `pages/` `support/` で **export されている関数名の変更・削除・追加**
+- `support/<product>/utils.js` / `constants.js` への関数・定数の追加
+- `_common/` への Mixin / ファクトリの追加
+- AGENTS.md の「雛形」として名指しされているファイルの構造変更
 
 ---
 
@@ -140,6 +150,46 @@ npm run docs:update-readme-map
 - キーは `"page/"` または `"check/"` 等のサブフォルダから始める相対パス
 - 値は何をテストしているかを20字以内で
 - **これを忘れると GUI（run_gui.py）の TestFile 欄で日本語説明が表示されない**
+- 未完成テスト（`@wip` タグ付き）は説明を `[WIP] ` で始める（AGENTS.md「テスト運用ガイド」参照）
+
+---
+
+#### カテゴリ F: Page Object / utils の共通パターン変更
+
+**1. 影響を受けるスキルを特定する**
+
+変更した関数・ファイルを名指ししているスキル・ガイドを grep する：
+
+```bash
+# 例：extractRecordId を新設し、各 FlowPage のインラインを置き換えた場合
+grep -rln "record=(\[\^&\]+)" .claude/skills docs
+# 例：IchiranPage を Mixin 化した場合
+grep -rln "IchiranPage\|navigateTo.*ListPage" .claude/skills docs
+```
+
+**2. 各 SKILL.md を更新する**（`.claude/skills/<product>-*/SKILL.md`）
+
+- 「参照すべきファイル」表：雛形・参照先が**実在する現行ファイル**を指しているか
+- Step 内のコードテンプレ：新しいユーティリティ／Mixin を使う形になっているか。
+  **テンプレはコードのコピーではなく骨格に留め、「詳細は雛形ファイル X を読む」と実ファイルへ誘導する**
+- トラブルシューティング表：解消済みの問題（例：BASE_URL 末尾スラッシュ）が残っていないか
+
+**3. `docs/<product>/` の学習ガイドを更新する**
+
+- 関数名・ファイル構成図・チェックリストが現行コードと一致しているか
+- 定数の値（例：`TIMEOUTS.SCREEN`）を本文に書いている場合は実値と照合する
+
+**4. `AGENTS.md` の共通ユーティリティ一覧を更新する**
+
+- 「tframe 登録テストの共通パターン」「shimamura テストの共通パターン」の表に新設した関数を追加、削除した関数を除去
+
+**5. 機械チェックを通す**
+
+```bash
+npm run docs:check-refs
+```
+
+存在しないパス・関数名がドキュメントに残っていれば一覧が出る。ゼロになるまで直す。
 
 ---
 
@@ -152,6 +202,7 @@ npm run docs:update-readme-map
 □ 各カテゴリのドキュメントを更新したか
 □ README.md の自動更新（npm run docs:update-readme-map）を実行したか（カテゴリAの場合）
 □ project_architecture_guide.md の最終更新日を変えたか（カテゴリAの場合）
+□ npm run docs:check-refs がゼロ件か（カテゴリFの場合）
 □ 更新したドキュメントをコミットに含めたか
 ```
 
@@ -172,3 +223,6 @@ npm run docs:update-readme-map
 | 新しいスキルを作成した | D |
 | `pages/` や `tests/` に新ディレクトリを追加した | A, C |
 | `data/tframe/` のファイルを整理した | B |
+| `support/<product>/utils.js` に共通関数を追加し、各ファイルのインラインを置き換えた | F |
+| Page Object を Mixin / ファクトリ化した、関数名を一括リネームした | F |
+| 未完成テストに `@wip` を付けた・外した | E（説明の `[WIP] ` 付け外し） |
