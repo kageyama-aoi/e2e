@@ -34,13 +34,6 @@ module.exports = {
     // 例: this.locators.otherTab('コース') は 'a.otherTab:has-text("コース")' を返す
     otherTab: (tabName) => `a.otherTab:has-text("${tabName}")`,
     subMenuLink: (linkText) => `a:has-text("${linkText}")`, // サブメニューのリンク
-    // TODO: 以下のセレクタは推測です。実際の画面に合わせて修正してください。
-    classNameInput: { name: 'name' },
-    teacherStatusSelect: { name: 'contact_status' },
-    courseCategorySelect: { name: 'course_category' },
-    searchButton: { css: 'input[type="button"][value="検索"]' },
-    searchResultsContainer: '#search_result_list', // 検索結果が表示されるコンテナ
-    searchResultLink: (className) => ({ css: `a${SELECTORS.RESULT_LINK}:has-text("${className}")` }),
 
     // 退会処理: 受講生詳細画面の個人情報1タブ操作
     taikai: {
@@ -157,42 +150,6 @@ module.exports = {
   },
 
   /**
-   * クラスを検索し、結果が表示されるのを待ちます。
-   * @param {object} searchCriteria - 検索条件
-   * @param {string} searchCriteria.className - クラス名
-   * @param {string} searchCriteria.teacherStatus - 講師のステイタス
-   * @param {string} searchCriteria.courseCategory - コースカテゴリー
-   */
-  searchClass(searchCriteria) {
-    I.say('【クラス検索】条件入力');
-    I.fillField(this.locators.classNameInput, searchCriteria.className);
-    I.selectOption(this.locators.teacherStatusSelect, searchCriteria.teacherStatus);
-    I.selectOption(this.locators.courseCategorySelect, searchCriteria.courseCategory);
-
-    I.say('【クラス検索】入力内容の確認');
-    I.seeInField(this.locators.classNameInput, searchCriteria.className);
-    I.seeInField(this.locators.teacherStatusSelect, searchCriteria.teacherStatus);
-    I.seeInField(this.locators.courseCategorySelect, searchCriteria.courseCategory);
-
-    I.say('【クラス検索】検索実行');
-    I.click(this.locators.searchButton);
-    I.waitForVisible(this.locators.searchResultsContainer, 10);
-    I.say('【クラス検索】結果表示');
-  },
-
-  /**
-   * 検索結果から指定されたクラス名のリンクをクリックします。
-   * @param {string} className - クリックするクラスの名称
-   */
-  selectClassFromSearchResult(className) {
-    I.say(`【クラス検索】結果から「${className}」を選択`);
-    const linkLocator = this.locators.searchResultLink(className);
-    I.waitForElement(linkLocator, 10);
-    I.click(linkLocator);
-    // TODO: 次のページ（クラス詳細など）が表示されたことを確認する検証を追加してください。
-  },
-
-  /**
    * 受講生詳細画面から「個人情報１」タブへ移動します。
    * 「経理処理が完了してないデータがあります」警告解消フロー（navigateToTaikaiScreen）から
    * 状態リセットのため複数回呼ばれることがあります。
@@ -303,6 +260,4 @@ module.exports = {
     this.clickSubMenuLink(l.linkName, l.linkName);
     await logScreenUrl(I, l.linkName);
   },
-
-  // TODO: これ以降のクラス受講生登録に関する操作（例: registerNewMember）をメソッドとして追加してください。
 };

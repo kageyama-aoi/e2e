@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-10 16:48:14
+Last updated: 2026-09-10 17:19:03
 
 ```text
 e2e/
@@ -284,6 +284,7 @@ e2e/
 │   │   ├── 2026-07-06-1038.md
 │   │   ├── 2026-07-06-1418.md
 │   │   ├── 2026-07-07-1619.md
+│   │   ├── 2026-09-10-1604.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -499,6 +500,10 @@ e2e/
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 
 │       ├── _common/ 
+│       │   ├── menuSnapshot/ 
+│       │   │   ├── culture_beta.json
+│       │   │   ├── juku_beta.json
+│       │   │   └── README.md
 │       │   ├── _urlPath.js
 │       │   ├── IchiranMixin.js
 │       │   ├── IchiranSearchMixin.js

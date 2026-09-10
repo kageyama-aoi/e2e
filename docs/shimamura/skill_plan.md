@@ -364,7 +364,7 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 方針:
 - **同規模のフロー（退会・経理・新画面）** → 新規ファイル（例: `TaikaiFlowPage.js`）を作成
 - **共通ナビゲーションの拡張** → `ClassMemberPage.js` に追記
-- `ClassMemberPage.js` の未使用メソッド（`searchClass` / `selectClassFromSearchResult`）は削除または統合を検討
+- ~~`ClassMemberPage.js` の未使用メソッド（`searchClass` / `selectClassFromSearchResult`）は削除または統合を検討~~ → 2026-09 に削除済み（#200 #f）
 
 ### 6-3. loadCsvWithProfile の dataDir
 

@@ -4,24 +4,19 @@
 
 const { I } = inject();
 
-const locators_2 = {
+const locators = {
   usernameField: 'input[name="user_name"]',
   passwordField: 'input[name="user_password"]',
   tantousyaNumberField: 'input[name="idnumber"]',
 };
 
-const messages_2 = {
-  tantousyaPrompt: '担当者番号を入力してください．',
+const messages = {
+  tantousyaPrompt: '担当者番号を入力してください',           // waitForText 用
+  tantousyaPromptInTbody: '担当者番号を入力してください．',   // I.see(..., 'tbody') 用（全角ピリオド付き）
   mainMenuKeyword: '管理',
 };
 
-const promt = {
-  tantousyaNumberPromptText: '担当者番号を入力してください',
-}
-
 module.exports = {
-  locators_2,
-  messages_2,
 
   /**
    * 環境変数のユーザー情報でログインする
@@ -30,7 +25,7 @@ module.exports = {
     I.say('=== ログイン 開始 ===');
     I.say('【ログイン】認証情報の入力');
     I.amOnPage('/');
-    I.waitForElement(locators_2.usernameField, 5);
+    I.waitForElement(locators.usernameField, 5);
     I.executeScript(([user, pass]) => {
       document.querySelector('input[name="user_name"]').value = user;
       document.querySelector('input[name="user_password"]').value = pass;
@@ -39,7 +34,7 @@ module.exports = {
     I.click('ログイン');
     const count = await I.grabNumberOfVisibleElements(locate('input[name="idnumber"]'));
     if (count > 0) {
-      I.see(messages_2.tantousyaPrompt, 'tbody');
+      I.see(messages.tantousyaPromptInTbody, 'tbody');
     }
     I.say('=== ログイン 終了 ===');
   },
@@ -49,7 +44,7 @@ module.exports = {
    */
   seeLoggedIn() {
     I.amOnPage('/');
-    I.see(messages_2.mainMenuKeyword, 'tbody');
+    I.see(messages.mainMenuKeyword, 'tbody');
   },
 
   /**
@@ -77,8 +72,8 @@ module.exports = {
     }
 
     I.say(`【担当者番号入力】[${tantousyaNumber}] を入力してメインメニューへ`);
-    I.waitForText(promt.tantousyaNumberPromptText, 5);
-    I.fillField(locators_2.tantousyaNumberField, String(tantousyaNumber));
+    I.waitForText(messages.tantousyaPrompt, 5);
+    I.fillField(locators.tantousyaNumberField, String(tantousyaNumber));
     I.say('【メインメニュー】遷移');
     I.click('メインメニュー');
     I.say('=== 担当者番号入力 終了 ===');

@@ -25,14 +25,14 @@ async function toggleGroupmenu(I, { icon_id, menuname }) {
 /**
  * URLの変化を監視し、ターゲットが含まれるようになったら指定要素をクリックする
  * @param {CodeceptJS.I} I - CodeceptJSのIオブジェクト
- * @param {number} maxTries - 最大待機秒数（旧: 試行回数）
+ * @param {number} maxWaitSec - URLに targetValue が含まれるまで待つ最大秒数
  * @param {string} targetValue - URLに含まれるべき文字列
  * @param {string|Object} clickElement - クリックする要素
  */
-async function verifyNavigationByUrlChange(I, maxTries, targetValue, clickElement) {
+async function verifyNavigationByUrlChange(I, maxWaitSec, targetValue, clickElement) {
   await I.waitForFunction(
     `() => window.location.href.includes('${targetValue}')`,
-    maxTries
+    maxWaitSec
   );
   I.say(`✅ URLに '${targetValue}' を検出`);
   I.click(clickElement);
