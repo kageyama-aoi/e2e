@@ -36,10 +36,10 @@ E2E テスト（Flow Page Object / CSV / テストファイル）を新規作成
 |---|---|---|
 | テストの単位 | 画面単位（登録フォーム 1 枚） | **業務フロー単位**（複数画面をまたぐ） |
 | Page Object | `pages/tframe/screens/{名前}Page.js` | `pages/shimamura/flow/{名前}FlowPage.js` |
-| フォーム入力 | `fillTextFields(I, fieldMap)`（`#id` 属性） | `executeScript` 一括 + `I.selectOption` 個別（`name=` 属性多数） |
-| 保存ボタン | `#ewSaveButton`（全画面共通） | 画面ごとに「更新」「確定」「売上計上する」など異なる |
-| エラー確認 | `submitTframeFormAndVerify()` | `verifyValidationErrors(I, errors, '#top_err_info_msg_div')` |
-| 画面遷移 | URL 直遷移（`navigateTo*()`） | `navigateToAdminTab()` + `toggleGroupmenu()` + `clickSubMenuLink()` |
+| フォーム入力 | `fillTextFields(I, fieldMap)`（`#id` 属性） | `fillTextFieldsByName(I, fieldMap)`（`name=` 属性）/ `fillTextFieldsBySelector(I, pairs)`（`#id`）+ `I.selectOption` 個別 |
+| 保存ボタン | `#ewSaveButton`（全画面共通） | 画面ごとに `input[name="save_button"]`「更新」「確定」「売上計上する」など異なる |
+| エラー確認 | `submitTframeFormAndVerify()` | 成功系 `assertNoShimamuraError(I, context)` / 異常系 `verifyValidationErrors(I, errors, SELECTORS.ERROR_CONTAINER)` |
+| 画面遷移 | URL 直遷移（`navigateTo*()`） | URL 直遷移（`index.php?module=X&action=Y`）または `navigateToAdminTab()` + `toggleGroupmenu()` + `clickSubMenuLink()` |
 | ポップアップ | tframe モーダル（同タブ） | **別タブ**（`I.switchToNextTab()` が必要） |
 
 shimamura には「フォームを1枚埋めて保存」という単純なパターンが少なく、
@@ -56,26 +56,30 @@ shimamura には「フォームを1枚埋めて保存」という単純なパタ
 候補生検索 → 詳細 → 経理ビュー A → ポップアップ（別タブ） → 経理ビュー B → 確認 のように
 **複数の画面遷移**と**別タブ操作**を含む複雑なフロー。
 
-雛形: `pages/shimamura/flow/SyokaiFlowPage.js` + `tests/shimamura/flow/syokai_touroku_test.js`
+**雛形（実ファイルが正。スキルのコードは骨格のみ）**:
+- 標準サイズ: `pages/shimamura/flow/KoushiShareiFlowPage.js` + `tests/shimamura/flow/koushi_sharei_manual_test.js`
+  （URL 直遷移 → 別タブポップアップ → フォーム入力 → `saveAndVerify` の一直線。まずこれを真似る）
+- 大規模・実行プラン付き: `pages/shimamura/flow/SyokaiFlowPage.js` + `tests/shimamura/flow/syokai_touroku_test.js`
+- セットアップ→本体の2段構成（セッションファイル受け渡し）: `pages/shimamura/flow/HappyoukaiFlowPage.js` + `happyoukai_setup_test.js` / `happyoukai_touroku_test.js`
 
 ```
-verbNoun() 関数（各ステップ。例: navigateToXxxScreen / fillXxxForm / confirmXxxSubmit）
+verbNoun() 関数（各ステップ。例: navigateToTsuikaScreen / selectTeacher / fillMainForm / saveAndVerify）
     ↓
-runXxxFlow()（オーケストレーター）
+runXxxFlow()（オーケストレーター。例: runKoushiShareiManualFlow）
     ↓
 テストファイル（Scenario から runXxxFlow() を呼ぶ）
 ```
 
 > **命名規則（AGENTS.md参照）**: 各ステップ関数は `ShouldBeOnXxx` ではなく `verbNoun`
 > （`navigateTo...` / `open...` / `fill...` / `confirm...` / `execute...` 等）で命名すること。
-> `ShouldBeOnXxx` は過去に混在していた旧パターンで、2026-07 に全廃済み（#issue参照）。
+> `ShouldBeOnXxx` は過去に混在していた旧パターンで、2026-07 に全廃済み。
 
 ### パターン B: フォーム入力型（簡易）
 
-管理タブ → 対象画面 → フォーム入力 → ボタンクリック → 結果確認 のような
-**1〜2 画面で完結**するシンプルなフロー。
+URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 のような
+**1 画面で完結**するシンプルなフロー。FlowPage を作らずテストファイル内に完結させる。
 
-雛形: `tests/shimamura/flow/keiri_hennkin_syori_test.js`（FlowPage なし・テストファイル内に完結）
+雛形: `tests/shimamura/flow/smbc_state_import_test.js`（ファイル取込）/ `tests/shimamura/flow/contact_register_test.js`（フォーム登録）
 
 ---
 
@@ -83,14 +87,18 @@ runXxxFlow()（オーケストレーター）
 
 | 目的 | 参照先 |
 |---|---|
-| フロー型 PO のパターン（複雑） | `pages/shimamura/flow/SyokaiFlowPage.js` |
-| フロー型テストの書き方 | `tests/shimamura/flow/syokai_touroku_test.js` |
-| フォーム型テストの書き方 | `tests/shimamura/flow/keiri_hennkin_syori_test.js` |
-| 退会フローの書き方（タブ遷移なし） | `tests/shimamura/flow/taikai_test.js` |
-| ナビゲーションメソッド | `pages/shimamura/_common/ClassMemberPage.js` |
-| shimamura 固有ユーティリティ | `support/shimamura/utils.js` |
-| TIMEOUTS 定数 | `support/shimamura/constants.js` |
-| CSV の形式 | `data/shimamura/syokai_touroku_data.csv` |
+| フロー型 FlowPage の雛形（標準） | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
+| フロー型 FlowPage の雛形（実行プラン付き・大規模） | `pages/shimamura/flow/SyokaiFlowPage.js` |
+| フロー型テストの書き方 | `tests/shimamura/flow/koushi_sharei_manual_test.js` / `syokai_touroku_test.js` |
+| フォーム型テストの書き方（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` / `contact_register_test.js` |
+| 退会フローの書き方（既存関数の再利用） | `tests/shimamura/flow/taikai_test.js` |
+| コース・クラスを新規作成して前提を作る | `pages/shimamura/flow/CourseClassSetupFlowPage.js` |
+| ナビゲーションメソッド | `pages/shimamura/_common/ClassMemberPage.js`（管理タブ）/ `pages/shimamura/screens/IchiranPage.js`（一覧画面経由） |
+| ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
+| shimamura 固有ユーティリティ | `support/shimamura/utils.js`（一覧は `AGENTS.md`「shimamura テストの共通パターン」） |
+| TIMEOUTS / SELECTORS 定数 | `support/shimamura/constants.js` |
+| 口座振替スケジュールの事前確保 | `support/shimamura/accountTransferSchedule.js` |
+| CSV の形式 | `data/shimamura/koushi_sharei_manual_data.csv` / `syokai_touroku_data.csv` |
 
 ---
 
@@ -115,79 +123,82 @@ runXxxFlow()（オーケストレーター）
 ### Step 2: Flow Page Object の作成
 
 `pages/shimamura/flow/{prefix}FlowPage.js` を作成する。
+**`pages/shimamura/flow/KoushiShareiFlowPage.js` をコピーして改変する**（以下は骨格のみ）。
 
 ```javascript
 'use strict';
 
 const { logScreenUrl } = require('../../../support/utils');
 const {
-  toggleGroupmenu,
-  verifyValidationErrors
+  fillTextFieldsByName,        // name= 属性のテキスト一括入力
+  fillTextFieldsBySelector,    // #id 等のセレクタ指定版
+  verifyValidationErrors,      // 異常系: 期待エラー文言の検証
+  assertNoShimamuraError,      // 成功系: エラーコンテナが空であることの確認
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
 // ローカルロケーター（この FlowPage だけで使うセレクタをまとめる）
 // エラーコンテナ・検索結果リンク等の全画面共通セレクタは SELECTORS（constants.js）を参照し、
-// このファイル内で文字列リテラルとして再定義しないこと（複数ファイルへの重複を防ぐため）。
-const LOCATORS = {
-  textbox: { field1: '#field_id_1', field2: '#field_id_2' },
-  pulldown: { area: '#area_id', school: '#school_id' },
-  button:   { save: '更新', search: '検索' },
-  screen:   { name: '〇〇画面' },
-  error:    { container: SELECTORS.ERROR_CONTAINER }
+// このファイル内で文字列リテラルとして再定義しないこと。
+const S = {
+  fields:  { field1: '#field_id_1', field2: '#field_id_2' },
+  selects: { area: 'select[name="area_id"]', school: 'select[name="school_id"]' },
+  buttons: { save: 'input[name="save_button"]' },
+  screen:  { name: '〇〇画面' },
+  error:   SELECTORS.ERROR_CONTAINER,
 };
 
 // --------- 各ステップ（verbNoun パターン） ---------
 
-async function navigateToTargetScreen(I, classMemberPageShimamura) {
+async function navigateToTargetScreen(I) {
   I.say('【画面遷移】〇〇画面へ');
-  // ナビゲーション
-  await classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名');
+  I.amOnPage(process.env.BASE_URL + '/index.php?module={Module}&action={Action}');
+  I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '〇〇画面');
-  I.waitForElement(locate('body').withText(LOCATORS.screen.name), TIMEOUTS.SCREEN);
 }
 
 async function fillTargetForm(I, input) {
   I.say('【フォーム入力】〇〇フォームへ入力');
-  // テキスト入力: executeScript で一括セット（fillField の個別呼び出しより高速）
-  const textFields = [
-    ['field1', input.field1],
-    ['field2', input.field2],
-  ].filter(([, v]) => v);
-  if (textFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, textFields);
-  }
+  fillTextFieldsBySelector(I, [
+    [S.fields.field1, input.field1],
+    [S.fields.field2, input.field2],
+  ]);
   // selectOption は change イベントが必要なため個別に
-  if (input.area) I.selectOption(LOCATORS.pulldown.area, input.area);
+  if (input.area) I.selectOption(S.selects.area, input.area);
 }
 
-async function submitAndVerify(I, expectedErrors = []) {
-  I.say('【確定/保存】');
-  I.click(LOCATORS.button.save);
+// 保存 → 「エラーが出るか、保存ボタンが消える（ページ遷移）」まで動的に待つ → 判定
+// 実装は KoushiShareiFlowPage.saveAndVerify をそのまま真似る（waitForFunction の第2引数は配列で渡す）
+async function saveAndVerify(I, expectedErrors = []) {
+  I.say('【保存】保存ボタンをクリック');
+  I.click(S.buttons.save);
+  await I.waitForFunction(
+    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
+          !document.querySelector('input[name="save_button"]'),
+    [SELECTORS.ERROR_CONTAINER],
+    TIMEOUTS.RESULT
+  );
   if (expectedErrors.length > 0) {
-    await verifyValidationErrors(I, expectedErrors, LOCATORS.error.container);
+    await verifyValidationErrors(I, expectedErrors, S.error);
     return;
   }
-  I.say('【確認】保存成功');
+  await assertNoShimamuraError(I, '登録');
+  I.say('【確認】登録成功');
 }
 
 // --------- オーケストレーター ---------
 
-async function run{FlowName}Flow(I, classMemberPageShimamura, input) {
-  await navigateToTargetScreen(I, classMemberPageShimamura);
+async function run{FlowName}Flow(I, input) {
+  await navigateToTargetScreen(I);
   await fillTargetForm(I, input);
-  await submitAndVerify(I, input.expectedErrors);
+  await saveAndVerify(I, input.expectedErrors || []);
 }
 
-module.exports = {
-  run{FlowName}Flow
-};
+module.exports = { run{FlowName}Flow };
 ```
+
+管理タブ経由でしか辿れない画面は `navigateToTargetScreen(I, classMemberPageShimamura)` として
+`classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名')` を使う（`SyokaiFlowPage.runRegistrationFlow` 参照）。
 
 > **特殊ケースの実装パターンは `references/patterns.md` を参照:**
 > - 別タブポップアップ（`switchToNextTab` の使い方・なぜ戻れるか）
@@ -287,7 +298,7 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../../support/utils');
-const { validateShimamuraEnv } = require('../../../support/shimamura/utils');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { run{FlowName}Flow } = require('../../../pages/shimamura/flow/{prefix}FlowPage');
 
 const csvData = withScenarioLabel(
@@ -302,13 +313,9 @@ const validationErrorData = withScenarioLabel(
 
 Feature('{画面名}登録フロー'); // 必ずテスト内容を表す名前にする。'Dev sandbox (@dev)' 等の仮名を残さない
 
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('shimamuraUser');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);   // ログイン＋担当者番号入力（中身をテストに書かない）
 
-Data(csvData).Scenario('{画面名}を登録できる @dev @normal', async ({ I, classMemberPageShimamura, current }) => {
+Data(csvData).Scenario('{画面名}を登録できる @dev @normal', async ({ I, current }) => {
   setBusinessLabels({ epic: '{業務名}', feature: '{画面名}登録', story: '正常フロー' });
 
   const input = {
@@ -320,12 +327,12 @@ Data(csvData).Scenario('{画面名}を登録できる @dev @normal', async ({ I,
 
   attachBusinessContext({ label: '正常フロー', input });
 
-  await run{FlowName}Flow(I, classMemberPageShimamura, input);
+  await run{FlowName}Flow(I, input);
 
   I.saveScreenshotWithTimestamp('{PREFIX}_TOUROKU_success');
 });
 
-Data(validationErrorData).Scenario('{画面名}のバリデーションエラー @dev @error', async ({ I, classMemberPageShimamura, current }) => {
+Data(validationErrorData).Scenario('{画面名}のバリデーションエラー @dev @error', async ({ I, current }) => {
   const storyLabel = current.label || 'バリデーションエラー';
   setBusinessLabels({ epic: '{業務名}', feature: '{画面名}登録', story: storyLabel });
 
@@ -337,65 +344,56 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 
   attachBusinessContext({ label: storyLabel, input, expectedErrors: input.expectedErrors });
 
-  await run{FlowName}Flow(I, classMemberPageShimamura, input);
+  await run{FlowName}Flow(I, input);
   await attachErrorScreenshot(I, '{PREFIX}_VALIDATION_ERROR');
 });
 ```
+
+管理タブ経由の画面なら Scenario の引数に `classMemberPageShimamura` を足して `run{FlowName}Flow(I, classMemberPageShimamura, input)` の形にする。
+未完成のまま止めるときは Scenario 名に `@wip` を付ける（AGENTS.md「テスト運用ガイド」）。
 
 ---
 
 ## ワークフロー（パターン B: フォーム入力型）
 
-1〜2 画面で完結する場合は FlowPage を作らず、テストファイル内に完結させる。
+1 画面で完結する場合は FlowPage を作らず、テストファイル内に完結させる。
 
-雛形: `tests/shimamura/flow/keiri_hennkin_syori_test.js`
+雛形: `tests/shimamura/flow/smbc_state_import_test.js`（ファイル取込型）/ `tests/shimamura/flow/contact_register_test.js`（フォーム登録型）
 
 ```javascript
 // セレクタをファイル先頭にまとめる（ローカル定数）
 // エラーコンテナ等の全画面共通セレクタは SELECTORS（support/shimamura/constants.js）を参照する
-const { SELECTORS } = require('../../../support/shimamura/constants');
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
+const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+
 const S = {
-  fields:  { month: '#billing_month', school: '#school_id' },
-  buttons: { search: '検索', save: '更新' },
-  result:  { table: '.listView' },
-  error:   { container: SELECTORS.ERROR_CONTAINER }
+  fields:  { field1: 'field1_name', field2: 'field2_name' },   // name= 属性
+  selects: { school: 'select[name="school_id"]' },
+  buttons: { save: 'input[name="save_button"]' },
+  error:   SELECTORS.ERROR_CONTAINER,
 };
 
-// 各ステップを async function で定義
-async function navigateToTargetScreen(I, classMemberPageShimamura) {
-  await classMemberPageShimamura.navigateToAdminTab(I, '管理タブ', 'メニュー項目');
+// 各ステップを async function で定義（テストファイル内）
+async function navigateToTargetScreen(I) {
+  I.amOnPage(process.env.BASE_URL + '/index.php?module={Module}&action={Action}');
+  I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '対象画面');
 }
 
 async function fillTargetForm(I, input) {
-  // テキスト入力: executeScript で一括セット
-  const textFields = [
-    ['month', input.month],
-  ].filter(([, v]) => v);
-  if (textFields.length > 0) {
-    I.executeScript((fields) => {
-      fields.forEach(([name, value]) => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = value;
-      });
-    }, textFields);
-  }
-  // selectOption は change イベントが必要なため個別に
-  I.selectOption(S.fields.school, input.school);
-  I.click(S.buttons.search);
+  fillTextFieldsByName(I, { [S.fields.field1]: input.field1, [S.fields.field2]: input.field2 });
+  if (input.school) I.selectOption(S.selects.school, input.school);   // change イベントが必要なため個別に
 }
 
-// Before / Scenario は通常通り
-Before(async ({ login, loginPageShimamura }) => {
-  const tantousyaNumber = validateShimamuraEnv();
-  await login('shimamuraUser');
-  await loginPageShimamura.enterTantousyaNumberAndProceed(tantousyaNumber);
-});
+Before(beforeShimamura);
 
-Data(csvData).Scenario('〇〇処理 @dev', async ({ I, classMemberPageShimamura, current }) => {
-  await navigateToTargetScreen(I, classMemberPageShimamura);
-  await fillTargetForm(I, { month: current.month, school: current.school });
+Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current }) => {
+  await navigateToTargetScreen(I);
+  await fillTargetForm(I, current);
   I.click(S.buttons.save);
+  I.waitForElement('body', TIMEOUTS.SCREEN);
+  await assertNoShimamuraError(I, '【〇〇処理】保存');
   I.saveScreenshotWithTimestamp('TARGET_FORM_result');
 });
 ```
@@ -429,3 +427,10 @@ npx codeceptjs run ./tests/shimamura/flow/{prefix}_touroku_test.js --profile shi
 **既存ファイルへの追記**（新フローが少量の場合）:
 - 流れが 3 ステップ以内なら FlowPage は不要でテストファイル内に完結させる（パターン B）
 - 既存フロー（syokai）に関連する小さな追記なら `SyokaiFlowPage.js` へ追記することも可
+
+## Step 6: ドキュメント連動（/doc-sync）
+
+- `run/test_descriptions.json` の `"shimamura"` に説明を追加（カテゴリ E）
+- `docs/shimamura/screen_navigation_diagram.md` の参照元ファイル表に追記
+- 業務仕様を調べたら `docs/shimamura/concepts/`、テストの流れは `/flow-explain` で `docs/shimamura/flow/` へ
+- 共通ユーティリティを新設・変更したら `AGENTS.md` の一覧とこのスキルも更新する（カテゴリ F）

@@ -1,12 +1,13 @@
 # SyokaiFlowPage.js 学習ガイド
 **対象**: IT新人 / E2Eテスト初学者  
-**目標**: `SyokaiFlowPage.js` を自分で読み書きできるようになる
+**目標**: `SyokaiFlowPage.js` を自分で読み書きできるようになる  
+**対応コード**: `pages/shimamura/flow/SyokaiFlowPage.js`（2026-09 時点。関数名が変わったらこのガイドも直す — AGENTS.md ドキュメント連動ルール カテゴリF）
 
 ---
 
 ## このファイルは何をするもの？
 
-`SyokaiFlowPage.js` は「受講生登録〜経理処理」の**画面操作手順書**です。
+`SyokaiFlowPage.js` は「受講生登録〜経理処理〜退会」の**画面操作手順書**です。
 
 テストファイル (`syokai_touroku_test.js`) が「何をテストするか」を書くのに対して、  
 このファイルは「どうやって画面を操作するか」を書いています。
@@ -14,7 +15,8 @@
 ```
 syokai_touroku_test.js         ← 「何をテストするか」（司令塔）
   └─ SyokaiFlowPage.js         ← 「どう操作するか」（現場作業員）
-       └─ syokai_helpers.js    ← 「データをどう計算するか」（計算係）
+       ├─ syokai_helpers.js    ← 「どのステップを実行するか」を計算する（計算係）
+       └─ support/shimamura/utils.js ← 入力・検証の共通道具（道具箱）
 ```
 
 ---
@@ -37,9 +39,9 @@ const { logScreenUrl } = require('../../../support/utils');
 
 **練習**: 以下の `require` はどこのファイルから何を借りていますか？
 ```js
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 ```
-→ 3つ上の `support/shimamura/constants.js` から `TIMEOUTS` を借りている
+→ 3つ上の `support/shimamura/constants.js` から `TIMEOUTS` と `SELECTORS` を借りている
 
 ---
 
@@ -71,19 +73,27 @@ async function goodExample() {
 
 ```js
 module.exports = {
+  KEIRI_SCREEN_B_LOCATORS,
   runRegistrationFlow,
-  ShouldBeOnKeirisyoriScreenE,
-  ShouldBeOnTaikai
+  openKeirisyoriScreenA,
+  fillKeirisyoriScreenB,
+  confirmKeirisyoriScreenE,
+  executeTaikai,
+  fillTaikaiFormAndSubmit,
+  resolveUnfinishedKeiriDataIfPresent
 };
 ```
 
 `module.exports` に書いたものだけが、他のファイルから `require` で使えます。  
-書いていない関数はこのファイルの中だけで使えるプライベートな関数です。
+書いていない関数（`searchAndSelectKouhosei` など）はこのファイルの中だけで使えるプライベートな関数です。
 
 ```
-公開（module.exports に書く）→ テストファイルから呼べる
+公開（module.exports に書く）→ テストファイルや他の FlowPage から呼べる
 非公開（書かない）          → このファイルの中だけで使う
 ```
+
+`openKeirisyoriScreenA` などが公開されているのは、月謝一括作成のセットアップ（`gessya_ikkatu_setup_test.js`）が
+「候補生検索は自前で行い、経理ビューの処理だけ借りる」形で再利用しているからです。
 
 ---
 
@@ -117,42 +127,52 @@ const url = await I.grabCurrentUrl();  // 現在のURLを取得
 
 ```js
 // 「body の中に '受講生詳細' というテキストがある要素」を待つ
-I.waitForElement(locate('body').withText('受講生詳細'), 30);
+I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
 
 // 「.listViewTdLinkS1 クラスを持つ要素」をクリック
-I.click(locate('.listViewTdLinkS1'));
+I.click(locate(SELECTORS.RESULT_LINK));
 ```
 
 ---
 
-### 2-3. `TIMEOUTS` — 待ち時間の定数
+### 2-3. `TIMEOUTS` と `SELECTORS` — 定数で管理する
 
 ```js
-const { TIMEOUTS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 
-I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);
+I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);   // 5秒
+I.waitForElement(SELECTORS.RESULT_LINK, TIMEOUTS.RESULT);     // 10秒
 ```
 
-`TIMEOUTS.SCREEN` のように名前で管理することで、「30秒待つ」という数字が何を意味するかがわかりやすくなります。数字を直書きしないのがポイントです。
+`TIMEOUTS.SCREEN`（画面タイトル待ち = 5秒）、`TIMEOUTS.RESULT`（検索結果待ち = 10秒）のように名前で管理することで、
+数字が何を意味するかがわかります。数字を直書きしないのがポイントです。
+`SELECTORS.RESULT_LINK`（`.listViewTdLinkS1`）や `SELECTORS.ERROR_CONTAINER`（`#top_err_info_msg_div`）も同じ理由で定数化されています。
 
 ---
 
 ## Level 3：SyokaiFlowPage.js の構造を読む
 
-ファイルは上から順に「小さな部品 → 大きな処理」の順で並んでいます。
+ファイルは上から順に「定数 → 小さな部品 → 画面ごとの関数 → まとめ関数」の順で並んでいます。
 
 ```
-[定数]         KEIRI_SCREEN_B_LOCATORS  ← 画面のセレクタ一覧
-[部品]         fillClassSearchForm      ← 検索フォームへの入力
-[部品]         fillAccountingDates      ← 日付入力
-[部品]         createActionExecutor     ← 実行プランを動かす仕組み
-[画面関数]     ShouldBeOnStudentGroup   ← 候補生検索ページへ遷移
-[画面関数]     ShouldBeOnKouhoseiList   ← 候補生を検索して選択
-[画面関数]     ShouldBeOnKouhouseiDetail ← 候補生詳細を確認
-[画面関数]     ShouldBeOnKeirisyoriScreenA/B/E ← 経理処理の各画面
-[画面関数]     ShouldBeOnTaikai         ← 退会処理
-[まとめ関数]   runRegistrationFlow      ← 上の画面関数を順番に呼ぶ
-[公開]         module.exports           ← 外から使えるものを宣言
+[定数]      KEIRI_SCREEN_B_LOCATORS      ← 経理ビューBのセレクタ一覧
+            KEIRI_SUBMENU                ← 「閲覧/登録・経理ビュー」サブメニューの定義
+[部品]      navigateToKeirisyoriView     ← サブメニューを開いて経理ビューへ
+            fillClassSearchForm          ← クラス選択ポップアップの検索条件入力
+            fillAccountingDates          ← 契約日・開始日・月途中チェック
+            createActionExecutor         ← 実行プランのステップを1つずつ動かす仕組み
+[画面関数]  navigateToStudentGroup       ← 候補生検索ページへ遷移
+            searchAndSelectKouhosei      ← 候補生を姓で検索して選択
+            promoteKouhoseiToStudent     ← 候補生詳細で「受講生へ移動」
+            openKeirisyoriScreenA        ← 経理ビューAで「クラス追加/更新する」
+            selectClassInPopup           ← 別タブでクラスを検索して完全一致行を選ぶ
+            fillKeirisyoriScreenB        ← 経理ビューB（クラス適用〜売上計上）
+            confirmKeirisyoriScreenE     ← 「確認完了（経理ビューへ）」
+[警告解消]  resolveUnfinishedKeiriDataIfPresent ← 「経理処理が完了してないデータがあります」を解消
+[退会]      fillTaikaiFormAndSubmit      ← 退会処理画面のフォーム入力〜更新
+            executeTaikai                ← 受講生詳細 → 個人情報1 → 退会処理 まで含む
+[まとめ]    runRegistrationFlow          ← 候補生検索〜経理ビューBまでを順番に呼ぶ
+[公開]      module.exports               ← 外から使えるものを宣言
 ```
 
 ---
@@ -161,22 +181,12 @@ I.waitForElement(locators.pulldown.area, TIMEOUTS.SCREEN);
 
 ```js
 const KEIRI_SCREEN_B_LOCATORS = {
-  textbox: {
-    keiyaku_date: '#contract_dateclass_operation',
-    kaishi_date:  '#start_dateclass_operation',
-    class_name:   '#course_name'
-  },
-  pulldown: {
-    area:             '#AN_1_area_id',
-    couse_category:   '#course_category',
-    remaining_classes:'#remaining_times'
-  },
-  button: {
-    class_select:    '#course_popup_popup_button',
-    label_class_set: 'クラス適用',
-    label_tran_set:  '売上計上する'
-  },
-  error: { container: '#top_err_info_msg_div' }
+  textbox:  { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
+  pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
+  checkbox: { mid_month: '#ltd_mid_month' },
+  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
+  screen:   { name: '受講生詳細' },
+  error:    { container: SELECTORS.ERROR_CONTAINER }
 };
 ```
 
@@ -184,6 +194,7 @@ const KEIRI_SCREEN_B_LOCATORS = {
 
 **なぜまとめるの？**  
 HTML側でIDが変わったとき、この1箇所だけ直せばすべての操作に反映されます。
+全画面共通のもの（エラーコンテナ）は `SELECTORS` から借りていて、ここで文字列を書き直していない点にも注目してください。
 
 ---
 
@@ -192,12 +203,11 @@ HTML側でIDが変わったとき、この1箇所だけ直せばすべての操�
 画面関数はすべて同じパターンで書かれています：
 
 ```js
-async function ShouldBeOnKouhoseiList(I, last_name) {
-  // ① 使うセレクタをまとめる
+async function searchAndSelectKouhosei(I, last_name) {
+  // ① 使うセレクタをまとめる（共通のものは SELECTORS から）
   const S = {
-    field:  { lastName: 'last_name' },
     button: { search: '検索' },
-    result: { list: '.listViewTdLinkS1', link: 'a.listViewTdLinkS1' }
+    result: { list: SELECTORS.RESULT_LINK, link: `a${SELECTORS.RESULT_LINK}` }
   };
 
   // ② 今何をしているかログに出す
@@ -206,8 +216,8 @@ async function ShouldBeOnKouhoseiList(I, last_name) {
   // ③ 画面が表示されるまで待つ
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
 
-  // ④ 操作する
-  I.fillField(S.field.lastName, last_name);
+  // ④ 操作する（テキスト入力は共通ユーティリティ fillTextFieldsByName で）
+  fillTextFieldsByName(I, { last_name });
   I.click(S.button.search);
   I.waitForElement(S.result.list, TIMEOUTS.RESULT);
 
@@ -230,16 +240,41 @@ async function ShouldBeOnKouhoseiList(I, last_name) {
 ```js
 async function runRegistrationFlow(I, classMemberPageShimamura, input) {
   await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
-  await ShouldBeOnStudentGroup(I, classMemberPageShimamura);
-  const student_name = await ShouldBeOnKouhoseiList(I, input.lastName);
-  await ShouldBeOnKouhouseiDetail(I, student_name);
-  await ShouldBeOnKeirisyoriScreenA(I, classMemberPageShimamura);
-  await ShouldBeOnKeirisyoriScreenB(I, input);
+  await navigateToStudentGroup(I, classMemberPageShimamura);
+  const student_name = await searchAndSelectKouhosei(I, input.lastName);
+  await promoteKouhoseiToStudent(I, student_name);
+  await openKeirisyoriScreenA(I, classMemberPageShimamura);
+  await fillKeirisyoriScreenB(I, input);
 }
 ```
 
 「個々の画面操作」を組み合わせて「業務フロー」にしている関数です。  
 これを見るだけで「何の順番で画面を操作するか」が一目でわかります。
+
+テストファイル側はこの後 `confirmKeirisyoriScreenE` → `executeTaikai` を続けて呼び、
+登録〜退会までを1シナリオで通しています。
+
+---
+
+### 3-4. `fillKeirisyoriScreenB` — 「実行プラン」という考え方
+
+経理ビューBは CSV の `breakTarget` / `breakValue` によって「契約日を空にしてエラーを出す」
+「クラス選択を飛ばす」など、意図的に一部のステップをスキップします。
+
+```js
+async function fillKeirisyoriScreenB(I, { class_name01, ..., breakTarget, breakValue, expectedErrors = [] }) {
+  const preparedInput = prepareInput({ ... });            // breakTarget に応じて入力値を書き換える
+  const { plan } = buildExecutionPlan({ ... });           // 実行するステップの一覧を作る
+  const executor = createActionExecutor(I, S, preparedInput, expectedErrors);
+  for (const step of plan) {
+    await executor.execute(step);                         // 1ステップずつ実行
+  }
+}
+```
+
+「どのステップを実行するか」の判断は `support/shimamura/syokai_helpers.js`（`prepareInput` / `buildExecutionPlan`）に
+切り出されていて、画面操作（`createActionExecutor` の中身）とは分かれています。
+「条件分岐の計算」と「ブラウザ操作」を分けておくと、計算部分は単体でテストできるからです。
 
 ---
 
@@ -248,6 +283,7 @@ async function runRegistrationFlow(I, classMemberPageShimamura, input) {
 ### 4-1. テンプレート
 
 新しい画面用の関数を書くときは、このテンプレートを使いましょう。
+関数名は `verbNoun`（動詞＋名詞）です。旧パターンの `ShouldBeOn〇〇` は使いません。
 
 ```js
 /**
@@ -255,12 +291,12 @@ async function runRegistrationFlow(I, classMemberPageShimamura, input) {
  * @param {CodeceptJS.I} I
  * @param {string} paramName - 説明
  */
-async function ShouldBeOn○○(I, paramName) {
-  // ① セレクタ定義
+async function fillSomethingForm(I, paramName) {
+  // ① セレクタ定義（共通のものは SELECTORS から）
   const S = {
-    field:  { xxx: 'input[name="xxx"]' },
-    button: { submit: '保存' },
-    screen: { name: '○○画面' }
+    button: { submit: 'input[name="save_button"]' },
+    screen: { name: '○○画面' },
+    error:  { container: SELECTORS.ERROR_CONTAINER }
   };
 
   // ② ログ
@@ -269,11 +305,14 @@ async function ShouldBeOn○○(I, paramName) {
   // ③ 画面待ち
   I.waitForElement(locate('body').withText(S.screen.name), TIMEOUTS.SCREEN);
 
-  // ④ 操作
-  I.fillField(S.field.xxx, paramName);
+  // ④ 操作（テキストは fillTextFieldsByName、セレクトは selectOption）
+  fillTextFieldsByName(I, { xxx: paramName });
   I.click(S.button.submit);
 
-  // ⑤ URLログ
+  // ⑤ 保存結果の確認
+  await assertNoShimamuraError(I, '【○○】保存');
+
+  // ⑥ URLログ
   await logScreenUrl(I, S.screen.name);
 }
 ```
@@ -282,13 +321,16 @@ async function ShouldBeOn○○(I, paramName) {
 
 ### 4-2. チェックリスト（関数を書いたら確認）
 
-- [ ] 関数名が `ShouldBeOn〇〇` または `fill〇〇` / `run〇〇` になっている
+- [ ] 関数名が `verbNoun`（`navigateTo〇〇` / `fill〇〇` / `open〇〇` / `confirm〇〇` / `execute〇〇` / `run〇〇`）になっている
 - [ ] `async` が付いている
-- [ ] セレクタが関数の中の `const S = {...}` にまとまっている
+- [ ] セレクタが関数の中の `const S = {...}` かファイル先頭の定数にまとまっている
+- [ ] エラーコンテナ・検索結果リンクは `SELECTORS` を参照している（文字列を再定義していない）
+- [ ] テキスト入力に `fillTextFieldsByName` / `fillTextFieldsBySelector` を使っている
 - [ ] `I.say(...)` でログが出る
 - [ ] 画面待ち（`waitForElement` / `waitForText`）がある
 - [ ] `await` が必要な場所に付いている（`grab系` の前）
 - [ ] 外から呼ぶ必要があれば `module.exports` に追加している
+- [ ] 同じ操作が他の FlowPage（`GessyaIkkatuFlowPage` 等）に既にないか grep した
 
 ---
 
@@ -306,22 +348,22 @@ console.log(name);  // → "かげやま"
 
 ```js
 // ❌ async を付け忘れた関数で await を使う
-function bad(I) {
+function badExample(I) {
   const name = await I.grabTextFrom('.selector');  // SyntaxError!
 }
 
 // ✅ 正しい
-async function good(I) {
+async function goodExample(I) {
   const name = await I.grabTextFrom('.selector');
 }
 ```
 
 ```js
 // ❌ 呼び出し側で await しない
-ShouldBeOnStudentGroup(I, page);  // 完了を待たずに次へ進んでしまう
+navigateToStudentGroup(I, page);  // 完了を待たずに次へ進んでしまう
 
 // ✅ 正しい
-await ShouldBeOnStudentGroup(I, page);
+await navigateToStudentGroup(I, page);
 ```
 
 ---
@@ -335,7 +377,7 @@ await ShouldBeOnStudentGroup(I, page);
 lastName,className,keiyakuDate,...
 かげやま,ピアノ水曜日_01_01,2026-04-21,...
 
-        ↓ loadCsvWithProfile()
+        ↓ loadCsvWithProfile('syokai_touroku_data', 'shimamura')
 
 【csvData（配列）】
 [{ lastName: 'かげやま', className: 'ピアノ水曜日_01_01', ... }]
@@ -347,22 +389,22 @@ current.lastName    = 'かげやま'
 current.className   = 'ピアノ水曜日_01_01'
 current.keiyakuDate = '2026-04-21'
 
-        ↓ input = { ... } で詰め替え
+        ↓ input = { ... } で詰め替え（日付は resolveDynamicDateIfPast で当月に補正）
 
 【input（SyokaiFlowPage に渡す形）】
 input.lastName     = 'かげやま'
 input.class_name01 = 'ピアノ水曜日_01_01'  ← キー名を変換
-input.keiyaku_date = '2026-04-21'          ← キー名を変換
+input.keiyaku_date = '2026-09-10'          ← 過去月だったので本日に補正された
 
         ↓ runRegistrationFlow(I, page, input)
 
 【SyokaiFlowPage.js の各関数が input を使って画面を操作】
-ShouldBeOnKouhoseiList(I, input.lastName)
+searchAndSelectKouhosei(I, input.lastName)
   → 「かげやま」で候補生を検索
 
-ShouldBeOnKeirisyoriScreenB(I, input)
+fillKeirisyoriScreenB(I, input)
   → 「ピアノ水曜日_01_01」のクラスを選択
-  → 「2026-04-21」を契約日に入力
+  → 「2026-09-10」を契約日に入力
 ```
 
 ---
@@ -372,13 +414,17 @@ ShouldBeOnKeirisyoriScreenB(I, input)
 ```
 e2e/
 ├── tests/shimamura/flow/
-│   └── syokai_touroku_test.js    ← 「何をテストするか」
+│   ├── syokai_touroku_test.js    ← 「何をテストするか」
+│   └── taikai_test.js            ← 退会だけを行うテスト（fillTaikaiFormAndSubmit を再利用）
 ├── pages/shimamura/flow/
 │   └── SyokaiFlowPage.js         ← 「どう画面を操作するか」（このガイドの対象）
+├── pages/shimamura/_common/
+│   └── ClassMemberPage.js        ← 管理タブ・サブメニューの共通ナビ
 ├── support/shimamura/
-│   ├── syokai_helpers.js         ← 「データをどう計算するか」
-│   ├── utils.js                  ← しまむら共通ユーティリティ
-│   └── constants.js              ← TIMEOUTS などの定数
+│   ├── syokai_helpers.js         ← 「どのステップを実行するか」を計算する
+│   ├── utils.js                  ← fillTextFieldsByName / assertNoShimamuraError など
+│   ├── hooks.js                  ← beforeShimamura（ログイン＋担当者番号）
+│   └── constants.js              ← TIMEOUTS / SELECTORS
 └── data/shimamura/
     └── syokai_touroku_data*.csv  ← テストデータ
 ```

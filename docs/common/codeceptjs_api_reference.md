@@ -62,20 +62,24 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
 
 **コード例 1: IDと文字列で指定**
 ```javascript
-// from: tests/shimamura/taikai_test.js
-async function ShouldBeOnTaikai(I, finalYear, finalMonth) {
+// from: pages/shimamura/flow/HappyoukaiFlowPage.js
+async function createRosterFromStudents(I, classMemberPageShimamura, { lastName, listName }) {
   // ...
-  I.fillField(S.fields.finalYear, finalYear);
-  I.fillField(S.fields.finalMonth, finalMonth);
+  I.fillField(S.studentSearch.lastName, lastName);
+  I.click(S.studentSearch.searchButton);
+  // ...
+  I.fillField(S.studentSearch.listNameField, listName);
+  I.click(S.studentSearch.saveListButton);
   // ...
 }
 ```
 **解説:**
-退会処理の画面で、最終在籍年と月を入力するために使用しています。`S.fields.finalYear`は`#final_enrollment_year`のようなCSSセレクタ（ID）を保持する変数です。
+受講生一覧で姓を入力して検索し、結果を名簿リストとして保存する処理です。`S.studentSearch.lastName`は`#last_name`のようなCSSセレクタ（ID）を保持する変数で、ファイル先頭の `S` オブジェクトにまとめています。
+複数のテキスト欄をまとめて入力する場合は `fillTextFieldsByName(I, {...})`（`support/shimamura/utils.js`）を使うのが shimamura の標準です。
 
 **コード例 2: Page Objectとsecret()の利用**
 ```javascript
-// from: pages/tframe/LoginMyPage.js
+// from: pages/tframe/auth/LoginMyPageStudentPage.js
 // ...
   login(username, password) {
     I.amOnPage(process.env.LOGIN_MYPAGE_URL);
@@ -97,7 +101,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 1: テキストでボタンを指定**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     I.selectOption('course_category','発表会');
     I.click('検索');
@@ -109,7 +113,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 2: 複雑なセレクタで要素を指定**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     const course_name = await I.grabTextFrom('a.listViewTdLinkS1');
     I.say(`リンクラベル: ${course_name}`);
@@ -128,18 +132,21 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 1: 特定の領域にテキストが表示されているか確認**
 ```javascript
-// from: tests/tframe/96-60_teacher_payment_report_test.js
-// ...
-    I.say('Step 5: レスポンス検証（現状はサーバーエラーを期待）');
-    I.see('Internal Server Error', jsonInputPage.locators.responseArea);
-// ...
+// from: pages/shimamura/flow/HappyoukaiFlowPage.js（verifyParticipation）
+  const rowXPath = `//table[contains(@class,"listView")]//tr[td[contains(., "${idnumber}")]]`;
+  I.waitForElement(rowXPath, TIMEOUTS.SCREEN);
+  if (expectedParticipating) {
+    I.see('✓', rowXPath);       // 会員番号の行に ✓ がある = 参加
+  } else {
+    I.dontSee('✓', rowXPath);   // ない = 不参加
+  }
 ```
 **解説:**
 APIのレスポンスを表示する特定の領域（`jsonInputPage.locators.responseArea`）内に、"Internal Server Error"という文字列が表示されていることを確認しています。これにより、意図したエラーハンドリングが行われているかをテストしています。
 
 **コード例 2: 要素の状態を確認**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     I.waitForElement('#tab_link_student_tab', 10);
     I.click('#tab_link_student_tab');
@@ -157,7 +164,7 @@ APIのレスポンスを表示する特定の領域（`jsonInputPage.locators.re
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   I.fillField('name', '鈴木');
   I.selectOption('display_hyouji','すべて');
@@ -181,7 +188,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   // ...
   I.waitForElement('.listViewTdLinkS1',10);
@@ -204,7 +211,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   // ...
   I.click('検索');
@@ -226,7 +233,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/shimamura_class_member_registration_test.js
+// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassOperate(){
   I.waitForElement('#tab_link_student_tab', 10);
   I.click('#tab_link_student_tab');
@@ -249,16 +256,18 @@ async function ClassOperate(){
 
 **コード例:**
 ```javascript
-// from: tests/shimamura/syokai_touroku_test.js
-async function ShouldBeOnKeirisyoriScreenB(I, { class_name01, keiyaku_date, kaishi_date }) {
+// from: pages/shimamura/flow/SyokaiFlowPage.js（createActionExecutor）
+const actions = {
+  class_select: async () => {
+    I.click(locators.button.class_select);                       // 別タブでクラス選択ポップアップが開く
+    await selectClassInPopup(I, locators, input.class_name01, input.course_category);
+  },
+  switch_to_detail: async () => {
+    I.switchToNextTab();                                         // ポップアップが閉じた後、元タブへ戻る
+    I.waitForElement(locate('body').withText(locators.screen.name), TIMEOUTS.SCREEN);
+  },
   // ...
-  I.click(S.button.class_select);
-  await ShouldBoOnClassSelectPopup(I, S, class_name01);
-
-  I.switchToNextTab();
-  I.waitForElement(locate('body').withText(S.screen.name), 5);
-  // ...
-}
+};
 ```
 
 **解説:**

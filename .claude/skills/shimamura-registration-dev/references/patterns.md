@@ -35,20 +35,24 @@ shimamura のポップアップはすべて**別タブ**で開く。選択後は
 CodeceptJS は閉じたタブを参照し続けるため、**`I.switchToNextTab()` で明示的に元タブへ戻る必要がある。**
 戻らないと次のステップで `Target page, context or browser has been closed` エラーが発生する。
 
+実装例: `KoushiShareiFlowPage.selectTeacher`（最初の結果を選ぶ）/ `SyokaiFlowPage.selectClassInPopup`（完全一致行を選ぶ）
+
 ```javascript
-async function selectFromPopupTab(I) {
-  I.say('【ポップアップ】別タブへ切替');
-  I.wait(TIMEOUTS.TAB_SWITCH);          // タブが開くまで待つ
-  I.switchToNextTab();                  // ポップアップタブへ
-  I.waitForElement('.listViewTdLinkS1', TIMEOUTS.RESULT);
-  // 検索 → クリック（query=true の場合は検索不要）
-  I.click('検索');
-  I.waitForElement('.listViewTdLinkS1', TIMEOUTS.RESULT);
-  I.click(locate('.listViewTdLinkS1').first());
-  I.wait(TIMEOUTS.TAB_SWITCH);          // ポップアップが閉じるまで待つ
-  I.switchToNextTab();                  // ← 必須: 元タブへ戻る
+// KoushiShareiFlowPage.js より
+async function selectTeacher(I) {
+  I.say('【講師選択】ポップアップを開く');
+  I.click(S.buttons.teacher_popup);
+  I.switchToNextTab();                                        // ポップアップタブへ
+  I.waitForElement(S.teacher_popup.result, TIMEOUTS.RESULT);  // a.listViewTdLinkS1
+  I.say('【講師選択】最初の結果を選択');
+  I.click(locate(S.teacher_popup.result).first());
+  // ポップアップタブが閉じた後、元のタブへ戻る
+  I.switchToNextTab();                                        // ← 必須: 元タブへ戻る
 }
 ```
+
+タブが開くまでの待ちが必要な画面は `I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();`（`SyokaiFlowPage.fillClassSearchForm`）。
+クラス名検索は前方一致で類似クラスが混入するため、`selectClassInPopup` は完全一致の XPath で行を選んでいる。
 
 > **なぜ `switchToNextTab()` で戻れるか**:
 > ポップアップタブが閉じると pages 配列から消え、`indexOf(this.page)` が -1 になる。
@@ -60,27 +64,30 @@ async function selectFromPopupTab(I) {
 
 | 目的 | コード |
 |---|---|
-| テキスト入力（複数） | `executeScript` で一括セット（下記参照）|
+| テキスト入力（`name=` 属性） | `fillTextFieldsByName(I, { last_name: v, first_name: v })`（空値は自動スキップ） |
+| テキスト入力（`#id` / 複合セレクタ） | `fillTextFieldsBySelector(I, [['#keijoubi', v], ['#houshugaku', v]])` |
 | セレクト | `I.selectOption('select[name="field"]', value)`（個別。change イベントが必要） |
-| ボタンクリック | `I.click('ボタンラベル')` または `I.click('#buttonId')` |
+| ボタンクリック | `I.click('input[name="save_button"]')` または `I.click('ボタンラベル')` |
 | URL 直遷移 | `I.amOnPage(process.env.BASE_URL + '/index.php?module=X&action=Y')` |
 
-### テキスト入力: executeScript 一括パターン（標準）
+### テキスト入力: 共通ユーティリティを使う（標準）
 
 ```javascript
-// ✅ 標準: テキスト入力は executeScript で一括セット
-const textFields = [
-  ['field1', input.field1],
-  ['field2', input.field2],
-].filter(([, v]) => v);
-if (textFields.length > 0) {
-  I.executeScript((fields) => {
-    fields.forEach(([name, value]) => {
-      const el = document.querySelector(`[name="${name}"]`);
-      if (el) el.value = value;
-    });
-  }, textFields);
-}
+const { fillTextFieldsByName, fillTextFieldsBySelector } = require('../../../support/shimamura/utils');
+
+// ✅ 標準: name= 属性なら fillTextFieldsByName（FORM_FILL_FAST=true で executeScript 一括、既定は fillField 個別）
+fillTextFieldsByName(I, {
+  last_name:  input.last_name,
+  first_name: input.first_name,
+});
+
+// ✅ #id 指定なら fillTextFieldsBySelector（常に executeScript 一括）
+fillTextFieldsBySelector(I, [
+  [S.fields.keijoubi,      input.keijoubi],
+  [S.fields.from_datetime, input.from_datetime],
+]);
+
+// ❌ 非推奨: executeScript の一括セットを FlowPage 内に直書きする（utils に同じものがある）
 ```
 
 > **例外 — 以下は通常の fillField / 個別処理を使う**
@@ -88,7 +95,8 @@ if (textFields.length > 0) {
 > | ケース | 理由 | 対処 |
 > |---|---|---|
 > | `selectOption` | change イベントが必要 | 個別に `I.selectOption()` |
-> | 郵便番号・銀行コード（AJAX 連動） | API 補完を wait で待つ必要がある | `I.fillField()` + `I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT)`（マジックナンバーを直書きしない） |
+> | 郵便番号・銀行コード（AJAX 連動） | API 補完を wait で待つ必要がある | `I.fillField()` + `I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT)`（`StudentSaikenkaiFlowPage.fillAndSaveStudentBasicInfo` 参照） |
+> | 銀行コードが keyup で補完される画面 | value 代入だけでは発火しない | `executeScript` で `el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }))`（`TeacherKeiriFlowPage.setAccountingTab` 参照） |
 > | `readonly` 属性の textarea | removeAttribute が必要 | executeScript 内で `el.removeAttribute('readonly'); el.value = value;` |
 
 ---
@@ -143,27 +151,45 @@ I.click('更新');
 ## エラー確認
 
 ```javascript
-const { verifyValidationErrors } = require('../../support/shimamura/utils');
-await verifyValidationErrors(I, expectedErrors, '#top_err_info_msg_div');
+const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { SELECTORS } = require('../../../support/shimamura/constants');
+
+// 異常系: 期待エラー文言が含まれること
+await verifyValidationErrors(I, expectedErrors, SELECTORS.ERROR_CONTAINER);
+
+// 成功系: エラーコンテナが空であること（テキストがあれば throw）
+await assertNoShimamuraError(I, '【〇〇】保存');
 ```
 
 ## URL 変化を待って要素をクリック
 
 ```javascript
-const { verifyNavigationByUrlChange } = require('../../support/shimamura/utils');
-// maxTries=5 で 1 秒ごとに URL に 'targetValue' が含まれるか確認し、見つかったらクリック
+const { verifyNavigationByUrlChange } = require('../../../support/shimamura/utils');
+// 最大 5 秒、URL に 'DWConfirmCarteKeiri_AN' が含まれるのを待ってからクリック
 await verifyNavigationByUrlChange(I, 5, 'DWConfirmCarteKeiri_AN', '確認完了（経理ビューへ）');
 ```
 
-## TIMEOUTS
+## TIMEOUTS（`support/shimamura/constants.js` の実値）
 
 ```javascript
-const { TIMEOUTS } = require('../../support/shimamura/constants');
-// TIMEOUTS.SCREEN   = 画面遷移の待機（10〜15秒程度）
-// TIMEOUTS.ELEMENT  = 要素待機（5〜10秒程度）
-// TIMEOUTS.RESULT   = 検索結果待機（15秒程度）
-// TIMEOUTS.ENABLED  = フィールドが enabled になるまで待機
-// TIMEOUTS.TAB_SWITCH = 別タブが開くまでの待機（1〜2秒程度）
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
+// TIMEOUTS.SCREEN             = 5   画面タイトルの出現待ち
+// TIMEOUTS.ELEMENT            = 10  通常の要素出現待ち
+// TIMEOUTS.RESULT             = 10  検索結果の表示待ち
+// TIMEOUTS.ENABLED            = 15  入力可能になるまでの待ち
+// TIMEOUTS.TAB_SWITCH         = 2   タブ切り替え・AJAX 再描画後の安定待ち
+// TIMEOUTS.AJAX_DEBOUNCE      = 1   郵便番号/銀行コード等の AJAX 補完待ち（標準）
+// TIMEOUTS.AJAX_DEBOUNCE_SHORT= 0.5 軽量な AJAX 補完待ち
+```
+
+## 口座振替スケジュールの事前確保
+
+月謝一括作成・発表会参加費など「対象月の料金を作る」処理は、収納業者の口座振替スケジュールが
+未登録だと処理全体が止まる（#169）。バッチ前に `ensureAccountTransferSchedules` で確保する。
+
+```javascript
+const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
+await ensureAccountTransferSchedules(I, { claimMonth: '2026-10', debitDate: '2026-10-11', depositDate: '2026-10-15' });
 ```
 
 ---
@@ -177,28 +203,31 @@ const { TIMEOUTS } = require('../../support/shimamura/constants');
 | 保存後もページに留まる（エラーも成功も同一ページ） | `I.grabTextFrom('#top_err_info_msg_div')` | 要素が常に存在するため安全 |
 | 保存成功でページ遷移する（詳細画面などへリダイレクト） | `I.executeScript(...)` で DOM を直接参照 | 遷移後に `grabTextFrom` を呼ぶと `ElementNotFound` になる |
 
-**ページ遷移する場合の実装パターン:**
+**ページ遷移する場合の実装パターン**（`KoushiShareiFlowPage.saveAndVerify` より）:
 
 ```javascript
 async function saveAndVerify(I, expectedErrors) {
-  I.click('input[name="save_button"]');
-  I.wait(TIMEOUTS.RESULT);
+  I.click(S.buttons.save);
+  // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機。固定 I.wait は使わない
+  // codeceptjs の waitForFunction は第2引数が配列でないと args として渡されないため注意
+  await I.waitForFunction(
+    ([selector]) => document.querySelector(selector)?.textContent.trim() ||
+          !document.querySelector('input[name="save_button"]'),
+    [SELECTORS.ERROR_CONTAINER],
+    TIMEOUTS.RESULT
+  );
   if (expectedErrors.length > 0) {
-    await verifyValidationErrors(I, expectedErrors, '#top_err_info_msg_div');
+    await verifyValidationErrors(I, expectedErrors, S.message.error);
     return;
   }
-  // 登録成功時はページ遷移するため grabTextFrom は使えない
-  // executeScript でDOM直接確認（要素なし=遷移=成功、テキストあり=エラー）
-  const errorText = await I.executeScript(() => {
-    const el = document.querySelector('#top_err_info_msg_div');
-    return el ? el.textContent.trim() : '';
-  });
-  if (errorText) {
-    throw new Error(`登録エラー: ${errorText}`);
-  }
+  // 登録成功時はページ遷移するため grabTextFrom は使えない → assertNoShimamuraError（executeScript で DOM 直接確認）
+  await assertNoShimamuraError(I, '登録');
   I.say('【確認】登録成功');
 }
 ```
+
+保存後に編集画面から詳細画面へ戻る画面は、`'input[name="save_button"]'` が消える代わりに
+`'input[name="edit_button"]'` が現れるのを待つ（`StudentSaikenkaiFlowPage.waitForSaveResult` / `TeacherKeiriFlowPage.setAccountingTab`）。
 
 > **なぜ try-catch では解決しないか:**
 > CodeceptJS の Recorder は `grabTextFrom` の ElementNotFound を "Uncaught" エラーとして処理するため、

@@ -141,7 +141,7 @@ flowchart TD
 | フロー | テストファイル | Page Object |
 |---|---|---|
 | 受講生登録（新規契約） | `tests/shimamura/flow/syokai_touroku_test.js` | `pages/shimamura/flow/SyokaiFlowPage.js` |
-| 退会処理 | `tests/shimamura/flow/taikai_test.js` | `pages/shimamura/flow/SyokaiFlowPage.js`（`ShouldBeOnTaikai`） |
+| 退会処理 | `tests/shimamura/flow/taikai_test.js` | `pages/shimamura/flow/SyokaiFlowPage.js`（`fillTaikaiFormAndSubmit`）＋ `pages/shimamura/_common/ClassMemberPage.js`（`navigateToTaikaiScreen`） |
 | 月謝一括作成 | `gessya_ikkatu_setup_test.js` / `gessya_ikkatu_test.js` | `pages/shimamura/flow/GessyaIkkatuFlowPage.js` |
 | 債権買取顧客情報登録 | `student_saikenkai_test.js` | `pages/shimamura/flow/StudentSaikenkaiFlowPage.js` |
 | 講師経理設定 | `teacher_keiri_setup_test.js` | `pages/shimamura/flow/TeacherKeiriFlowPage.js` |

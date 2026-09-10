@@ -1,5 +1,11 @@
 # shimamura スキル体制 導入計画
 
+状態: 完了（2026-07）— Phase 1〜4 はすべて実装済み。歴史資料として残す。
+- Phase 1/2 → `scripts/html/fetch_shimamura_screens.js` + `/shimamura-html-fetch`
+- Phase 3 → `/shimamura-ichiran-dev`（`pages/shimamura/screens/IchiranPage.js` + `_common/sideMenus.js`）
+- Phase 4 → `/shimamura-registration-dev`（`pages/shimamura/flow/*FlowPage.js`）、追加で `/shimamura-download-verify`
+- 本文中の「現状」「ギャップ」は 2026-05 時点の記述。現行の構成は `AGENTS.md`「shimamura テストの共通パターン」を参照。
+
 作成日: 2026-05-11  
 調査担当: explorer agent
 
@@ -383,4 +389,4 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 - `scripts/html/shimamura/` は存在しなかった。shimamura 用の HTML サンプルはどこにも保存されていない（tframe は `scripts/html/input/` に多数の HTML が存在）。
 - `scripts/html/input/input.html` は tframe 専用の一時貼り付け先として使われており、shimamura には流用できない。
-- `SyokaiFlowPage.js` は `pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `pages/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。
+- `SyokaiFlowPage.js` は `pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `pages/shimamura/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。
