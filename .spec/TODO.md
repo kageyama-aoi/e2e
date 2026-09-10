@@ -1,17 +1,23 @@
 # TODO - タスクリスト
 
 ## 優先度：高（Phase 2 — コード集約）
-- [ ] #d utils 集約（extractRecordId / BASE_URL / waitForSaveResult / buildTestName）— Issue #205
-- [ ] #e IchiranPage.js Mixin 化 + SKILL.md 追従
+- [ ] #e IchiranPage.js の Mixin 化（9画面ファクトリ、未収金・受注売上・出席表は例外）+ SKILL.md 追従
 
-## 優先度：低（Phase 3）
-- [ ] #f デッドコード削除・命名整理
-- [ ] #g ひな形テスト @wip 化 + class_existence_check の置換
-- [ ] #h ナビ重複統合（実機確認必須・最後）
+## 優先度：中（Phase 3 — 整理・判断もの）
+- [ ] #f デッドコード削除・命名整理（ClassMemberPage.searchClass 等 / LoginPage の locators_2, promt / shimamura_login_test の引数ずれ）
+- [ ] #g ひな形テスト @wip 化（keiri_hennkin_syori / class_member_registration）+ class_existence_check を IchiranPage に置換
+- [ ] #h ナビ重複統合（経理ビュー遷移・候補生検索・候補生昇格を Gessya 版に寄せる／#206 サイドバー展開もここで）— 実機確認必須・最後
+
+## 派生バグ（別 Issue で追跡）
+- #203 tframe 側ドキュメントの参照ドリフト 30 件
+- #206 koushi_sharei_manual がサイドバー経路で「講師謝礼」グループ未展開のため全件失敗（既存）
+- #207 koushi_sharei_tsuika の「謝礼項目なし」「報酬額なし」が期待エラー文言不一致で失敗（既存）
+- #99 講師謝礼一括取込の正常系テストデータ未整備（既存）
 
 ## 完了済み
-- [x] 診断（2026-09-10）— artifact 参照
+- [x] 診断（2026-09-10）— artifact bcca3599
 - [x] .spec/ 新サイクル開始（旧サイクルは *-2026-09-10.md にアーカイブ）— dd71498
 - [x] #a AGENTS.md / doc-sync にカテゴリF・共通ユーティリティ節・@wip・planステータス規約 — #201 / f707691
-- [x] #b check_doc_refs.py + pre-commit + npm run docs:check-refs — #202 / a4efac5（tframe 側の検出分は #203 で追跡）
+- [x] #b check_doc_refs.py + pre-commit + npm run docs:check-refs — #202 / a4efac5
 - [x] #c docs/shimamura 4本 + スキル3ファイル + codeceptjs_api_reference.md を現行に追従 — #204 / f74786b（スクリプトのディレクトリ対応 1fddf35）
+- [x] #d extractRecordId / BASE_URL / waitForSaveResult / buildTestName を support/shimamura に集約 — #205 / 8540c21
