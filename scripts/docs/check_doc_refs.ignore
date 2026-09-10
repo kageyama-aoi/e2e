@@ -3,3 +3,5 @@
 
 docs/tree.md                   # npm run docs:tree:file の出力先（生成物・未コミット）
 data/tframe/teacherSideMenu    # AGENTS.md「ファイル移動時のプロトコル」の過去例（移動済み）
+scripts/html/fetch_tframe_menus.js       # docs/tframe/menu_coverage.md フェーズ2の新設予定スクリプト（未着手）
+scripts/docs/gen_tframe_menu_coverage.js # docs/tframe/menu_coverage.md フェーズ2の新設予定スクリプト（未着手）
