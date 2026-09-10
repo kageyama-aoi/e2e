@@ -1,6 +1,6 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-10（初版・Issue #196 / PO無し画面のパターン分類を追記・Issue #197）
+最終更新: 2026-09-10（初版 #196 / PO無し画面のパターン分類 #197 / 経理一覧系5画面テスト実装 #198）
 
 実機採取: `tframe.culture_beta`（`https://newculture.e-school.jp/beta/`）/ `tframe.juku_beta`（`https://newsms.e-school.jp/beta/`）を
 管理者アカウントでログインし、左サイドメニュー（`#sideBar`）を全アイコン展開して採取。
@@ -158,13 +158,13 @@
 
 | 画面名 | route | C | J | Page Object | テスト |
 |---|---|:-:|:-:|---|---|
-| 料金一覧 | `smsFee/sw/_default` | ● | ● | △ KeiryoMasterPage（menu-nav） | △ `keiryo_master_test.js` |
-| 契約一覧 | `smsContract/sw/_default` | ● | ● | △ menu-nav | △ |
-| 入金一覧 | `smsPayment/sw/_default` | ● | ● | △ menu-nav | △ |
-| 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | △ menu-nav | △ |
+| 料金一覧 | `smsFee/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `fee_ichiran_test.js`（juku_beta 主） |
+| 契約一覧 | `smsContract/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `contract_ichiran_test.js`（juku_beta 主） |
+| 入金一覧 | `smsPayment/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `payment_ichiran_test.js`（juku_beta 主） |
+| 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | ✓ KeiriIchiranPage | ✓ `unpaid_amount_ichiran_test.js`（juku_beta 主） |
 | 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | △ menu-nav | △ |
 | 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | △ menu-nav | △ |
-| 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | △ menu-nav | △ |
+| 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✓ `transaction_ichiran_test.js`（juku_beta 主） |
 | 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ |
 | 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✗ | ✗ |
@@ -268,6 +268,10 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 検索/クリアボタン＋結果テーブルの標準構造。CSV は「空検索 / 主要条件で絞り込み」の2行が基本。
 
+> **経理一覧系5画面（料金 / 契約 / 入金 / 未収金 / 入出金）は実装済み（Issue #198・`KeiriIchiranPage.js`）**。
+> 経理系は日付レンジ既定が「当月」＋エリア/ステイタスがサーバー側にセッション記憶されるため、
+> PO 側で検索前にレンジ拡大＋主要セレクトを「すべて」へリセットしている。
+
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
 | 出席表一覧 | `attendance/sw/_default` | 両 | 「出席表編集」ボタンあり（編集導線は対象外で可） |
@@ -277,11 +281,11 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | Eメール一覧 | `email/sw/_default` | 両 | `EmailPage` に ichiran メソッドを追加する形 |
 | Eメールテンプレート一覧 | `emailTemplate/sw/_default` | 両 | |
 | Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | 両 | |
-| 料金一覧 | `smsFee/sw/_default` | 両 | 検索条件多め（select 6） |
-| 契約一覧 | `smsContract/sw/_default` | 両 | |
-| 入金一覧 | `smsPayment/sw/_default` | 両 | |
-| 未収金一覧 | `smsTransaction/sw/unpaidAmountList` | 両 | 「検索結果を名簿リストにする」ボタンあり（対象外で可） |
-| 入出金一覧 | `smsTransaction/sw/_default` | 両 | 検索条件多め |
+| ~~料金一覧~~ | `smsFee/sw/_default` | 両 | ✓ 実装済み `fee_ichiran_test.js` |
+| ~~契約一覧~~ | `smsContract/sw/_default` | 両 | ✓ 実装済み `contract_ichiran_test.js`（姓は `#last_name`） |
+| ~~入金一覧~~ | `smsPayment/sw/_default` | 両 | ✓ 実装済み `payment_ichiran_test.js` |
+| ~~未収金一覧~~ | `smsTransaction/sw/unpaidAmountList` | 両 | ✓ 実装済み `unpaid_amount_ichiran_test.js` |
+| ~~入出金一覧~~ | `smsTransaction/sw/_default` | 両 | ✓ 実装済み `transaction_ichiran_test.js` |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | 両 | シンプル |
 | 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | 両 | 集計表示 |
 | 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | 両 | 組合せ条件多め（select 9） |
@@ -344,12 +348,12 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | 口座情報データ取込 | `student/ew/accountInfoDataImport` | juku | |
 | 問合せデータ取込 | `student/ew/stInquiryDataImport` | juku | select3（取込種別など）＋ファイル |
 
-### 着手順の提案
+### 着手順の提案 / 進捗
 
-1. **第1弾**: バケット A の①〜⑤（サブグループ単位で 取得→PO→CSV→テスト を一気通貫）
-2. **第2弾**: バケット B（アンケート編集は最後に回す）
-3. **第3弾**: バケット C（出力検証方式を決めてから）
-4. **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
+- ~~**第1弾（経理一覧系5画面）**~~ … ✓ 完了（Issue #198・`KeiriIchiranPage.js` ＋ `fee_` / `contract_` / `payment_` / `unpaid_amount_` / `transaction_` の各 `*_ichiran_test.js`。juku_beta 主）
+- **次弾**: バケット A の残り（名簿リスト / お知らせ / アンケート一覧、Eメール系一覧、出席表一覧、レポート4種、口座振替データ履歴、juku 入退記録一覧・連絡一覧）
+- **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
+- **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 
 ---
 

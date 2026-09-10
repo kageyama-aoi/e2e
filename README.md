@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-01 16:01:53
+Last updated: 2026-09-10 15:37:04
 
 ```text
 e2e/
@@ -418,13 +418,16 @@ e2e/
 │       ├── branch_touroku_data.csv
 │       ├── chosekin_ichiran_search_data.csv
 │       ├── chosekin_touroku_data.csv
+│       ├── contract_ichiran_search_data.csv
 │       ├── course_ichiran_search_data.csv
 │       ├── course_touroku_data.csv
 │       ├── courseBySt_ichiran_search_data.csv
+│       ├── fee_ichiran_search_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_touroku_data.csv
 │       ├── jukusei_course_link_flow_data.csv
+│       ├── jukusei_ichiran_extract_data.csv
 │       ├── jukusei_ichiran_search_data.csv
 │       ├── jukusei_touroku_data.csv
 │       ├── koshi_ichiran_search_data.csv
@@ -432,6 +435,7 @@ e2e/
 │       ├── koshi_touroku_data_minimum.csv
 │       ├── kyoshitsu_ichiran_search_data.csv
 │       ├── kyoshitsu_touroku_data.csv
+│       ├── payment_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
 │       ├── README.md
 │       ├── ryokin_master_ichiran_search_data.csv
@@ -445,7 +449,9 @@ e2e/
 │       ├── staff_touroku_data_minimum.csv
 │       ├── stByCourse_ichiran_search_data.csv
 │       ├── teacherPaymentReportParams.js
-│       └── teByStudent_ichiran_search_data.csv
+│       ├── teByStudent_ichiran_search_data.csv
+│       ├── transaction_ichiran_search_data.csv
+│       └── unpaid_amount_ichiran_search_data.csv
 ├── env/ 
 │   ├── .env.shimamura.MySQL84_dev
 │   ├── .env.shimamura.smbcpos_training
@@ -508,6 +514,7 @@ e2e/
 │           ├── HomePage.js
 │           ├── InfoHistoryPage.js
 │           ├── JukuseiPage.js
+│           ├── KeiriIchiranPage.js
 │           ├── KeiryoMasterPage.js
 │           ├── KoshiPage.js
 │           ├── MasterMenuPage.js
@@ -809,7 +816,6 @@ e2e/
 │   │   └── util/ 
 │   │       └── login_and_hold.js
 │   ├── smoke/ 
-│   │   ├── _dummy_test.js
 │   │   └── smoke_test.js
 │   ├── taskreport/ 
 │   │   └── taskreport_sample_test.js
@@ -836,16 +842,19 @@ e2e/
 │           ├── calendar_test.js
 │           ├── chosekin_ichiran_test.js
 │           ├── chosekin_touroku_test.js
+│           ├── contract_ichiran_test.js
 │           ├── course_ichiran_test.js
 │           ├── course_test.js
 │           ├── course_touroku_test.js
 │           ├── courseBySt_ichiran_test.js
 │           ├── email_test.js
+│           ├── fee_ichiran_test.js
 │           ├── help_test.js
 │           ├── home_test.js
 │           ├── infoHistory_ichiran_test.js
 │           ├── infoHistoryTemplate_ichiran_test.js
 │           ├── infoHistoryTemplate_touroku_test.js
+│           ├── jukusei_ichiran_extract_test.js
 │           ├── jukusei_ichiran_test.js
 │           ├── jukusei_test.js
 │           ├── jukusei_touroku_test.js
@@ -856,6 +865,7 @@ e2e/
 │           ├── kyoshitsu_ichiran_test.js
 │           ├── kyoshitsu_touroku_test.js
 │           ├── master_menu_test.js
+│           ├── payment_ichiran_test.js
 │           ├── proByCourse_ichiran_test.js
 │           ├── report_test.js
 │           ├── ryokin_master_ichiran_test.js
@@ -867,8 +877,11 @@ e2e/
 │           ├── staff_ichiran_test.js
 │           ├── staff_touroku_test.js
 │           ├── stByCourse_ichiran_test.js
-│           └── teByStudent_ichiran_test.js
+│           ├── teByStudent_ichiran_test.js
+│           ├── transaction_ichiran_test.js
+│           └── unpaid_amount_ichiran_test.js
 ├── .env
+├── .gitattributes
 ├── .gitignore
 ├── _temp_refactor_run_gui.md
 ├── AGENTS.md

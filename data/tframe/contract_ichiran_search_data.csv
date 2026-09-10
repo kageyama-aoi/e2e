@@ -1,0 +1,3 @@
+scenario,dateFrom,dateTo,lastName,expectedName
+全期間・空条件検索,2015-01-01,2035-12-31,,
+受講生姓で絞り込み,2015-01-01,2035-12-31,田中,田中

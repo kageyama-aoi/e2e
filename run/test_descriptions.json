@@ -40,6 +40,7 @@
     "page/master_menu_test.js":                        "マスター設定メニューの各項目への遷移を確認",
     "page/report_test.js":                             "レポート画面の表示・出力操作を確認",
     "page/jukusei_ichiran_test.js":                    "受講生一覧の空検索と姓での絞り込み検索を確認",
+    "page/jukusei_ichiran_extract_test.js":            "受講生一覧を検索条件＋ソートキー指定で検索し、結果テーブルをCSV抽出（POC・ページ送りなし）",
     "page/course_ichiran_test.js":                     "コース一覧の空検索とコース名での絞り込み検索を確認",
     "page/koshi_ichiran_test.js":                      "講師一覧の空検索と姓での絞り込み検索を確認",
     "page/shohin_ichiran_test.js":                     "商品一覧の空検索と商品名での絞り込み検索を確認",
@@ -57,6 +58,11 @@
     "page/infoHistory_ichiran_test.js":               "対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認",
     "page/infoHistoryTemplate_ichiran_test.js":       "対応履歴テンプレート一覧の空検索とテンプレート名での絞り込みを確認",
     "page/infoHistoryTemplate_touroku_test.js":       "対応履歴テンプレートの登録フォーム入力と保存を確認",
+    "page/fee_ichiran_test.js":                       "料金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/contract_ichiran_test.js":                  "契約一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/payment_ichiran_test.js":                   "入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/unpaid_amount_ichiran_test.js":             "未収金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
+    "page/transaction_ichiran_test.js":               "入出金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

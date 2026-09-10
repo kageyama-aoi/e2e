@@ -201,6 +201,11 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 調整金（講師謝礼） | `chosekin_` | `ChosekinPage.js` | `shareiDetail` | culture_beta のみ（画面上の名称は「講師謝礼」） |
 | 料金マスタ | `ryokin_master_` | `RyokinMasterPage.js` | `smsFeeMaster` | juku_test のみ |
 | 料金パッケージ | `ryokin_package_` | `RyokinPackagePage.js` | `smsFeeMasterPackage` | juku_test のみ |
+| 料金一覧（経理） | `fee_` | `KeiriIchiranPage.js` | `smsFee` | 一覧検索のみ・juku_beta 主 |
+| 契約一覧（経理） | `contract_` | `KeiriIchiranPage.js` | `smsContract` | 一覧検索のみ・juku_beta 主 |
+| 入金一覧（経理） | `payment_` | `KeiriIchiranPage.js` | `smsPayment` | 一覧検索のみ・juku_beta 主 |
+| 未収金一覧（経理） | `unpaid_amount_` | `KeiriIchiranPage.js` | `smsTransaction` | `sw/unpaidAmountList`・juku_beta 主 |
+| 入出金一覧（経理） | `transaction_` | `KeiriIchiranPage.js` | `smsTransaction` | `sw/_default`・juku_beta 主 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`

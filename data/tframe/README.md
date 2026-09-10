@@ -37,6 +37,7 @@
 | テストファイル | CSV | 説明 |
 |---|---|---|
 | `tests/tframe/page/jukusei_ichiran_test.js` | `jukusei_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/jukusei_ichiran_extract_test.js` | `jukusei_ichiran_extract_data.csv` | POC: 検索条件＋`sortKey`/`sortDir` を指定して検索し、結果テーブル1ページ目を `output/tframe/` に CSV 抽出（ページ送りなし）。`sortKey` は画面表示言語依存の列名（juku_test は英語） |
 | `tests/tframe/page/course_ichiran_test.js` | `course_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/koshi_ichiran_test.js` | `koshi_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
 | `tests/tframe/page/shohin_ichiran_test.js` | `shohin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→特定レコード確認 |
@@ -47,6 +48,11 @@
 | `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
 | `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/fee_ichiran_test.js` | `fee_ichiran_search_data.csv` | 料金一覧（経理）。B: 全期間検索→実データ行確認 / C: 受講生姓で絞り込み。dateFrom/dateTo で日付レンジを広げる（既定は当月）。※juku_beta 主 |
+| `tests/tframe/page/contract_ichiran_test.js` | `contract_ichiran_search_data.csv` | 契約一覧（経理）。姓フィールドは `#last_name`。※juku_beta 主 |
+| `tests/tframe/page/payment_ichiran_test.js` | `payment_ichiran_search_data.csv` | 入金一覧（経理）。※juku_beta 主 |
+| `tests/tframe/page/unpaid_amount_ichiran_test.js` | `unpaid_amount_ichiran_search_data.csv` | 未収金一覧（経理 `smsTransaction/sw/unpaidAmountList`）。※juku_beta 主 |
+| `tests/tframe/page/transaction_ichiran_test.js` | `transaction_ichiran_search_data.csv` | 入出金一覧（経理 `smsTransaction/sw/_default`）。※juku_beta 主 |
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
