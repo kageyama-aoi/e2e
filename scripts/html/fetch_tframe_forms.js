@@ -59,6 +59,13 @@ const TARGETS = [
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
   { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
 
+  // ── 登録・編集フォーム（EW）── Issue #215
+  { name: 'prospectList_touroku',        hint: '名簿リスト編集',               directUrl: `${BASE_URL}index.php?r=prospectList%2Few%2F_default` },
+  { name: 'announcement_touroku',        hint: 'お知らせ編集',                 directUrl: `${BASE_URL}index.php?r=announcement%2Few%2F_default` },
+  { name: 'emailTemplateCategory_touroku', hint: 'Eメールテンプレートカテゴリ編集', directUrl: `${BASE_URL}index.php?r=emailTemplateCategory%2Few%2F_default` },
+  { name: 'emailTemplate_touroku',       hint: 'Eメールテンプレート編集',       directUrl: `${BASE_URL}index.php?r=emailTemplate%2Few%2F_default` },
+  { name: 'entranceLog_touroku',         hint: '入退記録編集',                 directUrl: `${BASE_URL}index.php?r=entranceLog%2Few%2F_default` },
+
   // ── 講師謝礼合計・入退記録・連絡（SW）── Issue #214
   { name: 'shareiTotal_list',   hint: '講師謝礼合計一覧', directUrl: `${BASE_URL}index.php?r=shareiTotal%2Fsw%2F_default` },
   { name: 'entranceLog_list',   hint: '入退記録一覧',     directUrl: `${BASE_URL}index.php?r=entranceLog%2Fsw%2F_default` },

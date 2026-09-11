@@ -1,0 +1,2 @@
+title,postStart,postEnd,smsgroup,grade,branchId_area_id,branchId_branch_id,description
+テスト_お知らせ_自動,2026-01-01,2026-12-31,student,,a1,b1,自動テスト登録

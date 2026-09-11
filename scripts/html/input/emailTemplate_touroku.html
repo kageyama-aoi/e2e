@@ -1,0 +1,46 @@
+<div id="rootWidget" class="container-fluid tf-content tf-ew-page" data-actionid="emailTemplate/ew/_default"><div class="tf-title-wrapper"><div class="tf-page-title"><span class="pull-left showopacity tf-group-title-icon fa fa-envelope" style="line-height:32px;font-size:18px;padding-right:10px;"></span><span>Eメールテンプレート編集</span></div><div class="tf-help-icon">
+                    <a target="_blank" href="index.php?r=cmn/gw/help&amp;helpFileKey=Email">
+                        <span class="fa fa-question-circle"></span>
+                    </a>
+                </div><div class="tf-required-label"><span>*</span>必須項目</div><div class="clear-both"></div></div><div id="tf-message-summary" class="tf-message-summary"></div>
+    		<div class="tf-message-slide" id="tf-message-slide"></div>
+    		<div class="tf-page-body"><div id="ewFormWrapper" class="tf-group-wrapper col-sm-12"><div class="tf-group-body col-sm-12"><form id="editViewForm" action="index.php?r=emailTemplate/ew" method="POST" enctype="multipart/form-data" autocomplete="off"><div id="ewButtonsGroup" class="tf-group-wrapper top-buttons-group-wrapper-div col-sm-12"><div class="tf-group-body col-sm-12 top-buttons-group-body-div"><div id="ewButtonsMainGroup" class="tf-group-wrapper col-sm-3"><div class="tf-group-body col-sm-12"><div id="wrapper_ewSaveButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="ewSaveButton" class="tf-data btn btn-primary tf-ewSaveButton" name="ewSaveButton" value="" onclick="$(&quot;#&quot; + &quot;record&quot;).val(&quot;_R_data-record_R_&quot;);$(&quot;#&quot; + &quot;eventType&quot;).val(&quot;save&quot;);var $btn=$(&quot;#ewSaveButton&quot;); if (tf.core.isSubmitOk($btn, false, event)) $btn.closest(&quot;form&quot;).submit();" data-wrapper-id="wrapper_ewSaveButton">保存</button></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_ewCancelButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="ewCancelButton" class="tf-data btn btn-warning tf-ewCancelButton" name="ewCancelButton" value="" onclick="tf.core.redirect('/beta/index.php?r=emailTemplate%2Fsw%2F_default');" data-wrapper-id="wrapper_ewCancelButton">キャンセル</button></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div id="otherButtons" class="tf-group-wrapper col-sm-9"><div class="tf-group-body col-sm-12"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="infoGroup_1" class="tf-group-wrapper col-sm-12"><div class="tf-group-title col-sm-12"><span class="pull-left showopacity tf-group-title-icon glyphicon glyphicon-record"></span>全体設定</div><div class="tf-group-body col-sm-12 ew-data-group group-bordered upper-corners-flat" style="padding:1em;"><div id="wrapper_name" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-2"><label class="tf-label required-mark">名称:</label></div><div class="tf-data-div col-sm-10"><input id="name" class="tf-data form-control input-control tf-text" name="name" value="" data-wrapper-id="wrapper_name"></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_categoryId" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-5"><label class="tf-label required-mark">カテゴリ:</label></div><div class="tf-data-div col-sm-7"><select id="categoryId" class="tf-data form-control input-control tf-select" name="categoryId" data-wrapper-id="wrapper_categoryId" istranslate="">
+<option value="" selected="">設定なし</option>
+<option value="74757a39-b72a-e0af-4ba2-630c1bddb274">123456789A</option>
+<option value="2f77df14-aa79-c1f7-793d-62cbc85e5895">TEST</option>
+<option value="8d1cd16a-0b31-416d-c4ba-64b9de15e903">T_テンプレカテゴリ001</option>
+<option value="8335d392-cec7-0a23-9ff7-652a64ce9c75">T_テンプレカテゴリ002</option>
+<option value="1b17059d-2a02-6d04-cc0b-652a64d84a41">T_テンプレカテゴリ003</option>
+<option value="b0d77d2b-3dfc-4d7a-1ecf-652a64972086">T_テンプレカテゴリ004</option>
+<option value="7f5b3214-7a23-132d-88d6-652a641ba6b8">T_テンプレカテゴリ005</option>
+<option value="cac42fcc-2987-af38-626f-63a02c26ebaf">システム自動配信メール</option>
+<option value="aad25407-6181-c044-127c-63e9e62cd992">マニュアル作成用1234</option>
+<option value="d8553089-f998-2f5a-dc6a-63eb11e0f8a9">林マニュアル作成用3555</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_description" class="tf-element-wrapper-div col-sm-12"><div class="tf-label-div col-sm-1"><label class="tf-label">メモ:</label></div><div class="tf-data-div col-sm-11"><textarea id="description" class="tf-data form-control input-control tf-textarea" name="description" rows="5" data-wrapper-id="wrapper_description"></textarea></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_subject" class="tf-element-wrapper-div col-sm-6" style="padding: 1em 0em 1em 0em;"><div class="tf-label-div col-sm-2"><label class="tf-label">件名:</label></div><div class="tf-data-div col-sm-10"><input id="subject" class="tf-data form-control input-control tf-text" name="subject" value="" data-wrapper-id="wrapper_subject"></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="variableSetGroup" class="tf-group-wrapper col-sm-12"><div class="tf-group-body col-sm-12"><div id="wrapper_variable" class="tf-element-wrapper-div col-sm-6"><div class="tf-label-div col-sm-2"><label class="tf-label">変数:</label></div><div class="tf-data-div col-sm-10"><select id="variable" class="tf-data form-control input-control tf-select" name="variable" data-wrapper-id="wrapper_variable" istranslate="">
+<option value="$last_name">姓 ($last_name)</option>
+<option value="$first_name">名($first_name)</option>
+<option value="$username">ユーザ名($username)</option>
+<option value="$password">パスワード($password)</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_setVariable" class="tf-element-wrapper-div col-sm-1"><div class="tf-data-div col-sm-12 tf-tooltip"><button type="button" id="setVariable" class="tf-data btn btn-default tf-button" name="setVariable" value="" style="vertical-align: top;" onclick="insertVariableAtCursor();" data-wrapper-id="wrapper_setVariable">挿入</button><span id="setVariable_tooltip" class="fa fa-question-circle tf-tooltip-span tf-tooltip-span-absolute" data-content="・プルダウンの変数がこのテンプレートで使用できます。<br>
+                                   ・変数を入れるには挿入ボタンをクリックしてください。<br>
+                                   ・例えば「姓 ($last_name)」を挿入した場合、その箇所に宛先の姓を自動的に入れてメールが送られます。" data-toggle="popover" data-original-title="" title=""></span></div>
+        <div class="clear-both"></div>
+        </div><div id="emptyA" class="col-sm-5" name="emptyA">&nbsp;<div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="wrapper_body" class="tf-element-wrapper-div col-sm-12"><div class="tf-label-div col-sm-1"><label class="tf-label">本文:</label></div><div class="tf-data-div col-sm-11"><textarea id="body" class="tf-data form-control input-control tf-textarea" name="body" rows="5" style="margin-bottom:1em;" data-wrapper-id="wrapper_body"></textarea></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_notice" class="tf-element-wrapper-div col-sm-12"><div class="tf-label-div col-sm-1"><label class="tf-label tf-visibility-hidden">&nbsp;:</label></div><div class="tf-data-div col-sm-11">・別のホームページへ誘導するリンクを設定した場合、その一部を削除しても元のリンクが残りますのでご注意ください。<br>・テンプレート作成画面でリンクを貼った場合は、画面を保存した後、送信前に必ず一度クリックしてリンク先が間違っていないかご確認ください。 </div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><input type="hidden" id="record" name="record"><input type="hidden" id="eventType" name="eventType"><input type="hidden" id="_csrf" name="_csrf" value="ycFgIwFBLa7yvR13dMxB36a1Mg1QAwfZug53GrbpzCiMsBVTUS1q1t_wJBA6_Bnr-dpRe2B6cuvleyZM8620Zw=="><input class="tf-visibility-hidden" name="dummyInput"></form><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div>

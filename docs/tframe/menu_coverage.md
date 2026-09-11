@@ -154,13 +154,13 @@
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
 | Eメール一覧 | `email/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_ichiran_test.js` |  |
-| Eメールテンプレート登録 | `emailTemplate/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| Eメールテンプレート登録 | `emailTemplate/ew/_default` | ● | ● | ✓ EmailTourokuPage | ✓ `email_template_touroku_test.js` | ✗ |  |
 | Eメールテンプレート一覧 | `emailTemplate/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_template_ichiran_test.js` |  |
-| Eメールテンプレートカテゴリ登録 | `emailTemplateCategory/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| Eメールテンプレートカテゴリ登録 | `emailTemplateCategory/ew/_default` | ● | ● | ✓ EmailTourokuPage | ✓ `email_template_category_touroku_test.js` | ✗ |  |
 | Eメールテンプレートカテゴリ一覧 | `emailTemplateCategory/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `email_template_category_ichiran_test.js` |  |
-| 名簿リスト登録 | `prospectList/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| 名簿リスト登録 | `prospectList/ew/_default` | ● | ● | ✓ EmailTourokuPage | ✓ `prospect_list_touroku_test.js` | ✗ |  |
 | 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `prospect_list_ichiran_test.js` |  |
-| お知らせ登録 | `announcement/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| お知らせ登録 | `announcement/ew/_default` | ● | ● | ✓ EmailTourokuPage | ✓ `announcement_touroku_test.js` | ✗ |  |
 | お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `announcement_ichiran_test.js` |  |
 | 連絡一覧 | `contact/sw/_default` | - | ● | ✓ EmailIchiranPage | ✗ | ✓ `contact_ichiran_test.js` |  |
 | アンケート登録 | `poll/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
@@ -306,12 +306,12 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
-| 名簿リスト編集 | `prospectList/ew/_default` | 両 | 小（input2 / select2 / textarea1） |
-| お知らせ編集 | `announcement/ew/_default` | 両 | textarea1（本文） |
-| Eメールテンプレートカテゴリ編集 | `emailTemplateCategory/ew/_default` | 両 | 小 |
-| Eメールテンプレート編集 | `emailTemplate/ew/_default` | 両 | 「挿入」ボタン＝差込変数。本文 textarea |
-| アンケート編集 | `poll/ew/_default` | 両 | textarea2・設問行の動的追加あり（**やや複雑**・設計注意） |
-| 入退記録編集 | `entranceLog/ew/_default` | juku | input4 / select2 |
+| ~~名簿リスト編集~~ | `prospectList/ew/_default` | 両 | ✓ 実装済み `prospect_list_touroku_test.js`（#215・`EmailTourokuPage.js`） |
+| ~~お知らせ編集~~ | `announcement/ew/_default` | 両 | ✓ 実装済み `announcement_touroku_test.js`（#215）。掲載開始日/終了日/タイトルが必須 |
+| ~~Eメールテンプレートカテゴリ編集~~ | `emailTemplateCategory/ew/_default` | 両 | ✓ 実装済み `email_template_category_touroku_test.js`（#215） |
+| ~~Eメールテンプレート編集~~ | `emailTemplate/ew/_default` | 両 | ✓ 実装済み `email_template_touroku_test.js`（#215）。categoryId必須・環境別CSVで切替 |
+| アンケート編集 | `poll/ew/_default` | 両 | textarea2・設問行の動的追加あり（**やや複雑**・設計注意。最後に回す方針） |
+| 入退記録編集 | `entranceLog/ew/_default` | juku | input4 / select2。受講生ポップアップがモーダル型で選択操作要調査 → **#216** |
 
 ### C. 帳票出力系 — 検索フォーム＋出力ボタン（6画面）
 
@@ -361,7 +361,10 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**第5弾・最終（講師謝礼合計一覧・入退記録一覧・連絡一覧）**~~ … ✓ 完了（Issue #214・
   `KeiriIchiranPage.js` / `CalendarPage.js` / `EmailIchiranPage.js` に追記）。
   **これでバケットA（一覧検索系20画面）が全件完了。**
-- **次**: バケット B（登録・編集フォーム系6画面）に着手
+- ~~**バケットB 第1弾（登録・編集フォーム系5画面）**~~ … ✓ 完了（Issue #215・`EmailTourokuPage.js` 新設。
+  culture_beta / juku_beta 両方で 4画面×2環境=8/8 pass）。残り2画面（アンケート編集・入退記録編集）は個別Issueへ。
+- **次**: アンケート編集（設問行の動的追加あり・複雑、着手判断待ち）/ 入退記録編集（#216・モーダル調査待ち）/
+  バケット C（帳票出力系6画面）
 - **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 

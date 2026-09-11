@@ -188,6 +188,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
     infoHistoryPage:   './pages/tframe/screens/InfoHistoryPage.js',
     keiriIchiranPage:  './pages/tframe/screens/KeiriIchiranPage.js',
     emailIchiranPage:  './pages/tframe/screens/EmailIchiranPage.js',
+    emailTourokuPage:  './pages/tframe/screens/EmailTourokuPage.js',
     reportIchiranPage: './pages/tframe/screens/ReportIchiranPage.js'
   },
   // ----------------------------------------------------

@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-11 13:39 (JST)
+> 最終更新: 2026-09-11 14:15 (JST)
 
-**合計 102 テスト**（shimamura 30 / tframe 70 / taskreport 1 / smoke 1）
+**合計 106 テスト**（shimamura 30 / tframe 74 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（70件）
+## tframe（74件）
 
 ### api/（1件）
 
@@ -89,13 +89,14 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（60件）
+### page/（64件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
 | `announcement_ichiran_test.js` | — | お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
+| `announcement_touroku_test.js` | — | お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `attendance_ichiran_test.js` | — | 本日の出席表一覧の全期間検索とコースカテゴリ絞り込みを確認（culture_beta のみ・校舎データ依存） |
 | `bank_actions_history_ichiran_test.js` | — | 口座振替データ履歴の空検索と読込/作成絞り込みを確認（culture_beta / juku_beta 両対応） |
 | `branch_ichiran_test.js` | — | 校舎一覧の空検索と校舎名での絞り込み検索を確認 |
@@ -111,7 +112,9 @@
 | `course_touroku_test.js` | — | コースの新規登録フォームへの入力・保存を確認 |
 | `email_ichiran_test.js` | — | Eメール一覧の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `email_template_category_ichiran_test.js` | — | Eメールテンプレートカテゴリ一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
+| `email_template_category_touroku_test.js` | — | Eメールテンプレートカテゴリ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `email_template_ichiran_test.js` | — | Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
+| `email_template_touroku_test.js` | — | Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
 | `entrance_log_ichiran_test.js` | — | 入退記録一覧の全期間検索を確認（juku_beta 専用） |
 | `fee_ichiran_test.js` | — | 料金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
@@ -135,6 +138,7 @@
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
+| `prospect_list_touroku_test.js` | — | 名簿リスト編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `report_inquiry_ichiran_test.js` | — | 問合せ・入学・退学レポートの空検索と受講生ステイタス絞り込みを確認（culture_beta 主） |
 | `report_stdata_ichiran_test.js` | — | 受講生データ組合せレポートの既定検索と組合せ項目「学年」での検索を確認（culture_beta 主） |
 | `report_stschedule_ichiran_test.js` | — | 受講生スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |

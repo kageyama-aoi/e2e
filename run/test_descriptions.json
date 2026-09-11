@@ -78,6 +78,10 @@
     "page/sharei_total_ichiran_test.js":             "講師謝礼合計一覧の空検索と謝礼項目絞り込みを確認（culture_beta 専用）",
     "page/entrance_log_ichiran_test.js":             "入退記録一覧の全期間検索を確認（juku_beta 専用）",
     "page/contact_ichiran_test.js":                  "連絡一覧の全期間検索を確認（juku_beta 専用・環境にデータ無しのため結果テーブル描画のみ確認）",
+    "page/prospect_list_touroku_test.js":            "名簿リスト編集の新規登録を確認（culture_beta / juku_beta 両対応）",
+    "page/announcement_touroku_test.js":             "お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応）",
+    "page/email_template_category_touroku_test.js":  "Eメールテンプレートカテゴリ編集の新規登録を確認（culture_beta / juku_beta 両対応）",
+    "page/email_template_touroku_test.js":           "Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

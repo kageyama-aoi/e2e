@@ -68,5 +68,10 @@ module.exports = {
 
   ...createIchiranMixin('入退記録一覧'),
 
+  // 入退記録編集（EW: entranceLog/ew/_default・juku のみ）は #216 で追跡（未着手）。
+  // 受講生ポップアップが新規タブではなくページ内モーダルで開くため、他画面の
+  // teacher/course ポップアップ（switchToNextTab で選択）と同じパターンが使えない。
+  // モーダル内の結果行クリックが失敗した（`<a>` 無し）ため要実機調査。
+
   ...createMenuNavigationMixin('tframe_calendar'),
 };

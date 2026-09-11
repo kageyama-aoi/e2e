@@ -255,6 +255,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 講師謝礼合計一覧 | `sharei_total_` | `KeiriIchiranPage.js` | `shareiTotal` | `sw/_default`・culture_beta のみ。計上月がセッション記憶されるため要リセット |
 | 入退記録一覧 | `entrance_log_` | `CalendarPage.js` | `entranceLog` | `sw/_default`・juku_beta のみ（一覧検索のみ・menu-nav は従来通り `CalendarPage.js` 内で共存） |
 | 連絡一覧 | `contact_` | `EmailIchiranPage.js` | `contact` | `sw/_default`・juku_beta のみ。スケジュール開始日/作成日は「どちらか一方は7日以内」の制約あり |
+| 名簿リスト編集 | `prospect_list_touroku_` | `EmailTourokuPage.js` | `prospectList` | `ew/_default`・登録のみ（menu-nav は `EmailPage.js`・一覧検索は `EmailIchiranPage.js`）・culture_beta / juku_beta 両対応・#215 |
+| お知らせ編集 | `announcement_touroku_` | `EmailTourokuPage.js` | `announcement` | `ew/_default`・culture_beta / juku_beta 両対応・#215 |
+| Eメールテンプレートカテゴリ編集 | `email_template_category_touroku_` | `EmailTourokuPage.js` | `emailTemplateCategory` | `ew/_default`・culture_beta / juku_beta 両対応・#215 |
+| Eメールテンプレート編集 | `email_template_touroku_` | `EmailTourokuPage.js` | `emailTemplate` | `ew/_default`・categoryId必須（環境別CSVで切替）・culture_beta / juku_beta 両対応・#215 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`

@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-11 13:39:03
+Last updated: 2026-09-11 14:15:37
 
 ```text
 e2e/
@@ -421,6 +421,7 @@ e2e/
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
 │       ├── announcement_ichiran_search_data.csv
+│       ├── announcement_touroku_data.csv
 │       ├── attendance_ichiran_search_data.csv
 │       ├── bank_actions_history_ichiran_search_data.csv
 │       ├── branch_ichiran_search_data.csv
@@ -434,7 +435,10 @@ e2e/
 │       ├── courseBySt_ichiran_search_data.csv
 │       ├── email_ichiran_search_data.csv
 │       ├── email_template_category_ichiran_search_data.csv
+│       ├── email_template_category_touroku_data.csv
 │       ├── email_template_ichiran_search_data.csv
+│       ├── email_template_touroku_data.csv
+│       ├── email_template_touroku_data_tframe.juku_beta.csv
 │       ├── entrance_log_ichiran_search_data.csv
 │       ├── fee_ichiran_search_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
@@ -453,6 +457,7 @@ e2e/
 │       ├── poll_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
 │       ├── prospect_list_ichiran_search_data.csv
+│       ├── prospect_list_touroku_data.csv
 │       ├── README.md
 │       ├── report_inquiry_ichiran_search_data.csv
 │       ├── report_stdata_ichiran_search_data.csv
@@ -537,6 +542,7 @@ e2e/
 │           ├── CoursePage.js
 │           ├── EmailIchiranPage.js
 │           ├── EmailPage.js
+│           ├── EmailTourokuPage.js
 │           ├── HelpPage.js
 │           ├── HomePage.js
 │           ├── InfoHistoryPage.js
@@ -579,6 +585,7 @@ e2e/
 │   │   │   ├── account_list.html
 │   │   │   ├── after_login.png
 │   │   │   ├── all_links.json
+│   │   │   ├── announcement_touroku.html
 │   │   │   ├── attendance_list.html
 │   │   │   ├── bank_code_0001_ajax.png
 │   │   │   ├── bank_code_0005_ajax.png
@@ -601,6 +608,8 @@ e2e/
 │   │   │   ├── course_list.html
 │   │   │   ├── course_touroku.html
 │   │   │   ├── courseBySt_list.html
+│   │   │   ├── emailTemplate_touroku.html
+│   │   │   ├── emailTemplateCategory_touroku.html
 │   │   │   ├── entranceLog_list.html
 │   │   │   ├── error_screenshot.png
 │   │   │   ├── infoHistory_student_list.html
@@ -612,6 +621,7 @@ e2e/
 │   │   │   ├── kyoshitsu_list.html
 │   │   │   ├── kyoshitsu_touroku.html
 │   │   │   ├── proByCourse_list.html
+│   │   │   ├── prospectList_touroku.html
 │   │   │   ├── report_inquiryEnrollCancel_list.html
 │   │   │   ├── report_stDataCombined_list.html
 │   │   │   ├── report_stSchedule_list.html
@@ -877,6 +887,7 @@ e2e/
 │           ├── account_ichiran_test.js
 │           ├── account_touroku_test.js
 │           ├── announcement_ichiran_test.js
+│           ├── announcement_touroku_test.js
 │           ├── attendance_ichiran_test.js
 │           ├── bank_actions_history_ichiran_test.js
 │           ├── branch_ichiran_test.js
@@ -892,7 +903,9 @@ e2e/
 │           ├── courseBySt_ichiran_test.js
 │           ├── email_ichiran_test.js
 │           ├── email_template_category_ichiran_test.js
+│           ├── email_template_category_touroku_test.js
 │           ├── email_template_ichiran_test.js
+│           ├── email_template_touroku_test.js
 │           ├── email_test.js
 │           ├── entrance_log_ichiran_test.js
 │           ├── fee_ichiran_test.js
@@ -916,6 +929,7 @@ e2e/
 │           ├── poll_ichiran_test.js
 │           ├── proByCourse_ichiran_test.js
 │           ├── prospect_list_ichiran_test.js
+│           ├── prospect_list_touroku_test.js
 │           ├── report_inquiry_ichiran_test.js
 │           ├── report_stdata_ichiran_test.js
 │           ├── report_stschedule_ichiran_test.js
