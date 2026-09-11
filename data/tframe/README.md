@@ -59,6 +59,10 @@
 | `tests/tframe/page/prospect_list_ichiran_test.js` | `prospect_list_ichiran_search_data.csv` | 名簿リスト一覧。name で絞り込み。※juku_beta 主 |
 | `tests/tframe/page/announcement_ichiran_test.js` | `announcement_ichiran_search_data.csv` | お知らせ一覧。dateFrom/dateTo で掲載日レンジを広げる。title で絞り込み。※juku_beta 主 |
 | `tests/tframe/page/poll_ichiran_test.js` | `poll_ichiran_search_data.csv` | アンケート一覧。dateFrom/dateTo で回答期間レンジを広げる。title で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/report_inquiry_ichiran_test.js` | `report_inquiry_ichiran_search_data.csv` | 問合せ・入学・退学レポート（`report/sw/inquiryEnrollCancelReport`）。年月別集計表。targetYear / personStatus で絞り込み。※culture_beta 主 |
+| `tests/tframe/page/report_stdata_ichiran_test.js` | `report_stdata_ichiran_search_data.csv` | 受講生データ組合せレポート（`report/sw/stDataCombinedReport`）。searchItems（組合せ項目）で切替。personStatus は空選択肢なしで既定「受講生」。※culture_beta 主 |
+| `tests/tframe/page/report_stschedule_ichiran_test.js` | `report_stschedule_ichiran_search_data.csv` | 受講生スケジュールレポート（`report/sw/stScheduleReport`）。dateFrom/dateTo でレンジを広げる（既定は当月）。cancelStatus / attendanceStatus で絞り込み。※culture_beta 主 |
+| `tests/tframe/page/report_teschedule_ichiran_test.js` | `report_teschedule_ichiran_search_data.csv` | 講師スケジュールレポート（`report/sw/teScheduleReport`）。stschedule と同構造。※culture_beta 主 |
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |

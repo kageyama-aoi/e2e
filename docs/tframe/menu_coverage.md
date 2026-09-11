@@ -201,10 +201,10 @@
 
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
-| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
-| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
-| 受講生スケジュールレポート | `report/sw/stScheduleReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
-| 講師スケジュールレポート | `report/sw/teScheduleReport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `report_test.js` |
+| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | ● | ● | ✓ ReportIchiranPage | ✗ | ✓ `report_inquiry_ichiran_test.js` |  |
+| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | ● | ● | ✓ ReportIchiranPage | ✗ | ✓ `report_stdata_ichiran_test.js` |  |
+| 受講生スケジュールレポート | `report/sw/stScheduleReport` | ● | ● | ✓ ReportIchiranPage | ✗ | ✓ `report_stschedule_ichiran_test.js` |  |
+| 講師スケジュールレポート | `report/sw/teScheduleReport` | ● | ● | ✓ ReportIchiranPage | ✗ | ✓ `report_teschedule_ichiran_test.js` |  |
 
 ### ヘルプ（icon: `help`）
 
@@ -290,10 +290,10 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | ~~未収金一覧~~ | `smsTransaction/sw/unpaidAmountList` | 両 | ✓ 実装済み `unpaid_amount_ichiran_test.js` |
 | ~~入出金一覧~~ | `smsTransaction/sw/_default` | 両 | ✓ 実装済み `transaction_ichiran_test.js` |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | 両 | シンプル |
-| 問合せ・入学・退学レポート | `report/sw/inquiryEnrollCancelReport` | 両 | 集計表示 |
-| 受講生データ組合せレポート | `report/sw/stDataCombinedReport` | 両 | 組合せ条件多め（select 9） |
-| 受講生スケジュールレポート | `report/sw/stScheduleReport` | 両 | |
-| 講師スケジュールレポート | `report/sw/teScheduleReport` | 両 | |
+| ~~問合せ・入学・退学レポート~~ | `report/sw/inquiryEnrollCancelReport` | 両 | ✓ 実装済み `report_inquiry_ichiran_test.js`（#212・`ReportIchiranPage.js`） |
+| ~~受講生データ組合せレポート~~ | `report/sw/stDataCombinedReport` | 両 | ✓ 実装済み `report_stdata_ichiran_test.js`（#212） |
+| ~~受講生スケジュールレポート~~ | `report/sw/stScheduleReport` | 両 | ✓ 実装済み `report_stschedule_ichiran_test.js`（#212） |
+| ~~講師スケジュールレポート~~ | `report/sw/teScheduleReport` | 両 | ✓ 実装済み `report_teschedule_ichiran_test.js`（#212） |
 | 講師謝礼合計一覧 | `shareiTotal/sw/_default` | culture | |
 | 入退記録一覧 | `entranceLog/sw/_default` | juku | |
 | 連絡一覧 | `contact/sw/_default` | juku | 検索条件多め |
@@ -355,7 +355,8 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 - ~~**第1弾（経理一覧系5画面）**~~ … ✓ 完了（Issue #198・`KeiriIchiranPage.js`。juku_beta 主）
 - ~~**第2弾（Eメールアイコン配下の一覧6画面）**~~ … ✓ 完了（Issue #199・`EmailIchiranPage.js` ＋ 共通ヘルパー `IchiranSearchMixin.js`。juku_beta 主）
-- **次弾**: バケット A の残り（出席表一覧、レポート4種、口座振替データ履歴、講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
+- ~~**第3弾（レポート4画面）**~~ … ✓ 完了（Issue #212・`ReportIchiranPage.js`。culture_beta / juku_beta 両方で 16/16 pass）
+- **次弾**: バケット A の残り（出席表一覧、口座振替データ履歴、講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
 - **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 

@@ -1,0 +1,3 @@
+scenario,dateFrom,dateTo,cancelStatus,attendanceStatus,expectedName
+全期間・空条件検索,2015-01-01,2035-12-31,,,
+キャンセルを除外して検索,2015-01-01,2035-12-31,2,,

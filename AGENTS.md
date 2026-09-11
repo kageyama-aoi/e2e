@@ -236,6 +236,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 名簿リスト一覧 | `prospect_list_` | `EmailIchiranPage.js` | `prospectList` | juku_beta 主 |
 | お知らせ一覧 | `announcement_` | `EmailIchiranPage.js` | `announcement` | juku_beta 主 |
 | アンケート一覧 | `poll_` | `EmailIchiranPage.js` | `poll` | juku_beta 主 |
+| 問合せ・入学・退学レポート | `report_inquiry_` | `ReportIchiranPage.js` | `report` | `sw/inquiryEnrollCancelReport`・一覧検索のみ（menu-nav は `ReportPage.js`）・culture_beta 主 |
+| 受講生データ組合せレポート | `report_stdata_` | `ReportIchiranPage.js` | `report` | `sw/stDataCombinedReport`・culture_beta 主 |
+| 受講生スケジュールレポート | `report_stschedule_` | `ReportIchiranPage.js` | `report` | `sw/stScheduleReport`・culture_beta 主 |
+| 講師スケジュールレポート | `report_teschedule_` | `ReportIchiranPage.js` | `report` | `sw/teScheduleReport`・culture_beta 主 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`

@@ -69,6 +69,10 @@
     "page/prospect_list_ichiran_test.js":             "名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主）",
     "page/announcement_ichiran_test.js":              "お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主）",
     "page/poll_ichiran_test.js":                      "アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主）",
+    "page/report_inquiry_ichiran_test.js":           "問合せ・入学・退学レポートの空検索と受講生ステイタス絞り込みを確認（culture_beta 主）",
+    "page/report_stdata_ichiran_test.js":            "受講生データ組合せレポートの既定検索と組合せ項目「学年」での検索を確認（culture_beta 主）",
+    "page/report_stschedule_ichiran_test.js":        "受講生スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主）",
+    "page/report_teschedule_ichiran_test.js":        "講師スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

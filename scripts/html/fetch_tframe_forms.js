@@ -59,6 +59,12 @@ const TARGETS = [
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
   { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
 
+  // ── レポート（SW）── Issue #212
+  { name: 'report_inquiryEnrollCancel_list', hint: '問合せ・入学・退学レポート', directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FinquiryEnrollCancelReport` },
+  { name: 'report_stDataCombined_list',      hint: '受講生データ組合せレポート', directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FstDataCombinedReport` },
+  { name: 'report_stSchedule_list',          hint: '受講生スケジュールレポート', directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FstScheduleReport` },
+  { name: 'report_teSchedule_list',          hint: '講師スケジュールレポート',   directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FteScheduleReport` },
+
   // ── 対応履歴（SW）──
   { name: 'infoHistory_student_list',  hint: '対応履歴一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistory%2Fsw%2F_default&menuModule=student` },
   { name: 'infoHistoryTemplate_student_list', hint: '対応履歴テンプレート一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistoryTemplate%2Fsw%2F_default&menuModule=student` },

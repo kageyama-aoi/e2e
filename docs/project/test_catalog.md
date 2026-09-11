@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-10 17:26 (JST)
+> 最終更新: 2026-09-11 09:59 (JST)
 
-**合計 93 テスト**（shimamura 30 / tframe 61 / taskreport 1 / smoke 1）
+**合計 97 テスト**（shimamura 30 / tframe 65 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（61件）
+## tframe（65件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（51件）
+### page/（55件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -131,6 +131,10 @@
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
+| `report_inquiry_ichiran_test.js` | — | 問合せ・入学・退学レポートの空検索と受講生ステイタス絞り込みを確認（culture_beta 主） |
+| `report_stdata_ichiran_test.js` | — | 受講生データ組合せレポートの既定検索と組合せ項目「学年」での検索を確認（culture_beta 主） |
+| `report_stschedule_ichiran_test.js` | — | 受講生スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
+| `report_teschedule_ichiran_test.js` | — | 講師スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
 | `report_test.js` | — | レポート画面の表示・出力操作を確認 |
 | `ryokin_master_ichiran_test.js` | — | 料金マスタ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_master_touroku_test.js` | — | 料金マスタの新規作成フォームへの入力・保存を確認（juku_test のみ） |

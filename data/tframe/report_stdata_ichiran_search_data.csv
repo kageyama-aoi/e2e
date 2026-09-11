@@ -1,0 +1,3 @@
+scenario,searchItems,personStatus,expectedName
+空条件検索（都道府県）,,,
+学年で組合せ集計,grade,,

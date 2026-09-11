@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-10 17:26:39
+Last updated: 2026-09-11 09:59:54
 
 ```text
 e2e/
@@ -450,6 +450,10 @@ e2e/
 │       ├── proByCourse_ichiran_search_data.csv
 │       ├── prospect_list_ichiran_search_data.csv
 │       ├── README.md
+│       ├── report_inquiry_ichiran_search_data.csv
+│       ├── report_stdata_ichiran_search_data.csv
+│       ├── report_stschedule_ichiran_search_data.csv
+│       ├── report_teschedule_ichiran_search_data.csv
 │       ├── ryokin_master_ichiran_search_data.csv
 │       ├── ryokin_master_touroku_data.csv
 │       ├── ryokin_package_ichiran_search_data.csv
@@ -536,6 +540,7 @@ e2e/
 │           ├── KeiryoMasterPage.js
 │           ├── KoshiPage.js
 │           ├── MasterMenuPage.js
+│           ├── ReportIchiranPage.js
 │           ├── ReportPage.js
 │           ├── RyokinMasterPage.js
 │           ├── RyokinPackagePage.js
@@ -596,6 +601,10 @@ e2e/
 │   │   │   ├── kyoshitsu_list.html
 │   │   │   ├── kyoshitsu_touroku.html
 │   │   │   ├── proByCourse_list.html
+│   │   │   ├── report_inquiryEnrollCancel_list.html
+│   │   │   ├── report_stDataCombined_list.html
+│   │   │   ├── report_stSchedule_list.html
+│   │   │   ├── report_teSchedule_list.html
 │   │   │   ├── ryokin_master_list.html
 │   │   │   ├── ryokin_master_touroku.html
 │   │   │   ├── ryokin_package_list.html
@@ -891,6 +900,10 @@ e2e/
 │           ├── poll_ichiran_test.js
 │           ├── proByCourse_ichiran_test.js
 │           ├── prospect_list_ichiran_test.js
+│           ├── report_inquiry_ichiran_test.js
+│           ├── report_stdata_ichiran_test.js
+│           ├── report_stschedule_ichiran_test.js
+│           ├── report_teschedule_ichiran_test.js
 │           ├── report_test.js
 │           ├── ryokin_master_ichiran_test.js
 │           ├── ryokin_master_touroku_test.js

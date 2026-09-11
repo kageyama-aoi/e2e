@@ -1,0 +1,3 @@
+scenario,targetYear,personStatus,expectedName
+空条件検索,,,
+受講生ステイタスで絞り込み,,3,

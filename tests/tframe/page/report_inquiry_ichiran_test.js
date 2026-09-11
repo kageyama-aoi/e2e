@@ -1,0 +1,41 @@
+/**
+ * @fileoverview 問合せ・入学・退学レポート 一覧検索テスト
+ *
+ * **テスト内容**
+ * - B パターン: 空条件で検索 → 年月別集計表に実データ行が1件以上表示される
+ * - C パターン: 受講生ステイタスで絞り込み → 実データ行が1件以上表示される
+ *
+ * **対象画面**: `report/sw/inquiryEnrollCancelReport`
+ * **プロファイル**: culture_beta 主対象（Issue #212。juku_beta でも可）
+ * **データソース**: `data/tframe/report_inquiry_ichiran_search_data.csv`
+ *
+ * **CSV カラム一覧**
+ * - scenario: シナリオラベル（必須）
+ * - targetYear: 対象年（任意・select value）
+ * - personStatus: 受講生ステイタス（任意・select value。1=問合せ / 2=トライアル / 3=受講生 / 4=休会 / 5=旧受講生）
+ * - expectedName: 結果確認用テキスト（空の場合は「実データ行あり」のみ確認）
+ */
+
+const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
+
+const csvData = withScenarioLabel(
+  loadCsvWithProfile('report_inquiry_ichiran_search_data', 'tframe'),
+  (row) => row.scenario
+);
+
+Feature('問合せ・入学・退学レポート一覧検索');
+
+Data(csvData).Scenario('問合せ・入学・退学レポートで検索できる @admin', async ({ I, reportIchiranPage, loginKannrisyaPage, current }) => {
+  loginKannrisyaPage.login(process.env.ADMIN_USER, process.env.ADMIN_PASSWORD);
+  loginKannrisyaPage.seeLogout();
+
+  reportIchiranPage.navigateToInquiryListPage();
+  reportIchiranPage.fillInquirySearchConditions(current);
+  reportIchiranPage.clickSearchAndWait();
+  I.saveScreenshotWithTimestamp('report_inquiry_ichiran_search', true);
+
+  await reportIchiranPage.verifyResultRowsExist();
+  if (current.expectedName) {
+    reportIchiranPage.verifyRecordInResults(current.expectedName);
+  }
+});
