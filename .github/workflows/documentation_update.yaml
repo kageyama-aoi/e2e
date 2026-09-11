@@ -24,7 +24,7 @@ jobs:
 
       - name: Update directory tree
         run: |
-          python scripts/tree_generator.py -u
+          python scripts/docs/tree_generator.py -u
 
       # --- Node.js / JSDoc ---
       - name: Set up Node.js
