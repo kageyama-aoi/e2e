@@ -295,6 +295,8 @@ async function runRegistrationFlow(I, classMemberPageShimamura, input) {
 module.exports = {
   KEIRI_SCREEN_B_LOCATORS,
   runRegistrationFlow,
+  navigateToStudentGroup,
+  navigateToKeirisyoriView,
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
   confirmKeirisyoriScreenE,

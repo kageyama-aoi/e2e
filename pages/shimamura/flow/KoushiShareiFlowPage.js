@@ -2,15 +2,18 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const {
-  verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector, waitForSaveResult,
+  verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector, waitForSaveResult, toggleGroupmenu,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const NAV = {
   directUrl: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
   sidebar: {
-    moduleUrl: 'index.php?module=ShareiNichibetsu&action=LWShareiIchiran_AN&top_menu=1',
-    shortcut:  '講師謝礼追加',
+    moduleUrl:      'index.php?module=ShareiNichibetsu&action=LWShareiIchiran_AN&top_menu=1',
+    // 謝礼一覧のサイドバーでは「講師謝礼」グループが折りたたまれており、
+    // 展開しないと「講師謝礼追加」リンクがクリックできない（#206）。
+    collapseToggle: { icon_id: 'submenu__sharei_koshi_sub', menuname: '講師謝礼' },
+    shortcut:       '講師謝礼追加',
   },
 };
 
@@ -51,6 +54,7 @@ async function navigateToTsuikaScreen(I) {
   if (process.env.SHIMAMURA_NAV === 'sidebar') {
     I.amOnPage(BASE_URL + NAV.sidebar.moduleUrl);
     I.waitForElement('a[class*="subMenuLink"]', TIMEOUTS.SCREEN);
+    await toggleGroupmenu(I, NAV.sidebar.collapseToggle);   // 「講師謝礼」グループを展開（#206）
     I.say(`【ナビ】サイドバー "${NAV.sidebar.shortcut}" をクリック`);
     I.click(locate('a[class*="subMenuLink"]').withText(NAV.sidebar.shortcut));
   } else {

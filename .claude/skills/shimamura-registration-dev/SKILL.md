@@ -198,6 +198,10 @@ module.exports = { run{FlowName}Flow };
 管理タブ経由でしか辿れない画面は `navigateToTargetScreen(I, classMemberPageShimamura)` として
 `classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名')` を使う（`SyokaiFlowPage.runRegistrationFlow` 参照）。
 
+受講生の「候補生検索」「経理ビュー（個人）」へのサイドバー遷移は `SyokaiFlowPage.js` の
+`navigateToStudentGroup(I, page)` / `navigateToKeirisyoriView(I, page)` を import して使う
+（`toggleGroupmenu` + `clickSubMenuLink` の 3 行を FlowPage 内で再実装しない）。
+
 > **特殊ケースの実装パターンは `references/patterns.md` を参照:**
 > - 別タブポップアップ（`switchToNextTab` の使い方・なぜ戻れるか）
 > - アコーディオンメニュー（`toggleGroupmenu`）

@@ -5,10 +5,11 @@ const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
 const {
-  toggleGroupmenu, assertNoShimamuraError, fillTextFieldsByName, extractRecordId, buildTestName,
+  assertNoShimamuraError, fillTextFieldsByName, extractRecordId, buildTestName,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
+const { navigateToStudentGroup, navigateToKeirisyoriView } = require('./SyokaiFlowPage');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
@@ -79,9 +80,7 @@ function saveToSession(SESSION_FILE, recordId, testName, row) {
 async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   I.say('【候補生一覧】サイドバー → 候補生グループ → 候補生検索');
   await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
-  await toggleGroupmenu(I, { icon_id: 'submenu__candidates_grp_sub', menuname: '候補生' });
-  await classMemberPageShimamura.clickSubMenuLink('候補生検索', '候補生検索');
-  await logScreenUrl(I, '候補生検索ページ');
+  await navigateToStudentGroup(I, classMemberPageShimamura);
 
   I.say(`【候補生一覧】姓 "${lastName}" で検索`);
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
@@ -323,8 +322,7 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
 
     // 経理ビューへ遷移
-    await toggleGroupmenu(I, { icon_id: 'submenu__detailviews_sub', menuname: '閲覧/登録・経理ビュー' });
-    await classMemberPageShimamura.clickSubMenuLink('受講生登録・経理ビュー（個人）', '受講生登録・経理ビュー（個人）');
+    await navigateToKeirisyoriView(I, classMemberPageShimamura);
     await logScreenUrl(I, '月謝確認_経理ビュー');
 
     I.see(targetYearMonth);
