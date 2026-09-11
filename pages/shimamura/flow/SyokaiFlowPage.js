@@ -126,6 +126,10 @@ async function navigateToStudentGroup(I, classMemberPageShimamura) {
   await logScreenUrl(I, '候補生検索ページ');
 }
 
+// 候補生を姓で検索し、先頭1件を選んで「受講生へ移動」で昇格する簡易版。
+// 会員番号重複検知・複数候補リトライを備えた堅牢版は GessyaIkkatuFlowPage.navigateToKouhosei にある。
+// 両者の統合（堅牢版へ寄せる）は #211 で保留中：回帰比較に使える緑のベースラインが
+// 経理ビューB の既存不具合で作れないため（詳細は #200 #h コミットB / .spec/TODO.md）。
 async function searchAndSelectKouhosei(I, last_name) {
   const S = {
     button: { search: '検索' },
