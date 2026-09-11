@@ -143,11 +143,11 @@
 
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
-| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
-| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
-| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
-| 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
-| 入退記録一覧 | `entranceLog/sw/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` |
+| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
+| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
+| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
+| 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
+| 入退記録一覧 | `entranceLog/sw/_default` | - | ● | ✓ CalendarPage | ✗ | ✓ `entrance_log_ichiran_test.js` |  |
 
 ### Eメール（icon: `email`）
 
@@ -162,7 +162,7 @@
 | 名簿リスト一覧 | `prospectList/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `prospect_list_ichiran_test.js` |  |
 | お知らせ登録 | `announcement/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
 | お知らせ一覧 | `announcement/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `announcement_ichiran_test.js` |  |
-| 連絡一覧 | `contact/sw/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
+| 連絡一覧 | `contact/sw/_default` | - | ● | ✓ EmailIchiranPage | ✗ | ✓ `contact_ichiran_test.js` |  |
 | アンケート登録 | `poll/ew/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `email_test.js` |
 | アンケート一覧 | `poll/sw/_default` | ● | ● | ✓ EmailIchiranPage | ✗ | ✓ `poll_ichiran_test.js` |  |
 
@@ -186,7 +186,7 @@
 | 調整金登録 | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` | ✗ |  |
 | 講師謝礼一覧 | `shareiDetail/sw/_default` | ● | - | ✓ ChosekinPage | ✗ | ✓ `chosekin_ichiran_test.js` |  |
 | 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
-| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ● | - | ✓ KeiriIchiranPage | ✗ | ✓ `sharei_total_ichiran_test.js` |  |
 | 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
@@ -294,9 +294,9 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | ~~受講生データ組合せレポート~~ | `report/sw/stDataCombinedReport` | 両 | ✓ 実装済み `report_stdata_ichiran_test.js`（#212） |
 | ~~受講生スケジュールレポート~~ | `report/sw/stScheduleReport` | 両 | ✓ 実装済み `report_stschedule_ichiran_test.js`（#212） |
 | ~~講師スケジュールレポート~~ | `report/sw/teScheduleReport` | 両 | ✓ 実装済み `report_teschedule_ichiran_test.js`（#212） |
-| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | culture | |
-| 入退記録一覧 | `entranceLog/sw/_default` | juku | |
-| 連絡一覧 | `contact/sw/_default` | juku | 検索条件多め |
+| ~~講師謝礼合計一覧~~ | `shareiTotal/sw/_default` | culture | ✓ 実装済み `sharei_total_ichiran_test.js`（#214・`KeiriIchiranPage.js`） |
+| ~~入退記録一覧~~ | `entranceLog/sw/_default` | juku | ✓ 実装済み `entrance_log_ichiran_test.js`（#214・`CalendarPage.js`） |
+| ~~連絡一覧~~ | `contact/sw/_default` | juku | ✓ 実装済み `contact_ichiran_test.js`（#214・`EmailIchiranPage.js`。環境にデータ無しのため弱いチェック） |
 
 **推奨サブグループ（1弾＝1テーマ）**: ①名簿リスト/お知らせ/アンケート一覧　②Eメール系一覧　③経理一覧系　④レポート4種　⑤juku入退記録・連絡
 
@@ -358,7 +358,10 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**第3弾（レポート4画面）**~~ … ✓ 完了（Issue #212・`ReportIchiranPage.js`。culture_beta / juku_beta 両方で 16/16 pass）
 - ~~**第4弾（出席表一覧・口座振替データ履歴）**~~ … ✓ 完了（Issue #213・`CoursePage.js` / `KeiriIchiranPage.js` に追記。
   出席表は校舎の出席データ在庫差が大きく culture_beta のみ、口座振替データ履歴は culture_beta / juku_beta 両対応）
-- **次弾**: バケット A の残り（講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
+- ~~**第5弾・最終（講師謝礼合計一覧・入退記録一覧・連絡一覧）**~~ … ✓ 完了（Issue #214・
+  `KeiriIchiranPage.js` / `CalendarPage.js` / `EmailIchiranPage.js` に追記）。
+  **これでバケットA（一覧検索系20画面）が全件完了。**
+- **次**: バケット B（登録・編集フォーム系6画面）に着手
 - **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 

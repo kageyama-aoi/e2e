@@ -8,6 +8,7 @@
  * - 未収金一覧 `smsTransaction/sw/unpaidAmountList`
  * - 入出金一覧 `smsTransaction/sw/_default`
  * - 口座振替データ履歴 `bankActionsHistory/sw/_default`（フィルタは `inputType` のみ・セッション記憶なし。#213）
+ * - 講師謝礼合計一覧 `shareiTotal/sw/_default`（culture のみ。#214）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -181,6 +182,34 @@ module.exports = {
   fillBankActionsHistorySearchConditions(data) {
     I.say('【口座振替データ履歴】検索条件を入力');
     if (data.inputType) I.selectOption('#inputType', data.inputType);
+  },
+
+  // ----------------------------------------------------------------
+  //  講師謝礼合計一覧（SW: shareiTotal/sw/_default）culture のみ
+  // ----------------------------------------------------------------
+
+  /**
+   * 講師謝礼合計一覧画面へ遷移する
+   */
+  navigateToShareiTotalListPage() {
+    I.say('【講師謝礼合計一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=shareiTotal%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 講師謝礼合計一覧の検索条件を入力する（空フィールドはスキップ）
+   * 計上月（`keijouMonthMonth`）が特定月にセッション記憶されデータ0件になることがあるため、
+   * 検索前に必ず「すべて」へリセットする（経理・Eメール系と同じセッション記憶のクセ。#214）。
+   * @param {object} data - sharei_total_ichiran_search_data.csv の1行分
+   *                        （keijouMonthYear / shareiKomoku / calType）
+   */
+  fillShareiTotalSearchConditions(data) {
+    I.say('【講師謝礼合計一覧】検索条件を入力');
+    resetSelects(['keijouMonthMonth']);
+    if (data.keijouMonthYear) I.selectOption('#keijouMonthYear', data.keijouMonthYear);
+    if (data.shareiKomoku) I.selectOption('#shareiKomoku', data.shareiKomoku);
+    if (data.calType) I.selectOption('#calType', data.calType);
   },
 
   // ----------------------------------------------------------------

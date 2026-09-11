@@ -8,6 +8,7 @@
  * - 名簿リスト一覧               `prospectList/sw/_default`
  * - お知らせ一覧                 `announcement/sw/_default`
  * - アンケート一覧               `poll/sw/_default`
+ * - 連絡一覧                     `contact/sw/_default`（juku のみ。#214）
  *
  * 既存の `EmailPage.js` はメニューナビ検証専用のため、一覧検索は本 PO に分ける
  * （`KeiryoMasterPage`（menu-nav）と `KeiriIchiranPage`（一覧検索）の関係と同じ）。
@@ -179,6 +180,43 @@ module.exports = {
     setDateField('rangeFromDate', data.dateFrom);
     setDateField('rangeToDate', data.dateTo);
     fillTextFields(I, { title: data.title });
+  },
+
+  // ----------------------------------------------------------------
+  //  連絡一覧（SW: contact/sw/_default）juku のみ
+  // ----------------------------------------------------------------
+  // 検索条件が多い（受講生情報・コース情報・日付レンジ2種・開封状態）。
+  // バリデーション制約: 「スケジュール開始日」「作成日」の**どちらか一方**は7日以内の
+  // レンジにしないと検索が拒否される（画面上部に赤字警告、結果テーブルが描画されずタイムアウトする）。
+  // → 全期間で検索したい場合は片方だけ広げ、もう片方は未指定のまま（既定値=当日、7日以内）にする。
+  // 実機確認時点でこの環境には連絡データが1件も無く、上記制約を満たしても実データ行は出せなかった。
+  // データ不在のため `verifyResultsExist`（結果テーブルの描画のみ確認・thead行にもマッチする弱い
+  // チェック）を使う。データが投入された環境では `IchiranSearchMixin.verifyResultRowsExist` に差し替えること。
+
+  /**
+   * 連絡一覧画面へ遷移する
+   */
+  navigateToContactListPage() {
+    I.say('【連絡一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=contact%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 連絡一覧の検索条件を入力する（空フィールドはスキップ）
+   * @param {object} data - contact_ichiran_search_data.csv の1行分
+   *                        （lastName / courseCategory / status /
+   *                        scheduleDateFrom・scheduleDateTo・createdDateFrom・createdDateTo）
+   */
+  fillContactSearchConditions(data) {
+    I.say('【連絡一覧】検索条件を入力');
+    setDateField('rangeFromField', data.scheduleDateFrom);
+    setDateField('rangeToField', data.scheduleDateTo);
+    setDateField('rangeFromField1', data.createdDateFrom);
+    setDateField('rangeToField1', data.createdDateTo);
+    fillTextFields(I, { lastName: data.lastName });
+    if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
+    if (data.status) I.selectOption('#status', data.status);
   },
 
   // ----------------------------------------------------------------

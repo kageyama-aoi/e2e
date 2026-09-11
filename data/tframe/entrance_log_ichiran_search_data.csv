@@ -1,0 +1,2 @@
+scenario,dateFrom,dateTo,lastName,school_area_id,school_branch_id,expectedName
+全期間・空条件検索,2015-01-01 00:00,2035-12-31 23:59,,,,

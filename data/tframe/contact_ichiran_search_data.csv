@@ -1,0 +1,2 @@
+scenario,lastName,courseCategory,status,scheduleDateFrom,scheduleDateTo,createdDateFrom,createdDateTo,expectedName
+全期間・空条件検索,,,,2015-01-01,2035-12-31,,,

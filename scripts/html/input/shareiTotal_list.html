@@ -1,0 +1,19 @@
+
+
+
+<h2>An internal server error occurred.</h2>
+<span id="timer">2</span> 秒後にホームに戻ります
+<script type="text/javascript">
+    var counter = document.getElementById("timer").innerHTML;
+    setInterval(function() {
+        counter--;
+        if(counter < 0) {
+            window.location.href = "/beta/index.php";
+        } else {
+            document.getElementById("timer").innerHTML = counter;
+        }
+    }, 1000);
+</script>
+    
+
+    

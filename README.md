@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-11 12:28:20
+Last updated: 2026-09-11 13:39:03
 
 ```text
 e2e/
@@ -427,6 +427,7 @@ e2e/
 │       ├── branch_touroku_data.csv
 │       ├── chosekin_ichiran_search_data.csv
 │       ├── chosekin_touroku_data.csv
+│       ├── contact_ichiran_search_data.csv
 │       ├── contract_ichiran_search_data.csv
 │       ├── course_ichiran_search_data.csv
 │       ├── course_touroku_data.csv
@@ -434,6 +435,7 @@ e2e/
 │       ├── email_ichiran_search_data.csv
 │       ├── email_template_category_ichiran_search_data.csv
 │       ├── email_template_ichiran_search_data.csv
+│       ├── entrance_log_ichiran_search_data.csv
 │       ├── fee_ichiran_search_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
@@ -460,6 +462,7 @@ e2e/
 │       ├── ryokin_master_touroku_data.csv
 │       ├── ryokin_package_ichiran_search_data.csv
 │       ├── ryokin_package_touroku_data.csv
+│       ├── sharei_total_ichiran_search_data.csv
 │       ├── shohin_ichiran_search_data.csv
 │       ├── shohin_touroku_data.csv
 │       ├── staff_ichiran_search_data.csv
@@ -572,6 +575,7 @@ e2e/
 │   ├── html/ 
 │   │   ├── input/ 
 │   │   │   ├── _att_debug.png
+│   │   │   ├── _contact_debug.png
 │   │   │   ├── account_list.html
 │   │   │   ├── after_login.png
 │   │   │   ├── all_links.json
@@ -593,9 +597,11 @@ e2e/
 │   │   │   ├── chosekin_person_popup.html
 │   │   │   ├── chosekin_popup.png
 │   │   │   ├── chosekin_touroku.html
+│   │   │   ├── contact_list.html
 │   │   │   ├── course_list.html
 │   │   │   ├── course_touroku.html
 │   │   │   ├── courseBySt_list.html
+│   │   │   ├── entranceLog_list.html
 │   │   │   ├── error_screenshot.png
 │   │   │   ├── infoHistory_student_list.html
 │   │   │   ├── infoHistoryTemplate_student_list.html
@@ -615,6 +621,7 @@ e2e/
 │   │   │   ├── ryokin_package_list.html
 │   │   │   ├── ryokin_package_touroku.html
 │   │   │   ├── sample_teacher_registration.html
+│   │   │   ├── shareiTotal_list.html
 │   │   │   ├── shohin_list.html
 │   │   │   ├── shohin_touroku.html
 │   │   │   ├── staff_list.html
@@ -877,6 +884,7 @@ e2e/
 │           ├── calendar_test.js
 │           ├── chosekin_ichiran_test.js
 │           ├── chosekin_touroku_test.js
+│           ├── contact_ichiran_test.js
 │           ├── contract_ichiran_test.js
 │           ├── course_ichiran_test.js
 │           ├── course_test.js
@@ -886,6 +894,7 @@ e2e/
 │           ├── email_template_category_ichiran_test.js
 │           ├── email_template_ichiran_test.js
 │           ├── email_test.js
+│           ├── entrance_log_ichiran_test.js
 │           ├── fee_ichiran_test.js
 │           ├── help_test.js
 │           ├── home_test.js
@@ -916,6 +925,7 @@ e2e/
 │           ├── ryokin_master_touroku_test.js
 │           ├── ryokin_package_ichiran_test.js
 │           ├── ryokin_package_touroku_test.js
+│           ├── sharei_total_ichiran_test.js
 │           ├── shohin_ichiran_test.js
 │           ├── shohin_touroku_test.js
 │           ├── staff_ichiran_test.js

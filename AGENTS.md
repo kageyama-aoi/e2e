@@ -252,6 +252,9 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 講師スケジュールレポート | `report_teschedule_` | `ReportIchiranPage.js` | `report` | `sw/teScheduleReport`・culture_beta 主 |
 | 本日の出席表一覧 | `attendance_` | `CoursePage.js` | `attendance` | `sw/_default`・culture_beta のみ（校舎ごとの出席データ在庫依存） |
 | 口座振替データ履歴 | `bank_actions_history_` | `KeiriIchiranPage.js` | `bankActionsHistory` | `sw/_default`・culture_beta / juku_beta 両対応 |
+| 講師謝礼合計一覧 | `sharei_total_` | `KeiriIchiranPage.js` | `shareiTotal` | `sw/_default`・culture_beta のみ。計上月がセッション記憶されるため要リセット |
+| 入退記録一覧 | `entrance_log_` | `CalendarPage.js` | `entranceLog` | `sw/_default`・juku_beta のみ（一覧検索のみ・menu-nav は従来通り `CalendarPage.js` 内で共存） |
+| 連絡一覧 | `contact_` | `EmailIchiranPage.js` | `contact` | `sw/_default`・juku_beta のみ。スケジュール開始日/作成日は「どちらか一方は7日以内」の制約あり |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
