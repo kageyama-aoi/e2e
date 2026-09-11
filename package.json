@@ -4,36 +4,28 @@
   "description": "CodeceptJS E2E Tests",
   "scripts": {
     "postinstall": "node scripts/hooks/install_git_hooks.js",
-
-    "gui":    "python run/run_gui.py",
-
+    "gui": "python run/run_gui.py",
     "test": "npx codeceptjs run --grep @wip --invert",
     "test_wip": "npx codeceptjs run --grep @wip",
-
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "pretest_s": "node scripts/check_pause.js",
     "test_s": "npx codeceptjs run ./tests/shimamura/**/*_test.js --profile shimamura.testgcp --grep @wip --invert",
-
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
     "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js --grep @wip --invert",
-
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
     "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport --grep @wip --invert",
-    
     "--- ALLURE ---": "echo '--- ALLURE ---'",
-    "allure:serve":   "npx allure serve allure-results",
-    "allure:latest":  "node scripts/allure/serve_latest.js",
-    "allure:report":  "npx allure generate allure-results --clean -o allure-report",
-    "allure:open":    "npx allure open allure-report",
-    "allure:clean":   "rimraf allure-results/default allure-results/tframe.* allure-results/shimamura.* allure-results/taskreport.*",
+    "allure:serve": "npx allure serve allure-results",
+    "allure:latest": "node scripts/allure/serve_latest.js",
+    "allure:report": "npx allure generate allure-results --clean -o allure-report",
+    "allure:open": "npx allure open allure-report",
+    "allure:clean": "rimraf allure-results/default allure-results/tframe.* allure-results/shimamura.* allure-results/taskreport.*",
     "allure:archive": "python scripts/allure/archive_allure_results.py",
-
     "--- CLEANUP ---": "echo '--- CLEANUP ---'",
-    "cleanup":         "python scripts/cleanup/cleanup_output_logs.py",
-    "cleanup:dry":     "python scripts/cleanup/cleanup_output_logs.py --dry-run",
-    "cleanup:output":  "python scripts/cleanup/cleanup_output_logs.py --target output",
-    "cleanup:logs":    "python scripts/cleanup/cleanup_output_logs.py --target logs",
-
+    "cleanup": "python scripts/cleanup/cleanup_output_logs.py",
+    "cleanup:dry": "python scripts/cleanup/cleanup_output_logs.py --dry-run",
+    "cleanup:output": "python scripts/cleanup/cleanup_output_logs.py --target output",
+    "cleanup:logs": "python scripts/cleanup/cleanup_output_logs.py --target logs",
     "--- DOCUMENTATION ---": "echo '--- DOCUMENTATION ---'",
     "docs:jsdoc": "jsdoc -c jsdoc.json",
     "docs:update-readme-map": "python scripts/docs/tree_generator.py -u",
@@ -55,6 +47,7 @@
   "devDependencies": {
     "@codeceptjs/configure": "^1.0.6",
     "docdash": "^2.0.2",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "jsdoc": "^4.0.5"
   }
 }
