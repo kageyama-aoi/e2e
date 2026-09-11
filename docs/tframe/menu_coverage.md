@@ -143,10 +143,10 @@
 
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
-| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
-| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
-| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
-| 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` |
+| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✓ CalendarPage | ✓ `entrance_log_touroku_test.js` | ✗ |  |
 | 入退記録一覧 | `entranceLog/sw/_default` | - | ● | ✓ CalendarPage | ✗ | ✓ `entrance_log_ichiran_test.js` |  |
 
 ### Eメール（icon: `email`）
@@ -311,7 +311,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | ~~Eメールテンプレートカテゴリ編集~~ | `emailTemplateCategory/ew/_default` | 両 | ✓ 実装済み `email_template_category_touroku_test.js`（#215） |
 | ~~Eメールテンプレート編集~~ | `emailTemplate/ew/_default` | 両 | ✓ 実装済み `email_template_touroku_test.js`（#215）。categoryId必須・環境別CSVで切替 |
 | アンケート編集 | `poll/ew/_default` | 両 | textarea2・設問行の動的追加あり（**やや複雑**・設計注意。最後に回す方針） |
-| 入退記録編集 | `entranceLog/ew/_default` | juku | input4 / select2。受講生ポップアップがモーダル型で選択操作要調査 → **#216** |
+| ~~入退記録編集~~ | `entranceLog/ew/_default` | juku | ✓ 実装済み `entrance_log_touroku_test.js`（#216・`CalendarPage.js`）。受講生ポップアップ（モーダル型）の選択パターンを解明し `selectFirstFromPopupPicker` として汎用化 |
 
 ### C. 帳票出力系 — 検索フォーム＋出力ボタン（6画面）
 
@@ -366,9 +366,18 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**バケットC 第1弾（支払調書）**~~ … ✓ 完了（Issue #217・`KeiriIchiranPage.js` に追記）。
   出力ボタンの挙動（同画面を`isExportType=output`付きで再読込→ファイルDL+`#tf-message-summary`に結果表示、
   ファイル中身は未検証）を解明。残り5画面は picker/データ調査が必要なため **#218** へ切り出し。
-- **次**: #218（帳票出力系残り5画面）/ #216（入退記録編集モーダル調査）/ アンケート編集（着手判断待ち）/
-  バケット D（一括処理・計算系5画面）/ バケット E（インポート系3画面）
-- **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
+- ~~**#216（入退記録編集）**~~ … ✓ 完了。受講生ポップアップは新規タブではなく**ページ内モーダル**で開き、
+  結果行に `<a>` は無く1列目のラジオボタン（CSSで視覚上は非表示）で選択する。`executeScript` で直接
+  `radio.click()` する方式を `support/tframe/utils.js` の `selectFirstFromPopupPicker()` として汎用化した。
+  **これでバケットB（登録フォーム系）は実質完了**（アンケート編集のみ意図的保留）。
+- **#218 続報（未完了）**: `selectFirstFromPopupPicker` は出席表一括出力の coursePicker にもそのまま使えることを
+  実機確認（モーダルの構造は同一）。ただし先頭コースの実施期間が出力対象スケジュール範囲（既定=当月・
+  **最大21日までの上限あり**）と噛み合わず「コースが選択されていません。」エラーになる（コース自体は
+  選択できている・メッセージが誤解を招く）。#213のような単純な日付範囲拡大では回避できないため、
+  出力対象期間内にスケジュールを持つコースを選ぶ工夫が別途必要。講師謝礼明細4種の teacherPicker も
+  同じ仕組みで選択できる見込みだが未検証。
+- **次**: #218（引き続き）/ アンケート編集（着手判断待ち）/ バケット D（一括処理・計算系5画面）/
+  バケット E（インポート系3画面）
 
 ---
 

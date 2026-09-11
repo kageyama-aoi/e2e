@@ -266,5 +266,13 @@ module.exports = {
     await verifyResultRowsExist('出席表一覧');
   },
 
+  // 出席表一括出力（SW: attendance/sw/attendanceBulkOutput）は #218 で追跡（未着手）。
+  // コース選択は selectFirstFromPopupPicker（support/tframe/utils.js）でモーダルから選択できる
+  // ところまで確認したが、先頭コースの実施期間が出力対象のスケジュール範囲（既定=当月・
+  // 最大21日まで）と重ならず「コースが選択されていません。」エラーになる（実機で選択できて
+  // いることは確認済み。コース未選択エラーではなくメッセージが誤解を招く）。
+  // 21日上限があるため #213 の校舎スイープのような単純な範囲拡大では回避できず、
+  // 出力対象期間内にスケジュールを持つコースを選ぶ工夫が必要。
+
   ...createMenuNavigationMixin('tframe_course'),
 };

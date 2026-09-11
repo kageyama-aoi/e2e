@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-11 17:51 (JST)
+> 最終更新: 2026-09-11 18:17 (JST)
 
-**合計 107 テスト**（shimamura 30 / tframe 75 / taskreport 1 / smoke 1）
+**合計 108 テスト**（shimamura 30 / tframe 76 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（75件）
+## tframe（76件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（65件）
+### page/（66件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -117,6 +117,7 @@
 | `email_template_touroku_test.js` | — | Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
 | `entrance_log_ichiran_test.js` | — | 入退記録一覧の全期間検索を確認（juku_beta 専用） |
+| `entrance_log_touroku_test.js` | — | 入退記録編集の新規登録を確認（juku_beta 専用・受講生ポップアップから選択） |
 | `fee_ichiran_test.js` | — | 料金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `help_test.js` | — | ヘルプページの表示を確認 |
 | `home_test.js` | — | ログイン後のホーム画面の表示を確認 |

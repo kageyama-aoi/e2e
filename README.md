@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-11 17:51:29
+Last updated: 2026-09-11 18:17:23
 
 ```text
 e2e/
@@ -440,6 +440,7 @@ e2e/
 │       ├── email_template_touroku_data.csv
 │       ├── email_template_touroku_data_tframe.juku_beta.csv
 │       ├── entrance_log_ichiran_search_data.csv
+│       ├── entrance_log_touroku_data.csv
 │       ├── fee_ichiran_search_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
@@ -915,6 +916,7 @@ e2e/
 │           ├── email_template_touroku_test.js
 │           ├── email_test.js
 │           ├── entrance_log_ichiran_test.js
+│           ├── entrance_log_touroku_test.js
 │           ├── fee_ichiran_test.js
 │           ├── help_test.js
 │           ├── home_test.js

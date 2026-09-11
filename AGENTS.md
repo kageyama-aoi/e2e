@@ -260,6 +260,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | Eメールテンプレートカテゴリ編集 | `email_template_category_touroku_` | `EmailTourokuPage.js` | `emailTemplateCategory` | `ew/_default`・culture_beta / juku_beta 両対応・#215 |
 | Eメールテンプレート編集 | `email_template_touroku_` | `EmailTourokuPage.js` | `emailTemplate` | `ew/_default`・categoryId必須（環境別CSVで切替）・culture_beta / juku_beta 両対応・#215 |
 | 支払調書 | `payment_statement_output_` | `KeiriIchiranPage.js` | `shareiTotal` | `sw/paymentStatement`・帳票出力系（ファイル中身は未検証・成功メッセージのみ確認）・culture_beta のみ・#217 |
+| 入退記録編集 | `entrance_log_touroku_` | `CalendarPage.js` | `entranceLog` | `ew/_default`・受講生ポップアップから選択（`selectFirstFromPopupPicker`）・juku_beta のみ・#216 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
@@ -281,6 +282,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - 郵便番号 → `I.click('#zipCodeBtn')` + `I.wait(1)` で都道府県・市区町村を自動入力（番地・カナは手動）
 - 銀行コード → `I.fillField('#bankCode', val)` + `I.wait(1)` で銀行名を AJAX 自動補完（bankName 列は CSV 不要）
 - AJAX 連動ドロップダウン（エリア→校舎）→ `support/tframe/utils.js` の `selectAreaThenBranch(I, { area, branch })` を使う（ID体系が `#school_area_id`/`#school_branch_id` と `#branchId_area_id`/`#branchId_branch_id` の2種あるため、後者は `areaSelector`/`branchSelector` を明示指定する）
+- 受講生・講師・コース等を選ぶ「ポップアップピッカー」（`#xxxPicker_start` ボタン）→ `support/tframe/utils.js` の
+  `selectFirstFromPopupPicker(I, { startSelector, displaySelector })` を使う。**新規タブではなくページ内モーダル**で開き、
+  結果行に `<a>` は無く1列目のラジオボタンで選択する（CSSで見た目上非表示のため `executeScript` で直接 click する。#216）。
+  先頭の検索結果を選ぶだけなので、対象データが出力条件（日付レンジ等）と噛み合うかは別途確認が要る（#218）。
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 

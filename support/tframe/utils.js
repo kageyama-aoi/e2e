@@ -50,4 +50,36 @@ function selectAreaThenBranch(I, { areaSelector = '#school_area_id', branchSelec
   if (branch) I.selectOption(branchSelector, branch);
 }
 
-module.exports = { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch };
+/**
+ * tframe の「ポップアップピッカー」（受講生・講師・コース等を選ぶモーダル）を開き、
+ * 検索結果1件目の行を選択する。
+ *
+ * このモーダルは新規タブではなく**ページ内モーダル**として開く（`switchToNextTab` は使えない）。
+ * 結果行には `<a>` が無く、1列目のラジオボタン（`input[type=radio]`）に選択・モーダルクローズ
+ * の挙動が仕込まれている。開いた時点で対象種別ごとの既定の絞り込み（受講生ステイタス等）で
+ * 結果が表示済みのため、追加の検索操作は不要（#216 で実機確認）。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {object} opts
+ * @param {string} opts.startSelector   - ポップアップを開くボタンのセレクタ（例: '#personId_start'）
+ * @param {string} opts.displaySelector - 選択後に値が入る表示用 input のセレクタ
+ *                                        （例: '#personId_display'。モーダルが閉じたことの確認に使う）
+ */
+function selectFirstFromPopupPicker(I, { startSelector, displaySelector }) {
+  I.click(startSelector);
+  I.waitForElement('.tf-data-table-table tbody tr', 15);
+  // ラジオボタンはカスタムCSSで見た目上は非表示（span でスタイリング）になっており、
+  // Playwright の可視性チェックに引っかかって通常クリックがタイムアウトする。
+  // 選択・モーダルクローズは input のネイティブ click イベントで発火するため、
+  // executeScript で直接 click() する（#216 で実機確認）。
+  I.executeScript(() => {
+    const table = document.querySelector('.tf-data-table-table');
+    const row = Array.from(table.querySelectorAll('tbody tr')).find((tr) => tr.innerText.trim());
+    const radio = row.querySelector('input[type="radio"]');
+    radio.click();
+  });
+  I.waitForElement(displaySelector, 10);
+  I.wait(1); // 表示用フィールド更新と隠しフィールド（実際に送信される値）の反映に短いラグがあるため
+}
+
+module.exports = { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch, selectFirstFromPopupPicker };
