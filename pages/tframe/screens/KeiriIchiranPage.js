@@ -7,6 +7,7 @@
  * - 入金一覧   `smsPayment/sw/_default`
  * - 未収金一覧 `smsTransaction/sw/unpaidAmountList`
  * - 入出金一覧 `smsTransaction/sw/_default`
+ * - 口座振替データ履歴 `bankActionsHistory/sw/_default`（フィルタは `inputType` のみ・セッション記憶なし。#213）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -158,6 +159,28 @@ module.exports = {
     setDateField('rangeFromDate', data.dateFrom);
     setDateField('rangeToDate', data.dateTo);
     fillTextFields(I, { lastName: data.lastName });
+  },
+
+  // ----------------------------------------------------------------
+  //  口座振替データ履歴（SW: bankActionsHistory/sw/_default）
+  // ----------------------------------------------------------------
+
+  /**
+   * 口座振替データ履歴画面へ遷移する
+   */
+  navigateToBankActionsHistoryListPage() {
+    I.say('【口座振替データ履歴】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=bankActionsHistory%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 口座振替データ履歴の検索条件を入力する（`inputType` 以外にフィルタなし。セッション記憶なし）
+   * @param {object} data - bank_actions_history_ichiran_search_data.csv の1行分（inputType）
+   */
+  fillBankActionsHistorySearchConditions(data) {
+    I.say('【口座振替データ履歴】検索条件を入力');
+    if (data.inputType) I.selectOption('#inputType', data.inputType);
   },
 
   // ----------------------------------------------------------------

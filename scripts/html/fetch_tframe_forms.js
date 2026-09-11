@@ -59,6 +59,10 @@ const TARGETS = [
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
   { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
 
+  // ── 出席表・口座振替（SW）── Issue #213
+  { name: 'attendance_list',        hint: '本日の出席表一覧',   directUrl: `${BASE_URL}index.php?r=attendance%2Fsw%2F_default` },
+  { name: 'bankActionsHistory_list', hint: '口座振替データ履歴', directUrl: `${BASE_URL}index.php?r=bankActionsHistory%2Fsw%2F_default` },
+
   // ── レポート（SW）── Issue #212
   { name: 'report_inquiryEnrollCancel_list', hint: '問合せ・入学・退学レポート', directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FinquiryEnrollCancelReport` },
   { name: 'report_stDataCombined_list',      hint: '受講生データ組合せレポート', directUrl: `${BASE_URL}index.php?r=report%2Fsw%2FstDataCombinedReport` },

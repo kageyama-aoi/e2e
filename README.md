@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-11 09:59:54
+Last updated: 2026-09-11 12:28:20
 
 ```text
 e2e/
@@ -421,6 +421,8 @@ e2e/
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
 │       ├── announcement_ichiran_search_data.csv
+│       ├── attendance_ichiran_search_data.csv
+│       ├── bank_actions_history_ichiran_search_data.csv
 │       ├── branch_ichiran_search_data.csv
 │       ├── branch_touroku_data.csv
 │       ├── chosekin_ichiran_search_data.csv
@@ -569,9 +571,11 @@ e2e/
 │   │   └── log_bash.py
 │   ├── html/ 
 │   │   ├── input/ 
+│   │   │   ├── _att_debug.png
 │   │   │   ├── account_list.html
 │   │   │   ├── after_login.png
 │   │   │   ├── all_links.json
+│   │   │   ├── attendance_list.html
 │   │   │   ├── bank_code_0001_ajax.png
 │   │   │   ├── bank_code_0005_ajax.png
 │   │   │   ├── bank_code_9900_ajax.png
@@ -582,6 +586,7 @@ e2e/
 │   │   │   ├── bank_payment_4_error.png
 │   │   │   ├── bank_payment_4_selected.png
 │   │   │   ├── bank_payment_validation.json
+│   │   │   ├── bankActionsHistory_list.html
 │   │   │   ├── branch_list.html
 │   │   │   ├── branch_touroku.html
 │   │   │   ├── chosekin_list.html
@@ -865,6 +870,8 @@ e2e/
 │           ├── account_ichiran_test.js
 │           ├── account_touroku_test.js
 │           ├── announcement_ichiran_test.js
+│           ├── attendance_ichiran_test.js
+│           ├── bank_actions_history_ichiran_test.js
 │           ├── branch_ichiran_test.js
 │           ├── branch_touroku_test.js
 │           ├── calendar_test.js

@@ -250,6 +250,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 受講生データ組合せレポート | `report_stdata_` | `ReportIchiranPage.js` | `report` | `sw/stDataCombinedReport`・culture_beta 主 |
 | 受講生スケジュールレポート | `report_stschedule_` | `ReportIchiranPage.js` | `report` | `sw/stScheduleReport`・culture_beta 主 |
 | 講師スケジュールレポート | `report_teschedule_` | `ReportIchiranPage.js` | `report` | `sw/teScheduleReport`・culture_beta 主 |
+| 本日の出席表一覧 | `attendance_` | `CoursePage.js` | `attendance` | `sw/_default`・culture_beta のみ（校舎ごとの出席データ在庫依存） |
+| 口座振替データ履歴 | `bank_actions_history_` | `KeiriIchiranPage.js` | `bankActionsHistory` | `sw/_default`・culture_beta / juku_beta 両対応 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`

@@ -112,7 +112,7 @@
 | コース登録 | `course/ew/_default` | ● | ● | ✓ CoursePage | ✓ `course_touroku_test.js` | ✗ |  |
 | コース一覧 | `course/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `course_ichiran_test.js` |  |
 | コース別商品一覧 | `course/sw/proByCourse` | ● | - | ✓ CoursePage | ✗ | ✓ `proByCourse_ichiran_test.js` |  |
-| 本日の出席表一覧 | `attendance/sw/_default` | ● | ● | ✗ | ✗ | ✗ |  |
+| 本日の出席表一覧 | `attendance/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `attendance_ichiran_test.js` |  |
 | 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | ● | ● | ✗ | ✗ | ✗ |  |
 
 ### 講師（icon: `teacher`）
@@ -181,7 +181,7 @@
 | 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `transaction_ichiran_test.js` |  |
 | 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
-| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `bank_actions_history_ichiran_test.js` |  |
 | 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 調整金登録 | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` | ✗ |  |
 | 講師謝礼一覧 | `shareiDetail/sw/_default` | ● | - | ✓ ChosekinPage | ✗ | ✓ `chosekin_ichiran_test.js` |  |
@@ -277,7 +277,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
-| 出席表一覧 | `attendance/sw/_default` | 両 | 「出席表編集」ボタンあり（編集導線は対象外で可） |
+| ~~出席表一覧~~ | `attendance/sw/_default` | 両 | ✓ 実装済み `attendance_ichiran_test.js`（#213・`CoursePage.js`・culture_beta のみ） |
 | ~~名簿リスト一覧~~ | `prospectList/sw/_default` | 両 | ✓ 実装済み `prospect_list_ichiran_test.js` |
 | ~~お知らせ一覧~~ | `announcement/sw/_default` | 両 | ✓ 実装済み `announcement_ichiran_test.js` |
 | ~~アンケート一覧~~ | `poll/sw/_default` | 両 | ✓ 実装済み `poll_ichiran_test.js` |
@@ -289,7 +289,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | ~~入金一覧~~ | `smsPayment/sw/_default` | 両 | ✓ 実装済み `payment_ichiran_test.js` |
 | ~~未収金一覧~~ | `smsTransaction/sw/unpaidAmountList` | 両 | ✓ 実装済み `unpaid_amount_ichiran_test.js` |
 | ~~入出金一覧~~ | `smsTransaction/sw/_default` | 両 | ✓ 実装済み `transaction_ichiran_test.js` |
-| 口座振替データ履歴 | `bankActionsHistory/sw/_default` | 両 | シンプル |
+| ~~口座振替データ履歴~~ | `bankActionsHistory/sw/_default` | 両 | ✓ 実装済み `bank_actions_history_ichiran_test.js`（#213・`KeiriIchiranPage.js`） |
 | ~~問合せ・入学・退学レポート~~ | `report/sw/inquiryEnrollCancelReport` | 両 | ✓ 実装済み `report_inquiry_ichiran_test.js`（#212・`ReportIchiranPage.js`） |
 | ~~受講生データ組合せレポート~~ | `report/sw/stDataCombinedReport` | 両 | ✓ 実装済み `report_stdata_ichiran_test.js`（#212） |
 | ~~受講生スケジュールレポート~~ | `report/sw/stScheduleReport` | 両 | ✓ 実装済み `report_stschedule_ichiran_test.js`（#212） |
@@ -356,7 +356,9 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**第1弾（経理一覧系5画面）**~~ … ✓ 完了（Issue #198・`KeiriIchiranPage.js`。juku_beta 主）
 - ~~**第2弾（Eメールアイコン配下の一覧6画面）**~~ … ✓ 完了（Issue #199・`EmailIchiranPage.js` ＋ 共通ヘルパー `IchiranSearchMixin.js`。juku_beta 主）
 - ~~**第3弾（レポート4画面）**~~ … ✓ 完了（Issue #212・`ReportIchiranPage.js`。culture_beta / juku_beta 両方で 16/16 pass）
-- **次弾**: バケット A の残り（出席表一覧、口座振替データ履歴、講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
+- ~~**第4弾（出席表一覧・口座振替データ履歴）**~~ … ✓ 完了（Issue #213・`CoursePage.js` / `KeiriIchiranPage.js` に追記。
+  出席表は校舎の出席データ在庫差が大きく culture_beta のみ、口座振替データ履歴は culture_beta / juku_beta 両対応）
+- **次弾**: バケット A の残り（講師謝礼合計一覧(culture)、juku 入退記録一覧・連絡一覧）
 - **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 

@@ -1,0 +1,3 @@
+scenario,dateFrom,dateTo,areaValue,branchValue,courseCategory,courseSubtype,expectedName
+全期間・空条件検索,2015-01-01,2035-12-31,a1,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,,,
+コースカテゴリ「通常授業」で絞り込み,2015-01-01,2035-12-31,a1,5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba,通常授業,,

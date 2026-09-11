@@ -7,6 +7,7 @@ const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
+const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
@@ -222,6 +223,47 @@ module.exports = {
       name:        data.name,
       productName: data.productName,
     });
+  },
+
+  // ----------------------------------------------------------------
+  //  本日の出席表一覧（SW: attendance/sw/_default）
+  // ----------------------------------------------------------------
+  // 校舎により出席データの在庫に大きな差があり、既定の東京(b1)は0件になりやすい。
+  // また rangeFrom/rangeTo の既定値は「本日」のみなので検索前に広げる（#213）。
+
+  /**
+   * 本日の出席表一覧画面へ遷移する
+   */
+  navigateToAttendanceListPage() {
+    I.say('【出席表一覧】一覧画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=attendance%2Fsw%2F_default');
+    I.waitForElement('#swSearchButton', 10);
+  },
+
+  /**
+   * 出席表一覧の検索条件を入力する
+   * @param {object} data - attendance_ichiran_search_data.csv の1行分
+   *                        （dateFrom / dateTo / branchValue / courseCategory / courseSubtype）
+   */
+  fillAttendanceSearchConditions(data) {
+    I.say('【出席表一覧】検索条件を入力');
+    resetSelects(['courseSubtype', 'courseCategory']);
+    setDateField('rangeFrom', data.dateFrom);
+    setDateField('rangeTo', data.dateTo);
+    selectAreaThenBranch(I, {
+      areaSelector: '#branchId_area_id', branchSelector: '#branchId_branch_id',
+      area: data.areaValue, branch: data.branchValue,
+    });
+    if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
+    if (data.courseSubtype) I.selectOption('#courseSubtype', data.courseSubtype);
+  },
+
+  /**
+   * 検索結果テーブルに実データ行が1件以上あることを確認する（`IchiranSearchMixin` へ委譲）。
+   * AJAX描画のタイミング差が大きい画面のため `verifyResultsExist`（即時判定）ではなくこちらを使う。
+   */
+  async verifyAttendanceResultRowsExist() {
+    await verifyResultRowsExist('出席表一覧');
   },
 
   ...createMenuNavigationMixin('tframe_course'),

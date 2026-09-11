@@ -1,0 +1,3 @@
+scenario,inputType,expectedName
+空条件検索,,
+読込/作成「作成」で絞り込み,export,
