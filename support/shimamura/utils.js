@@ -243,7 +243,7 @@ async function assertNoShimamuraError(I, context = '処理') {
  * id セレクタ（#keijoubi 等）や複合セレクタを扱う場合に使用する
  *
  * @param {CodeceptJS.I} I
- * @param {Array<[string, string|undefined]>} selectorValuePairs - [[selector, value], ...] の形式
+ * @param {Array<Array<string>>} selectorValuePairs - [[selector, value], ...] の形式
  */
 function fillTextFieldsBySelector(I, selectorValuePairs) {
   const entries = selectorValuePairs.filter(([, v]) => v);
@@ -294,7 +294,7 @@ function fillTextFieldsByName(I, fieldMap) {
  * @param {CodeceptJS.I} I
  * @param {string} dateStr - CSV由来の日付文字列（YYYY-MM-DD）
  * @param {string} fieldLabel - ログ表示用のフィールド名（例: 'keiyakuDate'）
- * @param {{graceMonths?: number}} [options] - graceMonths: 当月から遡って許容する月数（既定0=当月以降のみ有効。退会処理は1=先月まで有効）
+ * @param {{graceMonths: (number|undefined)}} [options] - graceMonths: 当月から遡って許容する月数（既定0=当月以降のみ有効。退会処理は1=先月まで有効）
  * @returns {string} 許容範囲内ならそのまま、範囲外（過去すぎる）なら本日日付（YYYY-MM-DD）
  */
 function resolveDynamicDateIfPast(I, dateStr, fieldLabel, { graceMonths = 0 } = {}) {
@@ -335,7 +335,7 @@ function extractRecordId(url) {
  * ※ codeceptjs の waitForFunction は第2引数を配列で渡さないと args として届かない。
  *
  * @param {CodeceptJS.I} I
- * @param {{successSelector?: string, successMode?: 'appears'|'disappears'|'hasText', timeout?: number}} [options]
+ * @param {{successSelector: (string|undefined), successMode: ('appears'|'disappears'|'hasText'|undefined), timeout: (number|undefined)}} [options]
  */
 async function waitForSaveResult(I, {
   successSelector = 'input[name="edit_button"]',

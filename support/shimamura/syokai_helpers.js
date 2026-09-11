@@ -68,7 +68,7 @@ function prepareInput(input) {
 /**
  * 実行計画（Execution Plan）を生成する
  * @param {Object} input
- * @returns {{ plan: Array.<{step: string, expect?: string}> }}
+ * @returns {{ plan: Array.<{step: string, expect: (string|undefined)}> }}
  */
 function buildExecutionPlan(input) {
   const breakSpec = normalizeBreakSpec(input.breakTarget, input.breakValue);

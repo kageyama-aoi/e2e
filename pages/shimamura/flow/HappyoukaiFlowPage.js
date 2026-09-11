@@ -99,9 +99,9 @@ function resetSession() {
 /**
  * 発表会カテゴリのクラス・コースを新規作成し、セッションファイルに記録する。
  * @param {object} I
- * @param {{courseCd: string, courseName: string, className?: string, kingaku: number|string,
+ * @param {{courseCd: string, courseName: string, className: (string|undefined), kingaku: (number|string),
  *   areaValue: string, schoolValue: string, weekdaySelector: string,
- *   startH: string, startM: string, endH: string, endM: string, monthsUntilEnd?: number}} params
+ *   startH: string, startM: string, endH: string, endM: string, monthsUntilEnd: (number|undefined)}} params
  */
 async function createHappyoukaiClassAndCourse(I, params) {
   I.say(`【発表会クラス作成】${params.className || params.courseName}`);

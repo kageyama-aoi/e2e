@@ -64,7 +64,7 @@ const S = {
 /**
  * コース(ShimaCourse)を新規作成する。
  * @param {object} I
- * @param {{courseCd: string, courseName: string, courseCategory?: string, kanrihi?: number|string, kingaku?: number|string}} params
+ * @param {{courseCd: string, courseName: string, courseCategory: (string|undefined), kanrihi: (number|string|undefined), kingaku: (number|string|undefined)}} params
  *   courseCategory は選択肢の表示テキスト（既定値: 'スクール'）。
  *   kingaku（コース金額/参加費）は発表会カテゴリなど月謝以外の料金体系で使う。省略時は未設定のまま。
  * @returns {Promise<string>} 作成したコースの record ID
@@ -93,9 +93,9 @@ async function createShimaCourse(I, { courseCd, courseName, courseCategory = '�
  * クラス(Course)を新規作成する。
  * @param {object} I
  * @param {{
- *   name: string, areaValue: string, schoolValue: string, courseCategory?: string,
+ *   name: string, areaValue: string, schoolValue: string, courseCategory: (string|undefined),
  *   weekdaySelector: string, startH: string, startM: string, endH: string, endM: string,
- *   teiin?: string
+ *   teiin: (string|undefined)
  * }} params
  *   areaValue/schoolValue は `#area_id`/`#school_id` の option value（school_id は area 選択後の
  *   AJAX 更新後にのみ有効な値になる）。weekdaySelector は例 `#youbi_8`（水曜日）。
@@ -133,7 +133,7 @@ async function createClass(I, {
 /**
  * クラスの「コース」タブから、指定したコースを検索・紐づけする。
  * @param {object} I
- * @param {{classRecordId: string, courseName: string, courseCategory?: string}} params
+ * @param {{classRecordId: string, courseName: string, courseCategory: (string|undefined)}} params
  *   courseCategory はポップアップ内の「コースカテゴリー」フィルタ（既定値: 'スクール'、
  *   選択肢に「すべて」は無いため対象コースのカテゴリーと必ず一致させる必要がある。
  *   実機確認: 既定値が固定で「スクール」になっているため、スクール以外のコースを
@@ -167,7 +167,7 @@ async function linkCourseToClass(I, { classRecordId, courseName, courseCategory 
  * デフォルト設定（週単位・曜日は既定値）のままスケジュール終了日を指定月数後に
  * 変更して保存する。これにより経理ビューでの登録が可能になる。
  * @param {object} I
- * @param {{classRecordId: string, monthsUntilEnd?: number, monthsUntilStart?: number, daysAfterStart?: number}} params
+ * @param {{classRecordId: string, monthsUntilEnd: (number|undefined), monthsUntilStart: (number|undefined), daysAfterStart: (number|undefined)}} params
  *   monthsUntilStart を指定すると開始日も今日からその月数後にずらす（既定は今日のまま）。
  *   monthsUntilStart 指定時は、終了日は monthsUntilEnd ではなく
  *   「開始日 + daysAfterStart（既定6日）」で計算する。開始日と終了日を同日にすると
