@@ -1,8 +1,8 @@
 """
 ドキュメント参照ドリフト検出ツール (Doc Reference Drift Checker)
 
-`docs/` `.claude/skills/` `AGENTS.md` の Markdown が名指ししているファイルパスと
-関数名が、実際のソースに存在するかを機械的に確認します。
+`docs/` `.claude/skills/` `AGENTS.md` の Markdown、および `.github/workflows/` の CI 設定が
+名指ししているファイルパスと関数名が、実際のソースに存在するかを機械的に確認します。
 
 コードを整理（関数名変更・ユーティリティ新設・Mixin 化）したあと、それを教える
 スキル／ガイドが追従していないと、次のテストが古いパターンで量産されます
@@ -51,8 +51,11 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT = Path(__file__).resolve().parents[2]
 
-# チェック対象の Markdown
-DOC_GLOBS = ["docs/**/*.md", ".claude/skills/**/*.md", "AGENTS.md"]
+# チェック対象（Markdown ＋ CI/自動化設定。後者は実行するまで参照切れに気付けないため）
+DOC_GLOBS = [
+    "docs/**/*.md", ".claude/skills/**/*.md", "AGENTS.md",
+    ".github/workflows/*.yml", ".github/workflows/*.yaml",
+]
 
 # チェックから外す Markdown（自動記録される学習ログは一時ファイルへの言及が多い）
 DOC_EXCLUDE_PARTS = ("learning",)

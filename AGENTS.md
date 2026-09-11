@@ -107,9 +107,13 @@
 | `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
 | tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
 | **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
+| `scripts/` 配下のスクリプトを移動・リネーム | `package.json` の該当 npm script、`.github/workflows/*.yaml`（CI がこれらを直接パス指定で呼んでいないか）。**CI 設定は push して実行されるまでローカルで気付けない**ため、移動時は必ず `grep -rn "旧パス" .github/ package.json` まで確認する（`/local-safe-move` Step 1 の対象拡張済み） |
 
 > 参照パス・関数名のドリフトは `npm run docs:check-refs`（`scripts/docs/check_doc_refs.py`）で機械的に検出できる。
-> `docs/` `.claude/skills/` `pages/` `support/` を含むコミットでは pre-commit が警告モードで自動実行する。
+> `docs/` `.claude/skills/` `pages/` `support/` `.github/workflows/` を含むコミットでは pre-commit が警告モードで自動実行する
+> （`.github/workflows/*.yaml` も走査対象。CI だけが持つパス参照はここでしか拾えない）。
+> **CI ワークフロー自体は生パスを書かず、`package.json` の npm script を呼ぶ**（`npm run docs:update-readme-map` 等）ことで
+> 「スクリプト移動時に直す場所」を1箇所に集約する（documentation_update.yaml 参照）。
 
 ### 計画資料（`docs/**/*_plan.md`）のステータス表記（必須）
 
@@ -170,6 +174,12 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   - 既存ファイルで訓令式（例: `Ikkatu`）や画面名由来の慣用表記が既に定着している場合は、
     無理に一括リネームせず現状を尊重する。ただし誤読・タイポ（例: 月謝を"tsukihi"と読む等）が
     見つかった場合は、影響範囲を確認のうえ修正してよい。
+- JSDoc の `@param` / `@returns` オブジェクト型注釈は TypeScript 風の `?:` 省略記法・
+  タプル型 `Array<[A, B]>` を使わない（Closure/JSDoc の型パーサーが解釈できずビルド時エラーになる）。
+  - 省略可能なプロパティは `{name: (string|undefined)}` のように `(Type|undefined)` で書く。
+  - タプルは `Array<Array<string>>` のように書くか、型を諦めて説明文だけにする。
+  - コミット前に `npm run docs:jsdoc` が ERROR 無しで通るか確認する（`pages/` `support/` `tests/` の
+    `.js` を含むコミットでは pre-commit が警告モードで自動チェックする）。
 
 ## テスト運用ガイド
 - フレームワーク: CodeceptJS + Playwright、レポートは Allure。

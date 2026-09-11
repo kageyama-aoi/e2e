@@ -22,11 +22,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Update directory tree
-        run: |
-          python scripts/docs/tree_generator.py -u
-
-      # --- Node.js / JSDoc ---
+      # --- Node.js ---
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -36,9 +32,16 @@ jobs:
         run: |
           npm ci
 
+      # 生スクリプトパスをここに書かず package.json の npm scripts を呼ぶ。
+      # スクリプトが移動しても package.json 側だけ直せばよく、
+      # ワークフロー側だけ旧パスが残るドリフトを防ぐ（2026-09-11 に実際発生した不具合の再発防止）。
+      - name: Update directory tree
+        run: |
+          npm run docs:update-readme-map
+
       - name: Generate JSDoc
         run: |
-          npx jsdoc -c jsdoc.json
+          npm run docs:jsdoc
 
       # --- commit & push ---
       - name: Commit and push changes

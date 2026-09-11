@@ -17,10 +17,29 @@ if ! command -v python >/dev/null 2>&1; then
 fi
 
 # --- 1) 参照ドリフト検出（警告モード） ---------------------------------------
-if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|pages/|support/|AGENTS\.md$)'; then
-  echo "[pre-commit] docs/skills の参照パス・関数名チェック..."
+if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|pages/|support/|AGENTS\.md$|\.github/workflows/)'; then
+  echo "[pre-commit] docs/skills/CI設定 の参照パス・関数名チェック..."
   # 警告のみ。fail にする場合は --check を付ける（npm run docs:check-refs と同じ）
   python scripts/docs/check_doc_refs.py --quiet || echo "[pre-commit] check_doc_refs.py 実行失敗（無視して続行）"
+fi
+
+# --- 1.5) JSDoc構文チェック（警告モード） -------------------------------------
+# pages/support/tests の JSDoc コメントが CI の `npx jsdoc` でパースできる構文かを確認する。
+# TypeScript風の省略記法（fieldName?: Type）やタプル型 Array<[a,b]> は Closure/JSDoc の
+# 型パーサーが解釈できずエラー扱いになり、生成自体は続くが exit code 1 で CI ジョブが失敗する
+# （2026-09-11 に実際発生。ローカルでは npm run docs:jsdoc を手動実行しない限り気付けなかった）。
+if echo "$changed" | grep -qE '^(pages/|support/|tests/).*\.js$'; then
+  if command -v npx >/dev/null 2>&1; then
+    echo "[pre-commit] JSDoc構文チェック..."
+    jsdoc_out=$(npx jsdoc -c jsdoc.json 2>&1)
+    err_count=$(printf '%s\n' "$jsdoc_out" | grep -c '^ERROR:')
+    if [ "$err_count" -gt 0 ]; then
+      echo "[pre-commit] WARN: JSDoc型注釈のパースエラーが ${err_count} 件あります（CI の Generate JSDoc が失敗します）"
+      printf '%s\n' "$jsdoc_out" | grep '^ERROR:' | head -5
+      echo "  → npm run docs:jsdoc で全件確認。'name?: Type' は '(Type|undefined)' に、"
+      echo "    'Array<[a,b]>' は 'Array<Array<T>>' に書き換える"
+    fi
+  fi
 fi
 
 # --- 2) tframe アイコン別マッピング表 再生成 ---------------------------------

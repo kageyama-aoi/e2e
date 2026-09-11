@@ -35,8 +35,12 @@ e2e（CodeceptJS）固有の差分だけを書く（手順の二重管理を防�
 4. 参照を修正し、旧パスへの grep がゼロになるまで確認
 5. `.py` / `.ps1` のリポジトリルート取得パスの見直し
 
-e2e での参照元は `--include="*.js" --include="*.json" --include="*.md"` を対象にすること
-（codecept.conf.js と run/test_descriptions.json が JSON、ドキュメントが MD にあるため）。
+e2e での参照元は `--include="*.js" --include="*.json" --include="*.md" --include="*.yaml"` を
+対象にすること（codecept.conf.js と run/test_descriptions.json が JSON、ドキュメントが MD、
+`.github/workflows/*.yaml` が CI 設定にあるため）。**`.github/workflows/` は
+`check_doc_refs.py` の走査対象・pre-commit の警告対象であり、旧パスが残っていると
+push して CI が実行されるまで気付けない**（2026-09-11、tree 生成スクリプトの
+移動が Update docs ワークフローに反映されておらず、毎 push 失敗していた実例あり）。
 
 ---
 
