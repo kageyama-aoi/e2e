@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-11 14:15 (JST)
+> 最終更新: 2026-09-11 17:51 (JST)
 
-**合計 106 テスト**（shimamura 30 / tframe 74 / taskreport 1 / smoke 1）
+**合計 107 テスト**（shimamura 30 / tframe 75 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（74件）
+## tframe（75件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（64件）
+### page/（65件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -135,6 +135,7 @@
 | `kyoshitsu_touroku_test.js` | — | 教室の新規登録フォームへの入力・保存を確認 |
 | `master_menu_test.js` | — | マスター設定メニューの各項目への遷移を確認 |
 | `payment_ichiran_test.js` | — | 入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `payment_statement_output_test.js` | — | 支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証） |
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |

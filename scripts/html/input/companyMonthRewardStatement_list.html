@@ -1,0 +1,38 @@
+<div id="rootWidget" class="container-fluid tf-content tf-sw-page" data-actionid="shareiDetail/sw/companyMonthRewardStatement"><div class="tf-title-wrapper"><div class="tf-page-title"><span class="pull-left showopacity tf-group-title-icon fa fa-calculator" style="line-height:32px;font-size:18px;padding-right:10px;"></span><span>当月謝礼明細（法人）</span></div><div class="tf-help-icon">
+                    <a target="_blank" href="index.php?r=cmn/gw/help&amp;helpFileKey=Sharei">
+                        <span class="fa fa-question-circle"></span>
+                    </a>
+                </div><div class="clear-both"></div></div><div id="tf-message-summary" class="tf-message-summary"></div>
+    		<div class="tf-message-slide" id="tf-message-slide"></div>
+    		<div class="tf-page-body"><form id="searchForm" action="index.php?r=shareiDetail/sw/companyMonthRewardStatement" method="POST" enctype="multipart/form-data" autocomplete="off"><div id="searchBlock" class="tf-group-wrapper searchBlock col-sm-12"><div class="tf-group-body col-sm-12"><div id="buttonsGroup" class="tf-group-wrapper top-buttons-group-wrapper-div col-sm-12"><div class="tf-group-body col-sm-12 top-buttons-group-body-div"><div id="searchButtonsMainGroup" class="tf-group-wrapper col-sm-4"><div class="tf-group-body col-sm-12"><div id="wrapper_statementOutput" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="statementOutput" class="tf-data btn btn-primary tf-button" name="statementOutput" value="" onclick="tf.core.redirect('index.php?r=shareiDetail%2Fsw%2FcompanyMonthRewardStatement&amp;isExportType=output&amp;' + tf.core.formElementsAsQueryString('#searchForm'));" data-wrapper-id="wrapper_statementOutput">謝礼明細出力</button></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_swClearButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="swClearButton" class="tf-data btn btn-warning tf-swClearButton" name="swClearButton" value="" onclick="tf.ajax.tcnAjax(  'isClearForm=1'   + '&amp;'  +   'isResetSw=1'   + '&amp;'  +   'record=_R_data-record_R_' + '&amp;' +   'ajaxRenderList[]=searchFields'     + '&amp;'   +   'ajaxRenderList[]=searchResult'   + '&amp;' + '' + '&amp;', 'index.php?r=shareiDetail/sw/companyMonthRewardStatement', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_swClearButton">クリア</button></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div id="otherButtons" class="tf-group-wrapper col-sm-1"><div class="tf-group-body col-sm-12"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchFields" class="tf-group-wrapper searchFields col-sm-12"><div class="tf-group-body col-sm-12"><div id="basicFields" class="tf-group-wrapper col-sm-12"><div class="tf-group-body col-sm-12" style="background-color:#eeeeee"><div id="wrapper_outputTargetDateCompanyMonth" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">出力対象年月:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td class="year" style="padding:0px;"><div id="wrapper_outputTargetDateCompanyMonthYear" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="outputTargetDateCompanyMonthYear" class="tf-data form-control input-control tf-select" name="outputTargetDateCompanyMonthYear" data-wrapper-id="wrapper_outputTargetDateCompanyMonth">
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026" selected="">2026</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td><td class="month" style="padding:0px;"><div id="wrapper_outputTargetDateCompanyMonthMonth" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="outputTargetDateCompanyMonthMonth" class="tf-data form-control input-control tf-select" name="outputTargetDateCompanyMonthMonth" data-wrapper-id="wrapper_outputTargetDateCompanyMonth">
+<option value="01">1</option>
+<option value="02">2</option>
+<option value="03">3</option>
+<option value="04">4</option>
+<option value="05">5</option>
+<option value="06">6</option>
+<option value="07">7</option>
+<option value="08" selected="">8</option>
+<option value="09">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_accountId" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">法人:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td><input type="hidden" id="accountId" name="accountId"><input type="text" id="accountId_display" class="form-control input-control popup-picker-display" disabled=""></td><td style="width:25px;padding-left:1px;"><button type="button" id="accountId_start" class="btn btn-default glyphicon glyphicon-new-window popup-picker-button popup-picker-start" onclick="tf.ajax.tcnAjax(  'retParams[]=ajaxRenderList[]_PVS_accountId'   + '&amp;'  +   'retParams[1]=accountId/eventType_PVS_updatePopupPicker'   + '&amp;'  +   'isPopup=1'   + '&amp;'  +   'ajaxTargetId=popup_a1bb0602-4e89-94b0-0ca4-6aa3bf0a32ac_message'   + '&amp;'  +   'ajaxWidgetKey=accountPopupPicker'   + '&amp;'  +   'ajaxData[]=accountPopupPicker_ADS_callback_ADS_tf.popup.open'   + '&amp;'  +   'ajaxData[]=accountPopupPicker_ADS_ajaxTargetId_ADS_popup_a1bb0602-4e89-94b0-0ca4-6aa3bf0a32ac_message'   + '&amp;'  +   'isSearch=1' + '&amp;' +   'ajaxRenderList[]=accountPopupPicker'   + '&amp;' + '' + '&amp;', 'index.php?r=shareiDetail/sw/companyMonthRewardStatement', {'async':true,'enableClientValidation':false});"></button></td><td style="width:21px;padding-left:3px;"><button type="button" id="accountId_clear" class="glyphicon glyphicon-remove popup-picker-button popup-picker-clear" onclick="$(&quot;#accountId&quot;).val(&quot;&quot;);$(&quot;#accountId_display&quot;).val(&quot;&quot;);"></button></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchResult" class="tf-group-wrapper searchResult tf-group-wrapper-sw-search-result col-sm-12"><div class="tf-group-body col-sm-12 tf-group-body-search-result"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><input type="hidden" id="_csrf" name="_csrf" value="SJdacS8yEpGkQNkZaeTLFQeeaZS0Dx7eziZ-mJM8VxMZ0GwmaQNCqfd5uC8Iq4FjVOkK1cB9cpS5FB_QynoAXA=="><input class="tf-visibility-hidden" name="dummyInput"></form><div class="clear-both"></div></div><div class="clear-both"></div></div>

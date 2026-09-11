@@ -82,6 +82,7 @@
     "page/announcement_touroku_test.js":             "お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応）",
     "page/email_template_category_touroku_test.js":  "Eメールテンプレートカテゴリ編集の新規登録を確認（culture_beta / juku_beta 両対応）",
     "page/email_template_touroku_test.js":           "Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替）",
+    "page/payment_statement_output_test.js":         "支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

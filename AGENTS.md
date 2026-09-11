@@ -259,6 +259,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | お知らせ編集 | `announcement_touroku_` | `EmailTourokuPage.js` | `announcement` | `ew/_default`・culture_beta / juku_beta 両対応・#215 |
 | Eメールテンプレートカテゴリ編集 | `email_template_category_touroku_` | `EmailTourokuPage.js` | `emailTemplateCategory` | `ew/_default`・culture_beta / juku_beta 両対応・#215 |
 | Eメールテンプレート編集 | `email_template_touroku_` | `EmailTourokuPage.js` | `emailTemplate` | `ew/_default`・categoryId必須（環境別CSVで切替）・culture_beta / juku_beta 両対応・#215 |
+| 支払調書 | `payment_statement_output_` | `KeiriIchiranPage.js` | `shareiTotal` | `sw/paymentStatement`・帳票出力系（ファイル中身は未検証・成功メッセージのみ確認）・culture_beta のみ・#217 |
 
 **ファイルの探し方（3点セット）**
 1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`

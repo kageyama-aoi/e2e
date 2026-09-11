@@ -59,6 +59,14 @@ const TARGETS = [
   { name: 'teByStudent_list', hint: '講師別受講生一覧',    directUrl: `${BASE_URL}index.php?r=teacher%2Fsw%2FteByStudent` },
   { name: 'proByCourse_list', hint: 'コース別商品一覧',    directUrl: `${BASE_URL}index.php?r=course%2Fsw%2FproByCourse` },
 
+  // ── 帳票出力（SW）── Issue #217
+  { name: 'attendanceBulkOutput_list',   hint: '出席表一括出力',     directUrl: `${BASE_URL}index.php?r=attendance%2Fsw%2FattendanceBulkOutput` },
+  { name: 'teacherRewardStatement_list', hint: '講師謝礼明細（個人）', directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FteacherRewardStatement` },
+  { name: 'companyRewardStatement_list', hint: '講師謝礼明細（法人）', directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FcompanyRewardStatement` },
+  { name: 'monthRewardStatement_list',   hint: '当月謝礼明細（個人）', directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FmonthRewardStatement` },
+  { name: 'companyMonthRewardStatement_list', hint: '当月謝礼明細（法人）', directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FcompanyMonthRewardStatement` },
+  { name: 'paymentStatement_list',       hint: '支払調書',           directUrl: `${BASE_URL}index.php?r=shareiTotal%2Fsw%2FpaymentStatement` },
+
   // ── 登録・編集フォーム（EW）── Issue #215
   { name: 'prospectList_touroku',        hint: '名簿リスト編集',               directUrl: `${BASE_URL}index.php?r=prospectList%2Few%2F_default` },
   { name: 'announcement_touroku',        hint: 'お知らせ編集',                 directUrl: `${BASE_URL}index.php?r=announcement%2Few%2F_default` },

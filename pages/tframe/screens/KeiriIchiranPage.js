@@ -9,6 +9,7 @@
  * - 入出金一覧 `smsTransaction/sw/_default`
  * - 口座振替データ履歴 `bankActionsHistory/sw/_default`（フィルタは `inputType` のみ・セッション記憶なし。#213）
  * - 講師謝礼合計一覧 `shareiTotal/sw/_default`（culture のみ。#214）
+ * - 支払調書 `shareiTotal/sw/paymentStatement`（culture のみ・帳票出力系。#217）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -210,6 +211,41 @@ module.exports = {
     if (data.keijouMonthYear) I.selectOption('#keijouMonthYear', data.keijouMonthYear);
     if (data.shareiKomoku) I.selectOption('#shareiKomoku', data.shareiKomoku);
     if (data.calType) I.selectOption('#calType', data.calType);
+  },
+
+  // ----------------------------------------------------------------
+  //  支払調書（SW: shareiTotal/sw/paymentStatement）culture のみ・帳票出力系
+  // ----------------------------------------------------------------
+  // 出力ボタンは「同画面に isExportType=output を付けて再読込 → ファイルダウンロード + #tf-message-summary
+  // に結果メッセージ表示」という一覧検索系と違う流れになる（#217）。ダウンロードしたファイルの中身までは
+  // 検証せず、`#tf-message-summary` の成功メッセージ（「〜出力が完了しました」）の有無で確認する。
+
+  /**
+   * 支払調書画面へ遷移する
+   */
+  navigateToPaymentStatementPage() {
+    I.say('【支払調書】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=shareiTotal%2Fsw%2FpaymentStatement');
+    I.waitForElement('#paymentStatementOutput', 10);
+  },
+
+  /**
+   * 支払調書の出力条件を入力する（空フィールドはスキップ。既定=当年ですでに出力可能）
+   * @param {object} data - payment_statement_output_data.csv の1行分（targetYear）
+   */
+  fillPaymentStatementConditions(data) {
+    I.say('【支払調書】出力条件を入力');
+    if (data.targetYear) I.selectOption('#targetYear', data.targetYear);
+  },
+
+  /**
+   * 出力ボタンをクリックし、成功メッセージが表示されることを確認する
+   */
+  clickPaymentStatementOutputAndVerify() {
+    I.say('【支払調書】出力ボタンをクリック');
+    I.click('#paymentStatementOutput');
+    I.waitForElement('#tf-message-summary', 10);
+    I.see('完了しました', '#tf-message-summary');
   },
 
   // ----------------------------------------------------------------

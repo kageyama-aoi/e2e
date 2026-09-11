@@ -191,7 +191,7 @@
 | 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
-| 支払調書 | `shareiTotal/sw/paymentStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 支払調書 | `shareiTotal/sw/paymentStatement` | ● | - | ✓ KeiriIchiranPage | ✗ | ✗ | `payment_statement_output_test.js` |
 | 料金マスタ作成 | `smsFeeMaster/ew/_default` | - | ● | ✓ RyokinMasterPage | ✓ `ryokin_master_touroku_test.js` | ✗ |  |
 | 料金マスタ一覧 | `smsFeeMaster/sw/_default` | - | ● | ✓ RyokinMasterPage | ✗ | ✓ `ryokin_master_ichiran_test.js` |  |
 | 料金パッケージ作成 | `smsFeeMasterPackage/ew/_default` | - | ● | ✓ RyokinPackagePage | ✓ `ryokin_package_touroku_test.js` | ✗ |  |
@@ -320,12 +320,12 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | 出力ボタン |
 |---|---|---|---|
-| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 両 | 出席表印刷 |
-| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | culture | 謝礼明細出力 |
-| 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | culture | 謝礼明細出力 |
-| 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | culture | 謝礼明細出力 |
-| 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | culture | 謝礼明細出力 |
-| 支払調書 | `shareiTotal/sw/paymentStatement` | culture | 支払調書出力 |
+| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 両 | 出席表印刷。coursePicker必須 → **#218**（要ピッカー調査） |
+| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | culture | 謝礼明細出力。月スイープ5パターンで全て0件 → **#218**（要teacherPicker調査） |
+| 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | culture | 謝礼明細出力 → **#218**（teacherRewardStatementと同構造見込み） |
+| 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | culture | 謝礼明細出力 → **#218** |
+| 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | culture | 謝礼明細出力 → **#218** |
+| ~~支払調書~~ | `shareiTotal/sw/paymentStatement` | culture | ✓ 実装済み `payment_statement_output_test.js`（#217・`KeiriIchiranPage.js`）。出力ボタンの挙動（同画面を`isExportType=output`付きで再読込→ファイルDL+`#tf-message-summary`に結果表示）はこの5画面共通の設計と判明 |
 
 ### D. 一括処理・計算系 — 副作用あり・個別設計（5画面）
 
@@ -361,11 +361,13 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**第5弾・最終（講師謝礼合計一覧・入退記録一覧・連絡一覧）**~~ … ✓ 完了（Issue #214・
   `KeiriIchiranPage.js` / `CalendarPage.js` / `EmailIchiranPage.js` に追記）。
   **これでバケットA（一覧検索系20画面）が全件完了。**
-- ~~**バケットB 第1弾（登録・編集フォーム系5画面）**~~ … ✓ 完了（Issue #215・`EmailTourokuPage.js` 新設。
+- ~~**バケットB 第1弾（登録・編集フォーム系4画面）**~~ … ✓ 完了（Issue #215・`EmailTourokuPage.js` 新設。
   culture_beta / juku_beta 両方で 4画面×2環境=8/8 pass）。残り2画面（アンケート編集・入退記録編集）は個別Issueへ。
-- **次**: アンケート編集（設問行の動的追加あり・複雑、着手判断待ち）/ 入退記録編集（#216・モーダル調査待ち）/
-  バケット C（帳票出力系6画面）
-- **その後**: バケット B（アンケート編集は最後に回す）→ バケット C（出力検証方式を決めてから）
+- ~~**バケットC 第1弾（支払調書）**~~ … ✓ 完了（Issue #217・`KeiriIchiranPage.js` に追記）。
+  出力ボタンの挙動（同画面を`isExportType=output`付きで再読込→ファイルDL+`#tf-message-summary`に結果表示、
+  ファイル中身は未検証）を解明。残り5画面は picker/データ調査が必要なため **#218** へ切り出し。
+- **次**: #218（帳票出力系残り5画面）/ #216（入退記録編集モーダル調査）/ アンケート編集（着手判断待ち）/
+  バケット D（一括処理・計算系5画面）/ バケット E（インポート系3画面）
 - **後回し**: バケット D・E（1画面＝1Issue、副作用・ファイル操作の個別設計）
 
 ---

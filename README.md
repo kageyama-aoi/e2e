@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-11 14:15:37
+Last updated: 2026-09-11 17:51:29
 
 ```text
 e2e/
@@ -454,6 +454,7 @@ e2e/
 │       ├── kyoshitsu_ichiran_search_data.csv
 │       ├── kyoshitsu_touroku_data.csv
 │       ├── payment_ichiran_search_data.csv
+│       ├── payment_statement_output_data.csv
 │       ├── poll_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
 │       ├── prospect_list_ichiran_search_data.csv
@@ -587,6 +588,7 @@ e2e/
 │   │   │   ├── all_links.json
 │   │   │   ├── announcement_touroku.html
 │   │   │   ├── attendance_list.html
+│   │   │   ├── attendanceBulkOutput_list.html
 │   │   │   ├── bank_code_0001_ajax.png
 │   │   │   ├── bank_code_0005_ajax.png
 │   │   │   ├── bank_code_9900_ajax.png
@@ -604,6 +606,8 @@ e2e/
 │   │   │   ├── chosekin_person_popup.html
 │   │   │   ├── chosekin_popup.png
 │   │   │   ├── chosekin_touroku.html
+│   │   │   ├── companyMonthRewardStatement_list.html
+│   │   │   ├── companyRewardStatement_list.html
 │   │   │   ├── contact_list.html
 │   │   │   ├── course_list.html
 │   │   │   ├── course_touroku.html
@@ -620,6 +624,8 @@ e2e/
 │   │   │   ├── keiri_page.png
 │   │   │   ├── kyoshitsu_list.html
 │   │   │   ├── kyoshitsu_touroku.html
+│   │   │   ├── monthRewardStatement_list.html
+│   │   │   ├── paymentStatement_list.html
 │   │   │   ├── proByCourse_list.html
 │   │   │   ├── prospectList_touroku.html
 │   │   │   ├── report_inquiryEnrollCancel_list.html
@@ -638,6 +644,7 @@ e2e/
 │   │   │   ├── stByCourse_list.html
 │   │   │   ├── student_list.html
 │   │   │   ├── teacher_list.html
+│   │   │   ├── teacherRewardStatement_list.html
 │   │   │   └── teByStudent_list.html
 │   │   ├── shimamura/ 
 │   │   │   ├── admin_top.html
@@ -926,6 +933,7 @@ e2e/
 │           ├── kyoshitsu_touroku_test.js
 │           ├── master_menu_test.js
 │           ├── payment_ichiran_test.js
+│           ├── payment_statement_output_test.js
 │           ├── poll_ichiran_test.js
 │           ├── proByCourse_ichiran_test.js
 │           ├── prospect_list_ichiran_test.js

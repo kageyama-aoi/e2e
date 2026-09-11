@@ -72,6 +72,7 @@
 | `tests/tframe/page/announcement_touroku_test.js` | `announcement_touroku_data.csv` | お知らせ編集（登録・`announcement/ew/_default`）。postStart/postEnd/titleが必須。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/email_template_category_touroku_test.js` | `email_template_category_touroku_data.csv` | Eメールテンプレートカテゴリ編集（登録・`emailTemplateCategory/ew/_default`）。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/email_template_touroku_test.js` | `email_template_touroku_data.csv` + `email_template_touroku_data_tframe.juku_beta.csv` | Eメールテンプレート編集（登録・`emailTemplate/ew/_default`）。`categoryId`（既存カテゴリのrecord ID）が必須で環境ごとに値が異なるため、juku_beta 用にプロファイル別CSVを用意。※culture_beta / juku_beta 両対応 |
+| `tests/tframe/page/payment_statement_output_test.js` | `payment_statement_output_data.csv` | 支払調書（帳票出力・`shareiTotal/sw/paymentStatement`）。出力ボタンは同画面を `isExportType=output` 付きで再読込する流れでファイルダウンロードが発生するが、中身は未検証。`#tf-message-summary` の成功メッセージのみ確認。※culture_beta のみ |
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
