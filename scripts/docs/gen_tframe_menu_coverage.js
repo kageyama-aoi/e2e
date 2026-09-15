@@ -32,7 +32,11 @@ const DOC_FILE = path.join(ROOT, 'docs', 'tframe', 'menu_coverage.md');
 const START = '<!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_tframe_menu_coverage.js。手で編集しない -->';
 const END = '<!-- AUTOGEN:menu-table END -->';
 
-/** route 文字列を突き合わせ用キーに正規化（クエリ・分岐パラメータを落とす） */
+/**
+ * route 文字列を突き合わせ用キーに正規化する（クエリ・分岐パラメータを落とす）
+ * @param {string} route - 生の route 文字列（例: "student/ew/save?id=1"）
+ * @returns {string} 正規化後のキー（例: "student/ew/save"）
+ */
 function routeKey(route) {
   return String(route).split('?')[0].split(' ')[0].trim();
 }
@@ -41,6 +45,11 @@ function routeKey(route) {
 // 1. スナップショット読込 → アイコン別・env 別のメニュー構成を union
 // ---------------------------------------------------------------------------
 
+/**
+ * メニュースナップショット JSON を読み込む
+ * @param {string} name - スナップショットファイル名（拡張子なし。例: "culture_beta"）
+ * @returns {Object} パース済みのスナップショット JSON
+ */
 function loadSnapshot(name) {
   return JSON.parse(fs.readFileSync(path.join(SNAP_DIR, `${name}.json`), 'utf8'));
 }
@@ -48,8 +57,11 @@ function loadSnapshot(name) {
 const snapshots = { culture: loadSnapshot('culture_beta'), juku: loadSnapshot('juku_beta') };
 
 /**
- * icons: [{ key, label, groups: [{ name, items: [{ label, route, key, envs:Set }] }] }]
+ * スナップショット（culture / juku）を統合し、アイコン別のメニュー構成を組み立てる。
  * culture のアイコン順を基準にし、juku だけにあるアイコン/グループ/項目を後ろに足す。
+ * @returns {Array<Object>} アイコン一覧。各要素は
+ *   {key: string, label: string, groups: Array<{name: string, items: Array<Object>}>}。
+ *   items の各要素は {label: string, route: string, key: string, envs: Set<string>}
  */
 function buildIcons() {
   const iconOrder = [];
@@ -97,6 +109,12 @@ function buildIcons() {
 
 const ROUTE_RE = /r=([A-Za-z]+)%2F(ew|sw|gw)%2F([A-Za-z_]+)/g;
 
+/**
+ * pages/tframe/screens/*.js をスキャンし、route 参照と PO メソッドの対応を集計する
+ * @returns {Object} 集計結果。
+ *   routeToPO: {Map<string, Set<string>>} routeKey -> その route を参照する PO basename の集合。
+ *   poMethods: {Map<string, Array<Object>>} PO basename -> [{method: (string|null), routeKey: string}]
+ */
 function scanPageObjects() {
   const routeToPO = new Map();
   const poMethods = new Map(); // poBase -> [{ method, routeKey }]
@@ -152,6 +170,10 @@ const MENU_NAV_PO_BY_ICON = {
 // 3. codecept.conf.js の inject 名 -> PO basename
 // ---------------------------------------------------------------------------
 
+/**
+ * codecept.conf.js から inject 変数名 -> PO basename の対応を読み込む
+ * @returns {Map<string, string>} inject 変数名 -> PO basename
+ */
 function loadInjectMap() {
   const src = fs.readFileSync(CONF_FILE, 'utf8');
   const map = new Map();
@@ -166,6 +188,14 @@ function loadInjectMap() {
 //    routeKey -> [{ file, kind }]（kind: 登録 / 一覧 / その他）
 // ---------------------------------------------------------------------------
 
+/**
+ * tests/tframe/page/*_test.js をスキャンし、route とテストファイルの対応を集計する
+ * @param {Map<string, string>} injectMap - codecept.conf.js の inject 変数名 -> PO basename
+ * @param {Map<string, Array<Object>>} poMethods - scanPageObjects() が返す PO basename -> メソッド一覧
+ * @returns {Object} 集計結果。
+ *   routeToTests: {Map<string, Array<{file: string, kind: string}>>} routeKey -> 参照しているテストファイル一覧。
+ *   poBaseToTestFiles: {Map<string, Set<string>>} PO basename -> それを inject しているテストファイルの集合
+ */
 function scanTests(injectMap, poMethods) {
   const routeToTests = new Map();
   const poBaseToTestFiles = new Map(); // PO basename -> Set(test file)
@@ -216,22 +246,51 @@ function scanTests(injectMap, poMethods) {
 // 5. markdown 生成
 // ---------------------------------------------------------------------------
 
+/**
+ * env がその画面のメニューに存在するかを表示用マークに変換する
+ * @param {Set<string>} envs - 画面が存在する env の集合（"culture" | "juku"）
+ * @param {string} env - 判定対象の env
+ * @returns {string} 存在すれば "●"、存在しなければ "-"
+ */
 function envMark(envs, env) {
   return envs.has(env) ? '●' : '-';
 }
 
+/**
+ * Page Object 列のセル文字列を組み立てる
+ * @param {Map<string, Set<string>>} routeToPO - routeKey -> PO basename の集合
+ * @param {string} key - 判定対象の routeKey
+ * @returns {string} 該当 PO があれば "✓ PoA / PoB"、無ければ "✗"
+ */
 function poCell(routeToPO, key) {
   const set = routeToPO.get(key);
   if (!set || set.size === 0) return '✗';
   return `✓ ${[...set].sort().join(' / ')}`;
 }
 
+/**
+ * 登録/一覧テスト列のセル文字列を組み立てる
+ * @param {Map<string, Array<{file: string, kind: string}>>} routeToTests - routeKey -> テスト一覧
+ * @param {string} key - 判定対象の routeKey
+ * @param {string} kind - 絞り込む種別（"登録" | "一覧"）
+ * @returns {string} 該当テストがあれば "✓ `file1` / `file2`"、無ければ "✗"
+ */
 function testCell(routeToTests, key, kind) {
   const list = (routeToTests.get(key) || []).filter((t) => t.kind === kind);
   if (list.length === 0) return '✗';
   return `✓ ${list.map((t) => `\`${t.file}\``).sort().join(' / ')}`;
 }
 
+/**
+ * その他テスト列のセル文字列を組み立てる。専用 PO・専用テストのどちらも無い画面は、
+ * アイコンのメニューナビ検証テストがあれば "△ menu-nav ..." として補足する。
+ * @param {Map<string, Array<{file: string, kind: string}>>} routeToTests - routeKey -> テスト一覧
+ * @param {string} key - 判定対象の routeKey
+ * @param {string} iconKey - 所属アイコンのキー
+ * @param {Map<string, Set<string>>} routeToPO - routeKey -> PO basename の集合
+ * @param {Map<string, Set<string>>} poBaseToTestFiles - PO basename -> それを inject しているテストファイルの集合
+ * @returns {string} セル文字列（該当が無ければ空文字）
+ */
 function otherTestCell(routeToTests, key, iconKey, routeToPO, poBaseToTestFiles) {
   const parts = (routeToTests.get(key) || [])
     .filter((t) => t.kind === 'その他')
@@ -250,6 +309,14 @@ function otherTestCell(routeToTests, key, iconKey, routeToPO, poBaseToTestFiles)
   return [...new Set(parts)].sort().join(' / ');
 }
 
+/**
+ * アイコン別マッピング表の Markdown 本文を生成する
+ * @param {Array<Object>} icons - buildIcons() が返すアイコン一覧
+ * @param {Map<string, Set<string>>} routeToPO - routeKey -> PO basename の集合
+ * @param {Map<string, Array<{file: string, kind: string}>>} routeToTests - routeKey -> テスト一覧
+ * @param {Map<string, Set<string>>} poBaseToTestFiles - PO basename -> それを inject しているテストファイルの集合
+ * @returns {string} AUTOGEN マーカーを含む Markdown 文字列
+ */
 function renderTable(icons, routeToPO, routeToTests, poBaseToTestFiles) {
   const out = [];
   out.push('## アイコン別 マッピング表');
@@ -298,7 +365,13 @@ function renderTable(icons, routeToPO, routeToTests, poBaseToTestFiles) {
   return out.join('\n');
 }
 
-// 空グループの env 判定用（項目が無いので envs Set が空。スナップショットからグループ存在 env を引く）
+/**
+ * 項目なしグループの env 判定用に、スナップショットからそのグループが存在する env を引く
+ * （項目が無いので item.envs Set が空になるための代替手段）
+ * @param {Object} icon - buildIcons() が返すアイコン1件（{key, label, groups}）
+ * @param {Object} group - icon.groups の1件（{name: string, items: Array<Object>}）
+ * @returns {Set<string>} そのグループが存在する env の集合
+ */
 function collectEnvs(icon, group) {
   const envs = new Set();
   for (const [env, snap] of Object.entries(snapshots)) {
@@ -312,6 +385,11 @@ function collectEnvs(icon, group) {
 // main
 // ---------------------------------------------------------------------------
 
+/**
+ * エントリポイント。アイコン別マッピング表を生成し、menu_coverage.md の AUTOGEN 区間を更新する。
+ * `--check`（`process.argv`）指定時は書き換えず、差分があれば exit 1 する（pre-commit / CI 用）。
+ * @returns {void}
+ */
 function main() {
   const check = process.argv.includes('--check');
 
