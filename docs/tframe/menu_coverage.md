@@ -50,14 +50,14 @@
 | 商品一覧 | `product/sw/_default` | ✓ ShohinPage | ✓ `shohin_ichiran_test.js` |
 | 調整金登録（講師謝礼グループ） | `shareiDetail/ew/_default` | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` |
 | 講師謝礼一覧 | `shareiDetail/sw/_default` | ✓ ChosekinPage | ✓ `chosekin_ichiran_test.js` |
-| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ✗ | ✗ |
-| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ✗ | ✗ |
-| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ✗ | ✗ |
+| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ✓ ChosekinPage | ✓ `te_reward_calc_test.js` |
+| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ✓ KeiriIchiranPage | ✓ `te_reward_total_calc_test.js` |
+| 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ✓ KeiriIchiranPage | ✓ `sharei_total_ichiran_test.js` |
 | 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | ✗ | ✗ |
 | 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | ✗ | ✗ |
 | 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | ✗ | ✗ |
 | 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | ✗ | ✗ |
-| 支払調書 | `shareiTotal/sw/paymentStatement` | ✗ | △ API のみ（`flow/96-60_teacher_payment_report_test.js`） |
+| 支払調書 | `shareiTotal/sw/paymentStatement` | ✓ KeiriIchiranPage | ✓ `payment_statement_output_test.js`（＋△ API `flow/96-60_teacher_payment_report_test.js`） |
 
 ### juku_beta のみ（culture_beta の左メニューに無い）
 
@@ -66,9 +66,9 @@
 | 口座情報データ取込（取込グループ） | `student/ew/accountInfoDataImport` | ✓ JukuseiPage | ✓ `account_info_data_import_test.js` |
 | 問合せデータ取込 | `student/ew/stInquiryDataImport` | ✓ JukuseiPage | ✓ `st_inquiry_data_import_test.js` |
 | 校舎登録 | `branch/ew/_default` | ✓ BranchPage | ✓ `branch_touroku_test.js` |
-| 入退記録登録（入退室グループ） | `entranceLog/ew/_default` | ✗ | ✗ |
-| 入退記録一覧 | `entranceLog/sw/_default` | ✗ | ✗ |
-| 連絡一覧（連絡グループ） | `contact/sw/_default` | ✗ | ✗ |
+| 入退記録登録（入退室グループ） | `entranceLog/ew/_default` | ✓ CalendarPage | ✓ `entrance_log_touroku_test.js` |
+| 入退記録一覧 | `entranceLog/sw/_default` | ✓ CalendarPage | ✓ `entrance_log_ichiran_test.js` |
+| 連絡一覧（連絡グループ） | `contact/sw/_default` | ✓ EmailIchiranPage | ✓ `contact_ichiran_test.js` |
 | 料金マスタ作成 | `smsFeeMaster/ew/_default` | ✓ RyokinMasterPage | ✓ `ryokin_master_touroku_test.js` |
 | 料金マスタ一覧 | `smsFeeMaster/sw/_default` | ✓ RyokinMasterPage | ✓ `ryokin_master_ichiran_test.js` |
 | 料金パッケージ作成 | `smsFeeMasterPackage/ew/_default` | ✓ RyokinPackagePage | ✓ `ryokin_package_touroku_test.js` |
@@ -322,8 +322,8 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | 出力ボタン |
 |---|---|---|---|
-| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 両 | 出席表印刷。coursePicker必須 → **#218**（要ピッカー調査） |
-| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | culture | 謝礼明細出力。月スイープ5パターンで全て0件 → **#218**（要teacherPicker調査） |
+| 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | 両 | 出席表印刷。coursePicker必須 → **#218**（保留中。コース選択自体は成功するが出力ボタンが常に「コースが選択されていません」を返す原因不明のエラーで詰まっている） |
+| 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | culture | 謝礼明細出力。月スイープ5パターンで全て0件 → **#218**（要teacherPicker調査。上記と同系統の問題に当たる可能性あり） |
 | 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | culture | 謝礼明細出力 → **#218**（teacherRewardStatementと同構造見込み） |
 | 当月謝礼明細（個人） | `shareiDetail/sw/monthRewardStatement` | culture | 謝礼明細出力 → **#218** |
 | 当月謝礼明細（法人） | `shareiDetail/sw/companyMonthRewardStatement` | culture | 謝礼明細出力 → **#218** |
@@ -372,12 +372,18 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
   結果行に `<a>` は無く1列目のラジオボタン（CSSで視覚上は非表示）で選択する。`executeScript` で直接
   `radio.click()` する方式を `support/tframe/utils.js` の `selectFirstFromPopupPicker()` として汎用化した。
   **これでバケットB（登録フォーム系）は実質完了**（アンケート編集のみ意図的保留）。
-- **#218 続報（未完了）**: `selectFirstFromPopupPicker` は出席表一括出力の coursePicker にもそのまま使えることを
-  実機確認（モーダルの構造は同一）。ただし先頭コースの実施期間が出力対象スケジュール範囲（既定=当月・
-  **最大21日までの上限あり**）と噛み合わず「コースが選択されていません。」エラーになる（コース自体は
-  選択できている・メッセージが誤解を招く）。#213のような単純な日付範囲拡大では回避できないため、
-  出力対象期間内にスケジュールを持つコースを選ぶ工夫が別途必要。講師謝礼明細4種の teacherPicker も
-  同じ仕組みで選択できる見込みだが未検証。
+- **#218 続報（保留中・原因不明）**: `selectFirstFromPopupPicker` は出席表一括出力の coursePicker にもそのまま
+  使えることを実機確認（モーダルの構造は同一）。coursePicker モーダル内には検索フォーム
+  （`name`/`school_area_id`/`school_branch_id`/`courseCategory`/`nendoYear`/`code`）があり、
+  `nendoYear` で絞り込むと実施期間（`actualEventStart`/`actualEventEnd`）が入っている候補を効率よく
+  見つけられる。当初「先頭コースの実施期間が出力対象スケジュール範囲（既定=当月・最大21日上限）と
+  噛み合わない」という仮説を立てたが、複数パターン（実施期間内の日付・期間開始/終了直前・単日ピンポイント
+  一致・実データ確認済みの「営業」校舎の実在コース）で反証済み。**コースを一切選ばずデフォルトのまま
+  出力した場合と全く同一のエラーメッセージ**になることから、コース選択の有無ではなく別の要因
+  （出力ボタン`#sheetPrint`だけが検索ボタンと違う`tf.core.redirect`の素のGETリダイレクト経路を通る点が疑わしい）
+  が原因の可能性が高い。ヘッドレスの範囲で複数仮説を検証し尽くしたため、次に触るときは実機で人間が
+  操作した場合との比較から始める方針。講師謝礼明細4種の teacherPicker も同じ仕組みで選択できる見込みだが
+  未検証（#218 コメント参照）。
 - ~~**バケットD 第1弾（翌月月謝一括作成・講師謝礼計算・講師謝礼合計計算）**~~ … ✓ 完了（Issue #219・
   `KeiriIchiranPage.js` / `ChosekinPage.js` に追記 ＋ 共通ヘルパー `verifyBulkActionResult`
   （support/tframe/utils.js）新設）。3画面とも「成功」または「対象データなし（冪等・実質正常系）」の
