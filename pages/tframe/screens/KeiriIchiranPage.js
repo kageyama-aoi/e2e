@@ -15,6 +15,8 @@
  * - 口座振替請求データ作成 `bankTransfer/ew/bankTransferExport`（両対応・一括処理系。#219）
  * - 一括入金処理 `smsPayment/sw/batchPayment`（両対応・一括処理系。実データを変更しない
  *   ガード確認のみ実施。#219）
+ * - 口座振替請求データ読込 `bankTransfer/ew/bankTransferImport`（両対応・インポート系。
+ *   実データを変更しないガード確認のみ実施。#220）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -344,6 +346,53 @@ module.exports = {
   async clickBankTransferExportAndVerify() {
     I.say('【口座振替請求データ作成】作成ボタンをクリック');
     await verifyBulkActionResult(I, '#createBtn');
+  },
+
+  // ----------------------------------------------------------------
+  //  口座振替請求データ読込（EW: bankTransfer/ew/bankTransferImport）両対応・インポート系
+  // ----------------------------------------------------------------
+  // 取込ファイル・トランザクションIDが必須で、正しい組み合わせは #219 の
+  // 口座振替請求データ作成で生成された実際のトランザクションID・振替結果ファイルが必要
+  // （銀行フォーマット依存のため未調査）。本テストは**ガードメッセージの確認のみ**とし、
+  // 実際の読込（実データ更新）はテスト対象外とする（#220）。
+
+  /**
+   * 口座振替請求データ読込画面へ遷移する
+   */
+  navigateToBankTransferImportPage() {
+    I.say('【口座振替請求データ読込】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=bankTransfer%2Few%2FbankTransferImport');
+    I.waitForElement('#readBtn', 10);
+  },
+
+  /**
+   * ファイル・トランザクションIDを入力する（空フィールドはスキップ＝未入力のまま）
+   * @param {object} data - bank_transfer_import_data.csv の1行分（filePath / transactionId）
+   */
+  fillBankTransferImportConditions(data) {
+    if (data.filePath) {
+      I.say(`【口座振替請求データ読込】ファイル選択: ${data.filePath}`);
+      I.attachFile('#readFile', data.filePath);
+    } else {
+      I.say('【口座振替請求データ読込】ファイル選択スキップ（未選択ケース）');
+    }
+    if (data.transactionId) I.fillField('#transactionId', data.transactionId);
+  },
+
+  /**
+   * 読込ボタンをクリックし、期待するガードメッセージを確認する（日英とも許容）
+   * @param {string} expectedKey - 'noInput'（ファイル・トランザクションID未入力）
+   *                               | 'invalidFormat'（不正フォーマットのファイル）
+   */
+  clickBankTransferImportAndVerify(expectedKey) {
+    I.say('【口座振替請求データ読込】読込ボタンをクリック');
+    I.click('#readBtn');
+    I.waitForElement('#tf-message-summary', 10);
+    const messages = {
+      noInput: isEnglish() ? 'Import file cannot be blank' : '取込ファイル をご入力ください',
+      invalidFormat: isEnglish() ? 'The specified file is not eligible' : '対象ファイルではありません',
+    };
+    I.see(messages[expectedKey], '#tf-message-summary');
   },
 
   // ----------------------------------------------------------------

@@ -100,6 +100,11 @@ const TARGETS = [
   { name: 'bankTransferExport_touroku',   hint: '口座振替請求データ作成', directUrl: `${BASE_URL}index.php?r=bankTransfer%2Few%2FbankTransferExport` },
   { name: 'teRewardCalc_list',            hint: '講師謝礼計算',     directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FteRewardCalc` },
   { name: 'teRewardTotalCalc_list',       hint: '講師謝礼合計計算', directUrl: `${BASE_URL}index.php?r=shareiTotal%2Fsw%2FteRewardTotalCalc` },
+
+  // ── インポート系（EW）── Issue #220
+  { name: 'bankTransferImport_touroku',   hint: '口座振替請求データ読込', directUrl: `${BASE_URL}index.php?r=bankTransfer%2Few%2FbankTransferImport` },
+  { name: 'accountInfoDataImport_touroku', hint: '口座情報データ取込',    directUrl: `${BASE_URL}index.php?r=student%2Few%2FaccountInfoDataImport` },
+  { name: 'stInquiryDataImport_touroku',  hint: '問合せデータ取込',       directUrl: `${BASE_URL}index.php?r=student%2Few%2FstInquiryDataImport` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-15 13:10:26
+Last updated: 2026-09-15 13:42:50
 
 ```text
 e2e/
@@ -417,7 +417,10 @@ e2e/
 │   │   ├── transaction_ichiran_search_data.csv
 │   │   └── validity_data_output_data.csv
 │   └── tframe/ 
+│       ├── import_samples/ 
+│       │   └── invalid_header_sample.csv
 │       ├── account_ichiran_search_data.csv
+│       ├── account_info_data_import_data.csv
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
 │       ├── announcement_ichiran_search_data.csv
@@ -425,6 +428,7 @@ e2e/
 │       ├── attendance_ichiran_search_data.csv
 │       ├── bank_actions_history_ichiran_search_data.csv
 │       ├── bank_transfer_export_data.csv
+│       ├── bank_transfer_import_data.csv
 │       ├── batch_payment_data.csv
 │       ├── branch_ichiran_search_data.csv
 │       ├── branch_touroku_data.csv
@@ -474,6 +478,8 @@ e2e/
 │       ├── sharei_total_ichiran_search_data.csv
 │       ├── shohin_ichiran_search_data.csv
 │       ├── shohin_touroku_data.csv
+│       ├── st_inquiry_data_import_data.csv
+│       ├── st_inquiry_data_import_validation_data.csv
 │       ├── staff_ichiran_search_data.csv
 │       ├── staff_touroku_data.csv
 │       ├── staff_touroku_data_minimum.csv
@@ -590,6 +596,7 @@ e2e/
 │   │   │   ├── _att_debug.png
 │   │   │   ├── _contact_debug.png
 │   │   │   ├── account_list.html
+│   │   │   ├── accountInfoDataImport_touroku.html
 │   │   │   ├── after_login.png
 │   │   │   ├── all_links.json
 │   │   │   ├── announcement_touroku.html
@@ -607,6 +614,7 @@ e2e/
 │   │   │   ├── bank_payment_validation.json
 │   │   │   ├── bankActionsHistory_list.html
 │   │   │   ├── bankTransferExport_touroku.html
+│   │   │   ├── bankTransferImport_touroku.html
 │   │   │   ├── batchPayment_list.html
 │   │   │   ├── branch_list.html
 │   │   │   ├── branch_touroku.html
@@ -651,6 +659,7 @@ e2e/
 │   │   │   ├── shohin_touroku.html
 │   │   │   ├── staff_list.html
 │   │   │   ├── stByCourse_list.html
+│   │   │   ├── stInquiryDataImport_touroku.html
 │   │   │   ├── student_list.html
 │   │   │   ├── teacher_list.html
 │   │   │   ├── teacherRewardStatement_list.html
@@ -904,12 +913,14 @@ e2e/
 │       │   └── navigation_after_login_test.js
 │       └── page/ 
 │           ├── account_ichiran_test.js
+│           ├── account_info_data_import_test.js
 │           ├── account_touroku_test.js
 │           ├── announcement_ichiran_test.js
 │           ├── announcement_touroku_test.js
 │           ├── attendance_ichiran_test.js
 │           ├── bank_actions_history_ichiran_test.js
 │           ├── bank_transfer_export_test.js
+│           ├── bank_transfer_import_test.js
 │           ├── batch_payment_test.js
 │           ├── branch_ichiran_test.js
 │           ├── branch_touroku_test.js
@@ -965,6 +976,7 @@ e2e/
 │           ├── sharei_total_ichiran_test.js
 │           ├── shohin_ichiran_test.js
 │           ├── shohin_touroku_test.js
+│           ├── st_inquiry_data_import_test.js
 │           ├── staff_ichiran_test.js
 │           ├── staff_touroku_test.js
 │           ├── stByCourse_ichiran_test.js

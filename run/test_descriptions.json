@@ -89,6 +89,9 @@
     "page/te_reward_total_calc_test.js":             "講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用）",
     "page/bank_transfer_export_test.js":             "口座振替請求データ作成の実行と結果メッセージを確認（culture_beta / juku_beta 両対応・再集計処理）",
     "page/batch_payment_test.js":                    "一括入金処理の対象0件ガード文言を確認（culture_beta / juku_beta 両対応・実データは変更しない）",
+    "page/bank_transfer_import_test.js":             "口座振替請求データ読込のガードメッセージを確認（culture_beta / juku_beta 両対応・実データは変更しない）",
+    "page/account_info_data_import_test.js":         "口座情報データ取込のガードメッセージを確認（juku_beta 専用・実データは変更しない）",
+    "page/st_inquiry_data_import_test.js":           "問合せデータ取込のマッピング確認画面遷移とガードメッセージを確認（juku_beta 専用・実データは変更しない）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

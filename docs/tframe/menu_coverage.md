@@ -1,6 +1,6 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-15（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化 / #219 バケットD第1弾3画面）
+最終更新: 2026-09-15（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化 / #219 バケットD全5画面 / #220 バケットE全3画面）
 
 - **アイコン別 マッピング表は自動生成**（`node scripts/docs/gen_tframe_menu_coverage.js` / commit 時にも自動再生成）。
   入力 = `pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`（実機採取・採取日は各 JSON の `capturedAt`）
@@ -63,8 +63,8 @@
 
 | 画面 | route | Page Object | テスト |
 |---|---|---|---|
-| 口座情報データ取込（取込グループ） | `student/ew/accountInfoDataImport` | ✗ | ✗ |
-| 問合せデータ取込 | `student/ew/stInquiryDataImport` | ✗ | ✗ |
+| 口座情報データ取込（取込グループ） | `student/ew/accountInfoDataImport` | ✓ JukuseiPage | ✓ `account_info_data_import_test.js` |
+| 問合せデータ取込 | `student/ew/stInquiryDataImport` | ✓ JukuseiPage | ✓ `st_inquiry_data_import_test.js` |
 | 校舎登録 | `branch/ew/_default` | ✓ BranchPage | ✓ `branch_touroku_test.js` |
 | 入退記録登録（入退室グループ） | `entranceLog/ew/_default` | ✗ | ✗ |
 | 入退記録一覧 | `entranceLog/sw/_default` | ✗ | ✗ |
@@ -102,8 +102,8 @@
 | 対応履歴一覧 | `infoHistory/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistory_ichiran_test.js` |  |
 | 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_touroku_test.js` | ✗ |  |
 | 対応履歴テンプレート一覧 | `infoHistoryTemplate/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistoryTemplate_ichiran_test.js` |  |
-| 口座情報データ取込 | `student/ew/accountInfoDataImport` | - | ● | ✗ | ✗ | ✗ |  |
-| 問合せデータ取込 | `student/ew/stInquiryDataImport` | - | ● | ✗ | ✗ | ✗ |  |
+| 口座情報データ取込 | `student/ew/accountInfoDataImport` | - | ● | ✓ JukuseiPage | ✗ | ✗ | `account_info_data_import_test.js` |
+| 問合せデータ取込 | `student/ew/stInquiryDataImport` | - | ● | ✓ JukuseiPage | ✗ | ✗ | `st_inquiry_data_import_test.js` |
 
 ### コース（icon: `course`）
 
@@ -180,7 +180,7 @@
 | 商品一覧 | `product/sw/_default` | ● | - | ✓ ShohinPage | ✗ | ✓ `shohin_ichiran_test.js` |  |
 | 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `transaction_ichiran_test.js` |  |
 | 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `bank_transfer_export_test.js` |
-| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `bank_transfer_import_test.js` |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `bank_actions_history_ichiran_test.js` |  |
 | 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✓ ChosekinPage | ✗ | ✗ | `te_reward_calc_test.js` / `te_reward_total_calc_test.js` |
 | 調整金登録 | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` | ✗ |  |
@@ -245,7 +245,7 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 - お知らせ 登録/一覧 `announcement/ew|sw/_default`
 - アンケート 登録/一覧 `poll/ew|sw/_default`
 - Eメールテンプレート／カテゴリ 登録/一覧（`emailTemplate*` / `emailTemplateCategory*`）※ menu-nav 巡回のみ
-- 口座振替請求データ 作成/読込 `bankTransfer/ew/bankTransferExport|Import` ／ 口座振替データ履歴 `bankActionsHistory/sw/_default`
+- ~~口座振替請求データ 作成/読込~~ `bankTransfer/ew/bankTransferExport|Import` ／ ~~口座振替データ履歴~~ `bankActionsHistory/sw/_default` … 全て完了（#213/#219/#220）
 - ~~経理一覧系（料金/契約/入金/未収金/入出金）~~ … ✓ 完了（#198）
 - ~~翌月月謝一括作成~~ / ~~一括入金処理~~ / ~~口座振替請求データ作成~~ … ✓ 完了（#219・`KeiriIchiranPage.js`。
   翌月月謝一括作成・口座振替請求データ作成は冪等/再集計処理として通常検証、一括入金処理は
@@ -253,7 +253,7 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 
 **juku_beta のみ**
 
-- 口座情報データ取込 `student/ew/accountInfoDataImport` ／ 問合せデータ取込 `student/ew/stInquiryDataImport`
+- ~~口座情報データ取込~~ `student/ew/accountInfoDataImport` ／ ~~問合せデータ取込~~ `student/ew/stInquiryDataImport` … ✓ 完了（#220）
 - 入退記録 登録/一覧 `entranceLog/ew|sw/_default`
 - 連絡一覧 `contact/sw/_default`
 
@@ -349,9 +349,9 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
-| 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | 両 | 振替結果ファイルの取込 |
-| 口座情報データ取込 | `student/ew/accountInfoDataImport` | juku | |
-| 問合せデータ取込 | `student/ew/stInquiryDataImport` | juku | select3（取込種別など）＋ファイル |
+| ~~口座振替請求データ読込~~ | `bankTransfer/ew/bankTransferImport` | 両 | ✓ 実装済み `bank_transfer_import_test.js`（#220・`KeiriIchiranPage.js`）。正しいトランザクションID・振替結果ファイルの仕様は未調査のため、未入力・不正フォーマットのガードメッセージのみ確認 |
+| ~~口座情報データ取込~~ | `student/ew/accountInfoDataImport` | juku | ✓ 実装済み `account_info_data_import_test.js`（#220・`JukuseiPage.js`）。正しいCSVヘッダー仕様は未調査のため、未選択・タイトル行不一致のガードメッセージのみ確認 |
+| ~~問合せデータ取込~~ | `student/ew/stInquiryDataImport` | juku | ✓ 実装済み `st_inquiry_data_import_test.js`（#220・`JukuseiPage.js`）。ヘッダー付きCSVで列マッピング確認画面（実データ未確定）まで進めることを確認し、「マッピングを保存して取込」は押さず「ファイル選択画面に戻る」で離脱 |
 
 ### 着手順の提案 / 進捗
 
@@ -389,7 +389,15 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
   実行ボタンのガード文言（「一覧より選択してください」。juku_beta英語UIでは
   "Please select the batch deposit to be processed from the list."）のみ確認する安全な経路限定**で実装
   （実際の入金確定フローはテスト対象外）。**これでバケットD（一括処理・計算系5画面）が全件完了。**
-- **次**: #218（保留中・要方針判断）/ アンケート編集（着手判断待ち）/ バケット E（インポート系3画面）
+- ~~**バケットE（インポート系3画面）**~~ … ✓ 完了（Issue #220・`KeiriIchiranPage.js` / `JukuseiPage.js` に追記）。
+  3画面とも正しいファイル仕様（CSVヘッダー・トランザクションID・銀行フォーマット等）が未調査のため、
+  実データを変更しない**ガードメッセージ確認のみ**の方針で統一。共有ダミーファイル
+  `data/tframe/import_samples/invalid_header_sample.csv`（`dummy,data`ヘッダーのみ）を3画面の
+  「不正フォーマット」検証に使い回せることを実機確認。問合せデータ取込はヘッダー付きCSV投入で
+  列マッピング確認画面（未確定）まで進むことも確認し、「ファイル選択画面に戻る」で安全に離脱する。
+  **これで menu_coverage.md のPO無し画面バケットA〜Eが全件完了。**
+- **次**: #218（保留中・要方針判断）/ アンケート編集（着手判断待ち）/
+  バケットE各画面の正しいファイル仕様調査（実データ投入テストへの発展・着手判断待ち）
 
 ---
 

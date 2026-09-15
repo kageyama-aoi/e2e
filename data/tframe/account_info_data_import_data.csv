@@ -1,0 +1,3 @@
+scenario,filePath,expectedMessage
+ファイル未選択はエラー,,Please select a file.
+タイトル行が一致しないファイルはエラー,data/tframe/import_samples/invalid_header_sample.csv,The title line of the imported file does not match.

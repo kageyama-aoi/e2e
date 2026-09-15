@@ -1,0 +1,2 @@
+scenario,filePath
+ヘッダー付きCSVでマッピング確認画面まで進める（実取込はしない）,data/tframe/import_samples/invalid_header_sample.csv

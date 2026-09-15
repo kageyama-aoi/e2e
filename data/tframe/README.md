@@ -85,6 +85,13 @@
 | `tests/tframe/page/te_reward_total_calc_test.js` | `te_reward_total_calc_data.csv` | 講師謝礼合計計算（一括処理・`shareiTotal/sw/teRewardTotalCalc`）。先に講師謝礼計算を実行してからでないと「処理対象の講師謝礼情報がありません。」になるため、テスト内でArrangeとして講師謝礼計算を挟む。※culture_beta のみ |
 | `tests/tframe/page/bank_transfer_export_test.js` | `bank_transfer_export_data.csv` | 口座振替請求データ作成（一括処理・`bankTransfer/ew/bankTransferExport`）。校舎・請求月は画面側で固定（入力フィールド無し）。2回連続実行しても同一件数を返す再集計処理と判明。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/batch_payment_test.js` | `batch_payment_data.csv` | 一括入金処理（`smsPayment/sw/batchPayment`）。実行すると実際に入金確定処理を行う副作用があるため、存在しないID番号で検索して結果0件にし、実行ボタンのガード文言（「一覧より選択してください」）のみ確認する安全な経路限定のテスト。※culture_beta / juku_beta 両対応 |
+| `tests/tframe/page/bank_transfer_import_test.js` | `bank_transfer_import_data.csv` | 口座振替請求データ読込（インポート系・`bankTransfer/ew/bankTransferImport`）。正しいトランザクションID・振替結果ファイルの仕様は未調査のため、未入力・不正フォーマットのガードメッセージのみ確認（実データ更新はテスト対象外）。日英メッセージは`KeiriIchiranPage.clickBankTransferImportAndVerify`が`isEnglish()`で切替。※culture_beta / juku_beta 両対応 |
+| `tests/tframe/page/account_info_data_import_test.js` | `account_info_data_import_data.csv` | 口座情報データ取込（インポート系・`student/ew/accountInfoDataImport`）。正しいCSVヘッダー仕様は未調査のため、未選択・タイトル行不一致のガードメッセージのみ確認（実データ更新はテスト対象外）。※juku_beta のみ（常に英語UI） |
+| `tests/tframe/page/st_inquiry_data_import_test.js` | `st_inquiry_data_import_data.csv`（正常系）+ `st_inquiry_data_import_validation_data.csv`（異常系） | 問合せデータ取込（インポート系・`student/ew/stInquiryDataImport`）。ヘッダー付きCSVを投入すると列マッピング確認画面（実データ未確定）へ進むことを確認し、「マッピングを保存して取込」は押さず「ファイル選択画面に戻る」で離脱。異常系はファイル未選択のガードメッセージを確認。※juku_beta のみ（常に英語UI） |
+
+> **アップロード用サンプルファイル**は `data/tframe/import_samples/` に配置する（`data/shimamura/smbc_import/` の tframe 版）。
+> `invalid_header_sample.csv` は上記3画面すべての「不正フォーマット/タイトル行不一致」テストで共有する
+> ダミーファイル（`dummy,data` ヘッダーのみ・実データなし）。
 
 ### minimum.csv の使い方（テスト実装時の方針）
 

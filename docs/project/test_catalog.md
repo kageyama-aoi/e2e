@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-15 13:10 (JST)
+> 最終更新: 2026-09-15 13:42 (JST)
 
-**合計 113 テスト**（shimamura 30 / tframe 81 / taskreport 1 / smoke 1）
+**合計 116 テスト**（shimamura 30 / tframe 84 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（81件）
+## tframe（84件）
 
 ### api/（1件）
 
@@ -89,17 +89,19 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（71件）
+### page/（74件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
+| `account_info_data_import_test.js` | — | 口座情報データ取込のガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
 | `announcement_ichiran_test.js` | — | お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `announcement_touroku_test.js` | — | お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `attendance_ichiran_test.js` | — | 本日の出席表一覧の全期間検索とコースカテゴリ絞り込みを確認（culture_beta のみ・校舎データ依存） |
 | `bank_actions_history_ichiran_test.js` | — | 口座振替データ履歴の空検索と読込/作成絞り込みを確認（culture_beta / juku_beta 両対応） |
 | `bank_transfer_export_test.js` | — | 口座振替請求データ作成の実行と結果メッセージを確認（culture_beta / juku_beta 両対応・再集計処理） |
+| `bank_transfer_import_test.js` | — | 口座振替請求データ読込のガードメッセージを確認（culture_beta / juku_beta 両対応・実データは変更しない） |
 | `batch_payment_test.js` | — | 一括入金処理の対象0件ガード文言を確認（culture_beta / juku_beta 両対応・実データは変更しない） |
 | `branch_ichiran_test.js` | — | 校舎一覧の空検索と校舎名での絞り込み検索を確認 |
 | `branch_touroku_test.js` | — | 校舎の新規登録フォームへの入力・保存を確認 |
@@ -156,6 +158,7 @@
 | `shohin_ichiran_test.js` | — | 商品一覧の空検索と商品名での絞り込み検索を確認 |
 | `shohin_touroku_test.js` | — | 経理タブの商品新規登録フォームへの入力・保存を確認 |
 | `stByCourse_ichiran_test.js` | — | コース別受講生一覧の空検索とコース名での絞り込み検索を確認 |
+| `st_inquiry_data_import_test.js` | — | 問合せデータ取込のマッピング確認画面遷移とガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `staff_ichiran_test.js` | — | スタッフ一覧の空検索と姓での絞り込み検索を確認 |
 | `staff_touroku_test.js` | — | スタッフの新規登録フォームへの入力・保存・バリデーションを確認 |
 | `teByStudent_ichiran_test.js` | — | 講師別受講生一覧の空検索と講師姓での絞り込み検索を確認 |

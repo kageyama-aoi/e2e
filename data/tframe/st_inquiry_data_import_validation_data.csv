@@ -1,0 +1,2 @@
+scenario,filePath,expectedMessage
+ファイル未選択はエラー,,Please select a file.

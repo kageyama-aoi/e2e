@@ -1,5 +1,8 @@
 /**
  * @fileoverview tframe 受講生画面 Page Object
+ * 口座情報データ取込 `student/ew/accountInfoDataImport` / 問合せデータ取込
+ * `student/ew/stInquiryDataImport`（ともに juku のみ・インポート系。実データを変更しない
+ * ガード確認のみ実施。#220）も含む。
  */
 
 const { I } = inject();
@@ -283,6 +286,110 @@ module.exports = {
       lastName: data.lastName,
       name:     data.courseName,
     });
+  },
+
+  // ----------------------------------------------------------------
+  //  口座情報データ取込（EW: student/ew/accountInfoDataImport）juku のみ・インポート系
+  // ----------------------------------------------------------------
+  // ファイル未選択は「ファイルを選択してください。」、CSVのタイトル行（ヘッダー）が
+  // 期待する列名と一致しないと「取込ファイルのタイトル行が一致しません。」を返す（#220）。
+  // 正しいヘッダー仕様は未調査のため、本テストは**ガードメッセージの確認のみ**とし、
+  // 実際の口座情報取込（実データ更新）はテスト対象外とする。
+
+  /**
+   * 口座情報データ取込画面へ遷移する
+   */
+  navigateToAccountInfoDataImportPage() {
+    I.say('【口座情報データ取込】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=student%2Few%2FaccountInfoDataImport');
+    I.waitForElement('#ewSaveButton', 10);
+  },
+
+  /**
+   * ファイルを選択する（空ならスキップ＝未選択のまま実行）
+   * @param {object} data - account_info_data_import_data.csv の1行分（filePath）
+   */
+  selectAccountInfoDataImportFile(data) {
+    if (!data.filePath) {
+      I.say('【口座情報データ取込】ファイル選択スキップ（未選択ケース）');
+      return;
+    }
+    I.say(`【口座情報データ取込】ファイル選択: ${data.filePath}`);
+    I.attachFile('#importAccountInfoFile', data.filePath);
+  },
+
+  /**
+   * データ取込ボタンをクリックし、期待するガードメッセージを確認する
+   * @param {string} expectedMessage - 期待するメッセージの部分文字列
+   */
+  clickAccountInfoDataImportAndVerify(expectedMessage) {
+    I.say('【口座情報データ取込】データ取込ボタンをクリック');
+    I.click('#ewSaveButton');
+    I.waitForElement('#tf-message-summary', 10);
+    I.see(expectedMessage, '#tf-message-summary');
+  },
+
+  // ----------------------------------------------------------------
+  //  問合せデータ取込（EW: student/ew/stInquiryDataImport）juku のみ・インポート系
+  // ----------------------------------------------------------------
+  // ファイル未選択は「ファイルを選択してください。」（juku_beta は常に英語UIのため
+  // "Please select a file."）を返す。ヘッダーを含むCSVを投入すると「マッピングを保存して取込」
+  // （英語UI: "Save and import mapping"）ボタンのある列マッピング確認画面（ステップ2）へ進む
+  // （この時点ではまだ何も取込まれていない）。実データ（受講生）を作成してしまう
+  // 「マッピングを保存して取込」は押さず、「ファイル選択画面に戻る」で安全に離脱する（#220）。
+
+  /**
+   * 問合せデータ取込画面へ遷移する
+   */
+  navigateToStInquiryDataImportPage() {
+    I.say('【問合せデータ取込】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=student%2Few%2FstInquiryDataImport');
+    I.waitForElement('#ewSaveButton', 10);
+  },
+
+  /**
+   * ファイルを選択する（空ならスキップ＝未選択のまま実行）
+   * @param {object} data - st_inquiry_data_import_data.csv / _validation_data.csv の1行分（filePath）
+   */
+  selectStInquiryDataImportFile(data) {
+    if (!data.filePath) {
+      I.say('【問合せデータ取込】ファイル選択スキップ（未選択ケース）');
+      return;
+    }
+    I.say(`【問合せデータ取込】ファイル選択: ${data.filePath}`);
+    I.attachFile('#inquiryImportFile', data.filePath);
+  },
+
+  /**
+   * データ取込ボタンをクリックする（ファイル未選択ならガードメッセージ、
+   * ヘッダー付きCSVなら列マッピング確認画面（ステップ2）に遷移する）
+   */
+  clickStInquiryDataImport() {
+    I.say('【問合せデータ取込】データ取込ボタンをクリック');
+    I.click('#ewSaveButton');
+    I.wait(2); // AJAX描画待ち（ステップ2への遷移 or ガードメッセージ表示）
+  },
+
+  /**
+   * ファイル未選択時のガードメッセージを確認する
+   * @param {string} expectedMessage - 期待するメッセージの部分文字列
+   */
+  verifyStInquiryDataImportGuardMessage(expectedMessage) {
+    I.waitForElement('#tf-message-summary', 10);
+    I.see(expectedMessage, '#tf-message-summary');
+  },
+
+  /**
+   * 列マッピング確認画面（ステップ2）に遷移していることを確認し、
+   * 実データを作成せずに「ファイル選択画面に戻る」で離脱する
+   */
+  verifyStInquiryDataImportMappingStepAndGoBack() {
+    I.say('【問合せデータ取込】マッピング確認画面（ステップ2）を確認');
+    I.waitForElement('#inquiryImportBtn', 10);
+    I.see('Save and import mapping', '#inquiryImportBtn');
+    I.say('【問合せデータ取込】実データは作成せず「ファイル選択画面に戻る」で離脱');
+    I.click('#inquiryBackBtn');
+    I.waitForElement('#ewSaveButton', 10);
   },
 
   ...createMenuNavigationMixin('tframe_student'),
