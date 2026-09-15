@@ -286,6 +286,11 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   `selectFirstFromPopupPicker(I, { startSelector, displaySelector })` を使う。**新規タブではなくページ内モーダル**で開き、
   結果行に `<a>` は無く1列目のラジオボタンで選択する（CSSで見た目上非表示のため `executeScript` で直接 click する。#216）。
   先頭の検索結果を選ぶだけなので、対象データが出力条件（日付レンジ等）と噛み合うかは別途確認が要る（#218）。
+- 一括処理・計算系ボタン（翌月月謝一括作成・講師謝礼計算等）の実行結果確認 → `support/tframe/utils.js` の
+  `verifyBulkActionResult(I, buttonSelector)` を使う。冪等な画面が返す「成功」と「対象データなし」
+  （`tf-message-error` クラスだが実質は正常系）の両方を日英で許容する（#219）。
+- インポート系画面の未選択・不正フォーマット等のガードメッセージ確認 → `support/tframe/utils.js` の
+  `verifyGuardMessage(I, expectedMessage)` を使う（#220）。
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 

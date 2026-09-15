@@ -82,6 +82,14 @@ function selectFirstFromPopupPicker(I, { startSelector, displaySelector }) {
   I.wait(1); // 表示用フィールド更新と隠しフィールド（実際に送信される値）の反映に短いラグがあるため
 }
 
+// verifyBulkActionResult が許容するメッセージパターン。日英とも実機確認済みのもののみ登録する
+// （未確認のパターンを混ぜると、想定外の文言を誤って合格判定してしまう恐れがあるため）。
+const BULK_ACTION_ACCEPTABLE_PATTERNS = [
+  /完了しました/,               // ja: 成功
+  /対象.*ありません/,           // ja: 対象データなし
+  /there is no .* to process/i, // en: 対象データなし（実機確認済み）
+];
+
 /**
  * tframe の「一括処理・計算」系ボタン（翌月月謝一括作成・講師謝礼計算・講師謝礼合計計算等）を
  * クリックし、結果メッセージが許容範囲内であることを確認する。
@@ -90,24 +98,32 @@ function selectFirstFromPopupPicker(I, { startSelector, displaySelector }) {
  * TFRAME_LANGUAGE=en では "There is no ... to process."）という `tf-message-error` クラスの
  * メッセージを返すが、これは異常ではなく**冪等性による正常系**（二重作成・二重計算を防いでいる）。
  * そのため成功メッセージと対象なしメッセージの両方を日英で許容し、それ以外のテキストのみ
- * 異常として弾く（#219）。
+ * 異常として弾く（#219）。英語の成功メッセージ文言は未確認のため、実機で確認できるまでは
+ * `BULK_ACTION_ACCEPTABLE_PATTERNS` に追加しない（誤って別のエラー文言を合格判定させないため）。
  *
  * @param {CodeceptJS.I} I
  * @param {string} buttonSelector - 実行ボタンのセレクタ（例: '#calculate'）
  */
 async function verifyBulkActionResult(I, buttonSelector) {
   I.click(buttonSelector);
-  I.waitForElement('#tf-message-summary', 10);
+  I.waitForElement('#tf-message-summary', TIMEOUTS.ELEMENT);
   const msg = (await I.grabTextFrom('#tf-message-summary')).trim();
-  const acceptablePatterns = [
-    /完了しました/,               // ja: 成功
-    /対象.*ありません/,           // ja: 対象データなし
-    /success(fully)?/i,           // en: 成功（想定・実測未確認）
-    /there is no .* to process/i, // en: 対象データなし（実機確認済み）
-  ];
-  if (!acceptablePatterns.some((pattern) => pattern.test(msg))) {
+  if (!BULK_ACTION_ACCEPTABLE_PATTERNS.some((pattern) => pattern.test(msg))) {
     throw new Error(`一括処理で想定外のメッセージ:\n${msg}`);
   }
+}
+
+/**
+ * 保存・実行ボタン押下後に `#tf-message-summary` へ表示されるガードメッセージ（バリデーション
+ * エラー等）を確認する。バケットE（インポート系）の「実データを変更しないガードメッセージ
+ * 確認のみ」方針のテストで共通利用する（#220）。
+ *
+ * @param {CodeceptJS.I} I
+ * @param {string} expectedMessage - 期待するメッセージの部分文字列
+ */
+function verifyGuardMessage(I, expectedMessage) {
+  I.waitForElement('#tf-message-summary', TIMEOUTS.ELEMENT);
+  I.see(expectedMessage, '#tf-message-summary');
 }
 
 module.exports = {
@@ -116,4 +132,5 @@ module.exports = {
   selectAreaThenBranch,
   selectFirstFromPopupPicker,
   verifyBulkActionResult,
+  verifyGuardMessage,
 };

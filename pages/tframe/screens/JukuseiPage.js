@@ -9,7 +9,7 @@ const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch, verifyGuardMessage } = require('../../../support/tframe/utils');
 
 module.exports = {
   /** 受講生アイコンのセレクタ（日英） */
@@ -325,8 +325,7 @@ module.exports = {
   clickAccountInfoDataImportAndVerify(expectedMessage) {
     I.say('【口座情報データ取込】データ取込ボタンをクリック');
     I.click('#ewSaveButton');
-    I.waitForElement('#tf-message-summary', 10);
-    I.see(expectedMessage, '#tf-message-summary');
+    verifyGuardMessage(I, expectedMessage);
   },
 
   // ----------------------------------------------------------------
@@ -363,11 +362,12 @@ module.exports = {
   /**
    * データ取込ボタンをクリックする（ファイル未選択ならガードメッセージ、
    * ヘッダー付きCSVなら列マッピング確認画面（ステップ2）に遷移する）
+   * どちらが表示されるかで待つ要素を出し分ける（固定 wait ではなく先着判定）。
    */
   clickStInquiryDataImport() {
     I.say('【問合せデータ取込】データ取込ボタンをクリック');
     I.click('#ewSaveButton');
-    I.wait(2); // AJAX描画待ち（ステップ2への遷移 or ガードメッセージ表示）
+    I.waitForElement('#inquiryImportBtn, #tf-message-summary', 10);
   },
 
   /**
@@ -375,8 +375,7 @@ module.exports = {
    * @param {string} expectedMessage - 期待するメッセージの部分文字列
    */
   verifyStInquiryDataImportGuardMessage(expectedMessage) {
-    I.waitForElement('#tf-message-summary', 10);
-    I.see(expectedMessage, '#tf-message-summary');
+    verifyGuardMessage(I, expectedMessage);
   },
 
   /**

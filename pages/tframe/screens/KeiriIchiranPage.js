@@ -30,7 +30,7 @@
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
-const { verifyBulkActionResult, selectAreaThenBranch, isEnglish } = require('../../../support/tframe/utils');
+const { verifyBulkActionResult, verifyGuardMessage, selectAreaThenBranch, isEnglish } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
 
@@ -44,6 +44,18 @@ function resetStickyFilters() {
   I.wait(1);
   resetSelects(['branchId_branch_id']);
 }
+
+// 口座振替請求データ読込のガードメッセージ（日英・#220で実機確認済み）
+const BANK_TRANSFER_IMPORT_GUARD_MESSAGES = {
+  noInput:       { ja: '取込ファイル をご入力ください', en: 'Import file cannot be blank' },
+  invalidFormat: { ja: '対象ファイルではありません', en: 'The specified file is not eligible' },
+};
+
+// 一括入金処理の対象0件ガードメッセージ（日英・#219で実機確認済み）
+const BATCH_PAYMENT_NO_TARGET_GUARD_MESSAGE = {
+  ja: '一括入金の処理対象を一覧より選択してください',
+  en: 'Please select the batch deposit to be processed from the list',
+};
 
 module.exports = {
   // ----------------------------------------------------------------
@@ -387,12 +399,8 @@ module.exports = {
   clickBankTransferImportAndVerify(expectedKey) {
     I.say('【口座振替請求データ読込】読込ボタンをクリック');
     I.click('#readBtn');
-    I.waitForElement('#tf-message-summary', 10);
-    const messages = {
-      noInput: isEnglish() ? 'Import file cannot be blank' : '取込ファイル をご入力ください',
-      invalidFormat: isEnglish() ? 'The specified file is not eligible' : '対象ファイルではありません',
-    };
-    I.see(messages[expectedKey], '#tf-message-summary');
+    const message = BANK_TRANSFER_IMPORT_GUARD_MESSAGES[expectedKey][isEnglish() ? 'en' : 'ja'];
+    verifyGuardMessage(I, message);
   },
 
   // ----------------------------------------------------------------
@@ -434,11 +442,7 @@ module.exports = {
     I.say('【一括入金処理】入金方法を入力し実行ボタンをクリック（対象0件のガード確認）');
     if (data.paymentType) I.selectOption('#paymentType', data.paymentType);
     I.click('#createBatchPayment');
-    I.waitForElement('#tf-message-summary', 10);
-    const guardText = isEnglish()
-      ? 'Please select the batch deposit to be processed from the list'
-      : '一括入金の処理対象を一覧より選択してください';
-    I.see(guardText, '#tf-message-summary');
+    verifyGuardMessage(I, BATCH_PAYMENT_NO_TARGET_GUARD_MESSAGE[isEnglish() ? 'en' : 'ja']);
   },
 
   // ----------------------------------------------------------------
