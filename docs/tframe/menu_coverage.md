@@ -175,11 +175,11 @@
 | 入金一覧 | `smsPayment/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `payment_ichiran_test.js` |  |
 | 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `unpaid_amount_ichiran_test.js` |  |
 | 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `tuition_fee_bulk_create_test.js` |
-| 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `batch_payment_test.js` |
 | 商品登録 | `product/ew/_default` | ● | - | ✓ ShohinPage | ✓ `shohin_touroku_test.js` | ✗ |  |
 | 商品一覧 | `product/sw/_default` | ● | - | ✓ ShohinPage | ✗ | ✓ `shohin_ichiran_test.js` |  |
 | 入出金一覧 | `smsTransaction/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `transaction_ichiran_test.js` |  |
-| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `bank_transfer_export_test.js` |
 | 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `bank_actions_history_ichiran_test.js` |  |
 | 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✓ ChosekinPage | ✗ | ✗ | `te_reward_calc_test.js` / `te_reward_total_calc_test.js` |
@@ -247,7 +247,9 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 - Eメールテンプレート／カテゴリ 登録/一覧（`emailTemplate*` / `emailTemplateCategory*`）※ menu-nav 巡回のみ
 - 口座振替請求データ 作成/読込 `bankTransfer/ew/bankTransferExport|Import` ／ 口座振替データ履歴 `bankActionsHistory/sw/_default`
 - ~~経理一覧系（料金/契約/入金/未収金/入出金）~~ … ✓ 完了（#198）
-- ~~翌月月謝一括作成~~ … ✓ 完了（#219・`KeiriIchiranPage.js`。冪等）／一括入金処理 `smsPayment/sw/batchPayment`（未着手・副作用あり）
+- ~~翌月月謝一括作成~~ / ~~一括入金処理~~ / ~~口座振替請求データ作成~~ … ✓ 完了（#219・`KeiriIchiranPage.js`。
+  翌月月謝一括作成・口座振替請求データ作成は冪等/再集計処理として通常検証、一括入金処理は
+  実データへの影響を避けるため対象0件ガードのみ検証）
 
 **juku_beta のみ**
 
@@ -335,8 +337,8 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 | 画面 | route | 環境 | アクション |
 |---|---|---|---|
 | ~~翌月月謝一括作成~~ | `smsFee/ew/tuitionFeeBulkCreate` | 両 | ✓ 実装済み `tuition_fee_bulk_create_test.js`（#219・`KeiriIchiranPage.js`）。**冪等**（既に翌月分があれば二重作成しない）。成功時「〜作成しました」、対象なし時「処理対象の月謝情報がありません。」（juku_beta英語UIでは"There is no ... to process."）を両方許容する `verifyBulkActionResult`（support/tframe/utils.js）で判定 |
-| 一括入金処理 | `smsPayment/sw/batchPayment` | 両 | 検索→対象選択→一括入金実行（未着手・実データの入金確定を伴うため要検討） |
-| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | 両 | 条件選択→請求データ生成（未着手・校舎セレクトが disabled でログイン中の管理者の校舎に固定・実データのファイル生成を伴うため要検討） |
+| ~~一括入金処理~~ | `smsPayment/sw/batchPayment` | 両 | ✓ 実装済み `batch_payment_test.js`（#219）。実データの入金確定を伴うため、存在しないID番号で検索し結果0件にして実行ボタンのガード文言（「一覧より選択してください」）のみ確認する安全な経路限定 |
+| ~~口座振替請求データ作成~~ | `bankTransfer/ew/bankTransferExport` | 両 | ✓ 実装済み `bank_transfer_export_test.js`（#219）。校舎セレクトは disabled でログイン中の管理者に固定・請求月も表示のみで選択不可。2回連続実行しても同一件数を返す再集計処理と判明したため通常の成功確認で実装 |
 | ~~講師謝礼計算~~ | `shareiDetail/sw/teRewardCalc` | culture | ✓ 実装済み `te_reward_calc_test.js`（#219・`ChosekinPage.js`）。既存データを上書きするだけで重複エラーにならず毎回成功する |
 | ~~講師謝礼合計計算~~ | `shareiTotal/sw/teRewardTotalCalc` | culture | ✓ 実装済み `te_reward_total_calc_test.js`（#219・`KeiriIchiranPage.js`）。先に同一計上年月の講師謝礼計算が必要なため、テスト内でArrangeとして挟む |
 
@@ -379,10 +381,15 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**バケットD 第1弾（翌月月謝一括作成・講師謝礼計算・講師謝礼合計計算）**~~ … ✓ 完了（Issue #219・
   `KeiriIchiranPage.js` / `ChosekinPage.js` に追記 ＋ 共通ヘルパー `verifyBulkActionResult`
   （support/tframe/utils.js）新設）。3画面とも「成功」または「対象データなし（冪等・実質正常系）」の
-  どちらでも合格とする判定方式を確立。**残り2画面（一括入金処理・口座振替請求データ作成）は
-  実データの入金確定・ファイル生成を伴う副作用があるため個別に着手判断が必要**、いったん保留。
-- **次**: #218（保留中・要方針判断）/ アンケート編集（着手判断待ち）/
-  バケットD残り2画面（一括入金処理・口座振替請求データ作成・着手判断待ち）/ バケット E（インポート系3画面）
+  どちらでも合格とする判定方式を確立。
+- ~~**バケットD 第2弾・最終（一括入金処理・口座振替請求データ作成）**~~ … ✓ 完了（Issue #219・
+  `KeiriIchiranPage.js` に追記）。口座振替請求データ作成は実機で2回連続実行しても同一件数
+  （正常N件・異常M件）を返す**再集計処理**と判明したため通常の成功確認で実装。一括入金処理は
+  実行すると実際に入金確定処理を行う副作用があるため、**存在しないID番号で検索して結果0件にし、
+  実行ボタンのガード文言（「一覧より選択してください」。juku_beta英語UIでは
+  "Please select the batch deposit to be processed from the list."）のみ確認する安全な経路限定**で実装
+  （実際の入金確定フローはテスト対象外）。**これでバケットD（一括処理・計算系5画面）が全件完了。**
+- **次**: #218（保留中・要方針判断）/ アンケート編集（着手判断待ち）/ バケット E（インポート系3画面）
 
 ---
 

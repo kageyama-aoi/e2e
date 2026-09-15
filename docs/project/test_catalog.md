@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-15 10:47 (JST)
+> 最終更新: 2026-09-15 13:10 (JST)
 
-**合計 111 テスト**（shimamura 30 / tframe 79 / taskreport 1 / smoke 1）
+**合計 113 テスト**（shimamura 30 / tframe 81 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（79件）
+## tframe（81件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（69件）
+### page/（71件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -99,6 +99,8 @@
 | `announcement_touroku_test.js` | — | お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `attendance_ichiran_test.js` | — | 本日の出席表一覧の全期間検索とコースカテゴリ絞り込みを確認（culture_beta のみ・校舎データ依存） |
 | `bank_actions_history_ichiran_test.js` | — | 口座振替データ履歴の空検索と読込/作成絞り込みを確認（culture_beta / juku_beta 両対応） |
+| `bank_transfer_export_test.js` | — | 口座振替請求データ作成の実行と結果メッセージを確認（culture_beta / juku_beta 両対応・再集計処理） |
+| `batch_payment_test.js` | — | 一括入金処理の対象0件ガード文言を確認（culture_beta / juku_beta 両対応・実データは変更しない） |
 | `branch_ichiran_test.js` | — | 校舎一覧の空検索と校舎名での絞り込み検索を確認 |
 | `branch_touroku_test.js` | — | 校舎の新規登録フォームへの入力・保存を確認 |
 | `calendar_test.js` | — | カレンダー画面の表示・基本操作を確認 |

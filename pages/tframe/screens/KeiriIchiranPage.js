@@ -12,6 +12,9 @@
  * - 支払調書 `shareiTotal/sw/paymentStatement`（culture のみ・帳票出力系。#217）
  * - 翌月月謝一括作成 `smsFee/ew/tuitionFeeBulkCreate`（両対応・一括処理系。#219）
  * - 講師謝礼合計計算 `shareiTotal/sw/teRewardTotalCalc`（culture のみ・一括処理系。#219）
+ * - 口座振替請求データ作成 `bankTransfer/ew/bankTransferExport`（両対応・一括処理系。#219）
+ * - 一括入金処理 `smsPayment/sw/batchPayment`（両対応・一括処理系。実データを変更しない
+ *   ガード確認のみ実施。#219）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -25,7 +28,7 @@
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
-const { verifyBulkActionResult, selectAreaThenBranch } = require('../../../support/tframe/utils');
+const { verifyBulkActionResult, selectAreaThenBranch, isEnglish } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
 
@@ -316,6 +319,77 @@ module.exports = {
   async clickTeRewardTotalCalcAndVerify() {
     I.say('【講師謝礼合計計算】計算ボタンをクリック');
     await verifyBulkActionResult(I, '#calculate');
+  },
+
+  // ----------------------------------------------------------------
+  //  口座振替請求データ作成（EW: bankTransfer/ew/bankTransferExport）両対応・一括処理系
+  // ----------------------------------------------------------------
+  // 校舎（branchId）はログイン中の管理者に固定（select disabled）、請求データ作成月（billingMonth）も
+  // 画面表示のみで選択不可のため、入力フィールドは無い。実機で2回連続実行しても同一件数
+  // （正常N件・異常M件）を返す＝実行のたびに新規請求データを積み増す一括処理ではなく、
+  // 当該請求月の対象を都度再集計する処理と判明（#219）。
+
+  /**
+   * 口座振替請求データ作成画面へ遷移する
+   */
+  navigateToBankTransferExportPage() {
+    I.say('【口座振替請求データ作成】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=bankTransfer%2Few%2FbankTransferExport');
+    I.waitForElement('#createBtn', 10);
+  },
+
+  /**
+   * 作成ボタンをクリックし、結果メッセージを確認する（成功 or 対象なしのどちらも正常）
+   */
+  async clickBankTransferExportAndVerify() {
+    I.say('【口座振替請求データ作成】作成ボタンをクリック');
+    await verifyBulkActionResult(I, '#createBtn');
+  },
+
+  // ----------------------------------------------------------------
+  //  一括入金処理（SW: smsPayment/sw/batchPayment）両対応・一括処理系
+  // ----------------------------------------------------------------
+  // 実行すると検索結果一覧から選択した対象へ実際に入金確定処理を行う（他画面の未収金/入金データに
+  // 影響する副作用）。そのため本テストは**実データを一切変更しない安全な経路のみ**を検証する方針とする：
+  // 存在しない受講生ID番号で検索して結果0件にし、何も選択できない状態で実行ボタンを押して
+  // 「一括入金の処理対象を一覧より選択してください。」というガード文言が出ることだけを確認する
+  // （実際の入金確定フローはこのテストの対象外・#219）。
+
+  /**
+   * 一括入金処理画面へ遷移する
+   */
+  navigateToBatchPaymentPage() {
+    I.say('【一括入金処理】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=smsPayment%2Fsw%2FbatchPayment');
+    I.waitForElement('#createBatchPayment', 10);
+  },
+
+  /**
+   * 実データに影響しない検索条件（存在しないID番号）で検索し、結果0件を確認する
+   * @param {object} data - batch_payment_data.csv の1行分（idnumber: 実在しない受講生ID番号）
+   */
+  searchBatchPaymentWithNoMatch(data) {
+    I.say('【一括入金処理】実データに影響しないID番号で検索');
+    fillTextFields(I, { idnumber: data.idnumber });
+    I.click('#swSearchButton');
+    I.wait(2); // AJAX描画待ち
+    I.dontSeeElement('#searchResult .tf-data-table-table tbody tr');
+  },
+
+  /**
+   * 入金方法を入力し、一括入金処理実行ボタンをクリックして
+   * 「対象を一覧より選択してください」ガード文言を確認する（実データは変更されない）
+   * @param {object} data - batch_payment_data.csv の1行分（paymentType）
+   */
+  clickCreateBatchPaymentAndVerifyNoTarget(data) {
+    I.say('【一括入金処理】入金方法を入力し実行ボタンをクリック（対象0件のガード確認）');
+    if (data.paymentType) I.selectOption('#paymentType', data.paymentType);
+    I.click('#createBatchPayment');
+    I.waitForElement('#tf-message-summary', 10);
+    const guardText = isEnglish()
+      ? 'Please select the batch deposit to be processed from the list'
+      : '一括入金の処理対象を一覧より選択してください';
+    I.see(guardText, '#tf-message-summary');
   },
 
   // ----------------------------------------------------------------

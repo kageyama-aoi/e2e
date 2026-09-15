@@ -1,0 +1,2 @@
+scenario,idnumber,paymentType
+存在しないID番号で検索し対象0件のガードを確認,ZZZ_NONEXISTENT_ID_9999,cash

@@ -87,6 +87,8 @@
     "page/tuition_fee_bulk_create_test.js":          "翌月月謝一括作成の実行と結果メッセージ（成功/対象なし）を確認（culture_beta / juku_beta 両対応・冪等）",
     "page/te_reward_calc_test.js":                   "講師謝礼計算の実行と成功メッセージ表示を確認（culture_beta 専用）",
     "page/te_reward_total_calc_test.js":             "講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用）",
+    "page/bank_transfer_export_test.js":             "口座振替請求データ作成の実行と結果メッセージを確認（culture_beta / juku_beta 両対応・再集計処理）",
+    "page/batch_payment_test.js":                    "一括入金処理の対象0件ガード文言を確認（culture_beta / juku_beta 両対応・実データは変更しない）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

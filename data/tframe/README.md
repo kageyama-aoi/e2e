@@ -83,6 +83,8 @@
 | `tests/tframe/page/tuition_fee_bulk_create_test.js` | `tuition_fee_bulk_create_data.csv` | 翌月月謝一括作成（一括処理・`smsFee/ew/tuitionFeeBulkCreate`）。冪等（二重作成されない）ため「完了しました」（成功）と「処理対象の月謝情報がありません。」（対象なし・実質正常系）の両方を許容。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/te_reward_calc_test.js` | `te_reward_calc_data.csv` | 講師謝礼計算（一括処理・`shareiDetail/sw/teRewardCalc`）。既存データを上書き成功するため毎回「完了しました」を返す。※culture_beta のみ |
 | `tests/tframe/page/te_reward_total_calc_test.js` | `te_reward_total_calc_data.csv` | 講師謝礼合計計算（一括処理・`shareiTotal/sw/teRewardTotalCalc`）。先に講師謝礼計算を実行してからでないと「処理対象の講師謝礼情報がありません。」になるため、テスト内でArrangeとして講師謝礼計算を挟む。※culture_beta のみ |
+| `tests/tframe/page/bank_transfer_export_test.js` | `bank_transfer_export_data.csv` | 口座振替請求データ作成（一括処理・`bankTransfer/ew/bankTransferExport`）。校舎・請求月は画面側で固定（入力フィールド無し）。2回連続実行しても同一件数を返す再集計処理と判明。※culture_beta / juku_beta 両対応 |
+| `tests/tframe/page/batch_payment_test.js` | `batch_payment_data.csv` | 一括入金処理（`smsPayment/sw/batchPayment`）。実行すると実際に入金確定処理を行う副作用があるため、存在しないID番号で検索して結果0件にし、実行ボタンのガード文言（「一覧より選択してください」）のみ確認する安全な経路限定のテスト。※culture_beta / juku_beta 両対応 |
 
 ### minimum.csv の使い方（テスト実装時の方針）
 

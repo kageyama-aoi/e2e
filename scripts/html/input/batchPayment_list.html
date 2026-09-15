@@ -1,0 +1,123 @@
+<div id="rootWidget" class="container-fluid tf-content tf-sw-page" data-actionid="smsPayment/sw/batchPayment"><div class="tf-title-wrapper"><div class="tf-page-title"><span class="pull-left showopacity tf-group-title-icon fas fa-yen-sign" style="line-height:32px;font-size:18px;padding-right:10px;"></span><span>一括入金処理</span></div><div class="tf-help-icon">
+                    <a target="_blank" href="index.php?r=cmn/gw/help&amp;helpFileKey=Accounting">
+                        <span class="fa fa-question-circle"></span>
+                    </a>
+                </div><div class="clear-both"></div></div><div id="tf-message-summary" class="tf-message-summary"></div>
+    		<div class="tf-message-slide" id="tf-message-slide"></div>
+    		<div class="tf-page-body"><form id="searchForm" action="index.php?r=smsPayment/sw/batchPayment" method="POST" enctype="multipart/form-data" autocomplete="off"><div id="searchBlock" class="tf-group-wrapper searchBlock col-sm-12"><div class="tf-group-body col-sm-12"><div id="buttonsGroup" class="tf-group-wrapper top-buttons-group-wrapper-div col-sm-12"><div class="tf-group-body col-sm-12 top-buttons-group-body-div"><div id="searchButtonsMainGroup" class="tf-group-wrapper col-sm-4"><div class="tf-group-body col-sm-12"><div id="wrapper_swSearchButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="swSearchButton" class="tf-data btn btn-primary tf-swSearchButton" name="swSearchButton" value="" onclick="tf.ajax.tcnAjax(  'isSearch=1'   + '&amp;'  +   'isResetPage=1'   + '&amp;'  +   'record=_R_data-record_R_'   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '.searchFields:first')   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '.searchResult:first') + '&amp;' +   'ajaxRenderList[]=searchResult'     + '&amp;'   +   'ajaxRenderList[]=swProspectListCreateGroup'   + '&amp;' + '' + '&amp;', 'index.php?r=smsPayment/sw/batchPayment', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_swSearchButton">検索</button></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_swClearButton" class="tf-element-wrapper-div col-sm-6"><div class="tf-data-div col-sm-12"><button type="button" id="swClearButton" class="tf-data btn btn-warning tf-swClearButton" name="swClearButton" value="" onclick="tf.ajax.tcnAjax(  'isSearch=1'   + '&amp;'  +   'isResetSw=1'   + '&amp;'  +   'record=_R_data-record_R_' + '&amp;' +   'ajaxRenderList[]=searchFields'     + '&amp;'   +   'ajaxRenderList[]=searchResult'   + '&amp;' + '' + '&amp;', 'index.php?r=smsPayment/sw/batchPayment', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_swClearButton">クリア</button></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div id="otherButtons" class="tf-group-wrapper col-sm-1"><div class="tf-group-body col-sm-12"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchFields" class="tf-group-wrapper col-sm-12" style="margin-top:10px;"><div class="tf-group-title col-sm-12"><span class="pull-left showopacity tf-group-title-icon glyphicon glyphicon-record"></span>一括入金処理対象検索</div><div class="tf-group-body col-sm-12 upper-corners-flat"><div id="basicFields" class="tf-group-wrapper searchFields col-sm-12" style="padding: 10px 0px;"><div class="tf-group-body col-sm-12" style="background-color:#eeeeee"><div id="wrapper_school" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">受注校舎:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td style="padding:0px;width:50%;"><div id="wrapper_school_area_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="school_area_id" class="tf-data form-control input-control tf-select" name="school_area_id" onchange="tf.ajax.tcnAjax( $('#wrapper_school').find('select, textarea, input').serialize() + '&amp;' +   'ajaxRenderList[]=school'   + '&amp;' + '' + '&amp;', 'index.php?r=smsPayment/sw/batchPayment', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_school_area_id" istranslate="">
+<option value="a1" selected="">関東</option>
+<option value="a2">関西</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td><td style="padding:0px;width:50%;"><div id="wrapper_school_branch_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="school_branch_id" class="tf-data form-control input-control tf-select" name="school_branch_id" data-wrapper-id="wrapper_school_branch_id" istranslate="">
+<option value="b1" selected="">東京</option>
+<option value="573c9069-7a40-cd07-121d-656d1a1065f0">account delete test</option>
+<option value="5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba">ダミー校舎</option>
+<option value="a420d855-0f2d-35be-1ba1-66bed2383e20">営業</option>
+<option value="3b680ac4-7794-b926-4ab7-67d8df9982a6">カゲヤマ関とう</option>
+<option value="e19eaa6f-bbe0-bfbc-d115-6800bbdd0288">20250417_test</option>
+<option value="e9915046-9168-6f46-6408-682af2d28db1">shimo_校舎</option>
+<option value="d8f435d4-158d-ca40-52ff-68410359d5de">田中テスト_豊洲</option>
+<option value="14ebb959-c45d-4549-1cd1-68479bd6fc32">カゲ関東2</option>
+<option value="b6ef1889-aa9b-1f44-10df-685bbe440b36">NB</option>
+<option value="5fd5ac68-58a0-e9fd-53a9-68677f904471">KETUGOU＿A校舎</option>
+<option value="23861e14-c4a7-ce89-45c0-68677f786674">KETUGOU＿B校舎</option>
+<option value="8708f85c-2d3c-c55b-4161-686c6a57f6eb">MHI研修センター</option>
+<option value="715cbb12-24e8-e231-fb1e-68be7668bbd9">使用しない</option>
+<option value="83a6f5b4-3fba-daec-2535-691e8078634d">札幌市生涯学習センター※デモ貸与</option>
+<option value="6c9c55fd-5e91-3398-3cbc-6a067df5cea3">3247</option>
+<option value="f25dd8ff-d691-c00d-57a3-6a7048c988f6">3288_TIS</option>
+<option value="61e4f628-8cf0-2b40-62cc-65a106f4ce52">testcampus</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_targetYearMonth" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">締切月:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td class="year" style="padding:0px;"><div id="wrapper_targetYearMonthYear" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="targetYearMonthYear" class="tf-data form-control input-control tf-select" name="targetYearMonthYear" data-wrapper-id="wrapper_targetYearMonth">
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026" selected="">2026</option>
+<option value="2027">2027</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td><td class="month" style="padding:0px;"><div id="wrapper_targetYearMonthMonth" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="targetYearMonthMonth" class="tf-data form-control input-control tf-select" name="targetYearMonthMonth" data-wrapper-id="wrapper_targetYearMonth">
+<option value="01">1</option>
+<option value="02">2</option>
+<option value="03">3</option>
+<option value="04">4</option>
+<option value="05">5</option>
+<option value="06">6</option>
+<option value="07">7</option>
+<option value="08">8</option>
+<option value="09" selected="">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_includePreviousYearMonth" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-9"><label class="tf-label">締切月以前の未収分も検索する:</label></div><div class="tf-data-div col-sm-3"><span class="tf-checkbox tf-checkbox-primary"><input type="checkbox" id="includePreviousYearMonth" class="tf-data tf-checkbox" name="includePreviousYearMonth[]" value="1" data-wrapper-id="wrapper_includePreviousYearMonth"><label for="includePreviousYearMonth"></label></span><input type="hidden" name="includePreviousYearMonth[]" value="-1"></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div><div id="wrapper_idnumber" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">受講生（ID番号）:</label></div><div class="tf-data-div col-sm-7"><input id="idnumber" class="tf-data form-control input-control tf-text" name="idnumber" value="" data-wrapper-id="wrapper_idnumber"></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_claimType" class="tf-element-wrapper-div col-sm-4"><div class="tf-label-div col-sm-5"><label class="tf-label">請求方法:</label></div><div class="tf-data-div col-sm-7"><select id="claimType" class="tf-data form-control input-control tf-select" name="claimType" data-wrapper-id="wrapper_claimType" istranslate="">
+<option value="">すべて</option>
+<option value="transfer">口座振替</option>
+<option value="cash">現金</option>
+<option value="combini">コンビニ</option>
+<option value="web_combini">Webコンビニ</option>
+<option value="card">カード</option>
+<option value="other">その他</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="batchPaymentForm" class="tf-group-wrapper col-sm-12" style="margin: 20px 0px;"><div class="tf-group-title col-sm-12"><span class="pull-left showopacity tf-group-title-icon glyphicon glyphicon-record"></span>一括入金処理方法選択</div><div class="tf-group-body col-sm-12 upper-corners-flat"><div id="batchPaymentFields" class="tf-group-wrapper batchFields col-sm-12" style="background-color: #eeeeee; margin-top: 3px; border: solid 1px #ddd; margin-bottom: 3px; padding:10px 0px;"><div class="tf-group-body col-sm-12"><div id="wrapper_paymentType" class="tf-element-wrapper-div col-sm-3"><div class="tf-label-div col-sm-5"><label class="tf-label required-mark">入金方法:</label></div><div class="tf-data-div col-sm-7"><select id="paymentType" class="tf-data form-control input-control tf-select" name="paymentType" data-wrapper-id="wrapper_paymentType" istranslate="">
+<option value="">設定なし</option>
+<option value="transfer">口座振替</option>
+<option value="cash">現金</option>
+<option value="combini">コンビニ</option>
+<option value="web_combini">Webコンビニ</option>
+<option value="card">カード</option>
+<option value="remittance">銀行振込</option>
+<option value="other">その他</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_paymentDate" class="tf-element-wrapper-div col-sm-3"><div class="tf-label-div col-sm-5"><label class="tf-label required-mark">入金日:</label></div><div class="tf-data-div col-sm-7"><div id="paymentDate_date" class="input-group date"><input id="paymentDate" class="tf-data form-control input-control tf-date" name="paymentDate" value="2026-09-15" data-wrapper-id="wrapper_paymentDate"><span class="input-control input-group-addon">
+                                    <span class="fa fa-calendar button-icon"></span>
+                               </span></div></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_paymentSchool" class="tf-element-wrapper-div col-sm-3"><div class="tf-label-div col-sm-5"><label class="tf-label">入金校舎:</label></div><div class="tf-data-div col-sm-7"><table style="width:100%;"><tbody><tr><td style="padding:0px;width:50%;"><div id="wrapper_paymentSchool_area_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="paymentSchool_area_id" class="tf-data form-control input-control tf-select" name="paymentSchool_area_id" onchange="tf.ajax.tcnAjax( $('#wrapper_paymentSchool').find('select, textarea, input').serialize() + '&amp;' +   'ajaxRenderList[]=paymentSchool'   + '&amp;' + '' + '&amp;', 'index.php?r=smsPayment/sw/batchPayment', {'async':true,'enableClientValidation':false});" data-wrapper-id="wrapper_paymentSchool_area_id" istranslate="">
+<option value="a1" selected="">関東</option>
+<option value="a2">関西</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td><td style="padding:0px;width:50%;"><div id="wrapper_paymentSchool_branch_id" class="tf-element-wrapper-div"><div class="tf-data-div col-sm-12"><select id="paymentSchool_branch_id" class="tf-data form-control input-control tf-select" name="paymentSchool_branch_id" data-wrapper-id="wrapper_paymentSchool_branch_id" istranslate="">
+<option value="b1" selected="">東京</option>
+<option value="573c9069-7a40-cd07-121d-656d1a1065f0">account delete test</option>
+<option value="5f8be3c0-c4b0-bc31-b9fd-661dcbb3beba">ダミー校舎</option>
+<option value="a420d855-0f2d-35be-1ba1-66bed2383e20">営業</option>
+<option value="3b680ac4-7794-b926-4ab7-67d8df9982a6">カゲヤマ関とう</option>
+<option value="e19eaa6f-bbe0-bfbc-d115-6800bbdd0288">20250417_test</option>
+<option value="e9915046-9168-6f46-6408-682af2d28db1">shimo_校舎</option>
+<option value="d8f435d4-158d-ca40-52ff-68410359d5de">田中テスト_豊洲</option>
+<option value="14ebb959-c45d-4549-1cd1-68479bd6fc32">カゲ関東2</option>
+<option value="b6ef1889-aa9b-1f44-10df-685bbe440b36">NB</option>
+<option value="5fd5ac68-58a0-e9fd-53a9-68677f904471">KETUGOU＿A校舎</option>
+<option value="23861e14-c4a7-ce89-45c0-68677f786674">KETUGOU＿B校舎</option>
+<option value="8708f85c-2d3c-c55b-4161-686c6a57f6eb">MHI研修センター</option>
+<option value="715cbb12-24e8-e231-fb1e-68be7668bbd9">使用しない</option>
+<option value="83a6f5b4-3fba-daec-2535-691e8078634d">札幌市生涯学習センター※デモ貸与</option>
+<option value="6c9c55fd-5e91-3398-3cbc-6a067df5cea3">3247</option>
+<option value="f25dd8ff-d691-c00d-57a3-6a7048c988f6">3288_TIS</option>
+<option value="61e4f628-8cf0-2b40-62cc-65a106f4ce52">testcampus</option>
+</select></div>
+        <div class="clear-both"></div>
+        </div></td></tr></tbody></table></div>
+        <div class="clear-both"></div>
+        </div><div id="wrapper_createBatchPayment" class="tf-element-wrapper-div col-sm-3"><div class="tf-data-div col-sm-12"><button type="button" id="createBatchPayment" class="tf-data btn btn-primary tf-button" name="createBatchPayment" value="" style="margin-left: 30%;" onclick="tf.ajax.tcnAjax(  'isSearch=1'   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '#batchPaymentFields:first')   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '.searchResult:first')   + '&amp;'  +   'eventType=payBatchTransaction'   + '&amp;'  +  tf.core.selectorElementsAsQueryStringWithinClosest(this, '.searchBlock', '#searchFields:first') + '&amp;' +   'ajaxRenderList[]=searchResult'   + '&amp;' + '' + '&amp;', 'index.php?r=smsPayment/sw/batchPayment', {'async':true,'enableClientValidation':false});;$('#swSearchButton').click();" data-wrapper-id="wrapper_createBatchPayment">一括入金処理実行</button></div>
+        <div class="clear-both"></div>
+        </div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><div id="searchResult" class="tf-group-wrapper searchResult tf-group-wrapper-sw-search-result col-sm-12"><div class="tf-group-body col-sm-12 tf-group-body-search-result"></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div></div><div class="clear-both"></div><input type="hidden" id="_csrf" name="_csrf" value="C11Q2Uiret6fPid3wnXwGbhxP0fn-zcu7vS-yJnGsSY4Fj6zfMQui-1qEz6qJZl9iDdrf9KQdGy3p9iDqpT-XA=="><input class="tf-visibility-hidden" name="dummyInput"></form><div class="clear-both"></div></div><div class="clear-both"></div></div>
