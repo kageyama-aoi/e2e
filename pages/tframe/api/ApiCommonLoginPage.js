@@ -47,7 +47,7 @@ module.exports = {
 
     if (!tokenMatch || !tokenMatch[1]) {
       I.saveScreenshotWithTimestamp('token_extraction_failed.png');
-      I.fail(`レスポンスからtcnTokenを抽出できませんでした。詳細は'token_extraction_failed.png'を確認してください。`);
+      throw new Error(`レスポンスからtcnTokenを抽出できませんでした。詳細は'token_extraction_failed.png'を確認してください。`);
     }
 
     const tcnToken = tokenMatch[1];

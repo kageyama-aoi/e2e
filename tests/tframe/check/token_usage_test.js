@@ -43,7 +43,7 @@ Before(async ({ I, loginKannrisyaPage, apiCommonLoginPage }) => {
 Scenario('取得したトークンを後続の操作で利用する', async ({ I, apiTeacherInfoGetPage }) => {
   I.say('Step 1: 前提条件で取得したトークンが利用可能であることを確認。');
   if (!tcnToken) {
-    I.fail('Beforeフックでトークンが取得されていない。');
+    throw new Error('Beforeフックでトークンが取得されていない。');
   }
   I.say(`取得したトークンを使用: ${secret(tcnToken)}`);
 

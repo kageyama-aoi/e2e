@@ -55,7 +55,7 @@ Data(headerPatternData).Scenario(
     const headerPattern = current.headerPattern;
 
     I.say('Step 1: トークン有効性の確認');
-    if (!tcnToken) I.fail('Beforeフックでトークンが取得されていない。');
+    if (!tcnToken) throw new Error('Beforeフックでトークンが取得されていない。');
 
     I.say('Step 2: JSON入力ページへ遷移');
     jsonInputPage.navigateToPage();
