@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-11 18:17 (JST)
+> 最終更新: 2026-09-15 10:47 (JST)
 
-**合計 108 テスト**（shimamura 30 / tframe 76 / taskreport 1 / smoke 1）
+**合計 111 テスト**（shimamura 30 / tframe 79 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（76件）
+## tframe（79件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（66件）
+### page/（69件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -157,7 +157,10 @@
 | `staff_ichiran_test.js` | — | スタッフ一覧の空検索と姓での絞り込み検索を確認 |
 | `staff_touroku_test.js` | — | スタッフの新規登録フォームへの入力・保存・バリデーションを確認 |
 | `teByStudent_ichiran_test.js` | — | 講師別受講生一覧の空検索と講師姓での絞り込み検索を確認 |
+| `te_reward_calc_test.js` | — | 講師謝礼計算の実行と成功メッセージ表示を確認（culture_beta 専用） |
+| `te_reward_total_calc_test.js` | — | 講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用） |
 | `transaction_ichiran_test.js` | — | 入出金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `tuition_fee_bulk_create_test.js` | — | 翌月月謝一括作成の実行と結果メッセージ（成功/対象なし）を確認（culture_beta / juku_beta 両対応・冪等） |
 | `unpaid_amount_ichiran_test.js` | — | 未収金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 
 ## taskreport（1件）

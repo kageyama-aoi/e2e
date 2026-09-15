@@ -93,6 +93,13 @@ const TARGETS = [
   { name: 'infoHistory_student_list',  hint: '対応履歴一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistory%2Fsw%2F_default&menuModule=student` },
   { name: 'infoHistoryTemplate_student_list', hint: '対応履歴テンプレート一覧（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistoryTemplate%2Fsw%2F_default&menuModule=student` },
   { name: 'infoHistoryTemplate_touroku', hint: '対応履歴テンプレート登録（受講生）', directUrl: `${BASE_URL}index.php?r=infoHistoryTemplate%2Few%2F_default&menuModule=student` },
+
+  // ── 一括処理・計算系（SW/EW）── Issue #219
+  { name: 'tuitionFeeBulkCreate_touroku', hint: '翌月月謝一括作成', directUrl: `${BASE_URL}index.php?r=smsFee%2Few%2FtuitionFeeBulkCreate` },
+  { name: 'batchPayment_list',            hint: '一括入金処理',     directUrl: `${BASE_URL}index.php?r=smsPayment%2Fsw%2FbatchPayment` },
+  { name: 'bankTransferExport_touroku',   hint: '口座振替請求データ作成', directUrl: `${BASE_URL}index.php?r=bankTransfer%2Few%2FbankTransferExport` },
+  { name: 'teRewardCalc_list',            hint: '講師謝礼計算',     directUrl: `${BASE_URL}index.php?r=shareiDetail%2Fsw%2FteRewardCalc` },
+  { name: 'teRewardTotalCalc_list',       hint: '講師謝礼合計計算', directUrl: `${BASE_URL}index.php?r=shareiTotal%2Fsw%2FteRewardTotalCalc` },
 ];
 
 // ── ヘルパー ─────────────────────────────────────────────────

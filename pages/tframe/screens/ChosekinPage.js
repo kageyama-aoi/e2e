@@ -1,11 +1,12 @@
 /**
- * @fileoverview tframe 調整金登録画面 Page Object
- * URL: index.php?r=shareiDetail%2Few%2F_default
+ * @fileoverview tframe 調整金登録・講師謝礼一覧・講師謝礼計算 Page Object
+ * URL: index.php?r=shareiDetail%2Few%2F_default（登録）/ shareiDetail%2Fsw%2F_default（一覧）/
+ *      shareiDetail%2Fsw%2FteRewardCalc（計算・culture のみ・一括処理系。#219）
  */
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
-const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
+const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch, verifyBulkActionResult } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 
 module.exports = {
@@ -100,4 +101,41 @@ module.exports = {
   },
 
   ...createIchiranMixin('調整金一覧'),
+
+  // ----------------------------------------------------------------
+  //  講師謝礼計算（SW: shareiDetail/sw/teRewardCalc）culture のみ・一括処理系
+  // ----------------------------------------------------------------
+  // 対象年月・校舎の講師謝礼を再計算する。既存データがあっても上書き成功する（重複エラーにならない）ため、
+  // 何度実行しても「講師謝礼計算処理が正常に完了しました。N人の講師の謝礼情報を作成しました。」を返す
+  // （実機確認済み・#219）。KeiriIchiranPage.clickTeRewardTotalCalcAndVerify の前段として使う。
+
+  /**
+   * 講師謝礼計算画面へ遷移する
+   */
+  navigateToTeRewardCalcPage() {
+    I.say('【講師謝礼計算】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=shareiDetail%2Fsw%2FteRewardCalc');
+    I.waitForElement('#calculate', 10);
+  },
+
+  /**
+   * 対象年月・校舎を入力する（空フィールドはスキップ＝既定値のまま）
+   * @param {object} data - te_reward_calc_data.csv の1行分（targetYM / school_area_id / school_branch_id）
+   */
+  fillTeRewardCalcConditions(data) {
+    I.say('【講師謝礼計算】対象年月・校舎を入力');
+    if (data.targetYM) I.selectOption('#targetYM', data.targetYM);
+    selectAreaThenBranch(I, {
+      areaSelector: '#branchId_area_id', branchSelector: '#branchId_branch_id',
+      area: data.school_area_id, branch: data.school_branch_id,
+    });
+  },
+
+  /**
+   * 計算ボタンをクリックし、結果メッセージを確認する（成功 or 対象なしのどちらも正常）
+   */
+  async clickTeRewardCalcAndVerify() {
+    I.say('【講師謝礼計算】計算ボタンをクリック');
+    await verifyBulkActionResult(I, '#calculate');
+  },
 };

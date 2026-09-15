@@ -1,6 +1,6 @@
 # tframe サイドメニュー 画面一覧 × テスト開発状況マッピング
 
-最終更新: 2026-09-10（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化）
+最終更新: 2026-09-15（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化 / #219 バケットD第1弾3画面）
 
 - **アイコン別 マッピング表は自動生成**（`node scripts/docs/gen_tframe_menu_coverage.js` / commit 時にも自動再生成）。
   入力 = `pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`（実機採取・採取日は各 JSON の `capturedAt`）
@@ -174,7 +174,7 @@
 | 契約一覧 | `smsContract/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `contract_ichiran_test.js` |  |
 | 入金一覧 | `smsPayment/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `payment_ichiran_test.js` |  |
 | 未収金 | `smsTransaction/sw/unpaidAmountList` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `unpaid_amount_ichiran_test.js` |  |
-| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✗ | `tuition_fee_bulk_create_test.js` |
 | 一括入金処理 | `smsPayment/sw/batchPayment` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 商品登録 | `product/ew/_default` | ● | - | ✓ ShohinPage | ✓ `shohin_touroku_test.js` | ✗ |  |
 | 商品一覧 | `product/sw/_default` | ● | - | ✓ ShohinPage | ✗ | ✓ `shohin_ichiran_test.js` |  |
@@ -182,10 +182,10 @@
 | 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 口座振替請求データ読込 | `bankTransfer/ew/bankTransferImport` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 口座振替データ履歴 | `bankActionsHistory/sw/_default` | ● | ● | ✓ KeiriIchiranPage | ✗ | ✓ `bank_actions_history_ichiran_test.js` |  |
-| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | ● | - | ✓ ChosekinPage | ✗ | ✗ | `te_reward_calc_test.js` / `te_reward_total_calc_test.js` |
 | 調整金登録 | `shareiDetail/ew/_default` | ● | - | ✓ ChosekinPage | ✓ `chosekin_touroku_test.js` | ✗ |  |
 | 講師謝礼一覧 | `shareiDetail/sw/_default` | ● | - | ✓ ChosekinPage | ✗ | ✓ `chosekin_ichiran_test.js` |  |
-| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
+| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | ● | - | ✓ KeiriIchiranPage | ✗ | ✗ | `te_reward_total_calc_test.js` |
 | 講師謝礼合計一覧 | `shareiTotal/sw/_default` | ● | - | ✓ KeiriIchiranPage | ✗ | ✓ `sharei_total_ichiran_test.js` |  |
 | 講師謝礼明細（個人） | `shareiDetail/sw/teacherRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
 | 講師謝礼明細（法人） | `shareiDetail/sw/companyRewardStatement` | ● | - | ✗ | ✗ | ✗ | △ menu-nav `keiryo_master_test.js` |
@@ -246,8 +246,8 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 - アンケート 登録/一覧 `poll/ew|sw/_default`
 - Eメールテンプレート／カテゴリ 登録/一覧（`emailTemplate*` / `emailTemplateCategory*`）※ menu-nav 巡回のみ
 - 口座振替請求データ 作成/読込 `bankTransfer/ew/bankTransferExport|Import` ／ 口座振替データ履歴 `bankActionsHistory/sw/_default`
-- 経理一覧系（料金/契約/入金/未収金/入出金）※ menu-nav 巡回のみ、専用検索テストなし
-- 一括処理系（翌月月謝一括作成 / 一括入金処理）※ 副作用あり
+- ~~経理一覧系（料金/契約/入金/未収金/入出金）~~ … ✓ 完了（#198）
+- ~~翌月月謝一括作成~~ … ✓ 完了（#219・`KeiriIchiranPage.js`。冪等）／一括入金処理 `smsPayment/sw/batchPayment`（未着手・副作用あり）
 
 **juku_beta のみ**
 
@@ -257,7 +257,7 @@ Page Object もテストも無い画面。優先度は `screen_coverage.md` の�
 
 **culture_beta のみ**
 
-- 講師謝礼 計算・合計・明細・支払調書（`shareiDetail/sw/teRewardCalc` ほか8画面）※ 計算実行は副作用あり、明細は表示確認のみで可
+- ~~講師謝礼計算~~ / ~~講師謝礼合計計算~~ … ✓ 完了（#219・`ChosekinPage.js` / `KeiriIchiranPage.js`）／講師謝礼明細4種は支払調書と同じ帳票出力系（#218 参照）
 - 対応履歴テンプレート登録（講師メニュー）… PO 対応済み。CSV に `menuModule=teacher` 行を足すだけ
 
 ---
@@ -334,11 +334,11 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 | 画面 | route | 環境 | アクション |
 |---|---|---|---|
-| 翌月月謝一括作成 | `smsFee/ew/tuitionFeeBulkCreate` | 両 | 対象月選択→一括作成（DB更新） |
-| 一括入金処理 | `smsPayment/sw/batchPayment` | 両 | 検索→対象選択→一括入金実行 |
-| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | 両 | 条件選択→請求データ生成（ファイル） |
-| 講師謝礼計算 | `shareiDetail/sw/teRewardCalc` | culture | 対象選択→謝礼計算実行 |
-| 講師謝礼合計計算 | `shareiTotal/sw/teRewardTotalCalc` | culture | 合計計算実行 |
+| ~~翌月月謝一括作成~~ | `smsFee/ew/tuitionFeeBulkCreate` | 両 | ✓ 実装済み `tuition_fee_bulk_create_test.js`（#219・`KeiriIchiranPage.js`）。**冪等**（既に翌月分があれば二重作成しない）。成功時「〜作成しました」、対象なし時「処理対象の月謝情報がありません。」（juku_beta英語UIでは"There is no ... to process."）を両方許容する `verifyBulkActionResult`（support/tframe/utils.js）で判定 |
+| 一括入金処理 | `smsPayment/sw/batchPayment` | 両 | 検索→対象選択→一括入金実行（未着手・実データの入金確定を伴うため要検討） |
+| 口座振替請求データ作成 | `bankTransfer/ew/bankTransferExport` | 両 | 条件選択→請求データ生成（未着手・校舎セレクトが disabled でログイン中の管理者の校舎に固定・実データのファイル生成を伴うため要検討） |
+| ~~講師謝礼計算~~ | `shareiDetail/sw/teRewardCalc` | culture | ✓ 実装済み `te_reward_calc_test.js`（#219・`ChosekinPage.js`）。既存データを上書きするだけで重複エラーにならず毎回成功する |
+| ~~講師謝礼合計計算~~ | `shareiTotal/sw/teRewardTotalCalc` | culture | ✓ 実装済み `te_reward_total_calc_test.js`（#219・`KeiriIchiranPage.js`）。先に同一計上年月の講師謝礼計算が必要なため、テスト内でArrangeとして挟む |
 
 ### E. インポート系 — ファイルアップロード（3画面）
 
@@ -376,8 +376,13 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
   選択できている・メッセージが誤解を招く）。#213のような単純な日付範囲拡大では回避できないため、
   出力対象期間内にスケジュールを持つコースを選ぶ工夫が別途必要。講師謝礼明細4種の teacherPicker も
   同じ仕組みで選択できる見込みだが未検証。
-- **次**: #218（引き続き）/ アンケート編集（着手判断待ち）/ バケット D（一括処理・計算系5画面）/
-  バケット E（インポート系3画面）
+- ~~**バケットD 第1弾（翌月月謝一括作成・講師謝礼計算・講師謝礼合計計算）**~~ … ✓ 完了（Issue #219・
+  `KeiriIchiranPage.js` / `ChosekinPage.js` に追記 ＋ 共通ヘルパー `verifyBulkActionResult`
+  （support/tframe/utils.js）新設）。3画面とも「成功」または「対象データなし（冪等・実質正常系）」の
+  どちらでも合格とする判定方式を確立。**残り2画面（一括入金処理・口座振替請求データ作成）は
+  実データの入金確定・ファイル生成を伴う副作用があるため個別に着手判断が必要**、いったん保留。
+- **次**: #218（保留中・要方針判断）/ アンケート編集（着手判断待ち）/
+  バケットD残り2画面（一括入金処理・口座振替請求データ作成・着手判断待ち）/ バケット E（インポート系3画面）
 
 ---
 

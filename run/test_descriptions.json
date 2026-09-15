@@ -84,6 +84,9 @@
     "page/email_template_touroku_test.js":           "Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替）",
     "page/payment_statement_output_test.js":         "支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証）",
     "page/entrance_log_touroku_test.js":             "入退記録編集の新規登録を確認（juku_beta 専用・受講生ポップアップから選択）",
+    "page/tuition_fee_bulk_create_test.js":          "翌月月謝一括作成の実行と結果メッセージ（成功/対象なし）を確認（culture_beta / juku_beta 両対応・冪等）",
+    "page/te_reward_calc_test.js":                   "講師謝礼計算の実行と成功メッセージ表示を確認（culture_beta 専用）",
+    "page/te_reward_total_calc_test.js":             "講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用）",
     "api/get_personal_info_api_test.js":              "APIトークンを使った講師個人情報の取得動作を確認"
   },
   "shimamura": {

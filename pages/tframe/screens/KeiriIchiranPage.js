@@ -10,6 +10,8 @@
  * - 口座振替データ履歴 `bankActionsHistory/sw/_default`（フィルタは `inputType` のみ・セッション記憶なし。#213）
  * - 講師謝礼合計一覧 `shareiTotal/sw/_default`（culture のみ。#214）
  * - 支払調書 `shareiTotal/sw/paymentStatement`（culture のみ・帳票出力系。#217）
+ * - 翌月月謝一括作成 `smsFee/ew/tuitionFeeBulkCreate`（両対応・一括処理系。#219）
+ * - 講師謝礼合計計算 `shareiTotal/sw/teRewardTotalCalc`（culture のみ・一括処理系。#219）
  *
  * マスター系一覧（KoshiPage 等）との違い:
  * 1. 日付レンジの既定値が「当月」のため、検索前にレンジを広げないと結果が0件になる。
@@ -23,6 +25,7 @@
 
 const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
+const { verifyBulkActionResult, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
 
@@ -246,6 +249,73 @@ module.exports = {
     I.click('#paymentStatementOutput');
     I.waitForElement('#tf-message-summary', 10);
     I.see('完了しました', '#tf-message-summary');
+  },
+
+  // ----------------------------------------------------------------
+  //  翌月月謝一括作成（EW: smsFee/ew/tuitionFeeBulkCreate）両対応・一括処理系
+  // ----------------------------------------------------------------
+  // 「あらかじめ翌月の月謝が作成されている場合、二重で作成されることはありません」（画面ツールチップより）
+  // ＝冪等。初回実行は「〜作成しました」、対象が尽きた再実行は「処理対象の月謝情報がありません。」
+  // （`tf-message-error` クラスだが実際は正常系）を返す。#219
+
+  /**
+   * 翌月月謝一括作成画面へ遷移する
+   */
+  navigateToTuitionFeeBulkCreatePage() {
+    I.say('【翌月月謝一括作成】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=smsFee%2Few%2FtuitionFeeBulkCreate');
+    I.waitForElement('#ewCreateBulkTuitionFee', 10);
+  },
+
+  /**
+   * 対象年月・校舎を入力する（空フィールドはスキップ＝既定値のまま）
+   * @param {object} data - tuition_fee_bulk_create_data.csv の1行分
+   *                        （targetYearMonth / school_area_id / school_branch_id）
+   */
+  fillTuitionFeeBulkCreateConditions(data) {
+    I.say('【翌月月謝一括作成】対象年月・校舎を入力');
+    if (data.targetYearMonth) I.selectOption('#targetYearMonth', data.targetYearMonth);
+    selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
+  },
+
+  /**
+   * 一括作成ボタンをクリックし、結果メッセージを確認する（成功 or 対象なしのどちらも正常）
+   */
+  async clickTuitionFeeBulkCreateAndVerify() {
+    I.say('【翌月月謝一括作成】一括作成ボタンをクリック');
+    await verifyBulkActionResult(I, '#ewCreateBulkTuitionFee');
+  },
+
+  // ----------------------------------------------------------------
+  //  講師謝礼合計計算（SW: shareiTotal/sw/teRewardTotalCalc）culture のみ・一括処理系
+  // ----------------------------------------------------------------
+  // 対象の計上年月に「講師謝礼計算」（ChosekinPage.calculateTeRewardAndVerify）済みのデータが
+  // 無いと「処理対象の講師謝礼情報がありません。」になる（正常系）。#219
+
+  /**
+   * 講師謝礼合計計算画面へ遷移する
+   */
+  navigateToTeRewardTotalCalcPage() {
+    I.say('【講師謝礼合計計算】画面へ遷移');
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=shareiTotal%2Fsw%2FteRewardTotalCalc');
+    I.waitForElement('#calculate', 10);
+  },
+
+  /**
+   * 計上年月を入力する（空ならスキップ＝既定値のまま）
+   * @param {object} data - te_reward_total_calc_data.csv の1行分（postingYearMonth）
+   */
+  fillTeRewardTotalCalcConditions(data) {
+    I.say('【講師謝礼合計計算】計上年月を入力');
+    if (data.postingYearMonth) I.selectOption('#postingYearMonth', data.postingYearMonth);
+  },
+
+  /**
+   * 計算ボタンをクリックし、結果メッセージを確認する（成功 or 対象なしのどちらも正常）
+   */
+  async clickTeRewardTotalCalcAndVerify() {
+    I.say('【講師謝礼合計計算】計算ボタンをクリック');
+    await verifyBulkActionResult(I, '#calculate');
   },
 
   // ----------------------------------------------------------------
