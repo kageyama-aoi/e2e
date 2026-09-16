@@ -17,7 +17,7 @@
 | 分類 | 用語（英語） | 日本語読み | 用語（日本語） | 意味（会話用に短く） | 最小コード例 |
 |---|---|---|---|---|---|
 | 設計思想 | Data-Driven Testing | データ・ドリブン・テスティング | データ駆動テスト | テストケースをコードではなくデータで増やす設計 | `Data(csvData).Scenario(...)` |
-| 設計思想 | Single Flow / Unified Flow | シングルフロー | 単一フロー設計 | 正常系・異常系を1本の処理フローに統合 | `runKeiriScreenB(I, input, error)` |
+| 設計思想 | Single Flow / Unified Flow | シングルフロー | 単一フロー設計 | 正常系・異常系を1本の処理フローに統合 | `fillKeirisyoriScreenB(I, { breakTarget, expectedErrors })` |
 | 設計思想 | Error Injection | エラー・インジェクション | エラー注入 | 意図的に入力や操作を壊して異常状態を作る | `{ breakTarget:'kaishi_date' }` |
 | 設計思想 | Injection Point | インジェクション・ポイント | 注入ポイント | エラーを差し込む限定箇所 | `if (target !== 'class_select')` |
 | 設計思想 | Branch Suppression | ブランチ・サプレッション | 分岐抑制 | 異常系増加による if/else 爆発を防ぐ | 分岐は注入点のみ |

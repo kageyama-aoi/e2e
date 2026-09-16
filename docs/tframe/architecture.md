@@ -199,24 +199,30 @@ Page Object ごとに少しずつ違います。
 
 ## データファイルの役割
 
-`data/tframe/*SideMenu.js` は、メニュー構造をデータとして持つファイルです。
+`pages/tframe/_common/sideMenus.js` は、全アイコンのメニュー構造を1ファイルに
+まとめたデータファイルです（旧 `data/tframe/*SideMenu.js` の個別ファイル群は
+このファイルへ統合済み）。
 
 Page Object はここに書かれた定義を見ながら、画面上の項目を順に確認します。
 
 ### データの形
 
-基本形は次の通りです。
+アイコンごとのキー（`student` / `teacher` / `course` / `calendar` / `email` /
+`report` / `help` / `master` / `accounting`）の下に、以下の基本形が入ります。
 
 ```js
 module.exports = {
-  groups: [
-    {
-      name: 'グループ名',
-      items: [
-        { name: 'メニュー名', href: '/test/index.php?...' },
-      ],
-    },
-  ],
+  student: {
+    groups: [
+      {
+        name: 'グループ名',
+        items: [
+          { name: 'メニュー名', href: '/test/index.php?...' },
+        ],
+      },
+    ],
+  },
+  // teacher / course / calendar / email / report / help / master / accounting も同様
 };
 ```
 
@@ -231,32 +237,32 @@ module.exports = {
 ### 代表的な対応関係
 
 - `tests/tframe/page/email_test.js`
-  - `pages/tframe/EmailPage.js`
-  - `data/tframe/emailSideMenu.js`
+  - `pages/tframe/screens/EmailPage.js`
+  - `sideMenus.email`
 - `tests/tframe/page/course_test.js`
-  - `pages/tframe/CoursePage.js`
-  - `data/tframe/courseSideMenu.js`
+  - `pages/tframe/screens/CoursePage.js`
+  - `sideMenus.course`
 - `tests/tframe/page/calendar_test.js`
-  - `pages/tframe/CalendarPage.js`
-  - `data/tframe/calendarSideMenu.js`
+  - `pages/tframe/screens/CalendarPage.js`
+  - `sideMenus.calendar`
 - `tests/tframe/page/help_test.js`
-  - `pages/tframe/HelpPage.js`
-  - `data/tframe/helpSideMenu.js`
+  - `pages/tframe/screens/HelpPage.js`
+  - `sideMenus.help`
 - `tests/tframe/page/jukusei_test.js`
-  - `pages/tframe/JukuseiPage.js`
-  - `data/tframe/studentSideMenu.js`
+  - `pages/tframe/screens/JukuseiPage.js`
+  - `sideMenus.student`
 - `tests/tframe/page/keiryo_master_test.js`
-  - `pages/tframe/KeiryoMasterPage.js`
-  - `data/tframe/accountingSideMenu.js`
+  - `pages/tframe/screens/KeiryoMasterPage.js`
+  - `sideMenus.accounting`
 - `tests/tframe/page/koshi_test.js`
-  - `pages/tframe/KoshiPage.js`
-  - `data/tframe/teacherSideMenu.js`
+  - `pages/tframe/screens/KoshiPage.js`
+  - `sideMenus.teacher`
 - `tests/tframe/page/master_menu_test.js`
-  - `pages/tframe/MasterMenuPage.js`
-  - `data/tframe/masterSideMenu.js`
+  - `pages/tframe/screens/MasterMenuPage.js`
+  - `sideMenus.master`
 - `tests/tframe/page/report_test.js`
-  - `pages/tframe/ReportPage.js`
-  - `data/tframe/reportSideMenu.js`
+  - `pages/tframe/screens/ReportPage.js`
+  - `sideMenus.report`
 
 ---
 
@@ -264,7 +270,7 @@ module.exports = {
 
 ### 管理者ログイン
 
-最初の共通入口は `pages/tframe/LoginKannrisyaPage.js` です。
+最初の共通入口は `pages/tframe/auth/LoginKannrisyaPage.js` です。
 
 この Page Object は次を担当します。
 
@@ -278,7 +284,7 @@ module.exports = {
 
 ### マイページログイン
 
-`pages/tframe/LoginMyPageTeacher.js` と `pages/tframe/LoginMyPageStudent.js` は、管理者画面とは別のログイン導線です。
+`pages/tframe/auth/LoginMyPageTeacherPage.js` と `pages/tframe/auth/LoginMyPageStudentPage.js` は、管理者画面とは別のログイン導線です。
 
 `tests/tframe/auth/mypage_login_test.js` で使われ、講師・受講生それぞれのマイページログインとメニュー確認を行います。
 
@@ -286,9 +292,9 @@ module.exports = {
 
 T-Frame には、画面遷移だけでなく API 補助の Page Object もあります。
 
-- `pages/tframe/ApiCommonLoginPage.js`
-- `pages/tframe/ApiTeacherInfoGetPage.js`
-- `pages/tframe/JsonInputPage.js`
+- `pages/tframe/api/ApiCommonLoginPage.js`
+- `pages/tframe/api/ApiTeacherInfoGetPage.js`
+- `pages/tframe/api/JsonInputPage.js`
 
 これらは、ログイン後に API 実行ページへ進み、レスポンスから `tcnToken` を抜き出す用途で使われます。
 
@@ -298,7 +304,7 @@ T-Frame には、画面遷移だけでなく API 補助の Page Object もあり
 
 ### 例 1: メニュー遷移テスト
 
-`tests/tframe/email_test.js` の流れ:
+`tests/tframe/page/email_test.js` の流れ:
 
 1. `loginKannrisyaPage.login(...)`
 2. `loginKannrisyaPage.seeLogout()`
