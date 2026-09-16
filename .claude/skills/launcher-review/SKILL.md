@@ -63,52 +63,56 @@ ttk.Button(btn_frame, text='...', command=...)  # ← style 未指定（素の t
 
 ---
 
-#### B. test_group / cond_group に rowconfigure が設定されているか
+#### B. PanedWindow の weight 設定と、left 内グループの伸び縮みが壊れていないか
 
-左ペインはグルーピング用に `test_group`（テスト選択）と `cond_group`（実行条件）の
-2つの `ttk.LabelFrame` に分かれている。それぞれ内部のリスト行に rowconfigure が
-設定されているかを確認する。
+画面全体は入れ子の `ttk.PanedWindow` で構成されている（2026-09 のレイアウト改修で
+右ペイン方式から移行）。
 
-これがないとテストリスト・プロファイルリストが固定高さになり、
-ウィンドウを広げてもリストが伸びない（かつ縮小時にボタンを押し出す）。
+- `_outer_pane`（VERTICAL）: `_top_pane` (weight=1) / `bottom`（Command+Log+Downloads, weight=2）
+- `_top_pane`（HORIZONTAL）: `left`（操作パネル, weight=1）/ `test_panel`（Test File, weight=3）
 
-**正しい形**:
+**`left` パネル自体（`product_group` / `cond_group` / `left_bot` を grid で縦に並べる親）には
+意図的に `rowconfigure` の weight を付けていない。** 各グループは中身の自然なサイズのまま
+上詰めで並び、余白は `test_panel`・`bottom` 側に流す設計。過去に `left.rowconfigure(1, weight=1)`
+と `cond_group.rowconfigure(1, weight=1)` を付けて「実行条件」ブロックを引き伸ばした結果、
+その枠だけ異様に間延びする不具合が実際に起きている。**`left` 配下に新しい `LabelFrame` や
+ウィジェットを追加するときも、明確な意図がない限り行 weight を付けないこと。**
+
+伸縮させたいのは以下の2箇所だけ：
 ```python
-test_group.rowconfigure(3, weight=1)  # テストリスト行
-cond_group.rowconfigure(1, weight=1)  # プロファイルリスト行
+test_panel.rowconfigure(0, weight=1)   # Test File パネル自体
+test_group.rowconfigure(0, weight=1)   # ↑の中のテストリスト行
 ```
+`cond_group` 内の Profile リスト（`height=3` 固定）は意図的に伸縮させていない。
+もし将来伸縮させたくなった場合は、`left` 全体が weight を持たない設計と矛盾しないか
+（＝結局 `left` ごと引き伸ばす形に戻さないか）を確認すること。
 
-さらに `left`（`test_group` / `cond_group` / `left_bot` を grid で縦に並べる親）にも
-`left.rowconfigure(0, weight=2)` / `left.rowconfigure(1, weight=1)` が設定され、
-2グループ間の伸び縮み比率を制御していることを確認する。
+**PanedWindow の初期比率を `sashpos()` で明示的に固定するのは危険。** 過去に
+`after(50, ...)` で起動直後に `sashpos()` を呼んだところ、`test_panel` と `bottom` が
+両方とも潰れて見えなくなる不具合が発生した（スクリーンショット検証で発覚・原因のメソッドを
+削除して解決）。デフォルトの weight ベースの初期配置で十分機能するため、`sashpos()` を
+使うなら起動直後ではなくユーザー操作後の保存/復元用途に限定し、スクリーンショットで
+実際に両ペインが見えることを必ず確認する。
 
 ---
 
 #### C. geometry と minsize の整合性
 
-`self.geometry(...)` と `self.minsize(...)` の値を読み取り、
-以下を確認する：
+`self.geometry('1100x760')` と `self.minsize(860, 640)`（`RunnerApp.__init__` 内）を
+読み取り、以下を確認する：
 
-1. `geometry` の高さ ≥ `minsize` の高さ（初期サイズが最小サイズより大きい）
-2. ボタン固定エリア（`left_bot`）の推定高さを計算する
-
-   **left_bot 内の行数カウント**:
-   - btn_frame 内の grid 行数（row=0, 1, 2, ... の最大値 + 1）
-   - 各行の高さ目安: チェックボックス行 ≈ 28px、`BTN_SECONDARY` 行 ≈ 32px、`BTN_PRIMARY` 行 ≈ 38px
-   - pady の合計も加算
-
-   **minsize の高さから逆算した左ペイン全体の最大高さ**:
-   ```
-   左ペイン最大高さ = minsize高さ - タイトルラベル(35px) - ステータスバー(25px) - left_bot高さ - 余白(20px)
-   ```
-
-   `test_group` + `cond_group`（それぞれ LabelFrame の見出し・padding 込み、目安 +20px/グループ）の
-   固定ウィジェット（テストリスト・プロファイルリスト以外）の合計高さが
-   左ペイン最大高さを超えていれば警告する。
-
-   目視より確実な方法として、`RunnerApp` を `withdraw()` した状態で構築し
-   `update_idletasks()` 後に `winfo_reqheight()` を測るスクリプト検証も使える
-   （`/launcher-gui-design` スキルの Step 6 参照）。
+1. `geometry` の高さ・幅 ≥ `minsize` の高さ・幅
+2. `left` パネルは伸縮しないため、`minsize` まで縮めても
+   `product_group` + `cond_group` + `left_bot`（ボタン群）の合計高さがウィンドウ内に
+   収まるか。収まらない場合、`_top_pane` の縦幅が足りずボタンが見切れる。
+   目安：`product_group` ≈ 70px、`cond_group` ≈ 230px、`left_bot`（デバッグ行+ボタン4行）
+   ≈ 190px。タイトルラベル・ステータスバー・`_outer_pane` の `bottom` 側最低表示分
+   （Command 1行 + Log 見出し、目安 80px）も差し引く。
+3. 目視より確実な方法として、`RunnerApp` を `withdraw()` した状態で構築し
+   `update_idletasks()` 後に `winfo_reqheight()` を測るスクリプト検証、または
+   実際に起動してスクリーンショットで両ペイン（Test File・Log）が見えることを確認する
+   （`/launcher-gui-design` スキルの Step 6 参照）。**見た目のレイアウト崩れは
+   属性 assert では拾えないため、PanedWindow 関連の変更は必ずスクリーンショットで確認する。**
 
 ---
 
@@ -130,7 +134,7 @@ cond_group.rowconfigure(1, weight=1)  # プロファイルリスト行
 ### A. ボタン親フレーム
 ✅ / ⚠️ ... （問題の説明）
 
-### B. rowconfigure
+### B. PanedWindow / 伸縮設定
 ✅ / ⚠️ ... （問題の説明）
 
 ### C. geometry / minsize
@@ -151,48 +155,59 @@ cond_group.rowconfigure(1, weight=1)  # プロファイルリスト行
 
 ---
 
-## 重要な構造メモ（2026-07-21 時点）
+## 重要な構造メモ（2026-09-16 時点）
+
+2026-09 のレイアウト改修で、右ペイン方式から入れ子 `ttk.PanedWindow`（ドラッグで
+上下・左右比率を調整可能）に変更された。Test File は「アイコン別グループ見出し＋
+日本語説明」が付いて行が長くなったため、独立した横幅の広いペインに切り出されている。
 
 ```
 RunnerApp._build_ui()
 ├── タイトルラベル (pack)
-├── body (pack fill=BOTH expand=True)
-│   ├── left (grid, columnconfigure(0)=1, rowconfigure(0)=2, rowconfigure(1)=1) ← 左ペイン
-│   │   ├── test_group = LabelFrame('テスト選択') (grid row=0, sticky=nsew)
-│   │   │   ├── row=0  Product ラベル
-│   │   │   ├── row=1  Product コンボ
-│   │   │   ├── row=2  Test File ラベル
-│   │   │   ├── row=3  テストリスト  ← rowconfigure weight=1
-│   │   │   ├── row=4  横スクロールバー
-│   │   │   └── row=5  説明ラベル
-│   │   ├── cond_group = LabelFrame('実行条件') (grid row=1, sticky=nsew)
-│   │   │   ├── row=0  Profile ラベル
-│   │   │   ├── row=1  プロファイルリスト  ← rowconfigure weight=1
-│   │   │   ├── row=2  Grep ラベル
-│   │   │   ├── row=3  Grep コンボ
-│   │   │   ├── row=4  Grep ヒント
-│   │   │   └── row=5  機能番号フィルター
-│   │   └── left_bot (grid row=2, sticky=ew)   ← ボタン固定エリア
-│   │       └── btn_frame
-│   │           ├── row=0 デバッグチェックボックス
-│   │           ├── row=1 Run Test(BTN_PRIMARY) / Stop(BTN_SECONDARY)
-│   │           ├── row=2 Open Allure / Open CSV（ともに BTN_SECONDARY）
-│   │           ├── row=3 Login & Hold（BTN_SECONDARY）
-│   │           └── row=4 Settings (.env)（BTN_SECONDARY）
-│   └── right (pack fill=BOTH expand=True)
-│       ├── Command 表示
-│       ├── Log エリア
-│       └── ダウンロードパネル（動的表示、ボタンは BTN_SECONDARY）
-└── ステータスバー (pack fill=X)
+└── body (pack fill=BOTH expand=True)
+    └── _outer_pane = PanedWindow(VERTICAL)
+        ├── _top_pane = PanedWindow(HORIZONTAL, weight=1)
+        │   ├── left (grid, columnconfigure(0)=1／rowconfigure は付けない＝伸縮させない, weight=1)
+        │   │   ├── product_group = LabelFrame('１ まず選ぶ', style='ProductCard.TLabelframe')
+        │   │   │   │   (grid row=0, sticky=ew／淡いブルーの独立カードでProduct選択を強調)
+        │   │   │   ├── row=0  Product ラベル (style='ProductCard.TLabel')
+        │   │   │   └── row=1  Product コンボ
+        │   │   ├── cond_group = LabelFrame('実行条件') (grid row=1, sticky=ew)
+        │   │   │   ├── row=0  Profile ラベル
+        │   │   │   ├── row=1  プロファイルリスト（height=3 固定・伸縮させない）
+        │   │   │   ├── row=2  Grep ラベル
+        │   │   │   ├── row=3  Grep コンボ
+        │   │   │   ├── row=4  Grep ヒント
+        │   │   │   └── row=5  機能番号フィルター
+        │   │   └── left_bot (grid row=2, sticky=ew)   ← ボタン固定エリア
+        │   │       └── btn_frame
+        │   │           ├── row=0 デバッグチェックボックス
+        │   │           ├── row=1 Run Test(BTN_PRIMARY) / Stop(BTN_SECONDARY)
+        │   │           ├── row=2 Open Allure / Open CSV（ともに BTN_SECONDARY）
+        │   │           ├── row=3 Login & Hold（BTN_SECONDARY）
+        │   │           └── row=4 Settings (.env)（BTN_SECONDARY）
+        │   └── test_panel (grid, rowconfigure(0)=1, weight=3)   ← Test File 専用の幅広ペイン
+        │       └── test_group = LabelFrame('Test File') (grid row=0, sticky=nsew)
+        │           ├── row=0  テストリスト（tk.Listbox） ← rowconfigure weight=1で伸縮
+        │           ├         縦スクロールバー (column=1)
+        │           ├── row=1  横スクロールバー
+        │           └── row=2  説明ラベル（選択中テストの日本語説明）
+        └── bottom = Frame(pack, weight=2)   ← 全幅・下段
+            ├── Command 表示
+            ├── Log エリア（ScrolledText）
+            └── ダウンロードパネル（動的表示、ボタンは BTN_SECONDARY）
 ```
 
+（ステータスバーは `_outer_pane` の外、`RunnerApp` 直下に `pack(fill=X)` で別途配置）
+
 新しいボタンを追加する際は必ず `btn_frame` (= `left_bot` の子) に grid で追加し、
-`left` や `test_group` / `cond_group` に直接追加しないこと。
+`left` や `product_group` / `cond_group` に直接追加しないこと。
 また `style=BTN_PRIMARY` / `BTN_SECONDARY` / `BTN_TERTIARY` のいずれかを必ず指定すること
 （無指定の素の `ttk.Button` は使わない。詳細は `run/README.md`「UI テーマについて」）。
 
-Product/Test File 系のウィジェットを追加する場合は `test_group` に、
-Profile/Grep/機能番号フィルター系は `cond_group` に追加する。
-`left` は `test_group`（weight=2）/ `cond_group`（weight=1）/ `left_bot`（weight=0）の
-3行 grid になっているため、新しい LabelFrame を左ペインに増やす場合は `left.rowconfigure()` の
-重み配分も見直すこと。
+Product 系のウィジェットを追加する場合は `product_group` に、Test File 系は
+`test_group`（`test_panel` 配下）に、Profile/Grep/機能番号フィルター系は `cond_group` に
+追加する。`left` 配下の3グループ（`product_group` / `cond_group` / `left_bot`）は
+**意図的に rowconfigure の weight を付けていない**（Step 3-B 参照）。新しい `LabelFrame` を
+`left` に増やす場合も、明確な意図がなければ伸縮させない（自然サイズのまま上詰め）方針を踏襲する。
+画面全体の比率調整（左右・上下）は `_top_pane` / `_outer_pane` の `weight=` 側で行う。

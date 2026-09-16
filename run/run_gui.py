@@ -53,6 +53,9 @@ UI_FONT_BOLD  = (UI_FONT_FAMILY, 9, 'bold')  # 見出し・ラベル
 UI_FONT_SMALL = (UI_FONT_FAMILY, 8)          # 補足・ヒント文
 UI_FONT_TITLE = (UI_FONT_FAMILY, 14, 'bold') # ウィンドウ見出し
 
+PRODUCT_CARD_BG = '#eaf2fb'  # Product選択カードの背景（淡いブルー、Run Testの濃い青とは彩度差をつける）
+PRODUCT_CARD_FG = '#0b5394'  # 同カードの見出し文字色
+
 # ボタン3段階ヒエラルキー: Primary（主操作1つだけ）/ Secondary（標準）/ Tertiary（Cancel等）
 BTN_PRIMARY   = 'Primary.Accent.TButton'   # sv_ttk の Accent.TButton を継承（未導入時は TButton にフォールバック）
 BTN_SECONDARY = 'Secondary.TButton'
@@ -182,6 +185,73 @@ def get_desc_text(entry):
     return entry or ''
 
 
+def load_tframe_icon_groups(repo_root):
+    """docs/tframe/menu_coverage.md のAUTOGEN区間（自動生成・単一の正）をパースし、
+    tframeのテストファイルをアイコン別にグルーピングするための情報を返す。
+
+    戻り値: (icon_order, file_to_group) のタプル。
+      icon_order: 出現順のアイコン日本語ラベル一覧（例: ['受講生', 'コース', ...]）
+      file_to_group: {'koshi_touroku_test.js': '講師', ...}（ファイル名のみで引く。フォルダ非依存）
+    パース失敗時は ([], {}) を返す（呼び出し側はグルーピングをスキップして従来表示にフォールバックする）。
+    """
+    path = os.path.join(repo_root, 'docs', 'tframe', 'menu_coverage.md')
+    try:
+        with open(path, encoding='utf-8') as f:
+            text = f.read()
+    except Exception:
+        return [], {}
+
+    block_match = re.search(
+        r'<!-- AUTOGEN:menu-table START.*?-->(.*?)<!-- AUTOGEN:menu-table END', text, re.S
+    )
+    if not block_match:
+        return [], {}
+    body = block_match.group(1)
+
+    icon_order = []
+    file_to_group = {}
+    for sec in re.finditer(r'^### (.+?)（icon: `[\w]+`）\s*$(.*?)(?=^### |\Z)', body, re.M | re.S):
+        label = sec.group(1).strip()
+        icon_order.append(label)
+        for fname in re.findall(r'`([\w]+_test\.js)`', sec.group(2)):
+            file_to_group[fname] = label
+    return icon_order, file_to_group
+
+
+def group_tframe_tests_by_icon(paths, product, icon_order, file_to_group):
+    """tframeのテストパスをアイコン別にグルーピングして並べ替える。
+
+    戻り値: (grouped_paths, header_before) のタプル。
+      grouped_paths: アイコン出現順→グループ内ファイル名順に並べ替えた paths
+      header_before: grouped_paths と同じ長さ。各位置の直前に挿入すべき見出し文字列
+                      （挿入不要な位置は None）
+    product が 'tframe' でない、または icon_order が空（パース失敗時）は
+    元の paths をそのまま返す（グルーピング無し）。
+    """
+    if product != 'tframe' or not icon_order:
+        return list(paths), [None] * len(paths)
+
+    prefix = f'./tests/{product}/'
+    buckets = {label: [] for label in icon_order}
+    other = []
+    for p in paths:
+        rel = p[len(prefix):] if p.startswith(prefix) else p
+        label = file_to_group.get(os.path.basename(rel))
+        (buckets[label] if label in buckets else other).append(p)
+
+    grouped_paths = []
+    header_before = []
+    for label in icon_order:
+        items = sorted(buckets[label], key=os.path.basename)
+        for i, p in enumerate(items):
+            grouped_paths.append(p)
+            header_before.append(label if i == 0 else None)
+    for i, p in enumerate(sorted(other, key=os.path.basename)):
+        grouped_paths.append(p)
+        header_before.append('その他' if i == 0 else None)
+    return grouped_paths, header_before
+
+
 def get_feature_no(entry):
     """descriptions の値から feature_no を返す。なければ空文字。"""
     if isinstance(entry, dict):
@@ -205,13 +275,18 @@ def get_display_name(test_path, product, descriptions=None):
     return rel
 
 
-def format_test_list(display_names):
-    """フォルダプレフィックスを固定幅に揃え、ファイル名の開始列を統一する。
+def format_test_list(display_names, desc_texts=None):
+    """フォルダプレフィックス・ファイル名をそれぞれ固定幅に揃え、説明文の開始列をリスト全体で統一する。
+    desc_texts を渡すと各行末尾に「 — 説明文」を付与する（test_descriptions.json の日本語説明）。
 
-    例:
+    例（desc_texts 無し）:
       auth/   login_test.js
       check/  dropdown_check_test.js
       page/   calendar_test.js
+
+    例（desc_texts 有り、ファイル名が固定幅に揃うので — の位置が全行で一致する）:
+      auth/   login_test.js          — 管理者アカウントでのログイン動作を確認
+      check/  dropdown_check_test.js — プルダウンの選択肢を確認
     """
     parts = []
     for name in display_names:
@@ -220,8 +295,17 @@ def format_test_list(display_names):
             parts.append((folder + '/', fname))
         else:
             parts.append(('', name))
-    max_len = max((len(f) for f, _ in parts), default=0)
-    return [f.ljust(max_len + 1) + fname for f, fname in parts]
+    max_folder_len = max((len(f) for f, _ in parts), default=0)
+    max_fname_len = max((len(fname) for _, fname in parts), default=0)
+    lines = []
+    for i, (f, fname) in enumerate(parts):
+        desc = desc_texts[i] if desc_texts and i < len(desc_texts) else ''
+        fname_part = fname.ljust(max_fname_len) if desc else fname
+        line = f.ljust(max_folder_len + 1) + fname_part
+        if desc:
+            line += '  — ' + desc
+        lines.append(line)
+    return lines
 
 
 def filter_profiles_for_product(all_profiles, product, order=None):
@@ -905,6 +989,7 @@ class RunnerApp(tk.Tk):
         self._filtered_test_paths = []  # 選択 Product の全テスト
         self._visible_test_paths = []   # フィルター・ソート後の表示対象
         self._descriptions = load_descriptions(os.path.dirname(__file__))
+        self._tframe_icon_order, self._tframe_file_to_group = load_tframe_icon_groups(repo_root)
 
         self.product_var = tk.StringVar()
         self.test_var = tk.StringVar()
@@ -964,59 +1049,95 @@ class RunnerApp(tk.Tk):
             style.configure(style_name, padding=(spec['hpad'], top, spec['hpad'], bottom))
         style.configure(BTN_TERTIARY, foreground='#888888')
 
+        # Product選択は「一番最初に決めるもの」で、Profile/Grep/機能番号フィルタ等の
+        # 実行条件（＝Productに従属する絞り込み）より一段上の重要度を持つ。同じ枠の
+        # 見た目のままだと他の項目と同じ視覚的重みになってしまうため、淡い色調のカードとして
+        # 独立させ、視線パターンの起点（左上）で最初に目に入るようにする。
+        style.configure('ProductCard.TLabelframe', background=PRODUCT_CARD_BG)
+        style.configure('ProductCard.TLabelframe.Label', background=PRODUCT_CARD_BG,
+                         foreground=PRODUCT_CARD_FG, font=UI_FONT_BOLD)
+        style.configure('ProductCard.TLabel', background=PRODUCT_CARD_BG, font=UI_FONT_BOLD)
+
+        # Listbox の選択色はOS既定だとAccentボタン（Run Test）と同系の濃い青になり、
+        # 「押せる場所」と「選択中の状態表示」の視覚的重みが競合する。選択色は明らかに
+        # 弱いトーンに落とし、画面で一番強い色をPrimaryボタンだけに残す。
+        for listbox in (self.test_list, self.profile_list):
+            listbox.configure(selectbackground='#d6dee6', selectforeground='#1a1a1a')
+
     def _build_ui(self):
         ttk.Label(self, text='CodeceptJS Test Runner', font=UI_FONT_TITLE).pack(pady=8)
 
         body = ttk.Frame(self)
         body.pack(fill=tk.BOTH, expand=True, padx=12, pady=4)
 
-        # ---- 左ペイン ----
-        left = ttk.Frame(body)
-        left.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 12))
-        left.columnconfigure(0, weight=1)
-        left.rowconfigure(0, weight=2)  # テスト選択グループが高さを吸収
-        left.rowconfigure(1, weight=1)  # 実行条件グループも少し伸び縮み
+        # 縦方向: 上段(テスト選択+実行条件) / 下段(Command+Log+Downloads) をドラッグで調整可能にする。
+        # Log は Test File の行が長くなった分（アイコン別グループ見出し＋日本語説明の付与）幅の余裕が
+        # 必要になったため、右ペインではなく下段の全幅レイアウトに変更した。
+        self._outer_pane = ttk.PanedWindow(body, orient=tk.VERTICAL)
+        self._outer_pane.pack(fill=tk.BOTH, expand=True)
 
-        # ---- テスト選択（グルーピング） ----
-        test_group = ttk.LabelFrame(left, text='テスト選択', padding=8)
-        test_group.grid(row=0, column=0, sticky='nsew', pady=(0, 8))
-        test_group.columnconfigure(0, weight=1)
-        test_group.rowconfigure(3, weight=1)  # テストリストが高さを吸収
+        self._top_pane = ttk.PanedWindow(self._outer_pane, orient=tk.HORIZONTAL)
+        self._outer_pane.add(self._top_pane, weight=1)
+
+        bottom = ttk.Frame(self._outer_pane)
+        self._outer_pane.add(bottom, weight=2)
+
+        # ---- 左ペイン（操作パネル：Product・実行条件・ボタン） ----
+        left = ttk.Frame(self._top_pane)
+        self._top_pane.add(left, weight=1)
+        left.columnconfigure(0, weight=1)
+        # 各グループは自然なサイズのまま上詰めにする（伸び縮みさせない）。
+        # Test File を別ペインに切り出した結果、左ペインの高さに余りが出るが、
+        # 「実行条件」やProfile一覧をそこまで引き伸ばすと間延びして見えるため、
+        # 余白はボタン下に残す（rowconfigure に weight を付けない）。
+
+        product_group = ttk.LabelFrame(left, text='１ まず選ぶ', padding=8, style='ProductCard.TLabelframe')
+        product_group.grid(row=0, column=0, sticky='ew', pady=(0, 8))
+        product_group.columnconfigure(0, weight=1)
 
         # ---- 実行条件（グルーピング） ----
         cond_group = ttk.LabelFrame(left, text='実行条件', padding=8)
-        cond_group.grid(row=1, column=0, sticky='nsew', pady=(0, 8))
+        cond_group.grid(row=1, column=0, sticky='ew', pady=(0, 8))
         cond_group.columnconfigure(0, weight=1)
-        cond_group.rowconfigure(1, weight=1)  # プロファイルリストも少し伸び縮み
 
         # 下部：ボタン（常に見える固定エリア）
         left_bot = ttk.Frame(left)
         left_bot.grid(row=2, column=0, sticky='ew')
 
         # Product
-        ttk.Label(test_group, text='Product').grid(row=0, column=0, columnspan=2, sticky='w')
-        self.product_combo = ttk.Combobox(test_group, textvariable=self.product_var, width=46, state='readonly')
+        ttk.Label(product_group, text='Product', style='ProductCard.TLabel').grid(
+            row=0, column=0, columnspan=2, sticky='w')
+        self.product_combo = ttk.Combobox(product_group, textvariable=self.product_var, width=46, state='readonly')
         self.product_combo.grid(row=1, column=0, columnspan=2, sticky='ew')
         self.product_combo.bind('<<ComboboxSelected>>', self._on_product_select)
 
-        # Test File
-        ttk.Label(test_group, text='Test File').grid(row=2, column=0, columnspan=2, sticky='w', pady=(8, 0))
+        # ---- Test File 一覧（幅広ペイン。アイコン別見出し＋日本語説明が付くため横幅を確保する） ----
+        test_panel = ttk.Frame(self._top_pane)
+        self._top_pane.add(test_panel, weight=3)
+        test_panel.columnconfigure(0, weight=1)
+        test_panel.rowconfigure(0, weight=1)
+
+        test_group = ttk.LabelFrame(test_panel, text='Test File', padding=8)
+        test_group.grid(row=0, column=0, sticky='nsew')
+        test_group.columnconfigure(0, weight=1)
+        test_group.rowconfigure(0, weight=1)  # テストリストが高さを吸収
+
         self.test_list = tk.Listbox(test_group, width=48, height=8, exportselection=False, font=LOG_FONT)
         tsb_y = ttk.Scrollbar(test_group, orient='vertical', command=self.test_list.yview)
         tsb_x = ttk.Scrollbar(test_group, orient='horizontal', command=self.test_list.xview)
         self.test_list.configure(yscrollcommand=tsb_y.set, xscrollcommand=tsb_x.set)
-        self.test_list.grid(row=3, column=0, sticky='nsew')
-        tsb_y.grid(row=3, column=1, sticky='ns')
-        tsb_x.grid(row=4, column=0, sticky='ew')
+        self.test_list.grid(row=0, column=0, sticky='nsew')
+        tsb_y.grid(row=0, column=1, sticky='ns')
+        tsb_x.grid(row=1, column=0, sticky='ew')
         self.test_list.bind('<<ListboxSelect>>', self._on_test_select)
 
         # Test description
         self.desc_var = tk.StringVar(value='')
         desc_label = ttk.Label(
             test_group, textvariable=self.desc_var, font=UI_FONT_SMALL,
-            foreground='#555555', wraplength=340, justify='left',
+            foreground='#555555', wraplength=600, justify='left',
         )
-        desc_label.grid(row=5, column=0, columnspan=2, sticky='w', pady=(2, 0))
+        desc_label.grid(row=2, column=0, columnspan=2, sticky='w', pady=(4, 0))
 
         # Profile
         self.profile_label = ttk.Label(cond_group, text='Profile')
@@ -1086,22 +1207,19 @@ class RunnerApp(tk.Tk):
         self.settings_btn = ttk.Button(btn_frame, text='Settings (.env)', style=BTN_SECONDARY, command=self._on_open_settings)
         self.settings_btn.grid(row=4, column=0, columnspan=2, sticky='ew', pady=(2, 2))
 
-        # ---- 右ペイン ----
-        right = ttk.Frame(body)
-        right.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # ---- 下段（Command / Log / Downloads。全幅で表示） ----
+        ttk.Label(bottom, text='Command (参照用)').pack(anchor='w')
+        ttk.Entry(bottom, textvariable=self.cmd_var, state='readonly').pack(fill=tk.X, pady=(0, 8))
 
-        ttk.Label(right, text='Command (参照用)').pack(anchor='w')
-        ttk.Entry(right, textvariable=self.cmd_var, state='readonly').pack(fill=tk.X, pady=(0, 8))
-
-        ttk.Label(right, text='Log').pack(anchor='w')
-        self.log_text = ScrolledText(right, wrap=tk.WORD, font=LOG_FONT)
+        ttk.Label(bottom, text='Log').pack(anchor='w')
+        self.log_text = ScrolledText(bottom, wrap=tk.WORD, font=LOG_FONT)
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log_text.configure(state='disabled')
         self._configure_log_tags()
         self._bind_log_context_menu()
 
         # ---- ダウンロードパネル（テスト完了後に自動表示） ----
-        self._dl_frame = ttk.LabelFrame(right, text='ダウンロードファイル')
+        self._dl_frame = ttk.LabelFrame(bottom, text='ダウンロードファイル')
         # 初期は非表示 - _show_downloads_panel() が呼ばれたときに pack する
         dl_cols = ('name', 'size', 'rows', 'enc')
         self._dl_tree = ttk.Treeview(self._dl_frame, columns=dl_cols, show='headings', height=3)
@@ -1161,16 +1279,34 @@ class RunnerApp(tk.Tk):
                 return (0 if fno else 1, fno, path)
             paths = sorted(paths, key=_sort_key)
 
-        self._visible_test_paths = paths
-        display_names = [get_display_name(t, product, self._descriptions) for t in paths]
-        formatted = format_test_list(display_names)
+        grouped_paths, header_before = group_tframe_tests_by_icon(
+            paths, product, self._tframe_icon_order, self._tframe_file_to_group
+        )
+        prefix = f'./tests/{product}/'
+        display_names = [get_display_name(t, product, self._descriptions) for t in grouped_paths]
+        desc_texts = [
+            get_desc_text(self._descriptions.get(product, {}).get(
+                t[len(prefix):] if t.startswith(prefix) else t
+            ))
+            for t in grouped_paths
+        ]
+        formatted = format_test_list(display_names, desc_texts)
+
         self.test_list.delete(0, tk.END)
-        for name in formatted:
-            self.test_list.insert(tk.END, name)
-        if paths:
-            self.test_list.selection_set(0)
-            self.test_list.activate(0)
-            self.test_var.set(paths[0])
+        display_paths = []  # Listbox の行とインデックスを揃える対応表（見出し行は ''）
+        for idx, (header, line) in enumerate(zip(header_before, formatted)):
+            if header:
+                self.test_list.insert(tk.END, f'── {header} ──')
+                display_paths.append('')
+            self.test_list.insert(tk.END, line)
+            display_paths.append(grouped_paths[idx])
+        self._visible_test_paths = display_paths
+
+        first_idx = next((i for i, p in enumerate(display_paths) if p), None)
+        if first_idx is not None:
+            self.test_list.selection_set(first_idx)
+            self.test_list.activate(first_idx)
+            self.test_var.set(display_paths[first_idx])
         else:
             self.test_var.set('')
         self._update_desc_label()
@@ -1202,7 +1338,20 @@ class RunnerApp(tk.Tk):
         sel = self.test_list.curselection()
         if not sel:
             return
-        self.test_var.set(self._visible_test_paths[sel[0]])
+        idx = sel[0]
+        if not self._visible_test_paths[idx]:
+            # 見出し行（アイコングループの区切り）が選択された場合は直後の実テスト行へ寄せる
+            n = len(self._visible_test_paths)
+            target = next((j for j in range(idx + 1, n) if self._visible_test_paths[j]), None)
+            if target is None:
+                target = next((j for j in range(idx - 1, -1, -1) if self._visible_test_paths[j]), None)
+            if target is None:
+                return
+            idx = target
+            self.test_list.selection_clear(0, tk.END)
+            self.test_list.selection_set(idx)
+            self.test_list.activate(idx)
+        self.test_var.set(self._visible_test_paths[idx])
         self._update_desc_label()
         self._update_grep_combo()
         self._update_cmd_display()
