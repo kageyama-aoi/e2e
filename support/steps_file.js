@@ -176,7 +176,7 @@ module.exports = function() {
       const fs = require('fs');
       const path = require('path');
       // codecept.conf.js から output ディレクトリのパスを取得
-      const outputDir = require('./codecept.conf.js').config.output;
+      const outputDir = require('../codecept.conf.js').config.output;
       const filePath = path.join(outputDir, fileName);
 
       let logContent = `--- Log created at: ${new Date().toISOString()} ---\n\n`;

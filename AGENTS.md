@@ -18,9 +18,9 @@
 ### テスト実行
 - `npm install` 依存関係のインストール。
 - `npm run gui` テスト実行ランチャー（GUI）を起動（= `python run/run_gui.py`）。
-- `npm test` 全テスト実行（CodeceptJS）。
+- `npm test` 全テスト実行（パス未指定＝`codecept.conf.js` の `tests` グロブ。プロファイルなしのためルート `.env` の接続先で全プロダクトが走る点に注意）。
 - `npm run test_s` しまむらテスト（実行前に `pretest_s` フックが `pause()` 残存をチェック）。
-- `npm run test_t` T-Frame テスト一式。
+- `npm run test_t` T-Frame テスト一式（`tframe.culture_beta`。別環境は GUI か `--profile` を手で指定）。
 - `npm run test_taskreport` Taskreport テスト。
 - `npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
 

@@ -46,7 +46,7 @@ flowchart TD
 
 ### スイート定義
 
-`codecept.conf.js` の `suites.tframe` が `./tests/tframe/**/*_test.js` を拾います。
+tframe の実行範囲はコマンドで渡すパスで決まります（`npm run test_t` は `./tests/tframe/**/*_test.js`）。`codecept.conf.js` の `tests` はパス未指定時の既定値です。
 
 つまり、`tests/tframe` 配下のサブフォルダを含む全 `*_test.js` が T-Frame の実行対象です。
 
@@ -86,7 +86,7 @@ T-Frame では、ここで読み込まれた環境変数がそのまま使われ
 T-Frame で重要なのは次の 2 点です。
 
 1. `include` により `loginKannrisyaPage` などがテストで使える
-2. `suites.tframe` により `tests/tframe/*_test.js` が実行対象になる
+2. `npm run test_t`（または GUI）が渡すパスにより `tests/tframe/**/*_test.js` が実行対象になる
 
 `include` されている代表的な tframe 用 Page Object は次の通りです。
 

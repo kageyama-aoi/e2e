@@ -96,7 +96,7 @@
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
 | 受講生登録 | `student/ew/_default` | ● | ● | ✓ JukuseiPage | ✓ `jukusei_touroku_test.js` | ✗ |  |
-| 受講生一覧 | `student/sw/_default` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `jukusei_ichiran_test.js` | `jukusei_ichiran_extract_test.js` |
+| 受講生一覧 | `student/sw/_default` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `jukusei_ichiran_test.js` |  |
 | コース別受講生一覧 | `student/sw/stByCourse` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `stByCourse_ichiran_test.js` |  |
 | 受講生別コース一覧 | `student/sw/courseBySt` | ● | ● | ✓ JukuseiPage | ✗ | ✓ `courseBySt_ichiran_test.js` |  |
 | 対応履歴一覧 | `infoHistory/sw/_default?menuModule=student` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistory_ichiran_test.js` |  |

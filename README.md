@@ -87,7 +87,7 @@ npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 | `npm run gui` | GUI ランチャー起動（推奨） |
 | `npm test` | 全テスト実行 |
 | `npm run test_s` | しまむら全テスト (`shimamura.testgcp`) |
-| `npm run test_t` | T-Frame 全テスト |
+| `npm run test_t` | T-Frame 全テスト（`tframe.culture_beta`） |
 | `npm run test_taskreport` | Task Report テスト |
 
 **Allure レポート**
