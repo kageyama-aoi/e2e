@@ -14,6 +14,7 @@
  */
 
 const { I } = inject();
+const { resetSearchForm } = require('./IchiranSearchMixin');
 
 /** 一覧画面（SW）の検索結果テーブルを囲む枠 */
 const LIST_CONTAINER = '.tf-group-body-search-result';
@@ -115,4 +116,22 @@ function createSortableTable({ label, container, columns, secondary }) {
   };
 }
 
-module.exports = { createSortableTable, subpanelContainer, LIST_CONTAINER };
+/**
+ * 一覧画面（SW）用の openCase を作る（`runSortCases` に渡す）。
+ * 1ケースごとに「一覧へ遷移 → 検索条件を全クリア → CSV 行の絞り込みを入力 → 検索」を行う。
+ * Page Object が navigateToListPage / fillSearchConditions / clickSearchAndWait を持っていること。
+ * 日付必須の画面などで手順が違う場合は、テスト側で openCase を個別に書く。
+ *
+ * @param {object} po - 一覧画面の Page Object
+ * @returns {function(Object): Promise<void>}
+ */
+function openListCase(po) {
+  return async (c) => {
+    po.navigateToListPage();
+    resetSearchForm();
+    po.fillSearchConditions(c);
+    po.clickSearchAndWait();
+  };
+}
+
+module.exports = { createSortableTable, subpanelContainer, openListCase, LIST_CONTAINER };

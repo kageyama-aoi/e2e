@@ -1,0 +1,5 @@
+scenario,sortKey,sortDir,name,idnumber
+法人・団体名_昇順,accountName,asc,,
+法人・団体名_降順,accountName,desc,,
+ID_昇順,idnumber,asc,,
+ID_降順,idnumber,desc,,

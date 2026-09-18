@@ -19,7 +19,7 @@
  */
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { runSortCases } = require('../../../support/tframe/sortTestRunner');
-const { resetSearchForm } = require('../../../pages/tframe/_common/IchiranSearchMixin');
+const { openListCase } = require('../../../pages/tframe/_common/SortableTable');
 
 const cases = loadCsvWithProfile('branch_ichiran_sort_data', 'tframe');
 
@@ -32,11 +32,6 @@ Scenario('列ヘッダソートで第1キーの順に並ぶ（CSV全ケース）
   await runSortCases(I, {
     table: branchPage.listSortTable,
     cases,
-    openCase: async (c) => {
-      branchPage.navigateToListPage();
-      resetSearchForm();
-      branchPage.fillSearchConditions(c);
-      branchPage.clickSearchAndWait();
-    },
+    openCase: openListCase(branchPage),
   });
 });

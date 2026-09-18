@@ -294,8 +294,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   `verifyGuardMessage(I, expectedMessage)` を使う（#220）。
 - 一覧（一覧画面・詳細画面のタブ内一覧）の列ヘッダソート検証 → PO に `createSortableTable({label, container, columns, secondary})`
   （`pages/tframe/_common/SortableTable.js`）を定義し、テストは `support/tframe/sortTestRunner.js` の
-  `runSortCases(I, {table, cases, openCase})` に渡す。検索条件の全クリアは `IchiranSearchMixin` の `resetSearchForm()`。
-  列の型（`string` / `stringCi` / `number` / `grouped`）と第2キー（無い画面は `null`）の決め方は `/tframe-ichiran-dev` 末尾（#223 #225）。
+  `runSortCases(I, {table, cases, openCase})` に渡す（一覧画面の openCase は `openListCase(po)`）。検索条件の全クリアは `IchiranSearchMixin` の `resetSearchForm()`。
+  定義案は調査ツール `tests/tframe/util/sort_spec_probe.js` で出す。列の型（`string` / `stringCi` / `number` / `datetime` / `grouped`）と第2キー（無い画面は `null`）の決め方は `/tframe-ichiran-dev` 末尾（#223 #225）。
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 

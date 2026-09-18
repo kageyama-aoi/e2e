@@ -8,6 +8,8 @@
  * - 'string'   : Unicode コードポイント順（DB のバイナリ照合。例: コース一覧のコース名）
  * - 'stringCi' : 英字の大文字小文字を区別しないコードポイント順（例: 講師 ID、校舎名）
  * - 'number'   : 数値順
+ * - 'datetime' : 日時（`YYYY-MM-DD HH:mm`）。並びは文字順で判定するが、画面は分単位までしか出さず
+ *                実値は秒まで持つため、表示が同じでも同値とは限らない → 第2キーの判定に使わない
  * - 'grouped'  : 表示値とは別の裏の値で並ぶ列（氏名＝フリガナ順、区分＝内部コード順など）。
  *                順序は判定できないので「同じ値が連続して固まっていること」だけを検証する
  *
@@ -19,7 +21,7 @@
  * 2値を比較する（a<b なら負、a>b なら正、同値なら0）。空値は最小として扱う。
  * @param {string} a
  * @param {string} b
- * @param {string} [type='string'] - 'string' | 'stringCi' | 'number'
+ * @param {string} [type='string'] - 'string' | 'stringCi' | 'number' | 'datetime'（datetime は文字列として比較）
  * @returns {number}
  */
 function compareValues(a, b, type = 'string') {
@@ -55,7 +57,7 @@ function isEmpty(v) {
  * @param {Array<Object>} rows - 画面から抽出した行（`{列キー: 値}`）
  * @param {object} spec
  * @param {string} spec.key  - 第1キーの列キー
- * @param {string} spec.type - 第1キーの型（'string' | 'stringCi' | 'number' | 'grouped'）
+ * @param {string} spec.type - 第1キーの型（'string' | 'stringCi' | 'number' | 'datetime' | 'grouped'）
  * @param {string} spec.dir  - 第1キーの方向（'asc' | 'desc'）
  * @param {({key: string, type: string, dir: string}|null)} spec.secondary - 第2キー。第2キーの無い画面は null（判定しない）
  * @returns {{violations: Array<string>, tiePairs: number, emptyRows: number}}
@@ -98,7 +100,8 @@ function findSortViolations(rows, { key, type, dir, secondary }) {
         continue;
       }
     }
-    if (primary !== 0 || !secondary) continue;
+    // datetime は表示の切り捨てで同値に見えるだけの場合があるので第2キーを判定しない
+    if (primary !== 0 || !secondary || type === 'datetime') continue;
     if (isEmpty(prev[secondary.key]) || isEmpty(cur[secondary.key])) continue;
 
     tiePairs++;
@@ -115,6 +118,8 @@ function findSortViolations(rows, { key, type, dir, secondary }) {
 
 /** 列の型の推定順（厳しい型から試し、昇順・降順とも違反0の最初の型を採用する） */
 const TYPE_CANDIDATES = ['number', 'string', 'stringCi', 'grouped'];
+/** 分単位の日時表示（tframe の登録日時・更新日時） */
+const DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
 /**
  * 実機で採取した「列ごと・方向ごとの1ページ目」から sortSpec の案を推定する（#226 調査ツール用）。
@@ -135,6 +140,11 @@ function inferSortSpec(samples) {
 
   const columns = {};
   Object.entries(byColumn).forEach(([col, list]) => {
+    const values = list.flatMap(({ rows }) => rows.map((r) => r[col])).filter((v) => !isEmpty(v));
+    if (values.length && values.every((v) => DATETIME_PATTERN.test(v))) {
+      columns[col] = 'datetime';
+      return;
+    }
     columns[col] = TYPE_CANDIDATES.find((type) => list.every(({ dir, rows }) =>
       findSortViolations(rows, { key: col, type, dir, secondary: null }).violations.length === 0)) || 'unknown';
   });
@@ -144,14 +154,14 @@ function inferSortSpec(samples) {
 
   const secondaryCandidates = [];
   allKeys.forEach((key) => {
-    const type = columns[key] && columns[key] !== 'grouped' && columns[key] !== 'unknown' ? columns[key] : 'string';
+    const type = ['number', 'string', 'stringCi'].includes(columns[key]) ? columns[key] : 'string';
     ['asc', 'desc'].forEach((dir) => {
       const sign = dir === 'desc' ? -1 : 1;
       let pairs = 0;
       let strictPairs = 0;
       let bad = 0;
       Object.entries(byColumn).forEach(([col, list]) => {
-        if (col === key) return;
+        if (col === key || columns[col] === 'datetime') return; // datetime の表示上の同値は裏付けにならない
         list.forEach(({ rows }) => {
           for (let i = 1; i < rows.length; i++) {
             const [a, b] = [rows[i - 1], rows[i]];

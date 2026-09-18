@@ -6,6 +6,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -118,6 +119,16 @@ module.exports = {
       idnumber: data.idnumber,
     });
   },
+
+  /**
+   * 法人・団体一覧の列ヘッダソート定義（#226・culture_beta で実機確認）。第2キーなし。
+   */
+  listSortTable: createSortableTable({
+    label: '法人・団体一覧',
+    container: LIST_CONTAINER,
+    columns: { accountName: 'stringCi', idnumber: 'stringCi' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('アカウント一覧'),
 };

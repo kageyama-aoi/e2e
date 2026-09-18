@@ -35,7 +35,7 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 | ENV 変数一覧 | `env/.env.tframe.template` |
 | フォルダ配置ルール | `AGENTS.md` の「tframe テストのフォルダ分類」 |
 | GUI 用説明の登録先 | `run/test_descriptions.json` |
-| ソート検証の雛形（一覧画面） | `pages/tframe/screens/KoshiPage.js` の `listSortTable` + `tests/tframe/page/koshi_ichiran_sort_test.js` |
+| ソート検証の雛形（一覧画面） | `pages/tframe/screens/StaffPage.js` の `listSortTable` + `tests/tframe/page/staff_ichiran_sort_test.js` |
 | ソート検証の雛形（タブ内一覧） | `pages/tframe/screens/CoursePage.js` の `studentSubpanelSortTable` + `tests/tframe/page/course_detail_student_sort_test.js` |
 
 ---
@@ -315,14 +315,14 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 | 用意するもの | 置き場 | 中身 |
 |---|---|---|
 | ソート定義 | Page Object に `xxxSortTable: createSortableTable({...})` | 表の枠・ソート可能列の型・第2キー |
-| 一覧を開く手順 | テストの `openCase` | 一覧へ遷移 → `resetSearchForm()` → 絞り込み → 検索 |
+| 一覧を開く手順 | テストの `openCase` | 一覧画面は `openListCase(po)` で済む（遷移 → `resetSearchForm()` → 絞り込み → 検索）。タブ内一覧・日付必須画面は個別に書く |
 | ケース | `data/tframe/{prefix}_sort_data.csv` | `scenario,sortKey,sortDir` ＋ 画面固有の絞り込み列 |
 
 共通部品（あるものを使う・再実装しない）:
 
 | 部品 | 置き場 | 役割 |
 |---|---|---|
-| `createSortableTable` / `LIST_CONTAINER` / `subpanelContainer(name)` | `pages/tframe/_common/SortableTable.js` | ソート操作・行抽出・ソート可能列取得（枠で絞り込む） |
+| `createSortableTable` / `LIST_CONTAINER` / `subpanelContainer(name)` / `openListCase(po)` | `pages/tframe/_common/SortableTable.js` | ソート操作・行抽出・ソート可能列取得（枠で絞り込む）、一覧画面の標準 openCase |
 | `resetSearchForm()` | `pages/tframe/_common/IchiranSearchMixin.js` | 検索条件を全クリア（プルダウンは「すべて」、エリア→校舎の AJAX 連動込み） |
 | `runSortCases(I, {table, cases, openCase})` | `support/tframe/sortTestRunner.js` | 1ログインで全ケースを回し違反を集約して報告 |
 | `findSortViolations` | `support/tframe/sortVerify.js` | 並び判定（純粋関数） |
@@ -343,14 +343,15 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
    |---|---|---|
    | `string` | 表示値の文字コード順で並ぶ | コース名、日付（`YYYY-MM-DD`） |
    | `stringCi` | 英字の大小を区別せず並ぶ | 講師ID（`cc` が `TA001` より前）、校舎名 |
-   | `number` | 数値順 | 年度 |
+   | `number` | 数値順 | 年度、定員 |
+| `datetime` | 分単位表示の日時（実値は秒まで持つので、表示が同じでも第2キー判定に使わない） | 登録日時・更新日時 |
    | `grouped` | 表示値と別の裏の値で並ぶ（順序は判定不能・同値の連続性のみ） | 氏名（フリガナ順）、区分・ステイタス・エリア（内部コード順） |
 
 3. **第2キーを決める**（第2キーの無い画面もある → `secondary: null`）
    - 同値が多い列（区分・カテゴリ等）でソートし、同値グループ内が何順かを見る
    - 実例: コース一覧＝`_recordId` 昇順（第1キーの方向によらず固定）、講師一覧＝`updated_at` 降順、校舎一覧・コース詳細受講生タブ＝なし
    - 第1キーを全行同値にする絞り込み（例: 年度で絞って年度ソート）を CSV に入れると、第2キーを15件すべてで検証できる
-4. **テストを書く**（雛形 `koshi_ichiran_sort_test.js` をコピーして PO 名・CSV 名・`openCase` を差し替える）
+4. **テストを書く**（雛形 `staff_ichiran_sort_test.js` をコピーして PO 名・CSV 名を差し替える。本体は `runSortCases` 1行）
 5. `run/test_descriptions.json` と `data/tframe/README.md` に追記し、実行して全ケース OK を確認
 
 ### 注意

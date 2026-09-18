@@ -204,7 +204,7 @@ module.exports = {
     container: LIST_CONTAINER,
     columns: {
       fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped',
-      phone1: 'string', email1: 'stringCi', created_at: 'string', updated_at: 'string',
+      phone1: 'string', email1: 'stringCi', created_at: 'datetime', updated_at: 'datetime',
     },
     secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
   }),

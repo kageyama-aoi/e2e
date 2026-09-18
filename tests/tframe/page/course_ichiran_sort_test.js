@@ -21,7 +21,7 @@
  */
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { runSortCases } = require('../../../support/tframe/sortTestRunner');
-const { resetSearchForm } = require('../../../pages/tframe/_common/IchiranSearchMixin');
+const { openListCase } = require('../../../pages/tframe/_common/SortableTable');
 
 const cases = loadCsvWithProfile('course_ichiran_sort_data', 'tframe');
 
@@ -34,11 +34,6 @@ Scenario('列ヘッダソートで第1キー・第2キーの順に並ぶ（CSV�
   await runSortCases(I, {
     table: coursePage.listSortTable,
     cases,
-    openCase: async (c) => {
-      coursePage.navigateToListPage();
-      resetSearchForm();
-      coursePage.fillSearchConditions(c);
-      coursePage.clickSearchAndWait();
-    },
+    openCase: openListCase(coursePage),
   });
 });

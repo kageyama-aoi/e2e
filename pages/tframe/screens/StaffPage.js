@@ -6,6 +6,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -145,6 +146,20 @@ module.exports = {
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
+
+  /**
+   * スタッフ一覧の列ヘッダソート定義（#226・culture_beta で実機確認・講師一覧と同じ人物系の並び）。
+   * 氏名（フリガナ順）・区分・部署は grouped、日時は分単位表示のため datetime。第2キーは更新日時の降順。
+   */
+  listSortTable: createSortableTable({
+    label: 'スタッフ一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped', department: 'grouped',
+      phone1: 'string', email1: 'stringCi', created_at: 'datetime', updated_at: 'datetime',
+    },
+    secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
+  }),
 
   ...createIchiranMixin('スタッフ一覧'),
 };

@@ -7,6 +7,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -89,6 +90,16 @@ module.exports = {
     fillTextFields(I, { name: data.name });
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
+
+  /**
+   * 教室一覧の列ヘッダソート定義（#226・culture_beta で実機確認）。第2キーなし。
+   */
+  listSortTable: createSortableTable({
+    label: '教室一覧',
+    container: LIST_CONTAINER,
+    columns: { name: 'stringCi', shortname: 'stringCi', capacity: 'number' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('教室一覧'),
 };

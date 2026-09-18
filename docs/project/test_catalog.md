@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-18 16:58 (JST)
+> 最終更新: 2026-09-18 17:11 (JST)
 
-**合計 120 テスト**（shimamura 30 / tframe 88 / taskreport 1 / smoke 1）
+**合計 123 テスト**（shimamura 30 / tframe 91 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（88件）
+## tframe（91件）
 
 ### api/（1件）
 
@@ -89,10 +89,11 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（78件）
+### page/（81件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
+| `account_ichiran_sort_test.js` | — | 法人・団体一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
 | `account_info_data_import_test.js` | — | 口座情報データ取込のガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
@@ -140,6 +141,7 @@
 | `koshi_ichiran_test.js` | — | 講師一覧の空検索と姓での絞り込み検索を確認 |
 | `koshi_test.js` | — | 講師一覧・管理画面の表示・操作を確認 |
 | `koshi_touroku_test.js` | — | 講師の新規登録フォームへの入力・保存・バリデーションを確認 |
+| `kyoshitsu_ichiran_sort_test.js` | — | 教室一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `kyoshitsu_ichiran_test.js` | — | 教室一覧の空検索と教室名での絞り込み検索を確認 |
 | `kyoshitsu_touroku_test.js` | — | 教室の新規登録フォームへの入力・保存を確認 |
 | `master_menu_test.js` | — | マスター設定メニューの各項目への遷移を確認 |
@@ -163,6 +165,7 @@
 | `shohin_touroku_test.js` | — | 経理タブの商品新規登録フォームへの入力・保存を確認 |
 | `stByCourse_ichiran_test.js` | — | コース別受講生一覧の空検索とコース名での絞り込み検索を確認 |
 | `st_inquiry_data_import_test.js` | — | 問合せデータ取込のマッピング確認画面遷移とガードメッセージを確認（juku_beta 専用・実データは変更しない） |
+| `staff_ichiran_sort_test.js` | — | スタッフ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `staff_ichiran_test.js` | — | スタッフ一覧の空検索と姓での絞り込み検索を確認 |
 | `staff_touroku_test.js` | — | スタッフの新規登録フォームへの入力・保存・バリデーションを確認 |
 | `teByStudent_ichiran_test.js` | — | 講師別受講生一覧の空検索と講師姓での絞り込み検索を確認 |

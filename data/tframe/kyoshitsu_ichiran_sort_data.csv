@@ -1,0 +1,7 @@
+scenario,sortKey,sortDir,name,school_area_id,school_branch_id
+教室名_昇順,name,asc,,,
+教室名_降順,name,desc,,,
+略称_昇順,shortname,asc,,,
+略称_降順,shortname,desc,,,
+定員_昇順,capacity,asc,,,
+定員_降順,capacity,desc,,,

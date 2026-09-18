@@ -46,8 +46,11 @@
 | `tests/tframe/page/shohin_ichiran_test.js` | `shohin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/chosekin_ichiran_test.js` | `chosekin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 年度で絞り込み→結果あり確認（名前検索なし） |
 | `tests/tframe/page/account_ichiran_test.js` | `account_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 法人名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/account_ichiran_sort_test.js` | `account_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/staff_ichiran_test.js` | `staff_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/staff_ichiran_sort_test.js` | `staff_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）（#226） |
 | `tests/tframe/page/kyoshitsu_ichiran_test.js` | `kyoshitsu_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 教室名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/kyoshitsu_ichiran_sort_test.js` | `kyoshitsu_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/branch_ichiran_sort_test.js` | `branch_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#225） |
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
