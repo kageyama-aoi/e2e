@@ -7,6 +7,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -136,6 +137,16 @@ module.exports = {
     if (data.productCategory) I.selectOption('#productCategory', data.productCategory);
     if (data.courseValid)     I.selectOption('#courseValid', data.courseValid);
   },
+
+  /**
+   * 商品一覧の列ヘッダソート定義（#226・実機確認）。商品カテゴリはプルダウン由来のため grouped。第2キーなし（同値内の並びは不定）。
+   */
+  listSortTable: createSortableTable({
+    label: '商品一覧',
+    container: LIST_CONTAINER,
+    columns: { productName: 'stringCi', productCode: 'stringCi', productCategory: 'grouped' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('商品一覧'),
 };

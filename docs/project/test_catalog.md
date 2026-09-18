@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-18 17:11 (JST)
+> 最終更新: 2026-09-18 17:33 (JST)
 
-**合計 123 テスト**（shimamura 30 / tframe 91 / taskreport 1 / smoke 1）
+**合計 126 テスト**（shimamura 30 / tframe 94 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（91件）
+## tframe（94件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（81件）
+### page/（84件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -148,6 +148,7 @@
 | `payment_ichiran_test.js` | — | 入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `payment_statement_output_test.js` | — | 支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証） |
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
+| `proByCourse_ichiran_sort_test.js` | — | コース別商品一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `prospect_list_touroku_test.js` | — | 名簿リスト編集の新規登録を確認（culture_beta / juku_beta 両対応） |
@@ -161,8 +162,10 @@
 | `ryokin_package_ichiran_test.js` | — | 料金パッケージ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_package_touroku_test.js` | — | 料金パッケージの新規作成フォームへの入力・保存を確認（juku_test のみ） |
 | `sharei_total_ichiran_test.js` | — | 講師謝礼合計一覧の空検索と謝礼項目絞り込みを確認（culture_beta 専用） |
+| `shohin_ichiran_sort_test.js` | — | 商品一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `shohin_ichiran_test.js` | — | 商品一覧の空検索と商品名での絞り込み検索を確認 |
 | `shohin_touroku_test.js` | — | 経理タブの商品新規登録フォームへの入力・保存を確認 |
+| `stByCourse_ichiran_sort_test.js` | — | コース別受講生一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `stByCourse_ichiran_test.js` | — | コース別受講生一覧の空検索とコース名での絞り込み検索を確認 |
 | `st_inquiry_data_import_test.js` | — | 問合せデータ取込のマッピング確認画面遷移とガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `staff_ichiran_sort_test.js` | — | スタッフ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |

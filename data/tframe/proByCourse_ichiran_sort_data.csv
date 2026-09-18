@@ -1,0 +1,13 @@
+scenario,sortKey,sortDir,name,productName
+コース名_昇順,courseName,asc,,
+コース名_降順,courseName,desc,,
+コースカテゴリ_昇順,courseCategory,asc,,
+コースカテゴリ_降順,courseCategory,desc,,
+年度_昇順,nendo,asc,,
+年度_降順,nendo,desc,,
+商品名_昇順,productName,asc,,
+商品名_降順,productName,desc,,
+商品コード_昇順,productCode,asc,,
+商品コード_降順,productCode,desc,,
+商品カテゴリ_昇順,productCategory,asc,,
+商品カテゴリ_降順,productCategory,desc,,

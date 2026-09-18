@@ -315,7 +315,7 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 | 用意するもの | 置き場 | 中身 |
 |---|---|---|
 | ソート定義 | Page Object に `xxxSortTable: createSortableTable({...})` | 表の枠・ソート可能列の型・第2キー |
-| 一覧を開く手順 | テストの `openCase` | 一覧画面は `openListCase(po)` で済む（遷移 → `resetSearchForm()` → 絞り込み → 検索）。タブ内一覧・日付必須画面は個別に書く |
+| 一覧を開く手順 | テストの `openCase` | 一覧画面は `openListCase(po)` で済む（遷移 → `resetSearchForm()` → 絞り込み → 検索）。1つの PO に一覧が複数あるときは `openListCase(po, { navigate: 'navigateToXxxListPage', fill: 'fillXxxSearchConditions' })`（例: `proByCourse_ichiran_sort_test.js`）。タブ内一覧・日付必須画面は個別に書く |
 | ケース | `data/tframe/{prefix}_sort_data.csv` | `scenario,sortKey,sortDir` ＋ 画面固有の絞り込み列 |
 
 共通部品（あるものを使う・再実装しない）:

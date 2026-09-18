@@ -1,0 +1,7 @@
+scenario,sortKey,sortDir,name,productCategory,courseValid,branchId_area_id,branchId_branch_id
+商品名_昇順,productName,asc,,,,,
+商品名_降順,productName,desc,,,,,
+商品コード_昇順,productCode,asc,,,,,
+商品コード_降順,productCode,desc,,,,,
+商品カテゴリ_昇順,productCategory,asc,,,,,
+商品カテゴリ_降順,productCategory,desc,,,,,

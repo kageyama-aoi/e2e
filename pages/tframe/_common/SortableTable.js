@@ -119,17 +119,19 @@ function createSortableTable({ label, container, columns, secondary }) {
 /**
  * 一覧画面（SW）用の openCase を作る（`runSortCases` に渡す）。
  * 1ケースごとに「一覧へ遷移 → 検索条件を全クリア → CSV 行の絞り込みを入力 → 検索」を行う。
- * Page Object が navigateToListPage / fillSearchConditions / clickSearchAndWait を持っていること。
+ * 1つの PO に複数の一覧がある場合（例: CoursePage のコース一覧とコース別商品一覧）は
+ * 遷移・条件入力のメソッド名を opts で指定する。検索ボタンは共通の clickSearchAndWait を使う。
  * 日付必須の画面などで手順が違う場合は、テスト側で openCase を個別に書く。
  *
  * @param {object} po - 一覧画面の Page Object
+ * @param {{navigate: (string|undefined), fill: (string|undefined)}} [opts] - メソッド名（既定: navigateToListPage / fillSearchConditions）
  * @returns {function(Object): Promise<void>}
  */
-function openListCase(po) {
+function openListCase(po, { navigate = 'navigateToListPage', fill = 'fillSearchConditions' } = {}) {
   return async (c) => {
-    po.navigateToListPage();
+    po[navigate]();
     resetSearchForm();
-    po.fillSearchConditions(c);
+    po[fill](c);
     po.clickSearchAndWait();
   };
 }

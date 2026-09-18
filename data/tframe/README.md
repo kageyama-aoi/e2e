@@ -44,6 +44,7 @@
 | `tests/tframe/page/koshi_ichiran_test.js` | `koshi_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
 | `tests/tframe/page/koshi_ichiran_sort_test.js` | `koshi_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）。絞り込みは講師一覧の検索列（#225） |
 | `tests/tframe/page/shohin_ichiran_test.js` | `shohin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/shohin_ichiran_sort_test.js` | `shohin_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/chosekin_ichiran_test.js` | `chosekin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 年度で絞り込み→結果あり確認（名前検索なし） |
 | `tests/tframe/page/account_ichiran_test.js` | `account_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 法人名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/account_ichiran_sort_test.js` | `account_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
@@ -82,9 +83,11 @@
 | `tests/tframe/page/payment_statement_output_test.js` | `payment_statement_output_data.csv` | 支払調書（帳票出力・`shareiTotal/sw/paymentStatement`）。出力ボタンは同画面を `isExportType=output` 付きで再読込する流れでファイルダウンロードが発生するが、中身は未検証。`#tf-message-summary` の成功メッセージのみ確認。※culture_beta のみ |
 | `tests/tframe/page/entrance_log_touroku_test.js` | `entrance_log_touroku_data.csv` | 入退記録編集（登録・`entranceLog/ew/_default`）。受講生はポップアップの先頭の結果を選択（`CalendarPage.selectEntranceLogStudent` → `support/tframe/utils.js` の `selectFirstFromPopupPicker`）。保存後は詳細画面ではなく一覧画面へ遷移するため `submitTframeFormAndVerify` は使わず専用の確認ロジックを使用。※juku_beta のみ |
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
+| `tests/tframe/page/stByCourse_ichiran_sort_test.js` | `stByCourse_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/proByCourse_ichiran_test.js` | `proByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→結果あり確認（culture_beta のみ） |
+| `tests/tframe/page/proByCourse_ichiran_sort_test.js` | `proByCourse_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/infoHistory_ichiran_test.js` | `infoHistory_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 件名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
 | `tests/tframe/page/infoHistoryTemplate_ichiran_test.js` | `infoHistoryTemplate_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: テンプレート名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
 | `tests/tframe/page/tuition_fee_bulk_create_test.js` | `tuition_fee_bulk_create_data.csv` | 翌月月謝一括作成（一括処理・`smsFee/ew/tuitionFeeBulkCreate`）。冪等（二重作成されない）ため「完了しました」（成功）と「処理対象の月謝情報がありません。」（対象なし・実質正常系）の両方を許容。※culture_beta / juku_beta 両対応 |

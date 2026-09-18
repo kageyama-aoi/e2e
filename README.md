@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-18 17:11:10
+Last updated: 2026-09-18 17:33:24
 
 ```text
 e2e/
@@ -335,6 +335,597 @@ e2e/
 │   │   │   └── SKILL.md
 │   │   └── tframe-registration-dev/ 
 │   │       └── SKILL.md
+│   ├── worktrees/ 
+│   │   └── fix-227-codecept-conf/ 
+│   │       ├── .agent/ 
+│   │       │   ├── handoff/ 
+│   │       │   │   ├── 2026-04-07-0937.md
+│   │       │   │   ├── 2026-04-07-1313.md
+│   │       │   │   ├── 2026-04-07-1438.md
+│   │       │   │   ├── 2026-04-22-1738.md
+│   │       │   │   ├── 2026-04-23-1319.md
+│   │       │   │   ├── 2026-04-23-1729.md
+│   │       │   │   ├── 2026-04-28-1516.md
+│   │       │   │   ├── 2026-04-28-1730.md
+│   │       │   │   ├── 2026-05-07-1544.md
+│   │       │   │   ├── 2026-05-07-1701.md
+│   │       │   │   ├── 2026-05-08-1204.md
+│   │       │   │   ├── 2026-05-08-1332.md
+│   │       │   │   ├── 2026-05-11-1653.md
+│   │       │   │   ├── 2026-05-12-1100.md
+│   │       │   │   ├── 2026-05-12-1429.md
+│   │       │   │   ├── 2026-05-12-1646.md
+│   │       │   │   ├── 2026-05-28-1651.md
+│   │       │   │   ├── 2026-06-05-1324.md
+│   │       │   │   ├── 2026-06-05-1326.md
+│   │       │   │   ├── 2026-06-05-1748.md
+│   │       │   │   ├── 2026-06-09-1708.md
+│   │       │   │   ├── 2026-06-15-1205.md
+│   │       │   │   ├── 2026-06-15-1534.md
+│   │       │   │   ├── 2026-06-15-1620.md
+│   │       │   │   ├── 2026-06-26-1433.md
+│   │       │   │   ├── 2026-06-29-1833.md
+│   │       │   │   ├── 2026-06-30-1441.md
+│   │       │   │   ├── 2026-06-30-1713.md
+│   │       │   │   ├── 2026-07-02-1802.md
+│   │       │   │   ├── 2026-07-03-1435.md
+│   │       │   │   ├── 2026-07-06-1038.md
+│   │       │   │   ├── 2026-07-06-1418.md
+│   │       │   │   └── 2026-07-07-1619.md
+│   │       │   ├── memory/ 
+│   │       │   │   ├── docs_reorganization_plan.md
+│   │       │   │   ├── MEMORY.md
+│   │       │   │   └── tframe_refactor_resume_2026-04-03.md
+│   │       │   ├── skills/ 
+│   │       │   │   └── make_project/ 
+│   │       │   │       └── SKILL.md
+│   │       │   └── workflows/ 
+│   │       │       ├── handoff.md
+│   │       │       └── newplan.md
+│   │       ├── .claude/ 
+│   │       │   ├── agents/ 
+│   │       │   │   ├── explorer.md
+│   │       │   │   ├── planner.md
+│   │       │   │   └── worker.md
+│   │       │   ├── commands/ 
+│   │       │   │   ├── handoff.md
+│   │       │   │   ├── newplan.md
+│   │       │   │   └── placement-gate.md
+│   │       │   ├── skills/ 
+│   │       │   │   ├── doc-sync/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── flow-explain/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── launcher-review/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── local-safe-move/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── shimamura-download-verify/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── shimamura-html-fetch/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── shimamura-ichiran-dev/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── shimamura-registration-dev/ 
+│   │       │   │   │   ├── references/ 
+│   │       │   │   │   │   ├── patterns.md
+│   │       │   │   │   │   └── troubleshooting.md
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── shimamura-screen-diagram/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── tframe-flow-dev/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── tframe-html-fetch/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   ├── tframe-ichiran-dev/ 
+│   │       │   │   │   └── SKILL.md
+│   │       │   │   └── tframe-registration-dev/ 
+│   │       │   │       └── SKILL.md
+│   │       │   └── settings.local.json
+│   │       ├── .githooks/ 
+│   │       │   └── pre-commit
+│   │       ├── .github/ 
+│   │       │   └── workflows/ 
+│   │       │       └── documentation_update.yaml
+│   │       ├── .spec/ 
+│   │       │   ├── KNOWLEDGE-2026-09-10.md
+│   │       │   ├── KNOWLEDGE.md
+│   │       │   ├── PLAN-2026-09-10.md
+│   │       │   ├── PLAN.md
+│   │       │   ├── SPEC-2026-09-10.md
+│   │       │   ├── SPEC.md
+│   │       │   ├── TODO-2026-09-10.md
+│   │       │   └── TODO.md
+│   │       ├── data/ 
+│   │       │   ├── shimamura/ 
+│   │       │   │   ├── koushi_sharei_errors/ 
+│   │       │   │   │   ├── error_01_column_count.csv
+│   │       │   │   │   ├── error_02_no_koushi_id.csv
+│   │       │   │   │   ├── error_05_no_keijou_date.csv
+│   │       │   │   │   ├── error_06_invalid_keijou_date.csv
+│   │       │   │   │   ├── error_07_no_taisho_tsuki.csv
+│   │       │   │   │   ├── error_08_invalid_taisho_tsuki.csv
+│   │       │   │   │   ├── error_15_no_id_bangou.csv
+│   │       │   │   │   ├── error_16_no_koushi_mei.csv
+│   │       │   │   │   ├── error_17_no_shiharai_houhou.csv
+│   │       │   │   │   ├── error_18_no_mise_id.csv
+│   │       │   │   │   ├── error_19_no_sharei_komoku.csv
+│   │       │   │   │   ├── error_20_no_houshu_gaku.csv
+│   │       │   │   │   ├── error_25_date_mismatch.csv
+│   │       │   │   │   ├── error_26_keijou_past.csv
+│   │       │   │   │   └── test_18col_no_koushi_id.csv
+│   │       │   │   ├── smbc_import/ 
+│   │       │   │   │   ├── smbc_err_data_short.txt
+│   │       │   │   │   ├── smbc_err_end_short.txt
+│   │       │   │   │   ├── smbc_err_header_short.txt
+│   │       │   │   │   ├── smbc_err_invalid_kind.txt
+│   │       │   │   │   ├── smbc_err_invalid_type.txt
+│   │       │   │   │   ├── smbc_err_no_end.txt
+│   │       │   │   │   ├── smbc_err_no_header.txt
+│   │       │   │   │   ├── smbc_err_no_trailer.txt
+│   │       │   │   │   ├── smbc_err_old_date.txt
+│   │       │   │   │   ├── smbc_err_trailer_short.txt
+│   │       │   │   │   └── smbc_state_import_sample.txt
+│   │       │   │   ├── attendance_today_ichiran_search_data.csv
+│   │       │   │   ├── bank_payment_type_check_data.csv
+│   │       │   │   ├── class_list_ichiran_search_data.csv
+│   │       │   │   ├── contact_list_ichiran_search_data.csv
+│   │       │   │   ├── contact_module_list_ichiran_search_data.csv
+│   │       │   │   ├── contact_register_data.csv
+│   │       │   │   ├── contact_register_validation_errors.csv
+│   │       │   │   ├── course_by_student_ichiran_search_data.csv
+│   │       │   │   ├── course_ichiran_search_data.csv
+│   │       │   │   ├── gessya_ikkatu_setup_data.csv
+│   │       │   │   ├── happyoukai_setup_data.csv
+│   │       │   │   ├── happyoukai_touroku_data.csv
+│   │       │   │   ├── keiri_hennkin_syori_data.csv
+│   │       │   │   ├── keiri_hennkin_syori_validation_errors.csv
+│   │       │   │   ├── keiri_invoices_ichiran_search_data.csv
+│   │       │   │   ├── koushi_sharei_import_sample.csv
+│   │       │   │   ├── koushi_sharei_manual_data.csv
+│   │       │   │   ├── koushi_sharei_manual_validation_errors.csv
+│   │       │   │   ├── koushi_sharei_tsuika_data.csv
+│   │       │   │   ├── koushi_sharei_tsuika_errors.csv
+│   │       │   │   ├── mishukin_list_ichiran_search_data.csv
+│   │       │   │   ├── smbc_state_import_data.csv
+│   │       │   │   ├── smbc_state_import_validation_errors.csv
+│   │       │   │   ├── student_saikenkai_data.csv
+│   │       │   │   ├── student_search_ichiran_search_data.csv
+│   │       │   │   ├── syokai_touroku_data.csv
+│   │       │   │   ├── syokai_touroku_data_shimamura.testgcp.csv
+│   │       │   │   ├── syokai_touroku_data_shimamura.testgcp2.csv
+│   │       │   │   ├── syokai_touroku_data_shimamura.traininggcp.csv
+│   │       │   │   ├── syokai_touroku_validation_errors.csv
+│   │       │   │   ├── taikai_testdata.csv
+│   │       │   │   ├── teacher_list_ichiran_search_data.csv
+│   │       │   │   ├── teacher_variants.csv
+│   │       │   │   ├── testgcp一括取込ファイル_20230402.txt
+│   │       │   │   ├── transaction_ichiran_search_data.csv
+│   │       │   │   └── validity_data_output_data.csv
+│   │       │   └── tframe/ 
+│   │       │       ├── import_samples/ 
+│   │       │       │   └── invalid_header_sample.csv
+│   │       │       ├── account_ichiran_search_data.csv
+│   │       │       ├── account_ichiran_sort_data.csv
+│   │       │       ├── account_info_data_import_data.csv
+│   │       │       ├── account_touroku_data.csv
+│   │       │       ├── account_touroku_data_minimum.csv
+│   │       │       ├── announcement_ichiran_search_data.csv
+│   │       │       ├── announcement_touroku_data.csv
+│   │       │       ├── attendance_ichiran_search_data.csv
+│   │       │       ├── bank_actions_history_ichiran_search_data.csv
+│   │       │       ├── bank_transfer_export_data.csv
+│   │       │       ├── bank_transfer_import_data.csv
+│   │       │       ├── batch_payment_data.csv
+│   │       │       ├── branch_ichiran_search_data.csv
+│   │       │       ├── branch_ichiran_sort_data.csv
+│   │       │       ├── branch_touroku_data.csv
+│   │       │       ├── chosekin_ichiran_search_data.csv
+│   │       │       ├── chosekin_touroku_data.csv
+│   │       │       ├── contact_ichiran_search_data.csv
+│   │       │       ├── contract_ichiran_search_data.csv
+│   │       │       ├── course_detail_student_sort_data.csv
+│   │       │       ├── course_detail_student_sort_data_tframe.culture_beta.csv
+│   │       │       ├── course_ichiran_search_data.csv
+│   │       │       ├── course_ichiran_sort_data.csv
+│   │       │       ├── course_touroku_data.csv
+│   │       │       ├── courseBySt_ichiran_search_data.csv
+│   │       │       ├── email_ichiran_search_data.csv
+│   │       │       ├── email_template_category_ichiran_search_data.csv
+│   │       │       ├── email_template_category_touroku_data.csv
+│   │       │       ├── email_template_ichiran_search_data.csv
+│   │       │       ├── email_template_touroku_data.csv
+│   │       │       ├── email_template_touroku_data_tframe.juku_beta.csv
+│   │       │       ├── entrance_log_ichiran_search_data.csv
+│   │       │       ├── entrance_log_touroku_data.csv
+│   │       │       ├── fee_ichiran_search_data.csv
+│   │       │       ├── infoHistory_ichiran_search_data.csv
+│   │       │       ├── infoHistoryTemplate_ichiran_search_data.csv
+│   │       │       ├── infoHistoryTemplate_touroku_data.csv
+│   │       │       ├── jukusei_course_link_flow_data.csv
+│   │       │       ├── jukusei_ichiran_search_data.csv
+│   │       │       ├── jukusei_touroku_data.csv
+│   │       │       ├── koshi_ichiran_search_data.csv
+│   │       │       ├── koshi_ichiran_sort_data.csv
+│   │       │       ├── koshi_touroku_data.csv
+│   │       │       ├── koshi_touroku_data_minimum.csv
+│   │       │       ├── kyoshitsu_ichiran_search_data.csv
+│   │       │       ├── kyoshitsu_ichiran_sort_data.csv
+│   │       │       ├── kyoshitsu_touroku_data.csv
+│   │       │       ├── payment_ichiran_search_data.csv
+│   │       │       ├── payment_statement_output_data.csv
+│   │       │       ├── poll_ichiran_search_data.csv
+│   │       │       ├── proByCourse_ichiran_search_data.csv
+│   │       │       ├── prospect_list_ichiran_search_data.csv
+│   │       │       ├── prospect_list_touroku_data.csv
+│   │       │       ├── README.md
+│   │       │       ├── report_inquiry_ichiran_search_data.csv
+│   │       │       ├── report_stdata_ichiran_search_data.csv
+│   │       │       ├── report_stschedule_ichiran_search_data.csv
+│   │       │       ├── report_teschedule_ichiran_search_data.csv
+│   │       │       ├── ryokin_master_ichiran_search_data.csv
+│   │       │       ├── ryokin_master_touroku_data.csv
+│   │       │       ├── ryokin_package_ichiran_search_data.csv
+│   │       │       ├── ryokin_package_touroku_data.csv
+│   │       │       ├── sharei_total_ichiran_search_data.csv
+│   │       │       ├── shohin_ichiran_search_data.csv
+│   │       │       ├── shohin_touroku_data.csv
+│   │       │       ├── st_inquiry_data_import_data.csv
+│   │       │       ├── st_inquiry_data_import_validation_data.csv
+│   │       │       ├── staff_ichiran_search_data.csv
+│   │       │       ├── staff_ichiran_sort_data.csv
+│   │       │       ├── staff_touroku_data.csv
+│   │       │       ├── staff_touroku_data_minimum.csv
+│   │       │       ├── stByCourse_ichiran_search_data.csv
+│   │       │       ├── te_reward_calc_data.csv
+│   │       │       ├── te_reward_total_calc_data.csv
+│   │       │       ├── teacherPaymentReportParams.js
+│   │       │       ├── teByStudent_ichiran_search_data.csv
+│   │       │       ├── transaction_ichiran_search_data.csv
+│   │       │       ├── tuition_fee_bulk_create_data.csv
+│   │       │       └── unpaid_amount_ichiran_search_data.csv
+│   │       ├── env/ 
+│   │       │   ├── .env.shimamura.template
+│   │       │   └── .env.tframe.template
+│   │       ├── pages/ 
+│   │       │   ├── shimamura/ 
+│   │       │   │   ├── _common/ 
+│   │       │   │   │   ├── ClassMemberPage.js
+│   │       │   │   │   └── sideMenus.js
+│   │       │   │   ├── auth/ 
+│   │       │   │   │   └── LoginPage.js
+│   │       │   │   ├── flow/ 
+│   │       │   │   │   ├── CourseClassSetupFlowPage.js
+│   │       │   │   │   ├── GessyaIkkatuFlowPage.js
+│   │       │   │   │   ├── HappyoukaiFlowPage.js
+│   │       │   │   │   ├── KoushiShareiFlowPage.js
+│   │       │   │   │   ├── StudentSaikenkaiFlowPage.js
+│   │       │   │   │   ├── SyokaiFlowPage.js
+│   │       │   │   │   └── TeacherKeiriFlowPage.js
+│   │       │   │   └── screens/ 
+│   │       │   │       ├── ContactRegisterPage.js
+│   │       │   │       └── IchiranPage.js
+│   │       │   ├── taskreport/ 
+│   │       │   │   └── TaskReportLoginPage.js
+│   │       │   └── tframe/ 
+│   │       │       ├── _common/ 
+│   │       │       │   ├── menuSnapshot/ 
+│   │       │       │   │   ├── culture_beta.json
+│   │       │       │   │   ├── juku_beta.json
+│   │       │       │   │   └── README.md
+│   │       │       │   ├── _urlPath.js
+│   │       │       │   ├── IchiranMixin.js
+│   │       │       │   ├── IchiranSearchMixin.js
+│   │       │       │   ├── MenuNavigationMixin.js
+│   │       │       │   ├── sideMenus.js
+│   │       │       │   └── SortableTable.js
+│   │       │       ├── api/ 
+│   │       │       │   ├── ApiCommonLoginPage.js
+│   │       │       │   ├── ApiTeacherInfoGetPage.js
+│   │       │       │   └── JsonInputPage.js
+│   │       │       ├── auth/ 
+│   │       │       │   ├── LoginKannrisyaPage.js
+│   │       │       │   ├── LoginMyPageStudentPage.js
+│   │       │       │   └── LoginMyPageTeacherPage.js
+│   │       │       ├── flow/ 
+│   │       │       │   └── JukuseiCourseFlowPage.js
+│   │       │       └── screens/ 
+│   │       │           ├── AccountPage.js
+│   │       │           ├── BranchPage.js
+│   │       │           ├── CalendarPage.js
+│   │       │           ├── ChosekinPage.js
+│   │       │           ├── ClassroomPage.js
+│   │       │           ├── CoursePage.js
+│   │       │           ├── EmailIchiranPage.js
+│   │       │           ├── EmailPage.js
+│   │       │           ├── EmailTourokuPage.js
+│   │       │           ├── HelpPage.js
+│   │       │           ├── HomePage.js
+│   │       │           ├── InfoHistoryPage.js
+│   │       │           ├── JukuseiPage.js
+│   │       │           ├── KeiriIchiranPage.js
+│   │       │           ├── KeiryoMasterPage.js
+│   │       │           ├── KoshiPage.js
+│   │       │           ├── MasterMenuPage.js
+│   │       │           ├── ReportIchiranPage.js
+│   │       │           ├── ReportPage.js
+│   │       │           ├── RyokinMasterPage.js
+│   │       │           ├── RyokinPackagePage.js
+│   │       │           ├── ShohinPage.js
+│   │       │           └── StaffPage.js
+│   │       ├── run/ 
+│   │       │   ├── ps/ 
+│   │       │   │   ├── _run_batch_core.ps1
+│   │       │   │   └── tframe_run_nav_all.ps1
+│   │       │   ├── README.md
+│   │       │   ├── run_gui.bat
+│   │       │   ├── run_gui.py
+│   │       │   ├── test_descriptions.json
+│   │       │   └── tframe_run_nav_all.bat
+│   │       ├── scripts/ 
+│   │       │   ├── allure/ 
+│   │       │   │   ├── archive_allure_results.py
+│   │       │   │   └── serve_latest.js
+│   │       │   ├── cleanup/ 
+│   │       │   │   ├── cleanup_gessya_fees.js
+│   │       │   │   └── cleanup_output_logs.py
+│   │       │   ├── hooks/ 
+│   │       │   │   ├── archive_allure.py
+│   │       │   │   ├── check_placement.py
+│   │       │   │   ├── install_git_hooks.js
+│   │       │   │   └── log_bash.py
+│   │       │   ├── html/ 
+│   │       │   │   ├── input/ 
+│   │       │   │   │   ├── account_list.html
+│   │       │   │   │   ├── accountInfoDataImport_touroku.html
+│   │       │   │   │   ├── announcement_touroku.html
+│   │       │   │   │   ├── attendance_list.html
+│   │       │   │   │   ├── attendanceBulkOutput_list.html
+│   │       │   │   │   ├── bankActionsHistory_list.html
+│   │       │   │   │   ├── bankTransferExport_touroku.html
+│   │       │   │   │   ├── bankTransferImport_touroku.html
+│   │       │   │   │   ├── batchPayment_list.html
+│   │       │   │   │   ├── branch_list.html
+│   │       │   │   │   ├── branch_touroku.html
+│   │       │   │   │   ├── chosekin_list.html
+│   │       │   │   │   ├── chosekin_person_popup.html
+│   │       │   │   │   ├── chosekin_touroku.html
+│   │       │   │   │   ├── companyMonthRewardStatement_list.html
+│   │       │   │   │   ├── companyRewardStatement_list.html
+│   │       │   │   │   ├── contact_list.html
+│   │       │   │   │   ├── course_list.html
+│   │       │   │   │   ├── course_touroku.html
+│   │       │   │   │   ├── courseBySt_list.html
+│   │       │   │   │   ├── emailTemplate_touroku.html
+│   │       │   │   │   ├── emailTemplateCategory_touroku.html
+│   │       │   │   │   ├── entranceLog_list.html
+│   │       │   │   │   ├── infoHistory_student_list.html
+│   │       │   │   │   ├── infoHistoryTemplate_student_list.html
+│   │       │   │   │   ├── infoHistoryTemplate_touroku.html
+│   │       │   │   │   ├── input.html
+│   │       │   │   │   ├── jukusei_touroku.html
+│   │       │   │   │   ├── kyoshitsu_list.html
+│   │       │   │   │   ├── kyoshitsu_touroku.html
+│   │       │   │   │   ├── monthRewardStatement_list.html
+│   │       │   │   │   ├── paymentStatement_list.html
+│   │       │   │   │   ├── proByCourse_list.html
+│   │       │   │   │   ├── prospectList_touroku.html
+│   │       │   │   │   ├── report_inquiryEnrollCancel_list.html
+│   │       │   │   │   ├── report_stDataCombined_list.html
+│   │       │   │   │   ├── report_stSchedule_list.html
+│   │       │   │   │   ├── report_teSchedule_list.html
+│   │       │   │   │   ├── ryokin_master_list.html
+│   │       │   │   │   ├── ryokin_master_touroku.html
+│   │       │   │   │   ├── ryokin_package_list.html
+│   │       │   │   │   ├── ryokin_package_touroku.html
+│   │       │   │   │   ├── sample_teacher_registration.html
+│   │       │   │   │   ├── shareiTotal_list.html
+│   │       │   │   │   ├── shohin_list.html
+│   │       │   │   │   ├── shohin_touroku.html
+│   │       │   │   │   ├── staff_list.html
+│   │       │   │   │   ├── stByCourse_list.html
+│   │       │   │   │   ├── stInquiryDataImport_touroku.html
+│   │       │   │   │   ├── student_list.html
+│   │       │   │   │   ├── teacher_list.html
+│   │       │   │   │   ├── teacherRewardStatement_list.html
+│   │       │   │   │   ├── teByStudent_list.html
+│   │       │   │   │   ├── teRewardCalc_list.html
+│   │       │   │   │   ├── teRewardTotalCalc_list.html
+│   │       │   │   │   └── tuitionFeeBulkCreate_touroku.html
+│   │       │   │   ├── _fetch_juku_lists.js
+│   │       │   │   ├── check_confirm_btn.js
+│   │       │   │   ├── check_schedule.js
+│   │       │   │   ├── compare_nav.js
+│   │       │   │   ├── extract_body_only_fields.py
+│   │       │   │   ├── extract_side_menu_groups.py
+│   │       │   │   ├── extract_submenus.py
+│   │       │   │   ├── fetch_chosekin_person_id.js
+│   │       │   │   ├── fetch_shimamura_nav.js
+│   │       │   │   ├── fetch_shimamura_screens.js
+│   │       │   │   ├── fetch_teacher_edit.js
+│   │       │   │   ├── fetch_tframe_forms.js
+│   │       │   │   ├── register_schedule.js
+│   │       │   │   ├── register_schedule2.js
+│   │       │   │   ├── register_schedule3.js
+│   │       │   │   ├── tframe_extract_form_fields.js
+│   │       │   │   └── verify_schedule.js
+│   │       │   ├── input/ 
+│   │       │   │   └── side_menu_extract/ 
+│   │       │   │       └── source.html
+│   │       │   └── check_pause.js
+│   │       ├── support/ 
+│   │       │   ├── shimamura/ 
+│   │       │   │   ├── accountTransferSchedule.js
+│   │       │   │   ├── constants.js
+│   │       │   │   ├── hooks.js
+│   │       │   │   ├── syokai_helpers.js
+│   │       │   │   └── utils.js
+│   │       │   ├── tframe/ 
+│   │       │   │   ├── constants.js
+│   │       │   │   ├── sortTestRunner.js
+│   │       │   │   ├── sortVerify.js
+│   │       │   │   └── utils.js
+│   │       │   ├── envLoader.js
+│   │       │   ├── repoRoot.js
+│   │       │   ├── steps_file.js
+│   │       │   └── utils.js
+│   │       ├── tests/ 
+│   │       │   ├── shimamura/ 
+│   │       │   │   ├── auth/ 
+│   │       │   │   │   └── shimamura_login_test.js
+│   │       │   │   ├── check/ 
+│   │       │   │   │   ├── bank_payment_type_check_test.js
+│   │       │   │   │   └── shimamura_class_existence_check_test.js
+│   │       │   │   ├── flow/ 
+│   │       │   │   │   ├── contact_register_test.js
+│   │       │   │   │   ├── course_class_setup_test.js
+│   │       │   │   │   ├── gessya_ikkatu_setup_test.js
+│   │       │   │   │   ├── gessya_ikkatu_test.js
+│   │       │   │   │   ├── happyoukai_setup_test.js
+│   │       │   │   │   ├── happyoukai_touroku_test.js
+│   │       │   │   │   ├── keiri_hennkin_syori_test.js
+│   │       │   │   │   ├── koushi_sharei_manual_test.js
+│   │       │   │   │   ├── koushi_sharei_tsuika_test.js
+│   │       │   │   │   ├── shimamura_class_member_registration_test.js
+│   │       │   │   │   ├── smbc_state_import_test.js
+│   │       │   │   │   ├── student_saikenkai_test.js
+│   │       │   │   │   ├── syokai_touroku_test.js
+│   │       │   │   │   ├── taikai_test.js
+│   │       │   │   │   └── teacher_keiri_setup_test.js
+│   │       │   │   ├── page/ 
+│   │       │   │   │   ├── attendance_today_ichiran_test.js
+│   │       │   │   │   ├── class_list_ichiran_test.js
+│   │       │   │   │   ├── contact_list_ichiran_test.js
+│   │       │   │   │   ├── contact_module_list_ichiran_test.js
+│   │       │   │   │   ├── course_by_student_ichiran_test.js
+│   │       │   │   │   ├── course_ichiran_test.js
+│   │       │   │   │   ├── keiri_invoices_ichiran_test.js
+│   │       │   │   │   ├── mishukin_list_ichiran_test.js
+│   │       │   │   │   ├── student_search_ichiran_test.js
+│   │       │   │   │   ├── teacher_list_ichiran_test.js
+│   │       │   │   │   ├── transaction_ichiran_test.js
+│   │       │   │   │   └── validity_data_output_test.js
+│   │       │   │   └── util/ 
+│   │       │   │       └── login_and_hold.js
+│   │       │   ├── smoke/ 
+│   │       │   │   └── smoke_test.js
+│   │       │   ├── taskreport/ 
+│   │       │   │   └── taskreport_sample_test.js
+│   │       │   └── tframe/ 
+│   │       │       ├── api/ 
+│   │       │       │   └── get_personal_info_api_test.js
+│   │       │       ├── auth/ 
+│   │       │       │   ├── login_test.js
+│   │       │       │   └── mypage_login_test.js
+│   │       │       ├── check/ 
+│   │       │       │   ├── dropdown_check_test.js
+│   │       │       │   ├── lang_check_test.js
+│   │       │       │   └── token_usage_test.js
+│   │       │       ├── flow/ 
+│   │       │       │   ├── 96-60_teacher_payment_report_test.js
+│   │       │       │   ├── jukusei_course_link_flow_test.js
+│   │       │       │   ├── navigation_after_login_student_test.js
+│   │       │       │   └── navigation_after_login_test.js
+│   │       │       ├── page/ 
+│   │       │       │   ├── account_ichiran_sort_test.js
+│   │       │       │   ├── account_ichiran_test.js
+│   │       │       │   ├── account_info_data_import_test.js
+│   │       │       │   ├── account_touroku_test.js
+│   │       │       │   ├── announcement_ichiran_test.js
+│   │       │       │   ├── announcement_touroku_test.js
+│   │       │       │   ├── attendance_ichiran_test.js
+│   │       │       │   ├── bank_actions_history_ichiran_test.js
+│   │       │       │   ├── bank_transfer_export_test.js
+│   │       │       │   ├── bank_transfer_import_test.js
+│   │       │       │   ├── batch_payment_test.js
+│   │       │       │   ├── branch_ichiran_sort_test.js
+│   │       │       │   ├── branch_ichiran_test.js
+│   │       │       │   ├── branch_touroku_test.js
+│   │       │       │   ├── calendar_test.js
+│   │       │       │   ├── chosekin_ichiran_test.js
+│   │       │       │   ├── chosekin_touroku_test.js
+│   │       │       │   ├── contact_ichiran_test.js
+│   │       │       │   ├── contract_ichiran_test.js
+│   │       │       │   ├── course_detail_student_sort_test.js
+│   │       │       │   ├── course_ichiran_sort_test.js
+│   │       │       │   ├── course_ichiran_test.js
+│   │       │       │   ├── course_test.js
+│   │       │       │   ├── course_touroku_test.js
+│   │       │       │   ├── courseBySt_ichiran_test.js
+│   │       │       │   ├── email_ichiran_test.js
+│   │       │       │   ├── email_template_category_ichiran_test.js
+│   │       │       │   ├── email_template_category_touroku_test.js
+│   │       │       │   ├── email_template_ichiran_test.js
+│   │       │       │   ├── email_template_touroku_test.js
+│   │       │       │   ├── email_test.js
+│   │       │       │   ├── entrance_log_ichiran_test.js
+│   │       │       │   ├── entrance_log_touroku_test.js
+│   │       │       │   ├── fee_ichiran_test.js
+│   │       │       │   ├── help_test.js
+│   │       │       │   ├── home_test.js
+│   │       │       │   ├── infoHistory_ichiran_test.js
+│   │       │       │   ├── infoHistoryTemplate_ichiran_test.js
+│   │       │       │   ├── infoHistoryTemplate_touroku_test.js
+│   │       │       │   ├── jukusei_ichiran_test.js
+│   │       │       │   ├── jukusei_test.js
+│   │       │       │   ├── jukusei_touroku_test.js
+│   │       │       │   ├── keiryo_master_test.js
+│   │       │       │   ├── koshi_ichiran_sort_test.js
+│   │       │       │   ├── koshi_ichiran_test.js
+│   │       │       │   ├── koshi_test.js
+│   │       │       │   ├── koshi_touroku_test.js
+│   │       │       │   ├── kyoshitsu_ichiran_sort_test.js
+│   │       │       │   ├── kyoshitsu_ichiran_test.js
+│   │       │       │   ├── kyoshitsu_touroku_test.js
+│   │       │       │   ├── master_menu_test.js
+│   │       │       │   ├── payment_ichiran_test.js
+│   │       │       │   ├── payment_statement_output_test.js
+│   │       │       │   ├── poll_ichiran_test.js
+│   │       │       │   ├── proByCourse_ichiran_test.js
+│   │       │       │   ├── prospect_list_ichiran_test.js
+│   │       │       │   ├── prospect_list_touroku_test.js
+│   │       │       │   ├── report_inquiry_ichiran_test.js
+│   │       │       │   ├── report_stdata_ichiran_test.js
+│   │       │       │   ├── report_stschedule_ichiran_test.js
+│   │       │       │   ├── report_teschedule_ichiran_test.js
+│   │       │       │   ├── report_test.js
+│   │       │       │   ├── ryokin_master_ichiran_test.js
+│   │       │       │   ├── ryokin_master_touroku_test.js
+│   │       │       │   ├── ryokin_package_ichiran_test.js
+│   │       │       │   ├── ryokin_package_touroku_test.js
+│   │       │       │   ├── sharei_total_ichiran_test.js
+│   │       │       │   ├── shohin_ichiran_test.js
+│   │       │       │   ├── shohin_touroku_test.js
+│   │       │       │   ├── st_inquiry_data_import_test.js
+│   │       │       │   ├── staff_ichiran_sort_test.js
+│   │       │       │   ├── staff_ichiran_test.js
+│   │       │       │   ├── staff_touroku_test.js
+│   │       │       │   ├── stByCourse_ichiran_test.js
+│   │       │       │   ├── te_reward_calc_test.js
+│   │       │       │   ├── te_reward_total_calc_test.js
+│   │       │       │   ├── teByStudent_ichiran_test.js
+│   │       │       │   ├── transaction_ichiran_test.js
+│   │       │       │   ├── tuition_fee_bulk_create_test.js
+│   │       │       │   └── unpaid_amount_ichiran_test.js
+│   │       │       └── util/ 
+│   │       │           └── sort_spec_probe.js
+│   │       ├── .git
+│   │       ├── .gitattributes
+│   │       ├── .gitignore
+│   │       ├── _temp_refactor_run_gui.md
+│   │       ├── AGENTS.md
+│   │       ├── CHANGELOG.md
+│   │       ├── CLAUDE.md
+│   │       ├── codecept.conf.js
+│   │       ├── digest_qiita.md
+│   │       ├── digest_qiita_monthly.md
+│   │       ├── GEMINI.md
+│   │       ├── jsconfig.json
+│   │       ├── jsdoc.json
+│   │       ├── package-lock.json
+│   │       ├── package.json
+│   │       ├── README.md
+│   │       └── steps.d.ts
 │   └── settings.local.json
 ├── .githooks/ 
 │   └── pre-commit
@@ -471,6 +1062,7 @@ e2e/
 │       ├── payment_statement_output_data.csv
 │       ├── poll_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
+│       ├── proByCourse_ichiran_sort_data.csv
 │       ├── prospect_list_ichiran_search_data.csv
 │       ├── prospect_list_touroku_data.csv
 │       ├── README.md
@@ -484,6 +1076,7 @@ e2e/
 │       ├── ryokin_package_touroku_data.csv
 │       ├── sharei_total_ichiran_search_data.csv
 │       ├── shohin_ichiran_search_data.csv
+│       ├── shohin_ichiran_sort_data.csv
 │       ├── shohin_touroku_data.csv
 │       ├── st_inquiry_data_import_data.csv
 │       ├── st_inquiry_data_import_validation_data.csv
@@ -492,6 +1085,7 @@ e2e/
 │       ├── staff_touroku_data.csv
 │       ├── staff_touroku_data_minimum.csv
 │       ├── stByCourse_ichiran_search_data.csv
+│       ├── stByCourse_ichiran_sort_data.csv
 │       ├── te_reward_calc_data.csv
 │       ├── te_reward_total_calc_data.csv
 │       ├── teacherPaymentReportParams.js
@@ -978,6 +1572,7 @@ e2e/
 │       │   ├── payment_ichiran_test.js
 │       │   ├── payment_statement_output_test.js
 │       │   ├── poll_ichiran_test.js
+│       │   ├── proByCourse_ichiran_sort_test.js
 │       │   ├── proByCourse_ichiran_test.js
 │       │   ├── prospect_list_ichiran_test.js
 │       │   ├── prospect_list_touroku_test.js
@@ -991,12 +1586,14 @@ e2e/
 │       │   ├── ryokin_package_ichiran_test.js
 │       │   ├── ryokin_package_touroku_test.js
 │       │   ├── sharei_total_ichiran_test.js
+│       │   ├── shohin_ichiran_sort_test.js
 │       │   ├── shohin_ichiran_test.js
 │       │   ├── shohin_touroku_test.js
 │       │   ├── st_inquiry_data_import_test.js
 │       │   ├── staff_ichiran_sort_test.js
 │       │   ├── staff_ichiran_test.js
 │       │   ├── staff_touroku_test.js
+│       │   ├── stByCourse_ichiran_sort_test.js
 │       │   ├── stByCourse_ichiran_test.js
 │       │   ├── te_reward_calc_test.js
 │       │   ├── te_reward_total_calc_test.js

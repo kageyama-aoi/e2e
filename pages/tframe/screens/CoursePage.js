@@ -265,6 +265,16 @@ module.exports = {
     });
   },
 
+  /**
+   * コース別商品一覧の列ヘッダソート定義（#226・実機確認）。カテゴリはプルダウン由来のため grouped。第2キーなし。
+   */
+  proByCourseSortTable: createSortableTable({
+    label: 'コース別商品一覧',
+    container: LIST_CONTAINER,
+    columns: { courseName: 'stringCi', courseCategory: 'grouped', nendo: 'number', productName: 'stringCi', productCode: 'stringCi', productCategory: 'grouped' },
+    secondary: null,
+  }),
+
   // ----------------------------------------------------------------
   //  本日の出席表一覧（SW: attendance/sw/_default）
   // ----------------------------------------------------------------

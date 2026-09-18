@@ -8,6 +8,7 @@
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch, verifyGuardMessage } = require('../../../support/tframe/utils');
 
@@ -262,6 +263,16 @@ module.exports = {
       lastName: data.lastName,
     });
   },
+
+  /**
+   * コース別受講生一覧の列ヘッダソート定義（#226・実機確認）。氏名（フリガナ順）・区分・ステイタス・カテゴリは grouped。第2キーなし。
+   */
+  stByCourseSortTable: createSortableTable({
+    label: 'コース別受講生一覧',
+    container: LIST_CONTAINER,
+    columns: { courseName: 'stringCi', courseCategory: 'grouped', nendo: 'number', fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped', eventPersonStatus: 'grouped', startDate: 'string', endDate: 'string', phone1: 'string' },
+    secondary: null,
+  }),
 
   // ----------------------------------------------------------------
   //  受講生別コース一覧（SW: student/sw/courseBySt）
