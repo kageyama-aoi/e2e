@@ -113,4 +113,62 @@ function findSortViolations(rows, { key, type, dir, secondary }) {
   return { violations, tiePairs, emptyRows: rows.length - targets.length };
 }
 
-module.exports = { compareValues, findSortViolations };
+/** 列の型の推定順（厳しい型から試し、昇順・降順とも違反0の最初の型を採用する） */
+const TYPE_CANDIDATES = ['number', 'string', 'stringCi', 'grouped'];
+
+/**
+ * 実機で採取した「列ごと・方向ごとの1ページ目」から sortSpec の案を推定する（#226 調査ツール用）。
+ * 1ページ分の標本からの推定なので、最終判断は目視で行うこと。
+ *
+ * @param {Object<string, Array<Object>>} samples - キー `"<列キー>|asc"` / `"<列キー>|desc"` → 行配列
+ * @returns {{columns: Object<string, string>, secondaryCandidates: Array<Object>}}
+ *   columns: 列キー → 推定型（どの型でも違反が出る列は 'unknown'）
+ *   secondaryCandidates: 第2キー候補 `{key, dir, type, pairs, strictPairs}`（strictPairs の多い順）。
+ *   pairs=第1キー同値の隣接ペア数、strictPairs=そのうち候補の値が異なり順序の裏付けになったペア数
+ */
+function inferSortSpec(samples) {
+  const byColumn = {};
+  Object.entries(samples).forEach(([k, rows]) => {
+    const [col, dir] = k.split('|');
+    (byColumn[col] = byColumn[col] || []).push({ dir, rows });
+  });
+
+  const columns = {};
+  Object.entries(byColumn).forEach(([col, list]) => {
+    columns[col] = TYPE_CANDIDATES.find((type) => list.every(({ dir, rows }) =>
+      findSortViolations(rows, { key: col, type, dir, secondary: null }).violations.length === 0)) || 'unknown';
+  });
+
+  const allKeys = new Set();
+  Object.values(samples).forEach((rows) => rows.forEach((r) => Object.keys(r).forEach((key) => allKeys.add(key))));
+
+  const secondaryCandidates = [];
+  allKeys.forEach((key) => {
+    const type = columns[key] && columns[key] !== 'grouped' && columns[key] !== 'unknown' ? columns[key] : 'string';
+    ['asc', 'desc'].forEach((dir) => {
+      const sign = dir === 'desc' ? -1 : 1;
+      let pairs = 0;
+      let strictPairs = 0;
+      let bad = 0;
+      Object.entries(byColumn).forEach(([col, list]) => {
+        if (col === key) return;
+        list.forEach(({ rows }) => {
+          for (let i = 1; i < rows.length; i++) {
+            const [a, b] = [rows[i - 1], rows[i]];
+            if (isEmpty(a[col]) || a[col] !== b[col]) continue;
+            if (isEmpty(a[key]) || isEmpty(b[key])) continue;
+            pairs++;
+            const c = sign * compareValues(a[key], b[key], type);
+            if (c > 0) bad++;
+            else if (c < 0) strictPairs++;
+          }
+        });
+      });
+      if (bad === 0 && strictPairs > 0) secondaryCandidates.push({ key, dir, type, pairs, strictPairs });
+    });
+  });
+  secondaryCandidates.sort((x, y) => y.strictPairs - x.strictPairs);
+  return { columns, secondaryCandidates };
+}
+
+module.exports = { compareValues, findSortViolations, inferSortSpec };

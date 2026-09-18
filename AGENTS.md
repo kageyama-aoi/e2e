@@ -202,6 +202,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `flow/` | 複数画面をまたぐ遷移・シナリオ | navigation_after_login_test |
 | `check/` | 表示・設定の確認系（検証寄り） | lang_check_test, dropdown_check_test |
 | `api/` | API系 | get_personal_info_api_test |
+| `util/` | 手動起動の開発補助スクリプト（`*_test.js` 非末尾・テストスイートに含まれない） | sort_spec_probe.js（一覧ソート定義の調査） |
 
 ### shimamura テストのフォルダ分類
 `tests/shimamura/` 配下も性質別サブフォルダで管理する（#100 で分類済み）。

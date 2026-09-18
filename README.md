@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-18 16:50:47
+Last updated: 2026-09-18 16:58:39
 
 ```text
 e2e/
@@ -919,85 +919,87 @@ e2e/
 │       │   ├── jukusei_course_link_flow_test.js
 │       │   ├── navigation_after_login_student_test.js
 │       │   └── navigation_after_login_test.js
-│       └── page/ 
-│           ├── account_ichiran_test.js
-│           ├── account_info_data_import_test.js
-│           ├── account_touroku_test.js
-│           ├── announcement_ichiran_test.js
-│           ├── announcement_touroku_test.js
-│           ├── attendance_ichiran_test.js
-│           ├── bank_actions_history_ichiran_test.js
-│           ├── bank_transfer_export_test.js
-│           ├── bank_transfer_import_test.js
-│           ├── batch_payment_test.js
-│           ├── branch_ichiran_sort_test.js
-│           ├── branch_ichiran_test.js
-│           ├── branch_touroku_test.js
-│           ├── calendar_test.js
-│           ├── chosekin_ichiran_test.js
-│           ├── chosekin_touroku_test.js
-│           ├── contact_ichiran_test.js
-│           ├── contract_ichiran_test.js
-│           ├── course_detail_student_sort_test.js
-│           ├── course_ichiran_sort_test.js
-│           ├── course_ichiran_test.js
-│           ├── course_test.js
-│           ├── course_touroku_test.js
-│           ├── courseBySt_ichiran_test.js
-│           ├── email_ichiran_test.js
-│           ├── email_template_category_ichiran_test.js
-│           ├── email_template_category_touroku_test.js
-│           ├── email_template_ichiran_test.js
-│           ├── email_template_touroku_test.js
-│           ├── email_test.js
-│           ├── entrance_log_ichiran_test.js
-│           ├── entrance_log_touroku_test.js
-│           ├── fee_ichiran_test.js
-│           ├── help_test.js
-│           ├── home_test.js
-│           ├── infoHistory_ichiran_test.js
-│           ├── infoHistoryTemplate_ichiran_test.js
-│           ├── infoHistoryTemplate_touroku_test.js
-│           ├── jukusei_ichiran_extract_test.js
-│           ├── jukusei_ichiran_test.js
-│           ├── jukusei_test.js
-│           ├── jukusei_touroku_test.js
-│           ├── keiryo_master_test.js
-│           ├── koshi_ichiran_sort_test.js
-│           ├── koshi_ichiran_test.js
-│           ├── koshi_test.js
-│           ├── koshi_touroku_test.js
-│           ├── kyoshitsu_ichiran_test.js
-│           ├── kyoshitsu_touroku_test.js
-│           ├── master_menu_test.js
-│           ├── payment_ichiran_test.js
-│           ├── payment_statement_output_test.js
-│           ├── poll_ichiran_test.js
-│           ├── proByCourse_ichiran_test.js
-│           ├── prospect_list_ichiran_test.js
-│           ├── prospect_list_touroku_test.js
-│           ├── report_inquiry_ichiran_test.js
-│           ├── report_stdata_ichiran_test.js
-│           ├── report_stschedule_ichiran_test.js
-│           ├── report_teschedule_ichiran_test.js
-│           ├── report_test.js
-│           ├── ryokin_master_ichiran_test.js
-│           ├── ryokin_master_touroku_test.js
-│           ├── ryokin_package_ichiran_test.js
-│           ├── ryokin_package_touroku_test.js
-│           ├── sharei_total_ichiran_test.js
-│           ├── shohin_ichiran_test.js
-│           ├── shohin_touroku_test.js
-│           ├── st_inquiry_data_import_test.js
-│           ├── staff_ichiran_test.js
-│           ├── staff_touroku_test.js
-│           ├── stByCourse_ichiran_test.js
-│           ├── te_reward_calc_test.js
-│           ├── te_reward_total_calc_test.js
-│           ├── teByStudent_ichiran_test.js
-│           ├── transaction_ichiran_test.js
-│           ├── tuition_fee_bulk_create_test.js
-│           └── unpaid_amount_ichiran_test.js
+│       ├── page/ 
+│       │   ├── account_ichiran_test.js
+│       │   ├── account_info_data_import_test.js
+│       │   ├── account_touroku_test.js
+│       │   ├── announcement_ichiran_test.js
+│       │   ├── announcement_touroku_test.js
+│       │   ├── attendance_ichiran_test.js
+│       │   ├── bank_actions_history_ichiran_test.js
+│       │   ├── bank_transfer_export_test.js
+│       │   ├── bank_transfer_import_test.js
+│       │   ├── batch_payment_test.js
+│       │   ├── branch_ichiran_sort_test.js
+│       │   ├── branch_ichiran_test.js
+│       │   ├── branch_touroku_test.js
+│       │   ├── calendar_test.js
+│       │   ├── chosekin_ichiran_test.js
+│       │   ├── chosekin_touroku_test.js
+│       │   ├── contact_ichiran_test.js
+│       │   ├── contract_ichiran_test.js
+│       │   ├── course_detail_student_sort_test.js
+│       │   ├── course_ichiran_sort_test.js
+│       │   ├── course_ichiran_test.js
+│       │   ├── course_test.js
+│       │   ├── course_touroku_test.js
+│       │   ├── courseBySt_ichiran_test.js
+│       │   ├── email_ichiran_test.js
+│       │   ├── email_template_category_ichiran_test.js
+│       │   ├── email_template_category_touroku_test.js
+│       │   ├── email_template_ichiran_test.js
+│       │   ├── email_template_touroku_test.js
+│       │   ├── email_test.js
+│       │   ├── entrance_log_ichiran_test.js
+│       │   ├── entrance_log_touroku_test.js
+│       │   ├── fee_ichiran_test.js
+│       │   ├── help_test.js
+│       │   ├── home_test.js
+│       │   ├── infoHistory_ichiran_test.js
+│       │   ├── infoHistoryTemplate_ichiran_test.js
+│       │   ├── infoHistoryTemplate_touroku_test.js
+│       │   ├── jukusei_ichiran_extract_test.js
+│       │   ├── jukusei_ichiran_test.js
+│       │   ├── jukusei_test.js
+│       │   ├── jukusei_touroku_test.js
+│       │   ├── keiryo_master_test.js
+│       │   ├── koshi_ichiran_sort_test.js
+│       │   ├── koshi_ichiran_test.js
+│       │   ├── koshi_test.js
+│       │   ├── koshi_touroku_test.js
+│       │   ├── kyoshitsu_ichiran_test.js
+│       │   ├── kyoshitsu_touroku_test.js
+│       │   ├── master_menu_test.js
+│       │   ├── payment_ichiran_test.js
+│       │   ├── payment_statement_output_test.js
+│       │   ├── poll_ichiran_test.js
+│       │   ├── proByCourse_ichiran_test.js
+│       │   ├── prospect_list_ichiran_test.js
+│       │   ├── prospect_list_touroku_test.js
+│       │   ├── report_inquiry_ichiran_test.js
+│       │   ├── report_stdata_ichiran_test.js
+│       │   ├── report_stschedule_ichiran_test.js
+│       │   ├── report_teschedule_ichiran_test.js
+│       │   ├── report_test.js
+│       │   ├── ryokin_master_ichiran_test.js
+│       │   ├── ryokin_master_touroku_test.js
+│       │   ├── ryokin_package_ichiran_test.js
+│       │   ├── ryokin_package_touroku_test.js
+│       │   ├── sharei_total_ichiran_test.js
+│       │   ├── shohin_ichiran_test.js
+│       │   ├── shohin_touroku_test.js
+│       │   ├── st_inquiry_data_import_test.js
+│       │   ├── staff_ichiran_test.js
+│       │   ├── staff_touroku_test.js
+│       │   ├── stByCourse_ichiran_test.js
+│       │   ├── te_reward_calc_test.js
+│       │   ├── te_reward_total_calc_test.js
+│       │   ├── teByStudent_ichiran_test.js
+│       │   ├── transaction_ichiran_test.js
+│       │   ├── tuition_fee_bulk_create_test.js
+│       │   └── unpaid_amount_ichiran_test.js
+│       └── util/ 
+│           └── sort_spec_probe.js
 ├── .env
 ├── .gitattributes
 ├── .gitignore

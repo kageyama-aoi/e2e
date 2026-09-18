@@ -330,6 +330,10 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 ### 手順
 
 1. **実機で列と並びを確認する**（推測で sortSpec を書かない）
+   - まず調査ツールで案を出す（全列を昇降順に並べ替えて1ページ目を採取し、列の型と第2キー候補を推定）:
+     `SORT_PROBE_ROUTE=staff/sw/_default npx codeceptjs run tests/tframe/util/sort_spec_probe.js --profile tframe.culture_beta`
+     （タブ内一覧は `SORT_PROBE_RECORD` / `SORT_PROBE_TAB` / `SORT_PROBE_PANEL` を追加。採取行は `output/sort_probe/*.json`）
+   - 推定は1ページ分の標本に基づく。英大文字を含まない標本では `stringCi` が `string` と出る等があるので、JSON の行を目視して確定する
    - ソート可能列: 見出し `th#swDataList[キー]` に `a[data-sort]` がある列
    - 枠: 一覧画面は `LIST_CONTAINER`。タブ内一覧は `div[id="<パネル名>[swDataList]"]` → `subpanelContainer('<パネル名>')`
    - 各列を昇順/降順にして1ページ目を眺め、列の型と第2キーを決める
