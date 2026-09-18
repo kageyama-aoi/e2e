@@ -1,0 +1,5 @@
+scenario,sortKey,sortDir,lastName,firstName
+講師氏名_昇順,fullName,asc,,
+講師氏名_降順,fullName,desc,,
+コースカテゴリ_昇順,courseCategory,asc,,
+コースカテゴリ_降順,courseCategory,desc,,

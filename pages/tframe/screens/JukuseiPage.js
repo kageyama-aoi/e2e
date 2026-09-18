@@ -237,6 +237,16 @@ module.exports = {
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
 
+  /**
+   * 受講生一覧の列ヘッダソート定義（#226・実機確認）。氏名（フリガナ順）・区分は grouped、日時は datetime。第2キーはレコードID昇順（同値44ペアで一致。講師一覧の更新日時降順とは異なる）。
+   */
+  listSortTable: createSortableTable({
+    label: '受講生一覧',
+    container: LIST_CONTAINER,
+    columns: { fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped', phone1: 'string', email1: 'stringCi', created_at: 'datetime', updated_at: 'datetime' },
+    secondary: { key: '_recordId', type: 'string', dir: 'asc' },
+  }),
+
   ...createIchiranMixin('受講生一覧'),
 
   // ----------------------------------------------------------------
@@ -298,6 +308,16 @@ module.exports = {
       name:     data.courseName,
     });
   },
+
+  /**
+   * 受講生別コース一覧の列ヘッダソート定義（#226・実機確認）。氏名・区分・校舎・カテゴリ・ステイタスは grouped。第2キーなし。
+   */
+  courseByStSortTable: createSortableTable({
+    label: '受講生別コース一覧',
+    container: LIST_CONTAINER,
+    columns: { fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped', courseName: 'stringCi', courseBranchName: 'grouped', courseCategory: 'grouped', nendo: 'number', eventPersonStatus: 'grouped', startDate: 'string', endDate: 'string' },
+    secondary: null,
+  }),
 
   // ----------------------------------------------------------------
   //  口座情報データ取込（EW: student/ew/accountInfoDataImport）juku のみ・インポート系

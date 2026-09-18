@@ -236,5 +236,16 @@ module.exports = {
     });
   },
 
+  /**
+   * 講師別受講生一覧の列ヘッダソート定義（#226・実機確認）。講師氏名（フリガナ順）・カテゴリは grouped。第2キーなし。行 id はコースのレコードIDで、同じコースの受講生行は同じ id を持つ（_recordId は一意でない）。
+   */
+  teByStudentSortTable: createSortableTable({
+    label: '講師別受講生一覧',
+    container: LIST_CONTAINER,
+    columns: { fullName: 'grouped', courseCategory: 'grouped' },
+    secondary: null,
+    timeoutSec: 45, // 全校舎で約2,500件あり、検索・ソートの再描画に15秒以上かかることがある
+  }),
+
   ...createMenuNavigationMixin('tframe_teacher'),
 };

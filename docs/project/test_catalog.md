@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-18 17:33 (JST)
+> 最終更新: 2026-09-18 17:50 (JST)
 
-**合計 126 テスト**（shimamura 30 / tframe 94 / taskreport 1 / smoke 1）
+**合計 129 テスト**（shimamura 30 / tframe 97 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（94件）
+## tframe（97件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（84件）
+### page/（87件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -112,6 +112,7 @@
 | `chosekin_touroku_test.js` | — | 経理タブの調整金新規登録フォームへの入力・保存を確認 |
 | `contact_ichiran_test.js` | — | 連絡一覧の全期間検索を確認（juku_beta 専用・環境にデータ無しのため結果テーブル描画のみ確認） |
 | `contract_ichiran_test.js` | — | 契約一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `courseBySt_ichiran_sort_test.js` | — | 受講生別コース一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `courseBySt_ichiran_test.js` | — | 受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認 |
 | `course_detail_student_sort_test.js` | — | コース詳細「受講生」タブ（付随一覧）の列ヘッダソートで第1キーの並びを検証 |
 | `course_ichiran_sort_test.js` | — | コース一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
@@ -133,6 +134,7 @@
 | `infoHistoryTemplate_touroku_test.js` | — | 対応履歴テンプレートの登録フォーム入力と保存を確認 |
 | `infoHistory_ichiran_test.js` | — | 対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認 |
 | `jukusei_ichiran_extract_test.js` | — | 受講生一覧を検索条件＋ソートキー指定で検索し、結果テーブルをCSV抽出（POC・ページ送りなし） |
+| `jukusei_ichiran_sort_test.js` | — | 受講生一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `jukusei_ichiran_test.js` | — | 受講生一覧の空検索と姓での絞り込み検索を確認 |
 | `jukusei_test.js` | — | 受講生一覧・管理画面の表示・操作を確認 |
 | `jukusei_touroku_test.js` | — | 受講生の新規登録フォームへの入力・保存を確認 |
@@ -171,6 +173,7 @@
 | `staff_ichiran_sort_test.js` | — | スタッフ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `staff_ichiran_test.js` | — | スタッフ一覧の空検索と姓での絞り込み検索を確認 |
 | `staff_touroku_test.js` | — | スタッフの新規登録フォームへの入力・保存・バリデーションを確認 |
+| `teByStudent_ichiran_sort_test.js` | — | 講師別受講生一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `teByStudent_ichiran_test.js` | — | 講師別受講生一覧の空検索と講師姓での絞り込み検索を確認 |
 | `te_reward_calc_test.js` | — | 講師謝礼計算の実行と成功メッセージ表示を確認（culture_beta 専用） |
 | `te_reward_total_calc_test.js` | — | 講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用） |

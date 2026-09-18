@@ -356,6 +356,7 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 
 ### 注意
 
+- 件数が多く検索・ソートが15秒を超える画面は `createSortableTable({ ..., timeoutSec: 45 })` で待ち時間を延ばす（例: 講師別受講生一覧）
 - 検証は1ページ目（15件）のみ。表示が空の値は NULL / 空文字の区別が付かないため判定対象外
 - 環境依存の値（タブ内一覧を開くコースのレコードID等）はプロファイル別 CSV（`{base}_tframe.culture_beta.csv`）に置き、既定 CSV はヘッダのみにする（ケース0件のプロファイルはスキップ）
 - 一覧の初期値（エリア=関東/校舎=東京 等）に絞られないよう、`openCase` では必ず `resetSearchForm()` を呼ぶ

@@ -37,15 +37,17 @@ function subpanelContainer(panelName) {
  * @param {string} def.container - 表を囲む枠のセレクタ（LIST_CONTAINER / subpanelContainer(...)）
  * @param {Object<string, string>} def.columns - ソート可能列キー → 型（sortVerify.js 参照）
  * @param {({key: string, type: string, dir: string}|null)} def.secondary - 第2キー（第2キーの無い画面は null）
+ * @param {number} [def.timeoutSec=15] - 検索結果・ソート後の再描画を待つ秒数（件数が多く重い画面は延ばす）
  * @returns {object} label / container / sortSpec と sortBy / grabRows / grabSortableKeys / waitForRows
  */
-function createSortableTable({ label, container, columns, secondary }) {
+function createSortableTable({ label, container, columns, secondary, timeoutSec = 15 }) {
   const headerLink = (key) => `${container} thead th[id="swDataList[${key}]"] a`;
   const dataRow = `${container} tbody tr[id^="${ROW_PREFIX}"]`;
 
   return {
     label,
     container,
+    timeoutSec,
     sortSpec: { columns, secondary },
 
     /**
@@ -66,7 +68,7 @@ function createSortableTable({ label, container, columns, secondary }) {
         const next = klass === 'sorting_asc_a' ? 'desc' : 'asc';
         I.click(headerLink(key));
         // 表は AJAX で丸ごと再描画される。見出しクラスの切替を描画完了の合図にする
-        I.waitForElement(`${headerLink(key)}.sorting_${next}_a`, 15);
+        I.waitForElement(`${headerLink(key)}.sorting_${next}_a`, timeoutSec);
       }
       throw new Error(`【${label}】列 "${key}" を ${dir} ソート状態にできませんでした`);
     },
@@ -99,15 +101,15 @@ function createSortableTable({ label, container, columns, secondary }) {
     },
 
     /**
-     * データ行が描画されるまで最大 timeoutSec 秒待ち、行数を返す（0件でも例外にしない）
-     * @param {number} [timeoutSec=15]
+     * データ行が描画されるまで最大 sec 秒待ち、行数を返す（0件でも例外にしない）
+     * @param {number} [sec] - 省略時は表の timeoutSec
      * @returns {Promise<number>}
      */
-    async waitForRows(timeoutSec = 15) {
-      I.waitForElement(`${container} thead`, timeoutSec);
+    async waitForRows(sec = timeoutSec) {
+      I.waitForElement(`${container} thead`, sec);
       const count = () => I.executeScript((sel) => document.querySelectorAll(sel).length, dataRow);
       let n = await count();
-      for (let i = 0; i < timeoutSec && n === 0; i++) {
+      for (let i = 0; i < sec && n === 0; i++) {
         I.wait(1);
         n = await count();
       }
@@ -118,9 +120,10 @@ function createSortableTable({ label, container, columns, secondary }) {
 
 /**
  * 一覧画面（SW）用の openCase を作る（`runSortCases` に渡す）。
- * 1ケースごとに「一覧へ遷移 → 検索条件を全クリア → CSV 行の絞り込みを入力 → 検索」を行う。
+ * 1ケースごとに「一覧へ遷移 → 検索条件を全クリア → CSV 行の絞り込みを入力 → 検索ボタン押下」を行う。
+ * 結果の描画待ちは runSortCases 側の table.waitForRows（表ごとの timeoutSec）に任せる。
  * 1つの PO に複数の一覧がある場合（例: CoursePage のコース一覧とコース別商品一覧）は
- * 遷移・条件入力のメソッド名を opts で指定する。検索ボタンは共通の clickSearchAndWait を使う。
+ * 遷移・条件入力のメソッド名を opts で指定する。
  * 日付必須の画面などで手順が違う場合は、テスト側で openCase を個別に書く。
  *
  * @param {object} po - 一覧画面の Page Object
@@ -132,7 +135,7 @@ function openListCase(po, { navigate = 'navigateToListPage', fill = 'fillSearchC
     po[navigate]();
     resetSearchForm();
     po[fill](c);
-    po.clickSearchAndWait();
+    I.click('#swSearchButton');
   };
 }
 

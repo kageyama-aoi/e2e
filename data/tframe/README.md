@@ -37,6 +37,7 @@
 | テストファイル | CSV | 説明 |
 |---|---|---|
 | `tests/tframe/page/jukusei_ichiran_test.js` | `jukusei_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
+| `tests/tframe/page/jukusei_ichiran_sort_test.js` | `jukusei_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=レコードID昇順）（#226） |
 | `tests/tframe/page/jukusei_ichiran_extract_test.js` | `jukusei_ichiran_extract_data.csv` | POC: 検索条件＋`sortKey`/`sortDir` を指定して検索し、結果テーブル1ページ目を `output/tframe/` に CSV 抽出（ページ送りなし）。`sortKey` は画面表示言語依存の列名（juku_test は英語） |
 | `tests/tframe/page/course_ichiran_test.js` | `course_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/course_ichiran_sort_test.js` | `course_ichiran_sort_data.csv` | 列ヘッダソート（sortKey/sortDir）→ 第1キー・第2キーの並び検証。絞り込みは name/code/courseCategory/nendoYear/school_area_id/school_branch_id で指定（空欄=すべて）。全ケースを1ログインで順に検証（#223 #224） |
@@ -85,7 +86,9 @@
 | `tests/tframe/page/stByCourse_ichiran_test.js` | `stByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→結果あり確認（結果列は受講生情報） |
 | `tests/tframe/page/stByCourse_ichiran_sort_test.js` | `stByCourse_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/courseBySt_ichiran_test.js` | `courseBySt_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 受講生姓で絞り込み→結果あり確認（結果列はコース情報） |
+| `tests/tframe/page/courseBySt_ichiran_sort_test.js` | `courseBySt_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/teByStudent_ichiran_test.js` | `teByStudent_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 講師姓で絞り込み→結果あり確認（結果列は受講生情報） |
+| `tests/tframe/page/teByStudent_ichiran_sort_test.js` | `teByStudent_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/proByCourse_ichiran_test.js` | `proByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→結果あり確認（culture_beta のみ） |
 | `tests/tframe/page/proByCourse_ichiran_sort_test.js` | `proByCourse_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/infoHistory_ichiran_test.js` | `infoHistory_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 件名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
