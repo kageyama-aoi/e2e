@@ -189,21 +189,25 @@ module.exports = {
 
   /**
    * 検索条件を入力する（空フィールドはスキップ）
-   * @param {object} data - course_ichiran_search_data.csv の1行分
+   * @param {object} data - course_ichiran_search_data.csv / course_ichiran_sort_data.csv の1行分
    */
   fillSearchConditions(data) {
     I.say('【コース一覧】検索条件を入力');
-    fillTextFields(I, { name: data.name });
+    fillTextFields(I, { name: data.name, code: data.code });
     if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
     if (data.nendoYear)    I.selectOption('#nendoYear', data.nendoYear);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
 
   /**
-   * エリア・校舎を「すべて」にして検索範囲を最大にする（ソート検証で確実にデータを出すため）
+   * 検索条件をすべてクリアし、エリア・校舎を「すべて」にする（検索範囲を最大にする）。
+   * 同一ログインで複数ケースを回すとき、前ケースの条件が残らないようにするために使う。
    */
-  widenAreaBranchScope() {
-    I.say('【コース一覧】エリア・校舎を「すべて」に設定');
+  resetSearchConditions() {
+    I.say('【コース一覧】検索条件をクリア（エリア・校舎は「すべて」）');
+    I.fillField('#name', '');
+    I.fillField('#code', '');
+    resetSelects(['courseCategory', 'nendoYear']);
     I.selectOption('#school_area_id', '');
     I.wait(TIMEOUTS.AJAX_SELECT); // AJAX: エリア変更で校舎ドロップダウンを更新
     I.selectOption('#school_branch_id', '');
