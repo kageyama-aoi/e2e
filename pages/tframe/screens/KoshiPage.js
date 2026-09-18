@@ -5,6 +5,7 @@
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 
@@ -191,6 +192,22 @@ module.exports = {
     if (data.personStatus) I.selectOption('#personStatus', data.personStatus);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
   },
+
+  /**
+   * 講師一覧の列ヘッダソート定義（#225・culture_beta で実機確認）。
+   * - 氏名はフリガナ順・区分は内部コード順で並ぶため grouped（同値の連続性のみ判定）
+   * - 講師 ID は英字の大小を区別しない並び（例: cc が TA001 より前）
+   * - 第2キーは更新日時の降順（同値54ペアで一致）
+   */
+  listSortTable: createSortableTable({
+    label: '講師一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      fullName: 'grouped', idnumber: 'stringCi', personStatus: 'grouped',
+      phone1: 'string', email1: 'stringCi', created_at: 'string', updated_at: 'string',
+    },
+    secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
+  }),
 
   ...createIchiranMixin('講師一覧'),
 

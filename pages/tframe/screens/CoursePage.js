@@ -8,7 +8,7 @@ const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
-const { TIMEOUTS } = require('../../../support/tframe/constants');
+const { createSortableTable, subpanelContainer, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
@@ -200,38 +200,45 @@ module.exports = {
   },
 
   /**
-   * 検索条件をすべてクリアし、エリア・校舎を「すべて」にする（検索範囲を最大にする）。
-   * 同一ログインで複数ケースを回すとき、前ケースの条件が残らないようにするために使う。
+   * コース一覧の列ヘッダソート定義（#223・culture_beta で実機確認）。
+   * 第2キーはレコードID昇順で、第1キーの昇順/降順に関係なく常に昇順。
    */
-  resetSearchConditions() {
-    I.say('【コース一覧】検索条件をクリア（エリア・校舎は「すべて」）');
-    I.fillField('#name', '');
-    I.fillField('#code', '');
-    resetSelects(['courseCategory', 'nendoYear']);
-    I.selectOption('#school_area_id', '');
-    I.wait(TIMEOUTS.AJAX_SELECT); // AJAX: エリア変更で校舎ドロップダウンを更新
-    I.selectOption('#school_branch_id', '');
-  },
-
-  /**
-   * 検索結果に実データ行が出るまで待って確認する（thead 行で空振りしない版）
-   */
-  async verifyListRowsExist() {
-    await verifyResultRowsExist('コース一覧');
-  },
-
-  /**
-   * コース一覧の列ヘッダソート仕様（#223・culture_beta で実機確認）。
-   * - columns: ソート可能列のキー → 値の型
-   * - secondary: 第1キー同値時の並び（画面側の裏設定）。コース一覧はレコードID昇順で、
-   *   第1キーの昇順/降順に関係なく常に昇順。
-   */
-  sortSpec: {
+  listSortTable: createSortableTable({
+    label: 'コース一覧',
+    container: LIST_CONTAINER,
     columns: { name: 'string', courseCategory: 'string', nendo: 'number' },
     secondary: { key: '_recordId', type: 'string', dir: 'asc' },
-  },
+  }),
 
   ...createIchiranMixin('コース一覧'),
+
+  // ----------------------------------------------------------------
+  //  コース詳細（DW）のタブ内一覧
+  // ----------------------------------------------------------------
+
+  /**
+   * コース詳細画面を開き、指定タブ（タブ内一覧）を表示する
+   * @param {string} record - コースのレコードID
+   * @param {string} tabHash - タブのリンク先（例: '#student'）
+   */
+  openDetailTab(record, tabHash) {
+    I.say(`【コース詳細】${record} の ${tabHash} タブを開く`);
+    I.amOnPage(process.env.BASE_URL + 'index.php?r=course%2Fdw%2F_default&record=' + encodeURIComponent(record));
+    I.waitForElement(`a[href="${tabHash}"]`, 15);
+    // タブは Bootstrap のリンク。見出しと同名のメニューリンクと取り違えないよう href で直接クリックする
+    I.executeScript((h) => document.querySelector(`a[href="${h}"]`).click(), tabHash);
+  },
+
+  /**
+   * コース詳細「受講生」タブの一覧のソート定義（#225・culture_beta で実機確認）。
+   * 氏名はフリガナ順・ステイタスは内部コード順で並ぶため grouped。第2キーなし。
+   */
+  studentSubpanelSortTable: createSortableTable({
+    label: 'コース詳細 受講生タブ',
+    container: subpanelContainer('studentSubpanel'),
+    columns: { fullName: 'grouped', eventPersonStatus: 'grouped', startDate: 'string', endDate: 'string' },
+    secondary: null,
+  }),
 
   // ----------------------------------------------------------------
   //  コース別商品一覧（SW）

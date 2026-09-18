@@ -120,7 +120,7 @@
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
 | 講師登録 | `teacher/ew/_default` | ● | ● | ✓ KoshiPage | ✓ `koshi_touroku_test.js` | ✗ |  |
-| 講師一覧 | `teacher/sw/_default` | ● | ● | ✓ KoshiPage | ✗ | ✓ `koshi_ichiran_test.js` |  |
+| 講師一覧 | `teacher/sw/_default` | ● | ● | ✓ KoshiPage | ✗ | ✓ `koshi_ichiran_test.js` | `koshi_ichiran_sort_test.js` |
 | 講師別受講生一覧 | `teacher/sw/teByStudent` | ● | ● | ✓ KoshiPage | ✗ | ✓ `teByStudent_ichiran_test.js` |  |
 | 対応履歴一覧 | `infoHistory/sw/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✗ | ✓ `infoHistory_ichiran_test.js` |  |
 | 対応履歴テンプレート登録 | `infoHistoryTemplate/ew/_default?menuModule=teacher` | ● | ● | ✓ InfoHistoryPage | ✓ `infoHistoryTemplate_touroku_test.js` | ✗ |  |
@@ -132,7 +132,7 @@
 |---|---|:-:|:-:|---|---|---|---|
 | スタッフ登録 | `staff/ew/_default` | ● | ● | ✓ StaffPage | ✓ `staff_touroku_test.js` | ✗ |  |
 | スタッフ一覧 | `staff/sw/_default` | ● | ● | ✓ StaffPage | ✗ | ✓ `staff_ichiran_test.js` |  |
-| 校舎一覧 | `branch/sw/_default` | ● | ● | ✓ BranchPage | ✗ | ✓ `branch_ichiran_test.js` |  |
+| 校舎一覧 | `branch/sw/_default` | ● | ● | ✓ BranchPage | ✗ | ✓ `branch_ichiran_test.js` | `branch_ichiran_sort_test.js` |
 | 校舎登録 | `branch/ew/_default` | - | ● | ✓ BranchPage | ✓ `branch_touroku_test.js` | ✗ |  |
 | 教室登録 | `classroom/ew/_default` | ● | ● | ✓ ClassroomPage | ✓ `kyoshitsu_touroku_test.js` | ✗ |  |
 | 教室一覧 | `classroom/sw/_default` | ● | ● | ✓ ClassroomPage | ✗ | ✓ `kyoshitsu_ichiran_test.js` |  |

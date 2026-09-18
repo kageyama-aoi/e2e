@@ -7,6 +7,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -112,6 +113,19 @@ module.exports = {
     });
     if (data.area_area_id) I.selectOption('#area_area_id', data.area_area_id);
   },
+
+  /**
+   * 校舎一覧の列ヘッダソート定義（#225・culture_beta で実機確認）。
+   * - 校舎名は英字の大小を区別しない並び、校舎コードは文字列順（99 が 127 より後）
+   * - エリアは内部コード順で並ぶため grouped
+   * - 第2キーなし（同値内の並びは不定）
+   */
+  listSortTable: createSortableTable({
+    label: '校舎一覧',
+    container: LIST_CONTAINER,
+    columns: { schoolName: 'stringCi', branchCode: 'string', areaId: 'grouped' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('校舎一覧'),
 };

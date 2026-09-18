@@ -12,6 +12,7 @@
 
 const { I } = inject();
 const assert = require('assert');
+const { TIMEOUTS } = require('../../../support/tframe/constants');
 
 /**
  * 日付入力欄に値を直接セットして change を発火する（datepicker / readonly を回避）。
@@ -71,4 +72,39 @@ async function verifyResultRowsExist(screenLabel, timeoutSec = 15) {
   assert(count > 0, `検索結果に実データ行がありません（count=${count}）`);
 }
 
-module.exports = { setDateField, resetSelects, verifyResultRowsExist };
+/**
+ * 検索フォームの条件をすべてクリアして検索範囲を最大にする（#225）。
+ * - テキスト入力（readonly 以外）を空にする
+ * - 「すべて」（空値）の選択肢を持つセレクトを空値にする
+ * - エリア（`*_area_id`）→ 校舎（`*_branch_id`）の AJAX 連動は、エリアを先に空にして
+ *   校舎リストの再描画を待ってから校舎を空にする
+ * 同一ログインで複数ケースを回すとき、前ケースやセッション記憶の条件を持ち越さない用途。
+ * 空値の選択肢が無いセレクト（必須の年月など）はそのまま残す。
+ *
+ * 注意: 日付入力欄も空になる。日付が入っている前提の画面（経理系の当月既定・連絡一覧の
+ * 「どちらか一方は7日以内」制約など）では、呼んだ後に `setDateField` で日付を入れ直すこと。
+ */
+function resetSearchForm() {
+  I.say('検索条件をクリア（プルダウンは「すべて」）');
+  I.executeScript(() => {
+    const form = document.querySelector('#swSearchButton').closest('form') || document;
+    form.querySelectorAll('input[type="text"], input:not([type])').forEach((el) => {
+      if (!el.readOnly) el.value = '';
+    });
+    form.querySelectorAll('select').forEach((sel) => {
+      if (/_branch_id$/.test(sel.id)) return;
+      if (!Array.from(sel.options).some((o) => o.value === '')) return;
+      sel.value = '';
+      if (/_area_id$/.test(sel.id)) sel.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+  I.wait(TIMEOUTS.AJAX_SELECT); // AJAX: エリア変更で校舎ドロップダウンを更新
+  I.executeScript(() => {
+    const form = document.querySelector('#swSearchButton').closest('form') || document;
+    form.querySelectorAll('select[id$="_branch_id"]').forEach((sel) => {
+      if (Array.from(sel.options).some((o) => o.value === '')) sel.value = '';
+    });
+  });
+}
+
+module.exports = { setDateField, resetSelects, verifyResultRowsExist, resetSearchForm };

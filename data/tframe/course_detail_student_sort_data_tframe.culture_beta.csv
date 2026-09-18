@@ -1,0 +1,9 @@
+scenario,sortKey,sortDir,record
+氏名_昇順,fullName,asc,57af82c8-a495-8fdb-af25-665fe554f36d
+氏名_降順,fullName,desc,57af82c8-a495-8fdb-af25-665fe554f36d
+コースでのステイタス_昇順,eventPersonStatus,asc,57af82c8-a495-8fdb-af25-665fe554f36d
+コースでのステイタス_降順,eventPersonStatus,desc,57af82c8-a495-8fdb-af25-665fe554f36d
+開始日_昇順,startDate,asc,57af82c8-a495-8fdb-af25-665fe554f36d
+開始日_降順,startDate,desc,57af82c8-a495-8fdb-af25-665fe554f36d
+終了日_昇順,endDate,asc,57af82c8-a495-8fdb-af25-665fe554f36d
+終了日_降順,endDate,desc,57af82c8-a495-8fdb-af25-665fe554f36d

@@ -1,0 +1,7 @@
+scenario,sortKey,sortDir,schoolName,SchoolCode,area_area_id
+校舎名_昇順,schoolName,asc,,,
+校舎名_降順,schoolName,desc,,,
+校舎コード_昇順,branchCode,asc,,,
+校舎コード_降順,branchCode,desc,,,
+エリア_昇順,areaId,asc,,,
+エリア_降順,areaId,desc,,,

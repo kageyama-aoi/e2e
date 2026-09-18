@@ -8,6 +8,7 @@ description: |
     （対象: tests/tframe/ 配下の *_ichiran_test.js、data/tframe/ の *_ichiran_search_data.csv。
      koshi_ / jukusei_ / course_ 等のプレフィックスは tframe の画面）
   - 「〇〇一覧のテストを作って」という依頼
+  - 一覧（一覧画面・詳細画面のタブ内一覧）の列ヘッダソート検証を追加したい（末尾「ソート検証の追加」）
 
   ワークフロー: 検索フィールド確認 → Page Object にメソッド追記 → CSV → テストファイル → 実行確認
 
@@ -34,6 +35,8 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 | ENV 変数一覧 | `env/.env.tframe.template` |
 | フォルダ配置ルール | `AGENTS.md` の「tframe テストのフォルダ分類」 |
 | GUI 用説明の登録先 | `run/test_descriptions.json` |
+| ソート検証の雛形（一覧画面） | `pages/tframe/screens/KoshiPage.js` の `listSortTable` + `tests/tframe/page/koshi_ichiran_sort_test.js` |
+| ソート検証の雛形（タブ内一覧） | `pages/tframe/screens/CoursePage.js` の `studentSubpanelSortTable` + `tests/tframe/page/course_detail_student_sort_test.js` |
 
 ---
 
@@ -301,3 +304,54 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 | CSV の役割 | 検索条件 + 期待値 | 登録フォームの入力データ |
 | テストの確認内容 | 結果エリアに表示されること | 保存後の画面に登録データが表示されること |
 | HTML 解析の対象 | `<form id="searchForm">` | `<form id="editForm">` 等の入力フォーム |
+
+---
+
+## ソート検証の追加（#223 / #225）
+
+一覧の列ヘッダ（上下矢印）ソートを「第1キー＝クリックした列 → 第2キー＝画面ごとの裏設定」の順で検証する。
+一覧画面・詳細画面のタブ内一覧（サブパネル）どちらも同じ部品で扱える。**画面ごとに書くのは次の3つだけ。**
+
+| 用意するもの | 置き場 | 中身 |
+|---|---|---|
+| ソート定義 | Page Object に `xxxSortTable: createSortableTable({...})` | 表の枠・ソート可能列の型・第2キー |
+| 一覧を開く手順 | テストの `openCase` | 一覧へ遷移 → `resetSearchForm()` → 絞り込み → 検索 |
+| ケース | `data/tframe/{prefix}_sort_data.csv` | `scenario,sortKey,sortDir` ＋ 画面固有の絞り込み列 |
+
+共通部品（あるものを使う・再実装しない）:
+
+| 部品 | 置き場 | 役割 |
+|---|---|---|
+| `createSortableTable` / `LIST_CONTAINER` / `subpanelContainer(name)` | `pages/tframe/_common/SortableTable.js` | ソート操作・行抽出・ソート可能列取得（枠で絞り込む） |
+| `resetSearchForm()` | `pages/tframe/_common/IchiranSearchMixin.js` | 検索条件を全クリア（プルダウンは「すべて」、エリア→校舎の AJAX 連動込み） |
+| `runSortCases(I, {table, cases, openCase})` | `support/tframe/sortTestRunner.js` | 1ログインで全ケースを回し違反を集約して報告 |
+| `findSortViolations` | `support/tframe/sortVerify.js` | 並び判定（純粋関数） |
+
+### 手順
+
+1. **実機で列と並びを確認する**（推測で sortSpec を書かない）
+   - ソート可能列: 見出し `th#swDataList[キー]` に `a[data-sort]` がある列
+   - 枠: 一覧画面は `LIST_CONTAINER`。タブ内一覧は `div[id="<パネル名>[swDataList]"]` → `subpanelContainer('<パネル名>')`
+   - 各列を昇順/降順にして1ページ目を眺め、列の型と第2キーを決める
+2. **列の型を決める**
+
+   | 型 | 使う列 | 実例 |
+   |---|---|---|
+   | `string` | 表示値の文字コード順で並ぶ | コース名、日付（`YYYY-MM-DD`） |
+   | `stringCi` | 英字の大小を区別せず並ぶ | 講師ID（`cc` が `TA001` より前）、校舎名 |
+   | `number` | 数値順 | 年度 |
+   | `grouped` | 表示値と別の裏の値で並ぶ（順序は判定不能・同値の連続性のみ） | 氏名（フリガナ順）、区分・ステイタス・エリア（内部コード順） |
+
+3. **第2キーを決める**（第2キーの無い画面もある → `secondary: null`）
+   - 同値が多い列（区分・カテゴリ等）でソートし、同値グループ内が何順かを見る
+   - 実例: コース一覧＝`_recordId` 昇順（第1キーの方向によらず固定）、講師一覧＝`updated_at` 降順、校舎一覧・コース詳細受講生タブ＝なし
+   - 第1キーを全行同値にする絞り込み（例: 年度で絞って年度ソート）を CSV に入れると、第2キーを15件すべてで検証できる
+4. **テストを書く**（雛形 `koshi_ichiran_sort_test.js` をコピーして PO 名・CSV 名・`openCase` を差し替える）
+5. `run/test_descriptions.json` と `data/tframe/README.md` に追記し、実行して全ケース OK を確認
+
+### 注意
+
+- 検証は1ページ目（15件）のみ。表示が空の値は NULL / 空文字の区別が付かないため判定対象外
+- 環境依存の値（タブ内一覧を開くコースのレコードID等）はプロファイル別 CSV（`{base}_tframe.culture_beta.csv`）に置き、既定 CSV はヘッダのみにする（ケース0件のプロファイルはスキップ）
+- 一覧の初期値（エリア=関東/校舎=東京 等）に絞られないよう、`openCase` では必ず `resetSearchForm()` を呼ぶ
+- `resetSearchForm()` は日付欄も空にする。日付が必須・既定値前提の画面（経理系の当月既定、連絡一覧の「どちらか一方は7日以内」等）では、`openCase` で呼んだ後に `setDateField` で日付を入れ直す

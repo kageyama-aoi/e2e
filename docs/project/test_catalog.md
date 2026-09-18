@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-18 15:52 (JST)
+> 最終更新: 2026-09-18 16:50 (JST)
 
-**合計 117 テスト**（shimamura 30 / tframe 85 / taskreport 1 / smoke 1）
+**合計 120 テスト**（shimamura 30 / tframe 88 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（85件）
+## tframe（88件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（75件）
+### page/（78件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -103,6 +103,7 @@
 | `bank_transfer_export_test.js` | — | 口座振替請求データ作成の実行と結果メッセージを確認（culture_beta / juku_beta 両対応・再集計処理） |
 | `bank_transfer_import_test.js` | — | 口座振替請求データ読込のガードメッセージを確認（culture_beta / juku_beta 両対応・実データは変更しない） |
 | `batch_payment_test.js` | — | 一括入金処理の対象0件ガード文言を確認（culture_beta / juku_beta 両対応・実データは変更しない） |
+| `branch_ichiran_sort_test.js` | — | 校舎一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `branch_ichiran_test.js` | — | 校舎一覧の空検索と校舎名での絞り込み検索を確認 |
 | `branch_touroku_test.js` | — | 校舎の新規登録フォームへの入力・保存を確認 |
 | `calendar_test.js` | — | カレンダー画面の表示・基本操作を確認 |
@@ -111,6 +112,7 @@
 | `contact_ichiran_test.js` | — | 連絡一覧の全期間検索を確認（juku_beta 専用・環境にデータ無しのため結果テーブル描画のみ確認） |
 | `contract_ichiran_test.js` | — | 契約一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `courseBySt_ichiran_test.js` | — | 受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認 |
+| `course_detail_student_sort_test.js` | — | コース詳細「受講生」タブ（付随一覧）の列ヘッダソートで第1キーの並びを検証 |
 | `course_ichiran_sort_test.js` | — | コース一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `course_ichiran_test.js` | — | コース一覧の空検索とコース名での絞り込み検索を確認 |
 | `course_test.js` | — | コース一覧・詳細画面の表示を確認 |
@@ -134,6 +136,7 @@
 | `jukusei_test.js` | — | 受講生一覧・管理画面の表示・操作を確認 |
 | `jukusei_touroku_test.js` | — | 受講生の新規登録フォームへの入力・保存を確認 |
 | `keiryo_master_test.js` | — | 経理・計量マスター画面の表示・操作を確認 |
+| `koshi_ichiran_sort_test.js` | — | 講師一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `koshi_ichiran_test.js` | — | 講師一覧の空検索と姓での絞り込み検索を確認 |
 | `koshi_test.js` | — | 講師一覧・管理画面の表示・操作を確認 |
 | `koshi_touroku_test.js` | — | 講師の新規登録フォームへの入力・保存・バリデーションを確認 |
