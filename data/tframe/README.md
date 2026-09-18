@@ -39,6 +39,7 @@
 | `tests/tframe/page/jukusei_ichiran_test.js` | `jukusei_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
 | `tests/tframe/page/jukusei_ichiran_extract_test.js` | `jukusei_ichiran_extract_data.csv` | POC: 検索条件＋`sortKey`/`sortDir` を指定して検索し、結果テーブル1ページ目を `output/tframe/` に CSV 抽出（ページ送りなし）。`sortKey` は画面表示言語依存の列名（juku_test は英語） |
 | `tests/tframe/page/course_ichiran_test.js` | `course_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: コース名で絞り込み→特定レコード確認 |
+| `tests/tframe/page/course_ichiran_sort_test.js` | `course_ichiran_sort_data.csv` | 列ヘッダソート（sortKey/sortDir）→ 第1キー・第2キーの並び検証（#223） |
 | `tests/tframe/page/koshi_ichiran_test.js` | `koshi_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 姓で絞り込み→特定レコード確認 |
 | `tests/tframe/page/shohin_ichiran_test.js` | `shohin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/chosekin_ichiran_test.js` | `chosekin_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 年度で絞り込み→結果あり確認（名前検索なし） |

@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-15 14:12 (JST)
+> 最終更新: 2026-09-18 13:46 (JST)
 
-**合計 116 テスト**（shimamura 30 / tframe 84 / taskreport 1 / smoke 1）
+**合計 117 テスト**（shimamura 30 / tframe 85 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（84件）
+## tframe（85件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（74件）
+### page/（75件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -111,6 +111,7 @@
 | `contact_ichiran_test.js` | — | 連絡一覧の全期間検索を確認（juku_beta 専用・環境にデータ無しのため結果テーブル描画のみ確認） |
 | `contract_ichiran_test.js` | — | 契約一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `courseBySt_ichiran_test.js` | — | 受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認 |
+| `course_ichiran_sort_test.js` | — | コース一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `course_ichiran_test.js` | — | コース一覧の空検索とコース名での絞り込み検索を確認 |
 | `course_test.js` | — | コース一覧・詳細画面の表示を確認 |
 | `course_touroku_test.js` | — | コースの新規登録フォームへの入力・保存を確認 |

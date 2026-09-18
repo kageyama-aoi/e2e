@@ -42,6 +42,7 @@
     "page/jukusei_ichiran_test.js":                    "受講生一覧の空検索と姓での絞り込み検索を確認",
     "page/jukusei_ichiran_extract_test.js":            "受講生一覧を検索条件＋ソートキー指定で検索し、結果テーブルをCSV抽出（POC・ページ送りなし）",
     "page/course_ichiran_test.js":                     "コース一覧の空検索とコース名での絞り込み検索を確認",
+    "page/course_ichiran_sort_test.js":                "コース一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証",
     "page/koshi_ichiran_test.js":                      "講師一覧の空検索と姓での絞り込み検索を確認",
     "page/shohin_ichiran_test.js":                     "商品一覧の空検索と商品名での絞り込み検索を確認",
     "page/chosekin_ichiran_test.js":                   "調整金一覧の空検索と年度での絞り込み検索を確認",

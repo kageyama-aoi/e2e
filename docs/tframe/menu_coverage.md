@@ -110,7 +110,7 @@
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
 | コース登録 | `course/ew/_default` | ● | ● | ✓ CoursePage | ✓ `course_touroku_test.js` | ✗ |  |
-| コース一覧 | `course/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `course_ichiran_test.js` |  |
+| コース一覧 | `course/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `course_ichiran_test.js` | `course_ichiran_sort_test.js` |
 | コース別商品一覧 | `course/sw/proByCourse` | ● | - | ✓ CoursePage | ✗ | ✓ `proByCourse_ichiran_test.js` |  |
 | 本日の出席表一覧 | `attendance/sw/_default` | ● | ● | ✓ CoursePage | ✗ | ✓ `attendance_ichiran_test.js` |  |
 | 出席表一括出力 | `attendance/sw/attendanceBulkOutput` | ● | ● | ✗ | ✗ | ✗ |  |
@@ -412,6 +412,8 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 1. `sideMenus.js` を環境タグ付き（`envs: ['culture','juku']`）に再構成 — 消費側（`MenuNavigationMixin` / `EmailPage.verifyMenuStructure` / `master_menu_test` など）の影響調査を伴う
 2. 採取スクリプト `scripts/html/fetch_tframe_menus.js`（既存 `scripts/html/extract_side_menu_groups.py` の後継 / プロファイル指定でログイン→`#sideBar` 走査→JSON 出力）
 3. 生成スクリプト `scripts/docs/gen_tframe_menu_coverage.js`（メニューカタログ × Page Object の `r=` 参照 × `test_catalog` を join して本ファイルの表を自動生成、`--check` でドリフト検出、`.githooks/pre-commit` に組込み）
+4. Page Object 命名のアプリ語彙への統一（`JukuseiPage`→`StudentPage`、`KeiryoMasterPage`→`AccountingMenuPage` 等・11件）
+   — 計画は [`page_object_naming_plan_2026-09-15.md`](page_object_naming_plan_2026-09-15.md)（状態: 計画中・#221/#222 参照）。テスト名は改名しない
 
 ---
 

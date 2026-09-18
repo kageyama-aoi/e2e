@@ -291,6 +291,10 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   （`tf-message-error` クラスだが実質は正常系）の両方を日英で許容する（#219）。
 - インポート系画面の未選択・不正フォーマット等のガードメッセージ確認 → `support/tframe/utils.js` の
   `verifyGuardMessage(I, expectedMessage)` を使う（#220）。
+- 一覧の列ヘッダソート検証 → `IchiranMixin` の `sortByColumnKey(key, dir)`（列キー指定・日英非依存）/
+  `grabResultRowsByKey()`（`{列キー: 値, _recordId}` で抽出）と、`support/tframe/sortVerify.js` の
+  `findSortViolations(rows, {key, type, dir, secondary})` を使う。第2キーは画面ごとの裏設定なので
+  Page Object の `sortSpec` に持たせる（雛形: `CoursePage.sortSpec` + `course_ichiran_sort_test.js`。#223）。
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 

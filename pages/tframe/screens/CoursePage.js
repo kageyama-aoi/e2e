@@ -8,6 +8,7 @@ const createIchiranMixin = require('../_common/IchiranMixin');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify, selectAreaThenBranch } = require('../../../support/tframe/utils');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
+const { TIMEOUTS } = require('../../../support/tframe/constants');
 
 module.exports = {
   /** コースアイコンのセレクタ（日英） */
@@ -196,6 +197,34 @@ module.exports = {
     if (data.courseCategory) I.selectOption('#courseCategory', data.courseCategory);
     if (data.nendoYear)    I.selectOption('#nendoYear', data.nendoYear);
     selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
+  },
+
+  /**
+   * エリア・校舎を「すべて」にして検索範囲を最大にする（ソート検証で確実にデータを出すため）
+   */
+  widenAreaBranchScope() {
+    I.say('【コース一覧】エリア・校舎を「すべて」に設定');
+    I.selectOption('#school_area_id', '');
+    I.wait(TIMEOUTS.AJAX_SELECT); // AJAX: エリア変更で校舎ドロップダウンを更新
+    I.selectOption('#school_branch_id', '');
+  },
+
+  /**
+   * 検索結果に実データ行が出るまで待って確認する（thead 行で空振りしない版）
+   */
+  async verifyListRowsExist() {
+    await verifyResultRowsExist('コース一覧');
+  },
+
+  /**
+   * コース一覧の列ヘッダソート仕様（#223・culture_beta で実機確認）。
+   * - columns: ソート可能列のキー → 値の型
+   * - secondary: 第1キー同値時の並び（画面側の裏設定）。コース一覧はレコードID昇順で、
+   *   第1キーの昇順/降順に関係なく常に昇順。
+   */
+  sortSpec: {
+    columns: { name: 'string', courseCategory: 'string', nendo: 'number' },
+    secondary: { key: '_recordId', type: 'string', dir: 'asc' },
   },
 
   ...createIchiranMixin('コース一覧'),

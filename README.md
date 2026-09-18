@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-15 14:12:32
+Last updated: 2026-09-18 13:46:50
 
 ```text
 e2e/
@@ -335,7 +335,6 @@ e2e/
 │   │   │   └── SKILL.md
 │   │   └── tframe-registration-dev/ 
 │   │       └── SKILL.md
-│   ├── scheduled_tasks.lock
 │   └── settings.local.json
 ├── .githooks/ 
 │   └── pre-commit
@@ -438,6 +437,7 @@ e2e/
 │       ├── contact_ichiran_search_data.csv
 │       ├── contract_ichiran_search_data.csv
 │       ├── course_ichiran_search_data.csv
+│       ├── course_ichiran_sort_data.csv
 │       ├── course_touroku_data.csv
 │       ├── courseBySt_ichiran_search_data.csv
 │       ├── email_ichiran_search_data.csv
@@ -850,6 +850,7 @@ e2e/
 │   │   └── utils.js
 │   ├── tframe/ 
 │   │   ├── constants.js
+│   │   ├── sortVerify.js
 │   │   └── utils.js
 │   ├── envLoader.js
 │   ├── repoRoot.js
@@ -930,6 +931,7 @@ e2e/
 │           ├── chosekin_touroku_test.js
 │           ├── contact_ichiran_test.js
 │           ├── contract_ichiran_test.js
+│           ├── course_ichiran_sort_test.js
 │           ├── course_ichiran_test.js
 │           ├── course_test.js
 │           ├── course_touroku_test.js

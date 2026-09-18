@@ -1,0 +1,9 @@
+scenario,sortKey,sortDir,courseCategory,nendoYear
+コース名_昇順,name,asc,,
+コース名_降順,name,desc,,
+コースカテゴリ_昇順,courseCategory,asc,,
+コースカテゴリ_降順,courseCategory,desc,,
+年度_昇順,nendo,asc,,
+年度_降順,nendo,desc,,
+年度_降順_年度2025で絞り込み（全行同値→第2キーを検証）,nendo,desc,,2025
+コースカテゴリ_昇順_通常授業で絞り込み（全行同値→第2キーを検証）,courseCategory,asc,通常授業,
