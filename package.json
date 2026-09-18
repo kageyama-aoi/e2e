@@ -11,7 +11,7 @@
     "pretest_s": "node scripts/check_pause.js",
     "test_s": "npx codeceptjs run ./tests/shimamura/**/*_test.js --profile shimamura.testgcp --grep @wip --invert",
     "--- TFRAME TESTS ---": "echo '--- TFRAME TESTS ---'",
-    "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js --grep @wip --invert",
+    "test_t": "npx codeceptjs run ./tests/tframe/**/*_test.js --profile tframe.culture_beta --grep @wip --invert",
     "--- TASKREPORT TESTS ---": "echo '--- TASKREPORT TESTS ---'",
     "test_taskreport": "npx codeceptjs run ./tests/taskreport/*_test.js --profile taskreport --grep @wip --invert",
     "--- ALLURE ---": "echo '--- ALLURE ---'",

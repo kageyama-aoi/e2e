@@ -43,7 +43,8 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 - `tests/` 配下はテストシナリオ（`*_test.js`）専用。Page Object・データを直書きしない。
 - サブフォルダの切り方はサイトの性質に合わせて決める（後述の「4. 参考実装の選び方」参照）。
-- `codecept.conf.js` の `suites.<site>` に `files: './tests/<site>/**/*_test.js'` を追加すること（後述）。
+- `codecept.conf.js` の `tests` グロブ（`./tests/**/*_test.js`）が全サイトを拾うので、テスト置き場の登録は不要。
+  サイト単位で回したいときは `package.json` に npm script を足す（後述 2-3）。
 
 ### 1-4. `data/<site>/`
 
@@ -61,15 +62,8 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 ### 2-1. `codecept.conf.js`
 
-- **`suites`**（L103〜）に新サイトのテストグロブを追加する：
-  ```js
-  suites: {
-    // ...既存...
-    newsite: {
-      files: './tests/newsite/**/*_test.js'
-    }
-  },
-  ```
+- テスト置き場の登録は不要（`tests: './tests/**/*_test.js'` が全サイトを拾う）。
+  以前あった `suites` キーは CodeceptJS 3.3.7 が読まず実行範囲に効いていなかったため削除した（#227）。
 - **`include`**（L152〜）に新サイトの Page Object を追加する。命名は `{役割}Page{サイト名}` または
   `{役割}Page`（tframe は既存 Page が多いためサフィックスなし、shimamura は `〜Shimamura` サフィックス。
   新サイトはどちらの慣習でもよいが、同一サイト内では統一すること）：

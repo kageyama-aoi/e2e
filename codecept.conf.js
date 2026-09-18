@@ -63,6 +63,8 @@ const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runDirName}`;
 const viewportWidth  = Number(process.env.VIEWPORT_WIDTH  || process.env.TFRAME_VIEWPORT_WIDTH  || 1600);
 const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
 const windowSize = `${viewportWidth}x${viewportHeight}`;
+// 実際に起動するブラウザ（Allure の Environment 表示にも同じ値を出す）
+const playwrightBrowser = 'chromium';
 
 fs.mkdirSync(path.resolve(__dirname, runtimeOutputDir), { recursive: true });
 fs.mkdirSync(path.resolve(__dirname, runtimeAllureResultsDir), { recursive: true });
@@ -80,11 +82,12 @@ exports.config = {
   
     // Allure レポートに表示したい環境情報を定義
     // ここで .env から読み込んだ値やプロファイル名を出力します
-    const envData = `Profile=${process.env.PROFILE || process.env.profile || 'default'}
-    BaseURL=${process.env.BASE_URL || 'unknown'}
-Browser=${process.env.BROWSER || 'chromium'}
+    const profile = process.env.PROFILE || process.env.profile || '';
+    const envData = `Profile=${profile || 'default'}
+BaseURL=${process.env.BASE_URL || 'unknown'}
+Browser=${playwrightBrowser}
 Viewport=${windowSize}
-EnvironmentFile=.env.${process.env.PROFILE || process.env.profile || ''}
+EnvironmentFile=${profile ? `env/.env.${profile}` : '.env (profile なし)'}
 OutputDir=${runtimeOutputDir}
 AllureResultsDir=${runtimeAllureResultsDir}
 `;
@@ -99,22 +102,11 @@ AllureResultsDir=${runtimeAllureResultsDir}
   },
 
   // ----------------------------------------------------
-  //  テストスイート定義（tests は使わず suites のみに統一）
+  //  テスト対象（パス未指定で実行したときの既定）
+  //  CodeceptJS 3.3.7 はパス未指定時に `tests` キーだけを読む（`suites` は読まない）。
+  //  通常はコマンド側でパスを渡す（npm run test_s / test_t / GUI）ので、ここは `npm test` 用の既定値。
   // ----------------------------------------------------
-  suites: {
-    smoke: {
-      files: './tests/smoke/*_test.js'
-    },
-    shimamura: {
-      files: './tests/shimamura/**/*_test.js'
-    },
-    tframe: {
-      files: './tests/tframe/**/*_test.js'
-    },
-    taskreport: {
-      files: './tests/taskreport/*_test.js'
-    }
-  },
+  tests: './tests/**/*_test.js',
 
   // ----------------------------------------------------
   //  ヘルパー（Playwright）
@@ -123,7 +115,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
     Playwright: {
       url: process.env.BASE_URL || 'http://localhost',
       show: process.env.HEADLESS !== 'true',
-      browser: 'chromium',
+      browser: playwrightBrowser,
       windowSize,
 
       // パフォーマンスチューニング設定
@@ -209,7 +201,9 @@ AllureResultsDir=${runtimeAllureResultsDir}
     // 新サイトで autoLogin を使いたい場合は users に別ロールを追加すること（既存の shimamuraUser は変えない）。
     autoLogin: {
       enabled: true,       // ← 有効化スイッチ
-      saveToFile: true,    // ← Cookieをファイルに保存して再利用
+      // ← Cookie をファイルに保存。保存先は global.output_dir（実行ごとの日時フォルダ）なので、
+      //   再利用されるのは同一実行内の Scenario 間だけ（実行をまたいだ再利用は起きない）
+      saveToFile: true,
       inject: 'login',     // ← テスト内で { login } として使えるようになる
       users: {
         shimamuraUser: {
