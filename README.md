@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-18 17:50:54
+Last updated: 2026-09-24 18:11:28
 
 ```text
 e2e/
@@ -1499,6 +1499,7 @@ e2e/
 │   │   │   ├── transaction_ichiran_test.js
 │   │   │   └── validity_data_output_test.js
 │   │   └── util/ 
+│   │       ├── create_contact_via_api_check.js
 │   │       └── login_and_hold.js
 │   ├── smoke/ 
 │   │   └── smoke_test.js
