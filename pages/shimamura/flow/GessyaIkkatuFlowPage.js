@@ -5,11 +5,12 @@ const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
 const {
-  assertNoShimamuraError, fillTextFieldsByName, extractRecordId, buildTestName,
+  assertNoShimamuraError, fillTextFieldsByName, buildTestName,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 const { navigateToStudentGroup, navigateToKeirisyoriView } = require('./SyokaiFlowPage');
+const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
@@ -147,35 +148,56 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   throw new Error(`有効な候補生が見つかりませんでした（姓: ${lastName}）。候補生データを補充してください。`);
 }
 
-async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
-  await navigateToKouhosei(I, classMemberPageShimamura, row.lastName);
-
-  I.say('【請求方法設定】受講生詳細 → 編集');
+/**
+ * 受講生詳細を開いている状態から、姓名・メモ・請求方法・収納業者・割引をフォーム送信で書き換える（#236）。
+ * 編集画面は CSRF トークン付きの GET で開くので「編集」ボタンだけは押し、入力と保存は
+ * 画面操作ではなく共通部品 submitEditViewForm で行う。保存後は元と同じく受講生詳細を開き直す。
+ * @param {object} I
+ * @param {{testName: {lastName: string, firstName: string, description: string},
+ *   bankPaymentType: string, shimaStorageId: string, discount: (string|undefined)}} params
+ *   bankPaymentType / shimaStorageId は選択肢の value でも表示名でもよい。discount は '1' で社割 ON。
+ * @returns {Promise<string>} 受講生の record ID
+ */
+async function editStudentPaymentBySubmit(I, { testName, bankPaymentType, shimaStorageId, discount }) {
+  I.say('【請求方法設定】受講生詳細 → 編集（入力と保存はフォーム送信）');
   I.click(S.kouhoseiEdit.editButton);
   I.waitForElement(S.kouhoseiEdit.bankPaymentType, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生編集');
 
-  const testName = buildTestName('月謝テスト', row);
-  I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
-  fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
-  I.fillField(S.kouhoseiEdit.description, testName.description);
-
-  I.selectOption(S.kouhoseiEdit.bankPaymentType, row.bank_payment_type);
-  I.selectOption(S.kouhoseiEdit.shimaStorageId,  row.shima_storage_id);
-
-  if (row.discount && String(row.discount).trim() === '1') {
+  const fields = {
+    last_name:         testName.lastName,
+    first_name:        testName.firstName,
+    bank_payment_type: bankPaymentType,
+    shima_storage_id:  shimaStorageId,
+    description:       testName.description,
+  };
+  if (discount && String(discount).trim() === '1') {
     I.say('【社割設定】割引有無をON');
-    I.checkOption(S.kouhoseiEdit.discount);
+    fields.discount = true;
   }
 
-  I.say('【請求方法設定】保存');
-  I.click(S.kouhoseiEdit.saveButton);
+  // path を渡さない＝今開いている編集画面のフォームをそのまま送る
+  const { url, recordId } = await submitEditViewForm(I, { fields, label: '請求方法設定・フォーム送信' });
+
+  // フォーム送信はブラウザの画面を動かさないので、後続（経理ビューへの遷移）のために保存後の画面を開く
+  I.amOnPage(url);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   await assertNoShimamuraError(I, '【請求方法設定】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');
+  return recordId;
+}
 
-  const recordId = extractRecordId(await I.grabCurrentUrl());
-  if (!recordId) return null;
+async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
+  await navigateToKouhosei(I, classMemberPageShimamura, row.lastName);
+
+  const testName = buildTestName('月謝テスト', row);
+  I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
+  const recordId = await editStudentPaymentBySubmit(I, {
+    testName,
+    bankPaymentType: row.bank_payment_type,
+    shimaStorageId:  row.shima_storage_id,
+    discount:        row.discount,
+  });
 
   const withdrawn = saveToSession(SESSION_FILE, recordId, testName, row);
   I.say(`  受講生 record=${recordId} をセッションファイルに保存${withdrawn ? '（退会済みフラグあり）' : ''}`);
@@ -341,4 +363,4 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { navigateToKouhosei, runStudentPaymentSetup, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
+module.exports = { navigateToKouhosei, runStudentPaymentSetup, editStudentPaymentBySubmit, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };

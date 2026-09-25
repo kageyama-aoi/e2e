@@ -45,7 +45,10 @@ const OPTION_WAIT_MS = 10000;
  *
  * @param {object} I CodeceptJS の actor
  * @param {object} params
- * @param {string} params.path 登録画面の URL（BASE_URL からの相対。例: `index.php?module=ShimaCourse&action=EditView`）
+ * @param {string} [params.path] 登録画面の URL（BASE_URL からの相対。例: `index.php?module=ShimaCourse&action=EditView`）。
+ *   省略すると画面を開き直さず、**今開いている画面**のフォームを送る。編集画面のように
+ *   URL だけでは開けない（編集ボタンが CSRF トークン付きの GET で開く）画面は、
+ *   ボタンで開いてから path を省略して呼ぶ（#236）。
  * @param {Object<string, (string|boolean)>} params.fields 入力する項目。キーは画面の name 属性。
  *   **書いた順に入力する**ので、画面で上の項目から順に書く（例: `area_id` → `school_id`）。
  *   - select: option の value でも表示テキストでも指定できる（例: `course_category: 'スクール'`）。
@@ -58,7 +61,7 @@ const OPTION_WAIT_MS = 10000;
  * @throws {Error} フォームが見つからない・未知の項目名や選択肢が渡された・レコードが作成されなかった場合
  */
 async function submitEditViewForm(I, { path, fields, label, formName = 'EditView' }) {
-  I.amOnPage(BASE_URL + path);
+  if (path) I.amOnPage(BASE_URL + path);
   I.waitForElement(`form[name="${formName}"]`, TIMEOUTS.SCREEN);
 
   I.say(`【${label}】フォーム送信で登録（${Object.keys(fields).join(', ')}）`);
@@ -153,7 +156,8 @@ async function submitEditViewForm(I, { path, fields, label, formName = 'EditView
     let errorText = '';
     if (!/[?&]record=/.test(res.url)) {
       try {
-        const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
         const errorEl = doc.querySelector(errorSelector);
         errorText = (errorEl ? errorEl.textContent : '').trim().slice(0, 300);
         // バリデーションエラーはエラー枠に出るが、重複候補の確認画面のように
@@ -161,6 +165,8 @@ async function submitEditViewForm(I, { path, fields, label, formName = 'EditView
         if (!errorText && doc.body) {
           errorText = doc.body.textContent.replace(/\s+/g, ' ').trim().slice(0, 200);
         }
+        // 本文も空なら（スクリプトで画面を移す応答など）、応答の HTML をそのまま少し見せる
+        if (!errorText) errorText = `（本文なし）応答の先頭: ${html.replace(/\s+/g, ' ').trim().slice(0, 400)}`;
       } catch (e) {
         errorText = '';
       }
