@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-25 09:57:05
+Last updated: 2026-09-25 10:40:49
 
 ```text
 e2e/
@@ -1451,6 +1451,7 @@ e2e/
 │   ├── shimamura/ 
 │   │   ├── accountTransferSchedule.js
 │   │   ├── constants.js
+│   │   ├── editViewSubmit.js
 │   │   ├── hooks.js
 │   │   ├── syokai_helpers.js
 │   │   └── utils.js
@@ -1500,7 +1501,9 @@ e2e/
 │   │   │   ├── transaction_ichiran_test.js
 │   │   │   └── validity_data_output_test.js
 │   │   └── util/ 
-│   │       ├── create_contact_via_api_check.js
+│   │       ├── create_class_by_submit_check.js
+│   │       ├── create_contact_by_submit_check.js
+│   │       ├── create_course_by_submit_check.js
 │   │       ├── delete_listed_test_records.js
 │   │       ├── list_api_test_contacts.js
 │   │       └── login_and_hold.js
