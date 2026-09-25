@@ -6,7 +6,7 @@
  * このファイルは通常のテストスイートには含まれない（`_test.js` 非末尾）。
  * `createContactBySubmit()` が実環境で通るかを手動で確かめるための実行用で、
  * 実行すると testgcp に受講生が1件増える（問合せ登録で作られるのは候補生ではなく受講生）。
- * 後始末は list_api_test_contacts.js で UUID を確認し、delete_listed_test_records.js で行う。
+ * 後始末は list_submit_test_records.js で UUID を確認し、delete_listed_test_records.js で行う。
  *
  * 実行例:
  *   npx codeceptjs run ./tests/shimamura/util/create_contact_by_submit_check.js --profile shimamura.testgcp
@@ -28,8 +28,8 @@ Scenario('createContactBySubmit で受講生を1件登録できる', async ({ I,
   // 同姓同名で送ると「すでに登録されているものと重なる可能性があります」の
   // 重複候補確認画面が返り保存されないため、名は実行時刻で一意にする。
   const hhmmss = new Date().toTimeString().slice(0, 8).replace(/:/g, '');
-  // 姓「API登録」は list_api_test_contacts.js の検索対象なので変えない。
-  const name = buildTestName('API登録', { testNo: hhmmss, scenario: '' });
+  // 姓「送信登録」は list_submit_test_records.js の検索対象なので変えない。
+  const name = buildTestName('送信登録', { testNo: hhmmss, scenario: '' });
 
   // 値は data/shimamura/contact_register_data.csv の「最小限登録」と揃える。
   // ふりがなは全角ひらがな必須、bank_payment_type は既定の 2（イオンCカード）のままだと
@@ -38,7 +38,7 @@ Scenario('createContactBySubmit で受講生を1件登録できる', async ({ I,
   const result = await contactRegisterPageShimamura.createContactBySubmit({
     last_name:           name.lastName,
     first_name:          name.firstName,
-    last_name_furigana:  'えーぴーあい',
+    last_name_furigana:  'そうしんとうろく',
     first_name_furigana: 'とうろく',
     bank_payment_type:   '3',
     description:         name.description,

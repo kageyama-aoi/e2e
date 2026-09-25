@@ -18,14 +18,9 @@ const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_sess
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
 const S = {
+  // 入力と保存はフォーム送信（#236）なので、残るのは編集画面を開くボタンと開いたことの目印だけ
   kouhoseiEdit: {
-    lastName:        '#last_name',
-    firstName:       '#first_name',
-    description:     'textarea[name="description"]',
     bankPaymentType: '#bank_payment_type',
-    shimaStorageId:  '#shima_storage_id',
-    discount:        '#discount',
-    saveButton:      'input[name="save_button"]',
     editButton:      'input[name="edit_button"]',
   },
 };
