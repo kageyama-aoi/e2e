@@ -7,7 +7,7 @@
  * 月謝一括作成準備（gessya_ikkatu_setup_test.js）の受講生編集を、**候補生を消費せずに**確かめる。
  * 候補生は年1回補充の限られた在庫なので、昇格の代わりに問合せ登録で使い捨ての受講生を作り、
  * その受講生を編集する。実行すると testgcp に受講生が1件増える。
- * 後始末は list_api_test_contacts.js で UUID を確認し、delete_listed_test_records.js で行う。
+ * 後始末は list_submit_test_records.js で UUID を確認し、delete_listed_test_records.js で行う。
  *
  * 実行例:
  *   npx codeceptjs run ./tests/shimamura/util/edit_student_payment_by_submit_check.js --profile shimamura.testgcp
@@ -27,9 +27,9 @@ Feature('shimamura 受講生編集（請求方法設定）のフォーム送信�
 Before(beforeShimamura);
 
 Scenario('使い捨ての受講生の請求方法をフォーム送信で書き換え、保存内容を確かめる', async ({ I, contactRegisterPageShimamura }) => {
-  // 姓「API登録MMDD」は list_api_test_contacts.js の検索対象（後始末用）。名は実行時刻で一意にする。
+  // 姓「送信登録MMDD」は list_submit_test_records.js の検索対象（後始末用）。名は実行時刻で一意にする。
   const hhmmss = new Date().toTimeString().slice(0, 8).replace(/:/g, '');
-  const name = buildTestName('API登録', { testNo: hhmmss, scenario: '' });
+  const name = buildTestName('送信登録', { testNo: hhmmss, scenario: '' });
 
   // 1. 使い捨ての受講生を作る（請求方法 3=現金）。
   //    銀行情報も持たせているが、問合せ登録で直接作った受講生は、これがあっても 1=銀行引落 に
@@ -43,7 +43,7 @@ Scenario('使い捨ての受講生の請求方法をフォーム送信で書き�
   const created = await contactRegisterPageShimamura.createContactBySubmit({
     last_name:           name.lastName,
     first_name:          name.firstName,
-    last_name_furigana:  'えーぴーあい',
+    last_name_furigana:  'そうしんとうろく',
     first_name_furigana: 'へんしゅう',
     bank_payment_type:   '3',
     bank_code:           '0001',
