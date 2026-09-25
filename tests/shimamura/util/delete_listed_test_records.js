@@ -11,13 +11,11 @@
  * 実行例:
  *   npx codeceptjs run ./tests/shimamura/util/delete_listed_test_records.js --profile shimamura.testgcp
  *
- * 削除は詳細画面の「削除」ボタンと同じ仕組み（`delete_button_form` を
- * `submittype=delete_focus` で送信）。ボタンの onclick にある確認ダイアログは
- * フォームを直接送るため出ない（ダイアログはブラウザ操作を止めてしまうため避ける）。
+ * 削除は詳細画面の「削除」ボタンと同じ送信（共通部品 `submitDeleteForm()`、support/shimamura/editViewSubmit.js）。
  */
 
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { BASE_URL, TIMEOUTS } = require('../../../support/shimamura/constants');
+const { submitDeleteForm } = require('../../../support/shimamura/editViewSubmit');
 
 /**
  * 削除対象。list_submit_test_records.js（読み取りのみ）が出した行のうち、module が Student の
@@ -44,28 +42,7 @@ Scenario('指定した record UUID のレコードを削除する', async ({ I }
   }
 
   for (const target of TARGETS) {
-    I.say(`【削除】${target.label} (record=${target.recordId})`);
-    I.amOnPage(`${BASE_URL}index.php?module=Student&action=DetailView&record=${target.recordId}`);
-    I.waitForElement('form[name="delete_button_form"]', TIMEOUTS.SCREEN);
-
-    // 削除ボタンと同じ値を立てて GET フォームを送る
-    const result = await I.executeScript(async (recordId) => {
-      const form = document.forms.delete_button_form;
-      if (!form) return { error: 'delete_button_form が見つかりません' };
-      if (form.record.value !== recordId) {
-        return { error: `画面のレコードが一致しません（画面=${form.record.value} / 指定=${recordId}）` };
-      }
-      form.submittype.value = 'delete_focus';
-      const params = new URLSearchParams(new FormData(form));
-      const res = await fetch(`${form.getAttribute('action')}?${params.toString()}`, {
-        credentials: 'same-origin',
-        redirect: 'follow',
-      });
-      return { status: res.status, url: res.url };
-    }, target.recordId);
-
-    if (result.error) throw new Error(`【削除】失敗 record=${target.recordId}: ${result.error}`);
-    I.say(`【削除】完了 (status=${result.status})`);
+    await submitDeleteForm(I, { module: 'Student', recordId: target.recordId, label: target.label });
   }
 
   I.say('【削除】すべて完了。list_submit_test_records.js で残件を確認すること');

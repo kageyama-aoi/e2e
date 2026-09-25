@@ -214,7 +214,53 @@ async function editOpenRecordBySubmit(I, { fields, label, editButton = 'input[na
   return result;
 }
 
+/**
+ * 詳細画面の「削除」ボタンと同じ送信で、指定した1件を削除する（#232）。
+ *
+ * 詳細画面を開き、`delete_button_form` を `submittype=delete_focus` で送る。ボタンの onclick に
+ * ある確認ダイアログはフォームを直接送るため出ない（ダイアログはブラウザ操作を止めてしまうため避ける）。
+ * 画面のフォームが指すレコードが指定と違うときは送らずに止める（別レコードを消さないため）。
+ * 消せるのは詳細画面に削除ボタンがある画面だけ（受講生は可。コース・クラスはボタンが無い #238）。
+ *
+ * @param {object} I CodeceptJS の actor
+ * @param {object} params
+ * @param {string} params.module 詳細画面の module（例: 'Student'）
+ * @param {string} params.recordId 削除するレコードの UUID
+ * @param {string} params.label ログ・エラーメッセージに出す名前
+ * @returns {Promise<{status: number, url: string}>}
+ * @throws {Error} 削除フォームが無い・画面のレコードが指定と違う場合
+ */
+async function submitDeleteForm(I, { module, recordId, label }) {
+  I.say(`【削除】${label} (${module} record=${recordId})`);
+  I.amOnPage(`${BASE_URL}index.php?module=${module}&action=DetailView&record=${recordId}`);
+  I.waitForElement('form[name="DetailView"]', TIMEOUTS.SCREEN);
+
+  const result = await I.executeScript(async (id) => {
+    const form = document.forms.delete_button_form;
+    if (!form) return { error: 'delete_button_form が見つかりません（この画面には削除ボタンが無い）' };
+    if (form.record.value !== id) {
+      return { error: `画面のレコードが一致しません（画面=${form.record.value} / 指定=${id}）` };
+    }
+    form.submittype.value = 'delete_focus';
+    const params = new URLSearchParams(new FormData(form));
+    try {
+      const res = await fetch(`${form.getAttribute('action')}?${params.toString()}`, {
+        credentials: 'same-origin',
+        redirect: 'follow',
+      });
+      return { status: res.status, url: res.url };
+    } catch (e) {
+      return { error: `送信に失敗しました: ${e && e.message ? e.message : e}` };
+    }
+  }, recordId);
+
+  if (result.error) throw new Error(`【削除】失敗 ${label} record=${recordId}: ${result.error}`);
+  I.say(`【削除】完了 (status=${result.status})`);
+  return result;
+}
+
 module.exports = {
   submitEditViewForm,
   editOpenRecordBySubmit,
+  submitDeleteForm,
 };
