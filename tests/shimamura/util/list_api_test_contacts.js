@@ -18,7 +18,7 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { SELECTORS, TIMEOUTS } = require('../../../support/shimamura/constants');
 
 /** 検証で作ったテストデータの姓 */
-const LAST_NAMES = ['API調査0924', 'API登録0924'];
+const LAST_NAMES = ['API調査0924', 'API登録0924', 'API登録0925'];
 
 Feature('shimamura 候補生テストデータの一覧');
 

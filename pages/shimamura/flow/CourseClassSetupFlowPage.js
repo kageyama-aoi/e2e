@@ -21,6 +21,7 @@
 const { logScreenUrl } = require('../../../support/utils');
 const { extractRecordId } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
 
 const S = {
   course: {
@@ -90,6 +91,32 @@ async function createShimaCourse(I, { courseCd, courseName, courseCategory = '�
 }
 
 /**
+ * コース(ShimaCourse)を、画面操作を経由せずフォーム送信で新規作成する（#234）。
+ * 引数と戻り値は `createShimaCourse` と同じなので、前提データ作りの箇所ならそのまま差し替えられる。
+ * コース登録画面そのものの検証には使わない（そちらは `createShimaCourse` で UI を通す）。
+ * @param {object} I
+ * @param {{courseCd: string, courseName: string, courseCategory: (string|undefined), kanrihi: (number|string|undefined), kingaku: (number|string|undefined)}} params
+ * @returns {Promise<string>} 作成したコースの record ID
+ */
+async function createShimaCourseBySubmit(I, { courseCd, courseName, courseCategory = 'スクール', kanrihi, kingaku }) {
+  I.say(`【コース作成・フォーム送信】${courseName}（${courseCd}） / 運営管理費(税抜): ${kanrihi ?? '未設定'} / 金額: ${kingaku ?? '未設定'}`);
+  const fields = {
+    course_cd:       courseCd,
+    course_name:     courseName,
+    course_category: courseCategory,
+  };
+  if (kanrihi !== undefined) fields.course_kanrihi = String(kanrihi);
+  if (kingaku !== undefined) fields.course_kingaku = String(kingaku);
+
+  const { recordId } = await submitEditViewForm(I, {
+    path:   'index.php?module=ShimaCourse&action=EditView&return_module=ShimaCourse&return_action=DetailView',
+    fields,
+    label:  'コース作成・フォーム送信',
+  });
+  return recordId;
+}
+
+/**
  * クラス(Course)を新規作成する。
  * @param {object} I
  * @param {{
@@ -127,6 +154,40 @@ async function createClass(I, {
   const recordId = extractRecordId(url);
   if (!recordId) throw new Error(`【クラス作成】record ID を取得できませんでした（url: ${url}）`);
   I.say(`  ✓ クラス作成完了 record=${recordId}`);
+  return recordId;
+}
+
+/**
+ * クラス(Course)を、画面操作を経由せずフォーム送信で新規作成する（#234）。
+ * 引数と戻り値は `createClass` と同じなので、前提データ作りの箇所ならそのまま差し替えられる。
+ * 店舗(school_id)の選択肢はエリア変更の AJAX で作り直されるが、共通部品が area_id の change を
+ * 発火させ、店舗の選択肢が現れるまで待つので、UI 版のような固定待ちは要らない。
+ * @param {object} I
+ * @param {object} params `createClass` と同じ
+ * @returns {Promise<string>} 作成したクラスの record ID
+ */
+async function createClassBySubmit(I, {
+  name, areaValue, schoolValue, courseCategory = 'スクール',
+  weekdaySelector, startH, startM, endH, endM, teiin = '10',
+}) {
+  I.say(`【クラス作成・フォーム送信】${name}`);
+  // 画面の上から順に書く（area_id → school_id の順でないと店舗の選択肢がそろわない）
+  const { recordId } = await submitEditViewForm(I, {
+    path:   'index.php?module=Course&action=EditView&return_module=Course&return_action=DetailView',
+    fields: {
+      name,
+      area_id:         areaValue,
+      school_id:       schoolValue,
+      teiin,
+      course_category: courseCategory,
+      [weekdaySelector.replace(/^#/, '')]: true, // '#youbi_8' → youbi_8
+      kaishi_jikan_H:  startH,
+      kaishi_jikan_M:  startM,
+      syuryou_jikan_H: endH,
+      syuryou_jikan_M: endM,
+    },
+    label:  'クラス作成・フォーム送信',
+  });
   return recordId;
 }
 
@@ -222,10 +283,17 @@ async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, month
  * @param {object} I
  * @param {object} params createShimaCourse・createClass の引数をまとめて渡す
  *   （className が省略された場合は courseName をそのままクラス名としても使う）
+ *   bySubmit: true のとき、コースとクラスの作成を画面操作ではなくフォーム送信版
+ *   （createShimaCourseBySubmit / createClassBySubmit）で行う。前提データ作りで使う側だけ有効にし、
+ *   この流れ自体を確かめるテスト（course_class_setup_test.js）では付けない（#234）。
+ *   紐づけとスケジュール作成はポップアップ・一括作成画面を通るので、どちらでも UI のまま。
  * @returns {Promise<{courseRecordId: string, classRecordId: string}>}
  */
 async function setupLinkedCourseAndClass(I, params) {
-  const courseRecordId = await createShimaCourse(I, {
+  const makeCourse = params.bySubmit ? createShimaCourseBySubmit : createShimaCourse;
+  const makeClass  = params.bySubmit ? createClassBySubmit : createClass;
+
+  const courseRecordId = await makeCourse(I, {
     courseCd:       params.courseCd,
     courseName:     params.courseName,
     courseCategory: params.courseCategory,
@@ -234,7 +302,7 @@ async function setupLinkedCourseAndClass(I, params) {
   });
 
   const className = params.className || params.courseName;
-  const classRecordId = await createClass(I, {
+  const classRecordId = await makeClass(I, {
     name:            className,
     areaValue:       params.areaValue,
     schoolValue:     params.schoolValue,
@@ -260,7 +328,9 @@ async function setupLinkedCourseAndClass(I, params) {
 
 module.exports = {
   createShimaCourse,
+  createShimaCourseBySubmit,
   createClass,
+  createClassBySubmit,
   linkCourseToClass,
   createClassSchedule,
   setupLinkedCourseAndClass,
