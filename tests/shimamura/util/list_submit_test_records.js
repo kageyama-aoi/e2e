@@ -27,15 +27,16 @@ const { SELECTORS, TIMEOUTS } = require('../../../support/shimamura/constants');
 
 /**
  * 探す画面と検索語。
- * - 受講生・候補生: 動作確認ランナーのテスト姓。`API登録` / `API調査` は #238 で改名する前の姓
+ * - 受講生・候補生: 動作確認ランナーのテスト姓。`API登録` / `API調査` は #238 で改名する前の姓。
+ *   `問合せテスト` は contact_register_test.js の姓（テスト内で削除するので、残っていたら削除に失敗した分）
  *   （問合せ登録で作ると受講生になるが、念のため候補生一覧も見る）
  * - コース: create_course_by_submit_check.js が作る名前
  * module は結果リンクの href から読む（受講生検索・候補生一覧の行には他の module のリンクも並ぶため、
  * 探したい module に絞る）。
  */
 const SEARCHES = [
-  { screen: '受講生検索', navKey: 'StudentSearch', coreKey: 'Student',       field: 'last_name', module: 'Student',     patterns: ['送信登録', 'API登録', 'API調査'] },
-  { screen: '候補生一覧', navKey: 'ContactList',   coreKey: 'ContactList',   field: 'last_name', module: 'Student',     patterns: ['送信登録', 'API登録', 'API調査'] },
+  { screen: '受講生検索', navKey: 'StudentSearch', coreKey: 'Student',       field: 'last_name', module: 'Student',     patterns: ['送信登録', 'API登録', 'API調査', '問合せテスト'] },
+  { screen: '候補生一覧', navKey: 'ContactList',   coreKey: 'ContactList',   field: 'last_name', module: 'Student',     patterns: ['送信登録', 'API登録', 'API調査', '問合せテスト'] },
   { screen: 'コース一覧', navKey: 'CourseIchiran', coreKey: 'CourseIchiran', field: 'name',      module: 'ShimaCourse', patterns: ['E2E_UI版_', 'E2E_送信版_'] },
 ];
 

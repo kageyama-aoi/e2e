@@ -1,7 +1,7 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-25 14:13 (JST)
+> 最終更新: 2026-09-25 16:57 (JST)
 
 **合計 129 テスト**（shimamura 30 / tframe 97 / taskreport 1 / smoke 1）
 
@@ -24,7 +24,7 @@
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
-| `contact_register_test.js` | — | 候補生詳細（詳細タブ）フォームへの入力・保存の正常系とバリデーションエラーを確認 |
+| `contact_register_test.js` | — | 問合せ登録で受講生を直接登録（保存を record で確認→削除）する正常系とバリデーションエラーを確認 |
 | `course_class_setup_test.js` | — | コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用） |
 | `gessya_ikkatu_setup_test.js` | — | 月謝一括作成 準備（受講生請求方法設定） |
 | `gessya_ikkatu_test.js` | — | 月謝一括作成 実行 |

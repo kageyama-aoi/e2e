@@ -417,6 +417,16 @@ Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current }) => {
 });
 ```
 
+> **新規登録画面では「エラーが出ていない」を成功の証拠にしない（#232）**
+> 保存に失敗しても、エラー枠を使わない画面（「二重登録の可能性のある受講生一覧」等）に移ると
+> `assertNoShimamuraError` は素通りし、偽合格になる。新規登録の成功は
+> **詳細画面へ遷移して URL に `record=<UUID>` が付くこと**で判定する
+> （`contact_register_test.js` の `waitForSavedRecordId()` 参照）。あわせて:
+> - 同姓同名は二重登録の確認画面で止まるので、姓名は実行ごとに一意にする（名＋時刻など）
+> - 実行のたびにレコードが増えるなら、確認後に `submitDeleteForm()`（`support/shimamura/editViewSubmit.js`）でその1件を消す
+> - 金融機関・支店コードは入力で候補ポップアップが出て、候補をクリックしたときだけ名称が埋まる。
+>   `fillField` では出ないので `I.type` で入れ、`#overDiv div[onclick^="put_into_targets('コード'"]` をクリックする
+
 ---
 
 ## Step 5: テスト実行と確認
