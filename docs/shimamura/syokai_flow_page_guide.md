@@ -157,7 +157,7 @@ I.waitForElement(SELECTORS.RESULT_LINK, TIMEOUTS.RESULT);     // 10秒
 ```
 [定数]      KEIRI_SCREEN_B_LOCATORS      ← 経理ビューBのセレクタ一覧
             KEIRI_SUBMENU                ← 「閲覧/登録・経理ビュー」サブメニューの定義
-[部品]      navigateToKeirisyoriView     ← サブメニューを開いて経理ビューへ
+[部品]      navigateToKeirisyoriView     ← サブメニューを開いて経理ビューへ（recordId を渡すと URL 直指定 #244）
             fillClassSearchForm          ← クラス選択ポップアップの検索条件入力
             fillAccountingDates          ← 契約日・開始日・月途中チェック
             createActionExecutor         ← 実行プランのステップを1つずつ動かす仕組み

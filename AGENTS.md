@@ -344,6 +344,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - 受講生まわりのサイドバー遷移（`navigateToAdminTab` 後の `toggleGroupmenu` + `clickSubMenuLink`）は
   `SyokaiFlowPage.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `navigateToKeirisyoriView(I, page)`（経理ビュー個人へ）に
   集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。**FlowPage 内で 3 行の遷移を再実装しない。**
+  受講生の UUID が分かっているデータ準備では `navigateToKeirisyoriView(I, page, { recordId })`（`openKeirisyoriScreenA` / `executeTaikai` も `recordId` を受け取る）で
+  経理ビューを URL 直指定で開く（`SHIMAMURA_NAV=sidebar` でも URL。約8秒/行短縮 #244）。サイドバー経路の確認は recordId を渡さない初回登録テストに残す。
 - URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。
 
 詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。

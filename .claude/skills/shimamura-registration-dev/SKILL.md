@@ -201,6 +201,8 @@ module.exports = { run{FlowName}Flow };
 受講生の「候補生検索」「経理ビュー（個人）」へのサイドバー遷移は `SyokaiFlowPage.js` の
 `navigateToStudentGroup(I, page)` / `navigateToKeirisyoriView(I, page)` を import して使う
 （`toggleGroupmenu` + `clickSubMenuLink` の 3 行を FlowPage 内で再実装しない）。
+前提データ作りで受講生の UUID が手元にあるときは `navigateToKeirisyoriView(I, page, { recordId })` として
+経理ビューを URL で開く（`SHIMAMURA_NAV=sidebar` でも URL。#244）。サイドバー経路そのものを確かめるテストでは recordId を渡さない。
 
 #### 前提データ作りはフォーム送信版を使う（#234 / #236 / #239）
 

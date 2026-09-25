@@ -11,7 +11,7 @@ const {
   fillTextFieldsByName,
   fillTextFieldsBySelector,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { prepareInput, buildExecutionPlan } = require('../../../support/shimamura/syokai_helpers');
 
 const KEIRI_SCREEN_B_LOCATORS = {
@@ -29,7 +29,23 @@ const KEIRI_SUBMENU = {
   linkName:  '受講生登録・経理ビュー（個人）',
 };
 
-async function navigateToKeirisyoriView(I, classMemberPageShimamura) {
+/**
+ * 受講生詳細から「受講生登録・経理ビュー（個人）」へ移る。
+ * recordId を渡すと URL を直接開く（サイドバー経由より約8秒速い #244）。
+ * recordId を渡すのはデータ準備の呼び出し元（月謝一括作成準備など）で、速さを優先して
+ * `SHIMAMURA_NAV=sidebar` の環境でも URL で開く。recordId が無いときは従来通りサイドバーから開く
+ * （初回登録テストは recordId を渡さず、サイドバー経路そのものを確かめる）。
+ * @param {object} I
+ * @param {object} classMemberPageShimamura
+ * @param {{recordId: (string|undefined)}} [options] 受講生の record UUID
+ */
+async function navigateToKeirisyoriView(I, classMemberPageShimamura, { recordId } = {}) {
+  if (recordId) {
+    // サイドバーのリンクが最終的に開く URL と同じ（2026-09-25 の通信記録で確認）
+    I.amOnPage(`${BASE_URL}index.php?module=Student&action=CarteView&return_module=Student&return_action=CarteView`
+      + `&layout_def_key=carte&carte_view=2&record=${recordId}`);
+    return;
+  }
   await toggleGroupmenu(I, { icon_id: KEIRI_SUBMENU.icon_id, menuname: KEIRI_SUBMENU.groupName });
   await classMemberPageShimamura.clickSubMenuLink(KEIRI_SUBMENU.linkName, KEIRI_SUBMENU.linkName);
 }
@@ -156,12 +172,12 @@ async function promoteKouhoseiToStudent(I, student_name) {
   I.click('受講生へ移動');
 }
 
-async function openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false } = {}) {
+async function openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav = false, recordId } = {}) {
   if (!skipNav) {
     I.say('【画面遷移】受講生登録・経理ビュー');
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
     await logScreenUrl(I, '受講生詳細');
-    await navigateToKeirisyoriView(I, classMemberPageShimamura);
+    await navigateToKeirisyoriView(I, classMemberPageShimamura, { recordId });
   }
   I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
   I.click('クラス追加/更新する');
@@ -265,7 +281,7 @@ async function fillTaikaiFormAndSubmit(I, { taikaiYear, taikaiMonth }) {
   I.saveScreenshot(`taikai_03_done_${label}.png`);
 }
 
-async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth }) {
+async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMonth, recordId }) {
   const label = `${taikaiYear}${taikaiMonth}`;
   I.say(`【退会処理】最終在籍年月 ${taikaiYear}/${taikaiMonth} を設定`);
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -276,7 +292,7 @@ async function executeTaikai(I, classMemberPageShimamura, { taikaiYear, taikaiMo
   await fillTaikaiFormAndSubmit(I, { taikaiYear, taikaiMonth });
 
   I.say('【退会後確認】経理ビューへ遷移');
-  await navigateToKeirisyoriView(I, classMemberPageShimamura);
+  await navigateToKeirisyoriView(I, classMemberPageShimamura, { recordId });
   I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
   await logScreenUrl(I, '退会後_経理ビュー');
   I.saveScreenshot(`keiri_after_taikai_${label}.png`, true);
