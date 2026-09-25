@@ -10,20 +10,12 @@ const {
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 const { navigateToStudentGroup, navigateToKeirisyoriView } = require('./SyokaiFlowPage');
-const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
+const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
 
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
-
-const S = {
-  // 入力と保存はフォーム送信（#236）なので、残るのは編集画面を開くボタンと開いたことの目印だけ
-  kouhoseiEdit: {
-    bankPaymentType: '#bank_payment_type',
-    editButton:      'input[name="edit_button"]',
-  },
-};
 
 function resolveRelativeMonth(taikaiYear, taikaiMonth) {
   const OFFSETS = { '先月': -1, '今月': 0, '来月': 1 };
@@ -145,8 +137,7 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
 
 /**
  * 受講生詳細を開いている状態から、姓名・メモ・請求方法・収納業者・割引をフォーム送信で書き換える（#236）。
- * 編集画面は CSRF トークン付きの GET で開くので「編集」ボタンだけは押し、入力と保存は
- * 画面操作ではなく共通部品 submitEditViewForm で行う。保存後は元と同じく受講生詳細を開き直す。
+ * 編集ボタン → フォーム送信 → 保存後の詳細を開き直す流れは共通部品 editOpenRecordBySubmit に任せる（#239）。
  * @param {object} I
  * @param {{testName: {lastName: string, firstName: string, description: string},
  *   bankPaymentType: string, shimaStorageId: string, discount: (string|undefined)}} params
@@ -154,11 +145,6 @@ async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
  * @returns {Promise<string>} 受講生の record ID
  */
 async function editStudentPaymentBySubmit(I, { testName, bankPaymentType, shimaStorageId, discount }) {
-  I.say('【請求方法設定】受講生詳細 → 編集（入力と保存はフォーム送信）');
-  I.click(S.kouhoseiEdit.editButton);
-  I.waitForElement(S.kouhoseiEdit.bankPaymentType, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '受講生編集');
-
   const fields = {
     last_name:         testName.lastName,
     first_name:        testName.firstName,
@@ -171,11 +157,8 @@ async function editStudentPaymentBySubmit(I, { testName, bankPaymentType, shimaS
     fields.discount = true;
   }
 
-  // path を渡さない＝今開いている編集画面のフォームをそのまま送る
-  const { url, recordId } = await submitEditViewForm(I, { fields, label: '請求方法設定・フォーム送信' });
-
-  // フォーム送信はブラウザの画面を動かさないので、後続（経理ビューへの遷移）のために保存後の画面を開く
-  I.amOnPage(url);
+  // 保存後の受講生詳細が開いた状態で戻る（後続は経理ビューへの遷移）
+  const { recordId } = await editOpenRecordBySubmit(I, { fields, label: '請求方法設定・フォーム送信' });
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   await assertNoShimamuraError(I, '【請求方法設定】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');

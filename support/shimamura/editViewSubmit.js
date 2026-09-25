@@ -191,6 +191,30 @@ async function submitEditViewForm(I, { path, fields, label, formName = 'EditView
   return { status: result.status, url: result.url, recordId };
 }
 
+/**
+ * 詳細画面を開いている状態から、編集ボタン → フォーム送信で保存 → 保存後の詳細画面を開き直す（#239）。
+ *
+ * 編集画面は URL だけでは開けない（編集ボタンが CSRF トークン付きの GET で開く）ので、
+ * ボタンだけは押す。入力と保存は `submitEditViewForm()` に任せる。フォーム送信はブラウザの
+ * 画面を動かさないため、後続の操作のために保存後の詳細画面（応答の URL）を開いて返す。
+ * 詳細画面が出そろったかの確認（見出しの待機・エラー表示の確認）は画面ごとに違うので呼び出し側で行う。
+ *
+ * @param {object} I CodeceptJS の actor
+ * @param {object} params
+ * @param {Object<string, (string|boolean)>} params.fields 入力する項目（`submitEditViewForm` と同じ）
+ * @param {string} params.label ログ・エラーメッセージに出す画面名
+ * @param {string} [params.editButton='input[name="edit_button"]'] 詳細画面の編集ボタン
+ * @returns {Promise<{status: number, url: string, recordId: string}>} 応答と保存したレコードの UUID
+ */
+async function editOpenRecordBySubmit(I, { fields, label, editButton = 'input[name="edit_button"]' }) {
+  I.say(`【${label}】詳細 → 編集（入力と保存はフォーム送信）`);
+  I.click(editButton);
+  const result = await submitEditViewForm(I, { fields, label });
+  I.amOnPage(result.url);
+  return result;
+}
+
 module.exports = {
   submitEditViewForm,
+  editOpenRecordBySubmit,
 };
