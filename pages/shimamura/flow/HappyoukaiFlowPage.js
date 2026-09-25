@@ -28,13 +28,12 @@ const fs   = require('fs');
 const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
-const {
-  fillTextFieldsByName, assertNoShimamuraError, extractRecordId, buildTestName,
-} = require('../../../support/shimamura/utils');
+const { assertNoShimamuraError, buildTestName } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const { navigateToKouhosei } = require('./GessyaIkkatuFlowPage');
 const { setupLinkedCourseAndClass } = require('./CourseClassSetupFlowPage');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
+const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 
 // setupテストと本体テスト間でクラス・受講生の情報を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/happyoukai_session.json');
@@ -42,13 +41,6 @@ const SESSION_FILE = path.resolve(__dirname, '../../../output/happyoukai_session
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
 const S = {
-  studentEdit: {
-    lastName:    '#last_name',
-    firstName:   '#first_name',
-    description: 'textarea[name="description"]',
-    saveButton:  'input[name="save_button"]',
-    editButton:  'input[name="edit_button"]',
-  },
   studentSearch: {
     lastName:      '#last_name',
     searchButton:  'input[name="search"]',
@@ -132,23 +124,21 @@ async function createHappyoukaiClassAndCourse(I, params) {
 async function promoteAndRenameStudent(I, classMemberPageShimamura, row) {
   await navigateToKouhosei(I, classMemberPageShimamura, row.lastName);
 
-  I.say('【受講生登録】受講生詳細 → 編集');
-  I.click(S.studentEdit.editButton);
-  I.waitForElement(S.studentEdit.lastName, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '受講生編集');
-
   const testName = buildTestName('発表会テスト', row);
   I.say(`【名前書き換え】${testName.lastName} / ${testName.firstName}`);
-  fillTextFieldsByName(I, { last_name: testName.lastName, first_name: testName.firstName });
-  I.fillField(S.studentEdit.description, testName.description);
-
-  I.click(S.studentEdit.saveButton);
+  // 姓名・メモの書き換えは前提データ作りなので、画面操作ではなくフォーム送信で行う（#239）
+  const { recordId } = await editOpenRecordBySubmit(I, {
+    fields: {
+      last_name:   testName.lastName,
+      first_name:  testName.firstName,
+      description: testName.description,
+    },
+    label: '受講生登録・フォーム送信',
+  });
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   await assertNoShimamuraError(I, '【受講生登録】保存');
   await logScreenUrl(I, '受講生詳細（保存後）');
 
-  const currentUrl = await I.grabCurrentUrl();
-  const recordId = extractRecordId(currentUrl);
   const idnumber = (await I.grabTextFrom('#td_idnumber')).trim();
 
   const session = loadSession();

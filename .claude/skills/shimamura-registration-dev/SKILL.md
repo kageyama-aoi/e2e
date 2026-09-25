@@ -202,6 +202,23 @@ module.exports = { run{FlowName}Flow };
 `navigateToStudentGroup(I, page)` / `navigateToKeirisyoriView(I, page)` を import して使う
 （`toggleGroupmenu` + `clickSubMenuLink` の 3 行を FlowPage 内で再実装しない）。
 
+#### 前提データ作りはフォーム送信版を使う（#234 / #236 / #239）
+
+テストの**前提として**レコードを作る・書き換えるだけの箇所は、画面操作の代わりに
+`support/shimamura/editViewSubmit.js` の共通部品で保存と同じフォーム送信を出す（1件あたり数秒〜10秒短縮）。
+
+| 場面 | 使う部品 | 例 |
+|---|---|---|
+| 登録画面を URL で開いて新規登録 | `submitEditViewForm(I, { path, fields, label })` | `CourseClassSetupFlowPage.createShimaCourseBySubmit()` |
+| 詳細画面から編集ボタンで開いて保存 | `editOpenRecordBySubmit(I, { fields, label })`（保存後の詳細を開いて返す） | `GessyaIkkatuFlowPage.editStudentPaymentBySubmit()` |
+
+- `fields` のキーは画面の **name 属性**。select は value でも表示名でもよい。checkbox は `true`。**画面の上から順に書く**（AJAX 連動の `area_id` → `school_id` など）
+- **その画面自体を検証するテストでは使わない**（画面側の入力制御を通らないため。検証は UI 操作の Scenario で行う）
+- 名前に「API」は使わない（shimamura に API は無い）。関数名は `…BySubmit`、UI 版と引数・戻り値をそろえて差し替えられるようにする
+- 詳細画面の見出し待ちと `assertNoShimamuraError` は画面ごとに違うので呼び出し側で行う
+- 動作確認で作ったデータは `tests/shimamura/util/list_submit_test_records.js`（読み取りのみ）で探し、
+  受講生は `delete_listed_test_records.js` に UUID を書いて消す（コース・クラスは削除ボタンが無く消せない）
+
 > **特殊ケースの実装パターンは `references/patterns.md` を参照:**
 > - 別タブポップアップ（`switchToNextTab` の使い方・なぜ戻れるか）
 > - アコーディオンメニュー（`toggleGroupmenu`）
