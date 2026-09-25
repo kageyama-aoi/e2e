@@ -283,10 +283,17 @@ async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, month
  * @param {object} I
  * @param {object} params createShimaCourse・createClass の引数をまとめて渡す
  *   （className が省略された場合は courseName をそのままクラス名としても使う）
+ *   bySubmit: true のとき、コースとクラスの作成を画面操作ではなくフォーム送信版
+ *   （createShimaCourseBySubmit / createClassBySubmit）で行う。前提データ作りで使う側だけ有効にし、
+ *   この流れ自体を確かめるテスト（course_class_setup_test.js）では付けない（#234）。
+ *   紐づけとスケジュール作成はポップアップ・一括作成画面を通るので、どちらでも UI のまま。
  * @returns {Promise<{courseRecordId: string, classRecordId: string}>}
  */
 async function setupLinkedCourseAndClass(I, params) {
-  const courseRecordId = await createShimaCourse(I, {
+  const makeCourse = params.bySubmit ? createShimaCourseBySubmit : createShimaCourse;
+  const makeClass  = params.bySubmit ? createClassBySubmit : createClass;
+
+  const courseRecordId = await makeCourse(I, {
     courseCd:       params.courseCd,
     courseName:     params.courseName,
     courseCategory: params.courseCategory,
@@ -295,7 +302,7 @@ async function setupLinkedCourseAndClass(I, params) {
   });
 
   const className = params.className || params.courseName;
-  const classRecordId = await createClass(I, {
+  const classRecordId = await makeClass(I, {
     name:            className,
     areaValue:       params.areaValue,
     schoolValue:     params.schoolValue,

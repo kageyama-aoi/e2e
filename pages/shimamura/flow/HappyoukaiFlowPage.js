@@ -105,9 +105,11 @@ function resetSession() {
  */
 async function createHappyoukaiClassAndCourse(I, params) {
   I.say(`【発表会クラス作成】${params.className || params.courseName}`);
+  // コース・クラスは発表会テストの前提データなので、画面操作ではなくフォーム送信で作る（#234）
   const { courseRecordId, classRecordId } = await setupLinkedCourseAndClass(I, {
     ...params,
     courseCategory: '発表会',
+    bySubmit:       true,
   });
 
   const session = loadSession();

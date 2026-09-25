@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-25 10:40:49
+Last updated: 2026-09-25 10:48:55
 
 ```text
 e2e/
