@@ -333,6 +333,7 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
    - まず調査ツールで案を出す（全列を昇降順に並べ替えて1ページ目を採取し、列の型と第2キー候補を推定）:
      `SORT_PROBE_ROUTE=staff/sw/_default npx codeceptjs run tests/tframe/util/sort_spec_probe.js --profile tframe.culture_beta`
      （タブ内一覧は `SORT_PROBE_RECORD` / `SORT_PROBE_TAB` / `SORT_PROBE_PANEL` を追加。採取行は `output/sort_probe/*.json`）
+     （日付必須の画面は `SORT_PROBE_FIELDS=rangeFromDate=2015-01-01,rangeToDate=2035-12-31` のように検索前の値を渡す。ソート可能列が0件と出た画面は並べ替え非対応なので対象外）
    - 推定は1ページ分の標本に基づく。英大文字を含まない標本では `stringCi` が `string` と出る等があるので、JSON の行を目視して確定する
    - ソート可能列: 見出し `th#swDataList[キー]` に `a[data-sort]` がある列
    - 枠: 一覧画面は `LIST_CONTAINER`。タブ内一覧は `div[id="<パネル名>[swDataList]"]` → `subpanelContainer('<パネル名>')`
