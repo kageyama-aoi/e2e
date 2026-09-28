@@ -57,10 +57,15 @@
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
 | `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
 | `tests/tframe/page/fee_ichiran_test.js` | `fee_ichiran_search_data.csv` | 料金一覧（経理）。B: 全期間検索→実データ行確認 / C: 受講生姓で絞り込み。dateFrom/dateTo で日付レンジを広げる（既定は当月）。※juku_beta 主 |
+| `tests/tframe/page/fee_ichiran_sort_test.js` | `fee_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/contract_ichiran_test.js` | `contract_ichiran_search_data.csv` | 契約一覧（経理）。姓フィールドは `#last_name`。※juku_beta 主 |
+| `tests/tframe/page/contract_ichiran_sort_test.js` | `contract_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/payment_ichiran_test.js` | `payment_ichiran_search_data.csv` | 入金一覧（経理）。※juku_beta 主 |
+| `tests/tframe/page/payment_ichiran_sort_test.js` | `payment_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時の降順）（#226） |
 | `tests/tframe/page/unpaid_amount_ichiran_test.js` | `unpaid_amount_ichiran_search_data.csv` | 未収金一覧（経理 `smsTransaction/sw/unpaidAmountList`）。※juku_beta 主 |
+| `tests/tframe/page/unpaid_amount_ichiran_sort_test.js` | `unpaid_amount_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/transaction_ichiran_test.js` | `transaction_ichiran_search_data.csv` | 入出金一覧（経理 `smsTransaction/sw/_default`）。※juku_beta 主 |
+| `tests/tframe/page/transaction_ichiran_sort_test.js` | `transaction_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/email_ichiran_test.js` | `email_ichiran_search_data.csv` | Eメール一覧。dateFrom/dateTo で送信日レンジを広げる（既定は当月）。※juku_beta 主 |
 | `tests/tframe/page/email_ichiran_sort_test.js` | `email_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/email_template_ichiran_test.js` | `email_template_ichiran_search_data.csv` | Eメールテンプレート一覧。name で絞り込み。※juku_beta 主 |

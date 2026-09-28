@@ -17,6 +17,8 @@
  * - SORT_PROBE_RECORD: 詳細画面のレコードID（任意）
  * - SORT_PROBE_TAB   : 開くタブの href（任意。例: `#student`）
  * - SORT_PROBE_PANEL : タブ内一覧のパネル名（任意。例: `studentSubpanel`。省略時は一覧画面の枠）
+ * - SORT_PROBE_FIELDS: 検索前に入れる値（任意。`id=値` をカンマ区切り。日付必須の画面用
+ *                      例: `rangeFromDate=2000-01-01,rangeToDate=2030-12-31`。セレクトの値も入れられる）
  *
  * **出力**: コンソールに推定結果、`output/sort_probe/<route>_<日時>.json` に採取した全行と推定結果
  */
@@ -25,12 +27,13 @@ const path = require('path');
 const repoRoot = require('../../../support/repoRoot');
 const { inferSortSpec } = require('../../../support/tframe/sortVerify');
 const { createSortableTable, subpanelContainer, LIST_CONTAINER } = require('../../../pages/tframe/_common/SortableTable');
-const { resetSearchForm } = require('../../../pages/tframe/_common/IchiranSearchMixin');
+const { resetSearchForm, setDateField } = require('../../../pages/tframe/_common/IchiranSearchMixin');
 
 const ROUTE = process.env.SORT_PROBE_ROUTE || '';
 const RECORD = process.env.SORT_PROBE_RECORD || '';
 const TAB = process.env.SORT_PROBE_TAB || '';
 const PANEL = process.env.SORT_PROBE_PANEL || '';
+const FIELDS = (process.env.SORT_PROBE_FIELDS || '').split(',').filter(Boolean).map((kv) => kv.split('='));
 
 Feature('一覧ソート調査ツール');
 
@@ -51,6 +54,8 @@ Scenario('ソート可能列を全方向で採取して sortSpec を推定する
   } else {
     I.waitForElement('#swSearchButton', 15);
     resetSearchForm();
+    // エリア→校舎のような AJAX 連動に備えて1項目ずつ待つ
+    FIELDS.forEach(([id, v]) => { setDateField(id, v); I.wait(1); });
     I.click('#swSearchButton');
   }
 
