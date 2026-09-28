@@ -63,11 +63,17 @@
 | `tests/tframe/page/unpaid_amount_ichiran_test.js` | `unpaid_amount_ichiran_search_data.csv` | 未収金一覧（経理 `smsTransaction/sw/unpaidAmountList`）。※juku_beta 主 |
 | `tests/tframe/page/transaction_ichiran_test.js` | `transaction_ichiran_search_data.csv` | 入出金一覧（経理 `smsTransaction/sw/_default`）。※juku_beta 主 |
 | `tests/tframe/page/email_ichiran_test.js` | `email_ichiran_search_data.csv` | Eメール一覧。dateFrom/dateTo で送信日レンジを広げる（既定は当月）。※juku_beta 主 |
+| `tests/tframe/page/email_ichiran_sort_test.js` | `email_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/email_template_ichiran_test.js` | `email_template_ichiran_search_data.csv` | Eメールテンプレート一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/email_template_ichiran_sort_test.js` | `email_template_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）（#226） |
 | `tests/tframe/page/email_template_category_ichiran_test.js` | `email_template_category_ichiran_search_data.csv` | Eメールテンプレートカテゴリ一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/email_template_category_ichiran_sort_test.js` | `email_template_category_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）（#226） |
 | `tests/tframe/page/prospect_list_ichiran_test.js` | `prospect_list_ichiran_search_data.csv` | 名簿リスト一覧。name で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/prospect_list_ichiran_sort_test.js` | `prospect_list_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）（#226） |
 | `tests/tframe/page/announcement_ichiran_test.js` | `announcement_ichiran_search_data.csv` | お知らせ一覧。dateFrom/dateTo で掲載日レンジを広げる。title で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/announcement_ichiran_sort_test.js` | `announcement_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時降順）（#226） |
 | `tests/tframe/page/poll_ichiran_test.js` | `poll_ichiran_search_data.csv` | アンケート一覧。dateFrom/dateTo で回答期間レンジを広げる。title で絞り込み。※juku_beta 主 |
+| `tests/tframe/page/poll_ichiran_sort_test.js` | `poll_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/report_inquiry_ichiran_test.js` | `report_inquiry_ichiran_search_data.csv` | 問合せ・入学・退学レポート（`report/sw/inquiryEnrollCancelReport`）。年月別集計表。targetYear / personStatus で絞り込み。※culture_beta 主 |
 | `tests/tframe/page/report_stdata_ichiran_test.js` | `report_stdata_ichiran_search_data.csv` | 受講生データ組合せレポート（`report/sw/stDataCombinedReport`）。searchItems（組合せ項目）で切替。personStatus は空選択肢なしで既定「受講生」。※culture_beta 主 |
 | `tests/tframe/page/report_stschedule_ichiran_test.js` | `report_stschedule_ichiran_search_data.csv` | 受講生スケジュールレポート（`report/sw/stScheduleReport`）。dateFrom/dateTo でレンジを広げる（既定は当月）。cancelStatus / attendanceStatus で絞り込み。※culture_beta 主 |

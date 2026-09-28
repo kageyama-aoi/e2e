@@ -1,0 +1,13 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,lastName
+件名_昇順,subject,asc,,,
+件名_降順,subject,desc,,,
+氏名_昇順,fullName,asc,,,
+氏名_降順,fullName,desc,,,
+校舎_昇順,branchName,asc,,,
+校舎_降順,branchName,desc,,,
+対象区分_昇順,smsgroup,asc,,,
+対象区分_降順,smsgroup,desc,,,
+送信者_昇順,username,asc,,,
+送信者_降順,username,desc,,,
+送信日時_昇順,sendDateTime,asc,,,
+送信日時_降順,sendDateTime,desc,,,
