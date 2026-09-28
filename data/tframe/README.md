@@ -55,7 +55,9 @@
 | `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/branch_ichiran_sort_test.js` | `branch_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#225） |
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/ryokin_master_ichiran_sort_test.js` | `ryokin_master_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キー=レコードIDの降順）※juku_beta のみ（#226） |
 | `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/ryokin_package_ichiran_sort_test.js` | `ryokin_package_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キーなし）※juku_beta のみ（#226） |
 | `tests/tframe/page/fee_ichiran_test.js` | `fee_ichiran_search_data.csv` | 料金一覧（経理）。B: 全期間検索→実データ行確認 / C: 受講生姓で絞り込み。dateFrom/dateTo で日付レンジを広げる（既定は当月）。※juku_beta 主 |
 | `tests/tframe/page/fee_ichiran_sort_test.js` | `fee_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/contract_ichiran_test.js` | `contract_ichiran_search_data.csv` | 契約一覧（経理）。姓フィールドは `#last_name`。※juku_beta 主 |
@@ -86,6 +88,7 @@
 | `tests/tframe/page/bank_actions_history_ichiran_test.js` | `bank_actions_history_ichiran_search_data.csv` | 口座振替データ履歴（`bankActionsHistory/sw/_default`）。フィルタは `inputType` のみでセッション記憶なし。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/sharei_total_ichiran_test.js` | `sharei_total_ichiran_search_data.csv` | 講師謝礼合計一覧（`shareiTotal/sw/_default`）。計上月（`keijouMonthMonth`）がセッション記憶され特定月に固定されデータ0件になることがあるため、検索前に必ず「すべて」へリセット。※culture_beta のみ |
 | `tests/tframe/page/entrance_log_ichiran_test.js` | `entrance_log_ichiran_search_data.csv` | 入退記録一覧（`entranceLog/sw/_default`）。rangeFrom/rangeTo（入退日時）の既定が「本日」のみで広げる。※juku_beta のみ |
+| `tests/tframe/page/entrance_log_ichiran_sort_test.js` | `entrance_log_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キーなし）※juku_beta のみ（#226） |
 | `tests/tframe/page/contact_ichiran_test.js` | `contact_ichiran_search_data.csv` | 連絡一覧（`contact/sw/_default`）。検索条件が多い。**スケジュール開始日・作成日はどちらか一方を7日以内にしないと検索が拒否される**ため、片方のみ広げる。実機確認時点でデータ0件のため `verifyResultsExist`（弱いチェック）を使用。※juku_beta のみ |
 | `tests/tframe/page/prospect_list_touroku_test.js` | `prospect_list_touroku_data.csv` | 名簿リスト編集（登録・`prospectList/ew/_default`）。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/announcement_touroku_test.js` | `announcement_touroku_data.csv` | お知らせ編集（登録・`announcement/ew/_default`）。postStart/postEnd/titleが必須。※culture_beta / juku_beta 両対応 |

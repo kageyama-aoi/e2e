@@ -1,0 +1,9 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,lastName
+入退日時_昇順,cardInputDate,asc,2015-01-01 00:00,2035-12-31 23:59,
+入退日時_降順,cardInputDate,desc,2015-01-01 00:00,2035-12-31 23:59,
+氏名_昇順,fullName,asc,2015-01-01 00:00,2035-12-31 23:59,
+氏名_降順,fullName,desc,2015-01-01 00:00,2035-12-31 23:59,
+ID番号_昇順,idNumber,asc,2015-01-01 00:00,2035-12-31 23:59,
+ID番号_降順,idNumber,desc,2015-01-01 00:00,2035-12-31 23:59,
+入退状況_昇順,entranceStatus,asc,2015-01-01 00:00,2035-12-31 23:59,
+入退状況_降順,entranceStatus,desc,2015-01-01 00:00,2035-12-31 23:59,

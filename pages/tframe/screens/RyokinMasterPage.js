@@ -8,6 +8,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -96,6 +97,17 @@ module.exports = {
     if (data.gesshaKubun)    I.selectOption('#gesshaKubun', data.gesshaKubun);
     if (data.packageId)      I.selectOption('#packageId', data.packageId);
   },
+
+  /**
+   * 料金マスタ一覧のソート定義（#226 バッチ8・juku_beta で実機確認）。
+   * 料金名は表示値と別の順（英字が記号より前に来る）で並ぶため grouped。第2キー=レコードIDの降順。
+   */
+  listSortTable: createSortableTable({
+    label: '料金マスタ一覧',
+    container: LIST_CONTAINER,
+    columns: { name: 'grouped', packageName: 'string', updatedAt: 'datetime' },
+    secondary: { key: '_recordId', type: 'string', dir: 'desc' },
+  }),
 
   ...createIchiranMixin('料金マスタ一覧'),
 };

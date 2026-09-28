@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-28 17:25 (JST)
+> 最終更新: 2026-09-28 17:36 (JST)
 
-**合計 141 テスト**（shimamura 30 / tframe 109 / taskreport 1 / smoke 1）
+**合計 144 テスト**（shimamura 30 / tframe 112 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（109件）
+## tframe（112件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（99件）
+### page/（102件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -130,6 +130,7 @@
 | `email_template_ichiran_test.js` | — | Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_template_touroku_test.js` | — | Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
+| `entrance_log_ichiran_sort_test.js` | — | 入退記録一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `entrance_log_ichiran_test.js` | — | 入退記録一覧の全期間検索を確認（juku_beta 専用） |
 | `entrance_log_touroku_test.js` | — | 入退記録編集の新規登録を確認（juku_beta 専用・受講生ポップアップから選択） |
 | `fee_ichiran_sort_test.js` | — | 料金一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
@@ -169,8 +170,10 @@
 | `report_stschedule_ichiran_test.js` | — | 受講生スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
 | `report_teschedule_ichiran_test.js` | — | 講師スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
 | `report_test.js` | — | レポート画面の表示・出力操作を確認 |
+| `ryokin_master_ichiran_sort_test.js` | — | 料金マスタ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードIDの降順）の並びを検証 |
 | `ryokin_master_ichiran_test.js` | — | 料金マスタ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_master_touroku_test.js` | — | 料金マスタの新規作成フォームへの入力・保存を確認（juku_test のみ） |
+| `ryokin_package_ichiran_sort_test.js` | — | 料金パッケージ一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `ryokin_package_ichiran_test.js` | — | 料金パッケージ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_package_touroku_test.js` | — | 料金パッケージの新規作成フォームへの入力・保存を確認（juku_test のみ） |
 | `sharei_total_ichiran_test.js` | — | 講師謝礼合計一覧の空検索と謝礼項目絞り込みを確認（culture_beta 専用） |

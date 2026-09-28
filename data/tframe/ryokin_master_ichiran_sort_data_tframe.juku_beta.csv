@@ -1,0 +1,7 @@
+scenario,sortKey,sortDir,name
+料金名_昇順,name,asc,
+料金名_降順,name,desc,
+パッケージ名_昇順,packageName,asc,
+パッケージ名_降順,packageName,desc,
+更新日時_昇順,updatedAt,asc,
+更新日時_降順,updatedAt,desc,

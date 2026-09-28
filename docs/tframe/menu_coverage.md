@@ -143,9 +143,9 @@
 
 | 画面名 | route | C | J | Page Object | 登録テスト | 一覧テスト | その他テスト |
 |---|---|:-:|:-:|---|---|---|---|
-| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
-| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
-| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 今日のコーススケジュール | `calendar/sw/_default?calRowType=course` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_sort_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 今日の講師スケジュール | `calendar/sw/_default?calRowType=teacher` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_sort_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
+| 今日の教室スケジュール | `calendar/sw/_default?calRowType=classroom` | ● | ● | ✗ | ✗ | ✗ | △ menu-nav `calendar_test.js` / `entrance_log_ichiran_sort_test.js` / `entrance_log_ichiran_test.js` / `entrance_log_touroku_test.js` |
 | 入退記録登録 | `entranceLog/ew/_default` | - | ● | ✓ CalendarPage | ✓ `entrance_log_touroku_test.js` | ✗ |  |
 | 入退記録一覧 | `entranceLog/sw/_default` | - | ● | ✓ CalendarPage | ✗ | ✓ `entrance_log_ichiran_test.js` |  |
 
