@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -136,6 +137,28 @@ def iter_children_sorted(dir_path: Path) -> list[Path]:
     return children
 
 
+def list_untracked(root: Path) -> set[Path]:
+    """git の未追跡ファイル・ディレクトリ（.gitignore 対象は除く）の絶対パス集合を返します。
+
+    git が使えない・リポジトリ外の場合は空集合を返します（除外なしで続行）。
+
+    Args:
+        root (Path): 走査のルートディレクトリ（git コマンドの実行場所）。
+
+    Returns:
+        set[Path]: 未追跡パスの集合。未追跡ディレクトリは配下を列挙せずディレクトリ自体を返します。
+    """
+    try:
+        out = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard", "--directory", "-z"],
+            cwd=root, capture_output=True, check=True,
+        ).stdout.decode("utf-8")
+    except (OSError, subprocess.CalledProcessError):
+        print("[tree_generator] git ls-files に失敗したため未追跡ファイルの除外をスキップします")
+        return set()
+    return {(root / e.rstrip("/")).resolve() for e in out.split("\0") if e}
+
+
 def build_tree_lines(
     root: Path,
     *,
@@ -143,6 +166,7 @@ def build_tree_lines(
     include_hidden: bool,
     exclude_dirs: set[str],
     only_dirs: bool,
+    exclude_paths: set[Path] | None = None,
 ) -> list[str]:
     """ディレクトリ構造を表す文字列のリストを生成します。
 
@@ -152,6 +176,7 @@ def build_tree_lines(
         include_hidden (bool): 隠しファイル/ディレクトリを含めるかどうか。
         exclude_dirs (set[str]): 除外するディレクトリ名。
         only_dirs (bool): True の場合、ディレクトリのみを表示しファイルを無視します。
+        exclude_paths (set[Path] | None): 表示しない絶対パスの集合（未追跡ファイルの除外用）。
 
     Returns:
         list[str]: ツリー図の各行を表す文字列のリスト。
@@ -167,6 +192,7 @@ def build_tree_lines(
         children = [
             c for c in iter_children_sorted(current)
             if not should_skip(c, include_hidden, exclude_dirs)
+            and not (exclude_paths and c.resolve() in exclude_paths)
         ]
         if only_dirs:
             children = [c for c in children if c.is_dir()]
@@ -318,6 +344,11 @@ def parse_args() -> argparse.Namespace:
         default=",".join(sorted(config.DEFAULT_EXCLUDE_DIRS)),
         help="除外するディレクトリ名をカンマ区切りで指定",
     )
+    p.add_argument(
+        "--exclude-untracked",
+        action="store_true",
+        help="git の未追跡ファイルを表示しない（pre-commit フック用。作業中ファイルの混入を防ぐ）",
+    )
     return p.parse_args()
 
 
@@ -340,6 +371,7 @@ def main() -> None:
         include_hidden=bool(args.include_hidden),
         exclude_dirs=exclude_dirs,
         only_dirs=bool(args.only_dirs),
+        exclude_paths=list_untracked(root.resolve()) if args.exclude_untracked else None,
     )
 
     if args.update:
