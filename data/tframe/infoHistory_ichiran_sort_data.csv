@@ -1,0 +1,13 @@
+scenario,sortKey,sortDir,name,categoryMain
+件名_昇順,name,asc,,
+件名_降順,name,desc,,
+氏名_昇順,fullName,asc,,
+氏名_降順,fullName,desc,,
+対応日_昇順,memodate,asc,,
+対応日_降順,memodate,desc,,
+大分類_昇順,categoryMain,asc,,
+大分類_降順,categoryMain,desc,,
+小分類_昇順,categorySub,asc,,
+小分類_降順,categorySub,desc,,
+更新日時_昇順,updated_at,asc,,
+更新日時_降順,updated_at,desc,,

@@ -9,6 +9,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -36,6 +37,21 @@ module.exports = {
     if (data.categoryMain) I.selectOption('#categoryMain', data.categoryMain);
   },
 
+  /**
+   * 対応履歴一覧のソート定義（#226 バッチ5・culture_beta で実機確認）。
+   * 件名は英字の大小を区別しない順。氏名はフリガナ順・分類は内部コード順のため grouped。
+   * 第2キー=更新日時の降順。
+   */
+  listSortTable: createSortableTable({
+    label: '対応履歴一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      name: 'stringCi', fullName: 'grouped', memodate: 'string', categoryMain: 'grouped',
+      categorySub: 'grouped', updated_at: 'datetime',
+    },
+    secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
+  }),
+
   ...createIchiranMixin('対応履歴一覧'),
 
   // ----------------------------------------------------------------
@@ -60,6 +76,17 @@ module.exports = {
     I.say('【対応履歴テンプレート一覧】検索条件を入力');
     fillTextFields(I, { name: data.name });
   },
+
+  /**
+   * 対応履歴テンプレート一覧のソート定義（#226 バッチ5）。更新日時は秒まで表示されるため string。
+   * 実機のデータが3件しかなく第2キーを確認できないため、第2キーなしとして扱う。
+   */
+  templateSortTable: createSortableTable({
+    label: '対応履歴テンプレート一覧',
+    container: LIST_CONTAINER,
+    columns: { name: 'string', categoryMain: 'grouped', categorySub: 'grouped', updated_at: 'string' },
+    secondary: null,
+  }),
 
   // ----------------------------------------------------------------
   //  対応履歴テンプレート登録（EW）

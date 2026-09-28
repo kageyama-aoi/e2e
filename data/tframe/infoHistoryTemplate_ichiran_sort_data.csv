@@ -1,0 +1,9 @@
+scenario,sortKey,sortDir,name
+名称_昇順,name,asc,
+名称_降順,name,desc,
+大分類_昇順,categoryMain,asc,
+大分類_降順,categoryMain,desc,
+小分類_昇順,categorySub,asc,
+小分類_降順,categorySub,desc,
+更新日時_昇順,updated_at,asc,
+更新日時_降順,updated_at,desc,
