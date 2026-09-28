@@ -13,6 +13,7 @@
  * 使い方:
  *   node scripts/docs/gen_tframe_menu_coverage.js           # 再生成（ファイルを書き換える）
  *   node scripts/docs/gen_tframe_menu_coverage.js --check    # 差分があれば exit 1（書き換えない・pre-commit / CI 用）
+ *   node scripts/docs/gen_tframe_menu_coverage.js --exclude-untracked  # git の未追跡ファイルを数えない（pre-commit 用）
  *
  * 作成日: 2026-09-10（Issue #208）
  */
@@ -21,6 +22,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const SNAP_DIR = path.join(ROOT, 'pages', 'tframe', '_common', 'menuSnapshot');
@@ -28,6 +30,32 @@ const SCREENS_DIR = path.join(ROOT, 'pages', 'tframe', 'screens');
 const TESTS_DIR = path.join(ROOT, 'tests', 'tframe', 'page');
 const CONF_FILE = path.join(ROOT, 'codecept.conf.js');
 const DOC_FILE = path.join(ROOT, 'docs', 'tframe', 'menu_coverage.md');
+
+/**
+ * git の未追跡ファイル（.gitignore 対象は除く）の絶対パス集合を返す。
+ * `--exclude-untracked` 指定時のみ使う。作業中の PO / テストが無関係なコミットの表に混入するのを防ぐ（#247）。
+ * @returns {Set<string>} git が使えなければ空集合
+ */
+function listUntracked() {
+  try {
+    const out = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'pages', 'tests'], { cwd: ROOT });
+    return new Set(out.toString('utf8').split('\0').filter(Boolean).map((e) => path.resolve(ROOT, e)));
+  } catch (e) {
+    console.warn('[gen_tframe_menu_coverage] git ls-files に失敗したため未追跡ファイルの除外をスキップします');
+    return new Set();
+  }
+}
+
+const UNTRACKED = process.argv.includes('--exclude-untracked') ? listUntracked() : new Set();
+
+/**
+ * ディレクトリ内のファイル名一覧（`--exclude-untracked` 指定時は未追跡ファイルを除く）
+ * @param {string} dir
+ * @returns {string[]}
+ */
+function listFiles(dir) {
+  return fs.readdirSync(dir).filter((f) => !UNTRACKED.has(path.join(dir, f)));
+}
 
 const START = '<!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_tframe_menu_coverage.js。手で編集しない -->';
 const END = '<!-- AUTOGEN:menu-table END -->';
@@ -119,7 +147,7 @@ function scanPageObjects() {
   const routeToPO = new Map();
   const poMethods = new Map(); // poBase -> [{ method, routeKey }]
 
-  for (const file of fs.readdirSync(SCREENS_DIR)) {
+  for (const file of listFiles(SCREENS_DIR)) {
     if (!file.endsWith('.js')) continue;
     const poBase = file.replace(/\.js$/, '');
     const src = fs.readFileSync(path.join(SCREENS_DIR, file), 'utf8');
@@ -200,7 +228,7 @@ function scanTests(injectMap, poMethods) {
   const routeToTests = new Map();
   const poBaseToTestFiles = new Map(); // PO basename -> Set(test file)
 
-  for (const file of fs.readdirSync(TESTS_DIR)) {
+  for (const file of listFiles(TESTS_DIR)) {
     if (!file.endsWith('_test.js')) continue;
     const src = fs.readFileSync(path.join(TESTS_DIR, file), 'utf8');
     const kind = /_touroku_test\.js$/.test(file) ? '登録'

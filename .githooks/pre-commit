@@ -5,6 +5,7 @@
 #    ドキュメントが名指ししているパス・関数名が実在するかを確認する（警告のみ・commit は止めない）。
 # 2) tests/ または run/test_descriptions.json に変更があるコミットで、
 #    ディレクトリツリー(README) とテストカタログ(docs/project/test_catalog.md) を自動再生成して stage する。
+#    再生成は --exclude-untracked 付き（未追跡の作業中ファイルを無関係なコミットに混入させない・#247）。
 #
 # 有効化: npm install（postinstall で core.hooksPath=.githooks を設定）
 #         もしくは手動で `git config core.hooksPath .githooks`
@@ -46,7 +47,7 @@ fi
 if echo "$changed" | grep -qE '^(pages/tframe/screens/|pages/tframe/_common/menuSnapshot/|tests/tframe/page/|codecept\.conf\.js$)'; then
   if command -v node >/dev/null 2>&1; then
     echo "[pre-commit] docs/tframe/menu_coverage.md のアイコン別表を再生成..."
-    node scripts/docs/gen_tframe_menu_coverage.js && git add docs/tframe/menu_coverage.md \
+    node scripts/docs/gen_tframe_menu_coverage.js --exclude-untracked && git add docs/tframe/menu_coverage.md \
       || echo "[pre-commit] gen_tframe_menu_coverage.js 実行失敗（無視して続行）"
   fi
 fi
@@ -55,8 +56,8 @@ fi
 echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
 
 echo "[pre-commit] docs 再生成（tree + test catalog）..."
-python scripts/docs/tree_generator.py -u    || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }
-python scripts/docs/gen_test_catalog.py     || { echo "[pre-commit] gen_test_catalog.py 失敗"; exit 1; }
+python scripts/docs/tree_generator.py -u --exclude-untracked || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }
+python scripts/docs/gen_test_catalog.py --exclude-untracked || { echo "[pre-commit] gen_test_catalog.py 失敗"; exit 1; }
 
 git add README.md docs/project/test_catalog.md
 echo "[pre-commit] README.md / docs/project/test_catalog.md を更新・stage しました"

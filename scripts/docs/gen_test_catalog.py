@@ -22,6 +22,9 @@
     # ドリフトがあれば exit 1（CI・pre-commit フック用。ファイルは書き換えない）
     python scripts/docs/gen_test_catalog.py --check
 
+    # git の未追跡テストを数えない（pre-commit フック用。作業中ファイルの混入を防ぐ）
+    python scripts/docs/gen_test_catalog.py --exclude-untracked
+
 作成日: 2026-09-01
 """
 
@@ -30,6 +33,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -88,13 +92,27 @@ def load_descriptions() -> dict:
         return json.load(f)
 
 
-def collect_product(name: str, descriptions: dict) -> ProductCatalog:
+def list_untracked() -> set[Path]:
+    """git の未追跡ファイル（.gitignore 対象は除く）の絶対パス集合を返す。git が使えなければ空集合。"""
+    try:
+        out = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", "tests"],
+            cwd=ROOT, capture_output=True, check=True,
+        ).stdout.decode("utf-8")
+    except (OSError, subprocess.CalledProcessError):
+        print("[gen_test_catalog] git ls-files に失敗したため未追跡ファイルの除外をスキップします")
+        return set()
+    return {(ROOT / e).resolve() for e in out.split("\0") if e}
+
+
+def collect_product(name: str, descriptions: dict, exclude: set[Path] = frozenset()) -> ProductCatalog:
     product_dir = TESTS_DIR / name
     catalog = ProductCatalog(name=name)
 
     test_files = sorted(
         p.relative_to(product_dir).as_posix()
         for p in product_dir.rglob("*_test.js")
+        if p.resolve() not in exclude
     )
     desc_map = {k: v for k, v in descriptions.get(name, {}).items()}
 
@@ -171,11 +189,17 @@ def main() -> int:
         action="store_true",
         help="ドリフトがあれば exit 1（ファイルは書き換えない）",
     )
+    parser.add_argument(
+        "--exclude-untracked",
+        action="store_true",
+        help="git の未追跡テストを数えない（pre-commit フック用）",
+    )
     args = parser.parse_args()
 
     descriptions = load_descriptions()
+    exclude = list_untracked() if args.exclude_untracked else set()
     catalogs = [
-        collect_product(name, descriptions)
+        collect_product(name, descriptions, exclude)
         for name in PRODUCT_ORDER
         if (TESTS_DIR / name).is_dir()
     ]

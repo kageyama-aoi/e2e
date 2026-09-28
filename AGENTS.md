@@ -40,7 +40,7 @@
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage` tframe アイコン別マッピング表（`docs/tframe/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。
 - `npm run docs:all` ツリー＋カタログ＋メニュー表をまとめて更新。
-- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。
+- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。フックからは `--exclude-untracked` 付きで呼ぶため、git 未追跡の作業中ファイルは載らない（手動の `npm run docs:*` は作業ツリー全体を数える）。
 
 ## ディレクトリ配置ルール
 
