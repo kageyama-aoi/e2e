@@ -5,6 +5,7 @@
 const { I } = inject();
 const createMenuNavigationMixin = require('../_common/MenuNavigationMixin');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, selectAreaThenBranch, selectFirstFromPopupPicker } = require('../../../support/tframe/utils');
 const { TIMEOUTS } = require('../../../support/tframe/constants');
@@ -66,6 +67,17 @@ module.exports = {
   async verifyEntranceLogResultRowsExist() {
     await verifyResultRowsExist('入退記録一覧');
   },
+
+  /**
+   * 入退記録一覧のソート定義（#226 バッチ8・juku_beta で実機確認）。
+   * 入退日時は秒まで表示されるため string。氏名・入退状況は grouped。第2キーなし。
+   */
+  entranceLogSortTable: createSortableTable({
+    label: '入退記録一覧',
+    container: LIST_CONTAINER,
+    columns: { cardInputDate: 'string', fullName: 'grouped', idNumber: 'stringCi', entranceStatus: 'grouped' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('入退記録一覧'),
 

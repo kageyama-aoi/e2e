@@ -1,0 +1,7 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,lastName
+売上日_昇順,sellDate,asc,2015-01-01,2035-12-31,
+売上日_降順,sellDate,desc,2015-01-01,2035-12-31,
+売上No_昇順,salesno,asc,2015-01-01,2035-12-31,
+売上No_降順,salesno,desc,2015-01-01,2035-12-31,
+開始日_昇順,startDate,asc,2015-01-01,2035-12-31,
+開始日_降順,startDate,desc,2015-01-01,2035-12-31,

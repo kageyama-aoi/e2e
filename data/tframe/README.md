@@ -55,12 +55,19 @@
 | `tests/tframe/page/branch_ichiran_test.js` | `branch_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 校舎名で絞り込み→特定レコード確認 |
 | `tests/tframe/page/branch_ichiran_sort_test.js` | `branch_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#225） |
 | `tests/tframe/page/ryokin_master_ichiran_test.js` | `ryokin_master_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/ryokin_master_ichiran_sort_test.js` | `ryokin_master_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キー=レコードIDの降順）※juku_beta のみ（#226） |
 | `tests/tframe/page/ryokin_package_ichiran_test.js` | `ryokin_package_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 名前で絞り込み→特定レコード確認 ※juku_test のみ |
+| `tests/tframe/page/ryokin_package_ichiran_sort_test.js` | `ryokin_package_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キーなし）※juku_beta のみ（#226） |
 | `tests/tframe/page/fee_ichiran_test.js` | `fee_ichiran_search_data.csv` | 料金一覧（経理）。B: 全期間検索→実データ行確認 / C: 受講生姓で絞り込み。dateFrom/dateTo で日付レンジを広げる（既定は当月）。※juku_beta 主 |
+| `tests/tframe/page/fee_ichiran_sort_test.js` | `fee_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/contract_ichiran_test.js` | `contract_ichiran_search_data.csv` | 契約一覧（経理）。姓フィールドは `#last_name`。※juku_beta 主 |
+| `tests/tframe/page/contract_ichiran_sort_test.js` | `contract_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/payment_ichiran_test.js` | `payment_ichiran_search_data.csv` | 入金一覧（経理）。※juku_beta 主 |
+| `tests/tframe/page/payment_ichiran_sort_test.js` | `payment_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時の降順）（#226） |
 | `tests/tframe/page/unpaid_amount_ichiran_test.js` | `unpaid_amount_ichiran_search_data.csv` | 未収金一覧（経理 `smsTransaction/sw/unpaidAmountList`）。※juku_beta 主 |
+| `tests/tframe/page/unpaid_amount_ichiran_sort_test.js` | `unpaid_amount_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/transaction_ichiran_test.js` | `transaction_ichiran_search_data.csv` | 入出金一覧（経理 `smsTransaction/sw/_default`）。※juku_beta 主 |
+| `tests/tframe/page/transaction_ichiran_sort_test.js` | `transaction_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/email_ichiran_test.js` | `email_ichiran_search_data.csv` | Eメール一覧。dateFrom/dateTo で送信日レンジを広げる（既定は当月）。※juku_beta 主 |
 | `tests/tframe/page/email_ichiran_sort_test.js` | `email_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/email_template_ichiran_test.js` | `email_template_ichiran_search_data.csv` | Eメールテンプレート一覧。name で絞り込み。※juku_beta 主 |
@@ -81,6 +88,7 @@
 | `tests/tframe/page/bank_actions_history_ichiran_test.js` | `bank_actions_history_ichiran_search_data.csv` | 口座振替データ履歴（`bankActionsHistory/sw/_default`）。フィルタは `inputType` のみでセッション記憶なし。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/sharei_total_ichiran_test.js` | `sharei_total_ichiran_search_data.csv` | 講師謝礼合計一覧（`shareiTotal/sw/_default`）。計上月（`keijouMonthMonth`）がセッション記憶され特定月に固定されデータ0件になることがあるため、検索前に必ず「すべて」へリセット。※culture_beta のみ |
 | `tests/tframe/page/entrance_log_ichiran_test.js` | `entrance_log_ichiran_search_data.csv` | 入退記録一覧（`entranceLog/sw/_default`）。rangeFrom/rangeTo（入退日時）の既定が「本日」のみで広げる。※juku_beta のみ |
+| `tests/tframe/page/entrance_log_ichiran_sort_test.js` | `entrance_log_ichiran_sort_data.csv`（ヘッダのみ）/ `_tframe.juku_beta.csv` | 列ヘッダソート検証（第2キーなし）※juku_beta のみ（#226） |
 | `tests/tframe/page/contact_ichiran_test.js` | `contact_ichiran_search_data.csv` | 連絡一覧（`contact/sw/_default`）。検索条件が多い。**スケジュール開始日・作成日はどちらか一方を7日以内にしないと検索が拒否される**ため、片方のみ広げる。実機確認時点でデータ0件のため `verifyResultsExist`（弱いチェック）を使用。※juku_beta のみ |
 | `tests/tframe/page/prospect_list_touroku_test.js` | `prospect_list_touroku_data.csv` | 名簿リスト編集（登録・`prospectList/ew/_default`）。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/announcement_touroku_test.js` | `announcement_touroku_data.csv` | お知らせ編集（登録・`announcement/ew/_default`）。postStart/postEnd/titleが必須。※culture_beta / juku_beta 両対応 |
@@ -97,7 +105,9 @@
 | `tests/tframe/page/proByCourse_ichiran_test.js` | `proByCourse_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 商品名で絞り込み→結果あり確認（culture_beta のみ） |
 | `tests/tframe/page/proByCourse_ichiran_sort_test.js` | `proByCourse_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/infoHistory_ichiran_test.js` | `infoHistory_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: 件名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
+| `tests/tframe/page/infoHistory_ichiran_sort_test.js` | `infoHistory_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キー=更新日時の降順）（#226） |
 | `tests/tframe/page/infoHistoryTemplate_ichiran_test.js` | `infoHistoryTemplate_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: テンプレート名で絞り込み→結果あり確認（受講生・講師の両 menuModule） |
+| `tests/tframe/page/infoHistoryTemplate_ichiran_sort_test.js` | `infoHistoryTemplate_ichiran_sort_data.csv` | 列ヘッダソート検証（第2キーなし）（#226） |
 | `tests/tframe/page/tuition_fee_bulk_create_test.js` | `tuition_fee_bulk_create_data.csv` | 翌月月謝一括作成（一括処理・`smsFee/ew/tuitionFeeBulkCreate`）。冪等（二重作成されない）ため「完了しました」（成功）と「処理対象の月謝情報がありません。」（対象なし・実質正常系）の両方を許容。※culture_beta / juku_beta 両対応 |
 | `tests/tframe/page/te_reward_calc_test.js` | `te_reward_calc_data.csv` | 講師謝礼計算（一括処理・`shareiDetail/sw/teRewardCalc`）。既存データを上書き成功するため毎回「完了しました」を返す。※culture_beta のみ |
 | `tests/tframe/page/te_reward_total_calc_test.js` | `te_reward_total_calc_data.csv` | 講師謝礼合計計算（一括処理・`shareiTotal/sw/teRewardTotalCalc`）。先に講師謝礼計算を実行してからでないと「処理対象の講師謝礼情報がありません。」になるため、テスト内でArrangeとして講師謝礼計算を挟む。※culture_beta のみ |
