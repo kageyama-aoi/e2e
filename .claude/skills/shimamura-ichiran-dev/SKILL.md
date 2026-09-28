@@ -48,7 +48,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
 | 共通ユーティリティ・定数 | `support/shimamura/utils.js`（`fillTextFieldsByName`）、`support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
 | CSV の形式 | `data/shimamura/transaction_ichiran_search_data.csv` |
-| 画面 URL 一覧 | `scripts/html/shimamura/main_menu_links.json` / `*_links.json` |
+| 画面 URL 一覧・未着手画面の確認 | `docs/shimamura/menu_coverage.md`（全メニュー × PO/テスト有無の自動生成表。route と折りたたみグループ名・`toggleId` もここで引ける）。元データは `pages/shimamura/_common/menuSnapshot/testgcp.json` |
 | フォルダ配置ルール | `AGENTS.md` |
 
 ---
