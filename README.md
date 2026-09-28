@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-28 16:47:14
+Last updated: 2026-09-28 16:54:13
 
 ```text
 e2e/
@@ -283,7 +283,12 @@ e2e/
 │   │   ├── 2026-07-03-1435.md
 │   │   ├── 2026-07-06-1038.md
 │   │   ├── 2026-07-06-1418.md
-│   │   └── 2026-07-07-1619.md
+│   │   ├── 2026-07-07-1619.md
+│   │   ├── 2026-09-10-1604.md
+│   │   ├── 2026-09-11-1822.md
+│   │   ├── 2026-09-24-1825.md
+│   │   ├── 2026-09-25-1139.md
+│   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
 │   │   ├── MEMORY.md
@@ -1051,6 +1056,7 @@ e2e/
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
 │       ├── infoHistoryTemplate_touroku_data.csv
 │       ├── jukusei_course_link_flow_data.csv
+│       ├── jukusei_ichiran_extract_data.csv
 │       ├── jukusei_ichiran_search_data.csv
 │       ├── jukusei_ichiran_sort_data.csv
 │       ├── jukusei_touroku_data.csv
@@ -1240,6 +1246,7 @@ e2e/
 │   │   │   ├── emailTemplate_touroku.html
 │   │   │   ├── emailTemplateCategory_touroku.html
 │   │   │   ├── entranceLog_list.html
+│   │   │   ├── entranceLog_touroku.html
 │   │   │   ├── error_screenshot.png
 │   │   │   ├── infoHistory_student_list.html
 │   │   │   ├── infoHistoryTemplate_student_list.html
@@ -1573,6 +1580,7 @@ e2e/
 │       │   ├── infoHistory_ichiran_test.js
 │       │   ├── infoHistoryTemplate_ichiran_test.js
 │       │   ├── infoHistoryTemplate_touroku_test.js
+│       │   ├── jukusei_ichiran_extract_test.js
 │       │   ├── jukusei_ichiran_sort_test.js
 │       │   ├── jukusei_ichiran_test.js
 │       │   ├── jukusei_test.js

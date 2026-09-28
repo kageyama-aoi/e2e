@@ -254,3 +254,144 @@ I.retry({ retries: 2, minTimeout: 500 })
 
 **「テストが仕様書として読める」レベルの、かなり完成度の高い構成**です。
 
+---
+
+## 11. DIコンテナと `inject()` の仕組み
+
+### 概念
+`pages/`のPage Objectがテストに渡ってくる仕組み（DI: 依存性注入）。CodeceptJSは
+`codecept.conf.js`の`include`に書かれた全エントリを起動時にrequireし、**1個の
+「全部乗せオブジェクト」**にまとめてコンテナに保持する。`inject()`は、このオブジェクトを
+呼ぶたびに返しているだけの関数。
+
+```js
+// CodeceptJSが内部で持っているイメージ（実際のコードではない）
+const supportObjects = {
+  I: require('./support/steps_file.js')(),           // actor()でラップ済み
+  koshiPage: require('./pages/tframe/screens/KoshiPage.js'),
+  loginKannrisyaPage: require('./pages/tframe/auth/LoginKannrisyaPage.js'),
+  // ... include に書いた分だけ
+};
+```
+
+Page Object側の`const { I } = inject();`（`pages/tframe/screens/KoshiPage.js`）も、
+このオブジェクトから`I`というキーを取り出しているだけのJS分割代入で、特別な魔法はない。
+
+### 3層構造
+```
+Helper (Playwright)                 ← ブラウザ操作の実体（click, fillField...）
+  ↑ actor() でラップ
+I actor (support/steps_file.js)     ← 全Helperメソッド + 独自メソッド(saveScreenshotWithTimestamp等)
+  ↑ Page Objectがこれを呼ぶ
+Page Object (pages/tframe/screens/KoshiPage.js)  ← 業務単位の操作(navigateToRegisterPage等)
+```
+
+`I`も`include`に`I: './support/steps_file.js'`として登録されている、他の
+Page Objectと**まったく同じ扱いの1エントリ**にすぎない。
+
+### 「リフレクションではない」証拠
+テストの`Scenario`コールバックも同じ1個のオブジェクトを毎回受け取っているだけなので、
+分割代入をやめて丸ごと受け取っても同じように動く。
+
+```js
+// tests/tframe/page/koshi_touroku_test.js の実際の書き方
+Data(csvData).Scenario('...', async ({ I, loginKannrisyaPage, koshiPage, current }) => {
+  koshiPage.navigateToRegisterPage();
+});
+
+// 分割代入をやめても全く同じ意味（CodeceptJSが引数名を読み取っているわけではない）
+Scenario('...', async (args) => {
+  args.koshiPage.navigateToRegisterPage();
+});
+```
+
+`Data(csvData).Scenario()`の`current`も同じ仕組みで、CSVの「今回の行」がこの
+オブジェクトに追加されているだけ（`I`や`koshiPage`と対等な1キー）。
+
+### まとめ表
+
+| 用語 | 正体 |
+|---|---|
+| `include`（codecept.conf.js） | 「名前→どのファイルをrequireするか」の一覧表 |
+| コンテナ | `include`を全部requireしてまとめた、たった1個のオブジェクト |
+| `inject()` | そのオブジェクトを返すだけの関数 |
+| `Scenario`のコールバック引数 | 同じオブジェクトが毎回渡ってくる。分割代入は自分で好きなキーを選んでいるだけ |
+| `current`（Data駆動時のみ） | そのオブジェクトに「今回のCSV行」が追加されたもの |
+
+---
+
+## 12. Suite / Scenario / Step とプラグインの仕組み（イベント駆動）
+
+### 概念
+`codecept.conf.js`の`plugins`（`allure` / `stepByStepReport` / `autoLogin`）は、
+テストコードから明示的に呼ばれることが一切ない。CodeceptJSが実行の節目
+（Suite/Scenario/Step）で発火するイベントに、プラグイン側が「後から」
+`event.dispatcher.on(...)`で登録しているだけ。
+
+### CodeceptJSはMochaの上で動いている
+
+| CodeceptJSの用語 | Mochaで言うと | 本リポジトリの実例 |
+|---|---|---|
+| Suite | `describe()` 1個 | `Feature('講師登録')` の1ファイル |
+| Scenario | `it()` 1個 | CSVの1行（データ駆動なら行ごとに1個ずつ） |
+| Step | Mochaには存在しない、CodeceptJS独自の概念 | `I.click(...)` や `I.waitForElement(...)` の1呼び出し |
+
+### Stepの粒度は `I.*` 呼び出し単位（Page Objectのメソッド単位ではない）
+
+Stepイベントを発火する仕組みは`I`（`actor()`でラップされたオブジェクト）の
+メソッドにだけ組み込まれている。Page Objectはただのプレーンな関数なので、
+`koshiPage.navigateToRegisterPage()`という**呼び出し自体は1 Stepとしてカウントされない**。
+その中身が呼んでいる`I.click(...)`・`I.waitForElement(...)`の**1つ1つ**がStepになる。
+
+```js
+// KoshiPage.js
+navigateToRegisterPage() {
+  I.waitForElement(...);   // ← Step 1個
+  I.click(...);            // ← Step 1個
+}
+```
+
+`codecept.conf.js`の`stepByStepReport: { screenshotsForAllSteps: true }`は
+この粒度でスクリーンショットを撮っている。Page Objectのメソッド1個につき1枚ではなく
+中の`I.*`呼び出し1個につき1枚なので、想像より枚数が多くなりやすい
+（`run/run_gui.py`の`_drain_log_queue`が大量ログでUIを固まらせうる問題も、
+この粒度の細かさが一因）。
+
+### プラグインの中身（イメージ）
+
+```js
+// allure-codeceptjs や stepByStepReport の中身のイメージ（簡略化・実物ではない）
+const event = require('codeceptjs').event;
+
+module.exports = function (config) {
+  event.dispatcher.on(event.test.before, (test) => {
+    // Scenario開始 → Allureのノードを作り始める
+  });
+  event.dispatcher.on(event.step.after, (step) => {
+    // Step終了 → スクリーンショットを撮る
+  });
+  event.dispatcher.on(event.test.after, (test) => {
+    // Scenario終了 → Allureのノードを確定させる
+  });
+};
+```
+
+`plugins: { stepByStepReport: { enabled: true, ... } }`は「この関数を起動時に1回
+呼んでください」という指示に過ぎない。中で何をlistenするか（どのタイミングで何を
+するか）はプラグイン側のコード（別のnpmパッケージ内）が決めており、テストファイルの
+どこにも呼び出しが書かれないので「勝手に動く」ように見える。
+
+### 補足: `await`していない`I.click()`でもタイミングがズれない理由
+
+`I.click(...)`はPromiseを返す非同期処理だが、テストコードでは`await`せずに連続で
+書ける。これは`I`の各メソッドが呼ばれるたびに、実際の処理を即座に実行せず
+「recorder」という内部のキューに積んでいくため。Step開始/終了イベントもこの
+キューの実行タイミングに合わせて発火するので、`await`を書き忘れてもStepの記録順序が
+崩れない。
+
+### 3点で覚える
+
+1. **`inject()`は魔法ではない。** 起動時に`include`から作られた「1個の全部乗せオブジェクト」を、呼ぶたびに返しているだけ。
+2. **Stepの粒度は`I.*`の呼び出し単位。** Page Objectのメソッド1個 = Step 1個ではない。
+3. **プラグインはただのイベントリスナー。** `plugins`設定は「起動時にこの関数を1回呼ぶ」という指示で、実処理は`event.dispatcher.on(...)`で登録された中身（別パッケージ内）に書かれている。
+

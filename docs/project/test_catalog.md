@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-28 16:47 (JST)
+> 最終更新: 2026-09-28 16:54 (JST)
 
-**合計 134 テスト**（shimamura 30 / tframe 102 / taskreport 1 / smoke 1）
+**合計 135 テスト**（shimamura 30 / tframe 103 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（102件）
+## tframe（103件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（92件）
+### page/（93件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -137,6 +137,7 @@
 | `infoHistoryTemplate_ichiran_test.js` | — | 対応履歴テンプレート一覧の空検索とテンプレート名での絞り込みを確認 |
 | `infoHistoryTemplate_touroku_test.js` | — | 対応履歴テンプレートの登録フォーム入力と保存を確認 |
 | `infoHistory_ichiran_test.js` | — | 対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認 |
+| `jukusei_ichiran_extract_test.js` | — | _（説明未登録）_ |
 | `jukusei_ichiran_sort_test.js` | — | 受講生一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `jukusei_ichiran_test.js` | — | 受講生一覧の空検索と姓での絞り込み検索を確認 |
 | `jukusei_test.js` | — | 受講生一覧・管理画面の表示・操作を確認 |
@@ -204,4 +205,7 @@
 
 ## メンテナンス状況
 
-✅ ドリフトなし（全テストに説明あり／不要な説明エントリなし）
+### ⚠️ 説明が未登録のテスト（tframe）
+`run/test_descriptions.json` に 1 行説明を追記してください。
+
+- `tframe/page/jukusei_ichiran_extract_test.js`

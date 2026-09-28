@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug: syokai_helpers 単体",
+      "program": "${workspaceFolder}/output/debug_syokai.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug: shimamura 経理バリデーションエラー flow",
+      "program": "${workspaceFolder}/node_modules/codeceptjs/bin/codecept.js",
+      "args": [
+        "run",
+        "./tests/shimamura/flow/syokai_touroku_test.js",
+        "--profile", "shimamura.testgcp",
+        "--grep", "経理日付バリデーションエラー"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug: shimamura 新規受講生登録（正常系フル）",
+      "program": "${workspaceFolder}/node_modules/codeceptjs/bin/codecept.js",
+      "args": [
+        "run",
+        "./tests/shimamura/flow/syokai_touroku_test.js",
+        "--profile", "shimamura.testgcp",
+        "--grep", "@normal"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
