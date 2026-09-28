@@ -1,0 +1,11 @@
+scenario,sortKey,sortDir,name
+名称_昇順,name,asc,
+名称_降順,name,desc,
+校舎_昇順,branch_name,asc,
+校舎_降順,branch_name,desc,
+作成者_昇順,username,asc,
+作成者_降順,username,desc,
+登録日時_昇順,createdAt,asc,
+登録日時_降順,createdAt,desc,
+更新日時_昇順,updatedAt,asc,
+更新日時_降順,updatedAt,desc,

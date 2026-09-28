@@ -1,9 +1,9 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-25 16:57 (JST)
+> 最終更新: 2026-09-28 16:18 (JST)
 
-**合計 129 テスト**（shimamura 30 / tframe 97 / taskreport 1 / smoke 1）
+**合計 134 テスト**（shimamura 30 / tframe 102 / taskreport 1 / smoke 1）
 
 ## shimamura（30件）
 
@@ -57,7 +57,7 @@
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（97件）
+## tframe（102件）
 
 ### api/（1件）
 
@@ -89,7 +89,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（87件）
+### page/（92件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -97,6 +97,7 @@
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
 | `account_info_data_import_test.js` | — | 口座情報データ取込のガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
+| `announcement_ichiran_sort_test.js` | — | お知らせ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `announcement_ichiran_test.js` | — | お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `announcement_touroku_test.js` | — | お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `attendance_ichiran_test.js` | — | 本日の出席表一覧の全期間検索とコースカテゴリ絞り込みを確認（culture_beta のみ・校舎データ依存） |
@@ -119,9 +120,12 @@
 | `course_ichiran_test.js` | — | コース一覧の空検索とコース名での絞り込み検索を確認 |
 | `course_test.js` | — | コース一覧・詳細画面の表示を確認 |
 | `course_touroku_test.js` | — | コースの新規登録フォームへの入力・保存を確認 |
+| `email_ichiran_sort_test.js` | — | Eメール一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `email_ichiran_test.js` | — | Eメール一覧の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `email_template_category_ichiran_sort_test.js` | — | Eメールテンプレートカテゴリ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `email_template_category_ichiran_test.js` | — | Eメールテンプレートカテゴリ一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_template_category_touroku_test.js` | — | Eメールテンプレートカテゴリ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
+| `email_template_ichiran_sort_test.js` | — | Eメールテンプレート一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `email_template_ichiran_test.js` | — | Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_template_touroku_test.js` | — | Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
@@ -133,7 +137,6 @@
 | `infoHistoryTemplate_ichiran_test.js` | — | 対応履歴テンプレート一覧の空検索とテンプレート名での絞り込みを確認 |
 | `infoHistoryTemplate_touroku_test.js` | — | 対応履歴テンプレートの登録フォーム入力と保存を確認 |
 | `infoHistory_ichiran_test.js` | — | 対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認 |
-| `jukusei_ichiran_extract_test.js` | — | 受講生一覧を検索条件＋ソートキー指定で検索し、結果テーブルをCSV抽出（POC・ページ送りなし） |
 | `jukusei_ichiran_sort_test.js` | — | 受講生一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `jukusei_ichiran_test.js` | — | 受講生一覧の空検索と姓での絞り込み検索を確認 |
 | `jukusei_test.js` | — | 受講生一覧・管理画面の表示・操作を確認 |
@@ -149,9 +152,11 @@
 | `master_menu_test.js` | — | マスター設定メニューの各項目への遷移を確認 |
 | `payment_ichiran_test.js` | — | 入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `payment_statement_output_test.js` | — | 支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証） |
+| `poll_ichiran_sort_test.js` | — | アンケート一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_sort_test.js` | — | コース別商品一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
+| `prospect_list_ichiran_sort_test.js` | — | 名簿リスト一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `prospect_list_touroku_test.js` | — | 名簿リスト編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `report_inquiry_ichiran_test.js` | — | 問合せ・入学・退学レポートの空検索と受講生ステイタス絞り込みを確認（culture_beta 主） |
@@ -199,4 +204,7 @@
 
 ## メンテナンス状況
 
-✅ ドリフトなし（全テストに説明あり／不要な説明エントリなし）
+### ⚠️ 実体のない説明エントリ（tframe）
+テストが削除・リネームされた可能性があります。`run/test_descriptions.json` を見直してください。
+
+- `tframe/page/jukusei_ichiran_extract_test.js`

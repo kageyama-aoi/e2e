@@ -1,0 +1,13 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,title
+タイトル_昇順,title,asc,,,
+タイトル_降順,title,desc,,,
+登録日時_昇順,createdAt,asc,,,
+登録日時_降順,createdAt,desc,,,
+開始日_昇順,startDate,asc,,,
+開始日_降順,startDate,desc,,,
+終了日_昇順,endDate,asc,,,
+終了日_降順,endDate,desc,,,
+ステイタス_昇順,pollStatus,asc,,,
+ステイタス_降順,pollStatus,desc,,,
+回答数_昇順,pollTotalVotes,asc,,,
+回答数_降順,pollTotalVotes,desc,,,

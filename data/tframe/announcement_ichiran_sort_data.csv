@@ -1,0 +1,9 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,title
+タイトル_昇順,title,asc,,,
+タイトル_降順,title,desc,,,
+掲載開始_昇順,postStart,asc,,,
+掲載開始_降順,postStart,desc,,,
+掲載終了_昇順,postEnd,asc,,,
+掲載終了_降順,postEnd,desc,,,
+更新日時_昇順,updatedAt,asc,,,
+更新日時_降順,updatedAt,desc,,,
