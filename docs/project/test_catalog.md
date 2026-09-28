@@ -1,7 +1,7 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-28 16:18 (JST)
+> 最終更新: 2026-09-28 16:47 (JST)
 
 **合計 134 テスト**（shimamura 30 / tframe 102 / taskreport 1 / smoke 1）
 
@@ -204,7 +204,4 @@
 
 ## メンテナンス状況
 
-### ⚠️ 実体のない説明エントリ（tframe）
-テストが削除・リネームされた可能性があります。`run/test_descriptions.json` を見直してください。
-
-- `tframe/page/jukusei_ichiran_extract_test.js`
+✅ ドリフトなし（全テストに説明あり／不要な説明エントリなし）
