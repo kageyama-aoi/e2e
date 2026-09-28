@@ -428,7 +428,8 @@ function main() {
 
   const generated = renderTable(icons, routeToPO, routeToTests, poBaseToTestFiles);
 
-  const doc = fs.readFileSync(DOC_FILE, 'utf8');
+  // Windows（core.autocrlf=true）では CRLF で取り出されるため、改行差だけで --check が失敗しないよう LF に揃える
+  const doc = fs.readFileSync(DOC_FILE, 'utf8').replace(/\r\n/g, '\n');
   const secStart = doc.indexOf('## アイコン別 マッピング表');
   if (secStart === -1) {
     console.error('[gen_tframe_menu_coverage] "## アイコン別 マッピング表" が見つかりません');
