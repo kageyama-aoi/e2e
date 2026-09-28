@@ -1,8 +1,7 @@
 'use strict';
 
 const { I } = inject();
-const { toggleGroupmenu, fillTextFieldsByName } = require('../../../support/shimamura/utils');
-const menus = require('../_common/sideMenus');
+const { toggleGroupmenu } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
@@ -63,11 +62,6 @@ const base = {
   },
 };
 
-// select[name="X"] は値があるときだけ選択する（fill 定義を短くするための小ヘルパー）
-function selectIfSet(name, value) {
-  if (value) I.selectOption(`select[name="${name}"]`, value);
-}
-
 // ================================================================
 //  標準一覧画面ファクトリ
 //
@@ -75,10 +69,12 @@ function selectIfSet(name, value) {
 //  「標準一覧画面」を、1つの定義から navigate / fill / click / verify×2 の
 //  5メソッドに展開する。メソッド名は画面ごとの navKey / coreKey で決まる。
 //
-//  非標準の画面（未収金一覧・受注売上・出席表検索・有効性データ出力）は
-//  ファイル下部に個別メソッドとして定義する（この共通形に乗らないため）。
+//  画面の定義はアイコン別ファイル（./ichiran/<icon>Screens.js）に置く（#251）。
+//    standardScreens … この共通形に乗る画面（1エントリ = 1画面）
+//    specialScreens  … 乗らない画面の個別メソッド（未収金一覧・受注売上・出席表検索・有効性データ出力 等）
 //
-//  新しい標準一覧画面を追加するとき: STANDARD_SCREENS に1エントリ足すだけ。
+//  新しい標準一覧画面を追加するとき: 該当アイコンのファイルの standardScreens に1エントリ足すだけ。
+//  新しいアイコンのファイルを作ったら下の ICON_SCREEN_FILES に足す。
 //  （手順は /shimamura-ichiran-dev スキル参照）
 // ================================================================
 function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRange = false }) {
@@ -112,181 +108,29 @@ function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRang
   };
 }
 
-const STANDARD_SCREENS = [
-  {
-    label: '入出金一覧', menu: menus.transactionList,
-    navKey: 'TransactionList', coreKey: 'Transaction', clearDateRange: true,
-    fill: (d) => {
-      fillTextFieldsByName(I, { last_name: d.last_name, course_name: d.course_name });
-      selectIfSet('area_id',      d.area_id);
-      selectIfSet('school_id',    d.school_id);
-      selectIfSet('smsgroup',     d.smsgroup);
-      selectIfSet('claim_type',   d.claim_type);
-      selectIfSet('payment_type', d.payment_type);
-    },
-  },
-  {
-    label: '受講生検索', menu: menus.studentSearch,
-    navKey: 'StudentSearch', coreKey: 'Student', clearDateRange: true,
-    fill: (d) => {
-      fillTextFieldsByName(I, { last_name: d.last_name, first_name: d.first_name, idnumber: d.idnumber });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
-  {
-    label: '候補生一覧', menu: menus.contactList,
-    navKey: 'ContactList', coreKey: 'ContactList', clearDateRange: true,
-    fill: (d) => {
-      fillTextFieldsByName(I, { last_name: d.last_name, first_name: d.first_name });
-    },
-  },
-  {
-    label: 'コース別受講生一覧', menu: menus.courseByStudent,
-    navKey: 'CourseByStudent', coreKey: 'CourseByStudent',
-    fill: (d) => {
-      fillTextFieldsByName(I, { course_name: d.course_name });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
-  {
-    label: 'クラス一覧', menu: menus.classList,
-    navKey: 'ClassList', coreKey: 'ClassList',
-    fill: (d) => {
-      fillTextFieldsByName(I, { name: d.name });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
-  {
-    label: '講師一覧', menu: menus.teacherList,
-    navKey: 'TeacherList', coreKey: 'TeacherList',
-    fill: (d) => {
-      fillTextFieldsByName(I, { last_name: d.last_name, first_name: d.first_name });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
-  {
-    label: 'コース一覧', menu: menus.courseIchiran,
-    navKey: 'CourseIchiran', coreKey: 'CourseIchiran',
-    fill: (d) => {
-      // CSV 列は name だが画面フィールドは course_name
-      fillTextFieldsByName(I, { course_name: d.name });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
-  {
-    label: '顧客一覧', menu: menus.contactModuleList,
-    navKey: 'ContactModuleList', coreKey: 'ContactModuleList',
-    fill: (d) => {
-      fillTextFieldsByName(I, { last_name: d.last_name, company_name: d.company_name });
-      selectIfSet('school_id', d.school_id);
-    },
-  },
+// ================================================================
+//  アイコン別の画面定義を結合
+//  （メソッド名が重複したら後勝ちで静かに上書きされるため、起動時に検出して止める）
+// ================================================================
+const ICON_SCREEN_FILES = [
+  require('./ichiran/studentScreens'),
+  require('./ichiran/courseScreens'),
+  require('./ichiran/teacherScreens'),
+  require('./ichiran/contactsScreens'),
+  require('./ichiran/keiriScreens'),
 ];
 
-// ================================================================
-//  非標準の一覧画面（共通ファクトリに乗らない画面）
-// ================================================================
-const specialScreens = {
+const screenMethods = [
+  ...ICON_SCREEN_FILES.flatMap((f) => f.standardScreens.map(createIchiranScreen)),
+  ...ICON_SCREEN_FILES.map((f) => f.specialScreens),
+];
 
-  // -- 未収金一覧 (mishukin_list) --
-  //  検索結果は listViewTdLinkS1 ではなくページネーションテーブル形式。
+const seen = new Set(Object.keys(base));
+for (const methods of screenMethods) {
+  for (const name of Object.keys(methods)) {
+    if (seen.has(name)) throw new Error(`IchiranPage: メソッド名 ${name} が重複しています（ichiran/*Screens.js を確認）`);
+    seen.add(name);
+  }
+}
 
-  async navigateToMishukinListPage() {
-    I.say('【未収金一覧】一覧画面へ遷移');
-    await this._navigateViaMenu(menus.mishukinList);
-    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
-  },
-
-  fillMishukinSearchConditions(data) {
-    I.say('【未収金一覧】検索条件を入力');
-    fillTextFieldsByName(I, {
-      last_name:  data.last_name,
-      query_date: data.query_date,
-    });
-    selectIfSet('school_id', data.school_id);
-  },
-
-  clickMishukinSearchAndWait() {
-    I.say('【未収金一覧】検索実行');
-    I.click('input[name="search"]');
-    I.waitForElement('.listViewPaginationTdS1', TIMEOUTS.ENABLED);
-  },
-
-  verifyMishukinTableVisible() {
-    I.say('【未収金一覧】結果テーブルが表示されることを確認');
-    I.seeElement('.listViewPaginationTdS1');
-  },
-
-  // -- 有効性データ出力 (validity_data_output) --
-
-  async navigateToValidityDataOutputPage() {
-    I.say('【有効性データ出力】画面へ遷移');
-    await this._navigateViaMenu(menus.validityDataOutput);
-    I.waitForElement('input[value="有効性データ出力"]', TIMEOUTS.ELEMENT);
-  },
-
-  async downloadValidityDataCsv(savePath) {
-    I.say('【有効性データ出力】出力ボタンをクリックしてCSVをダウンロード');
-    return await I.downloadAndReadCsv('input[value="有効性データ出力"]', savePath);
-  },
-
-  // -- 受注・売上（経理）(keiri_invoices) --
-
-  async navigateToKeiriInvoicesPage() {
-    I.say('【受注・売上】一覧画面へ遷移');
-    await this._navigateViaMenu(menus.keiriInvoices);
-    I.waitForElement('select[name="keiri_month_year"]', TIMEOUTS.ELEMENT);
-  },
-
-  fillKeiriInvoicesSearchConditions(data) {
-    I.say('【受注・売上】検索条件を入力');
-    selectIfSet('keiri_month_year',  data.keiri_year);
-    selectIfSet('keiri_month_month', data.keiri_month);
-    selectIfSet('keiri_month_day',   data.keiri_day);
-  },
-
-  clickKeiriInvoicesDisplayAndWait() {
-    I.say('【受注・売上】表示ボタンをクリック');
-    I.click('input[name="button"][value="表示"]');
-    I.waitForElement('select[name="keiri_month_year"]', TIMEOUTS.ENABLED);
-  },
-
-  verifyKeiriInvoicesPageLoaded() {
-    I.say('【受注・売上】フォームが再表示されることを確認');
-    I.seeElement('select[name="keiri_month_year"]');
-  },
-
-  // -- 出席表検索 (attendance_today) --
-
-  async navigateToAttendanceTodayPage() {
-    I.say('【出席表検索】一覧画面へ遷移');
-    await this._navigateViaMenu(menus.attendanceToday);
-    I.waitForElement('input[name="button"][value="出席表表示"]', TIMEOUTS.ELEMENT);
-  },
-
-  fillAttendanceTodaySearchConditions(data) {
-    I.say('【出席表検索】検索条件を入力');
-    fillTextFieldsByName(I, {
-      start_date: data.start_date,
-      end_date:   data.end_date,
-    });
-  },
-
-  clickAttendanceTodayDisplayAndWait() {
-    I.say('【出席表検索】出席表表示ボタンをクリック');
-    I.click('input[name="button"][value="出席表表示"]');
-    I.waitForElement('.listViewPaginationTdS1', TIMEOUTS.ENABLED);
-  },
-
-  verifyAttendanceTodayPageLoaded() {
-    I.say('【出席表検索】ページが表示されることを確認');
-    I.seeElement('.listViewPaginationTdS1');
-  },
-};
-
-module.exports = Object.assign(
-  {},
-  base,
-  ...STANDARD_SCREENS.map(createIchiranScreen),
-  specialScreens,
-);
+module.exports = Object.assign({}, base, ...screenMethods);

@@ -8,7 +8,7 @@ description: |
   - sideMenus.js に新しいメニュー定義を追加したい
 
   ワークフロー:
-    sideMenus.js 追記 → IchiranPage.js にメソッド追記 → テストファイル作成 → 実行確認
+    sideMenus.js 追記 → screens/ichiran/<icon>Screens.js にメソッド追記 → テストファイル作成 → 実行確認
 
   ※ 一覧検索テストは /shimamura-ichiran-dev を使うこと
   ※ 登録・処理フローは /shimamura-registration-dev を使うこと
@@ -172,9 +172,10 @@ screenName: {
 
 ---
 
-### Step 2: IchiranPage.js にメソッドを追記する
+### Step 2: 画面定義ファイルにメソッドを追記する
 
-`pages/shimamura/screens/IchiranPage.js` の末尾に追記する。
+画面が属するアイコンの `pages/shimamura/screens/ichiran/<icon>Screens.js` の `specialScreens` に追記する
+（例: 有効性データ出力は `studentScreens.js`）。`IchiranPage.js` が結合するので inject 名は `ichiranPageShimamura` のまま。
 
 ```javascript
 // ----------------------------------------------------------------

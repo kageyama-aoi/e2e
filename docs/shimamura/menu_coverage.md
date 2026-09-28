@@ -65,7 +65,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 今週のコース | `Calendar/index?el[]=all&event_category=course&view=week` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 今日のマイスケジュール | `Calendar/index?people_category=staff&pl[]=*&view=day` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 今日のミーティング | `Calendar/index?el[]=all&event_category=meeting&view=day` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 本日の出席表一覧 | `Course/AttendanceViewDetailed` | `attendanceToday` | ✓ IchiranPage | ✓ `attendance_today_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 本日の出席表一覧 | `Course/AttendanceViewDetailed` | `attendanceToday` | ✓ IchiranPage(courseScreens) | ✓ `attendance_today_ichiran_test.js` | ✗ | △ 巡回 |
 | 入退室 | 入退記録作成 | `Entrance/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入退室 | 入退記録一覧 | `Entrance/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入退室 | 入退・出席一覧 | `Entrance/index?shusseki=1` |  | ✗ | ✗ | ✗ | △ 巡回 |
@@ -92,11 +92,11 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
-| ショートカット | コース一覧 | `ShimaCourse/LW_AN` | `courseIchiran` | ✓ IchiranPage | ✓ `course_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | コース一覧 | `ShimaCourse/LW_AN` | `courseIchiran` | ✓ IchiranPage(courseScreens) | ✓ `course_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | コース設定 | `ShimaCourse/EditView` |  | ✓ CourseClassSetupFlowPage | ✗ | ✗ | △ 巡回 |
-| ショートカット | クラス一覧 | `Course/ListView?course_list=true` | `classList` | ✓ IchiranPage | ✓ `class_list_ichiran_test.js` | ✗ | ✓ `shimamura_class_existence_check_test.js` / △ 巡回 |
+| ショートカット | クラス一覧 | `Course/ListView?course_list=true` | `classList` | ✓ IchiranPage(courseScreens) | ✓ `class_list_ichiran_test.js` | ✗ | ✓ `shimamura_class_existence_check_test.js` / △ 巡回 |
 | ショートカット | クラス編集 | `Course/EditView` |  | ✓ CourseClassSetupFlowPage | ✗ | ✗ | △ 巡回 |
-| ショートカット | 本日の出席表一覧 | `Course/AttendanceViewDetailed` | `attendanceToday` | ✓ IchiranPage | ✓ `attendance_today_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 本日の出席表一覧 | `Course/AttendanceViewDetailed` | `attendanceToday` | ✓ IchiranPage(courseScreens) | ✓ `attendance_today_ichiran_test.js` | ✗ | △ 巡回 |
 | シラバス | シラバス一覧 | `Syllabus/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | シラバス | アップファイル一覧 | `SMSDocument/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | シラバス | ホームワーク一覧 | `HomeWork/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
@@ -107,21 +107,21 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
 | ショートカット | 受講生登録 | `Student/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 受講生検索 | `Student/index` | `studentSearch` | ✓ IchiranPage | ✓ `student_search_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 受講生検索 | `Student/index` | `studentSearch` | ✓ IchiranPage(studentScreens) | ✓ `student_search_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 債権買取顧客情報一覧 | `Student/LW_CreditPurchaseCustomerInfo_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | コース別受講生一覧 | `Student/index?contact_status=0&course_list=true` | `courseByStudent` | ✓ IchiranPage | ✓ `course_by_student_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | コース別受講生一覧 | `Student/index?contact_status=0&course_list=true` | `courseByStudent` | ✓ IchiranPage(studentScreens) | ✓ `course_by_student_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 受講生別クラス一覧 | `Student/index?contact_status=0&courses_by_student=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | EDI会員データ取込 | `ImportCreditSummary/LWEDIMemberDataImport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 見込み客連携 | 見込み客連携 | `Student/EWCustomerInterface_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 見込み客連携 | 受講生詳細 | `Student/DetailView` |  | ✓ GessyaIkkatuFlowPage / StudentSaikenkaiFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` / `student_saikenkai_test.js` | △ 巡回 |
 | 候補生 | 候補生検索 | `ContactsKouho/LW_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 問合せ | 問合せ登録 | `Student/EditView?contact_status=5` |  | ✓ ContactRegisterPage | ✗ | ✓ `contact_register_test.js` | △ 巡回 |
-| 問合せ | 問合せ一覧 | `Student/index?contact_status=5` | `contactList` | ✓ IchiranPage | ✓ `contact_list_ichiran_test.js` | ✗ | △ 巡回 |
+| 問合せ | 問合せ一覧 | `Student/index?contact_status=5` | `contactList` | ✓ IchiranPage(studentScreens) | ✓ `contact_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 問合せ | 資料請求一覧 | `Student/index?contact_status=11` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | メモ | メモ一覧 | `SMSMemo/ListView?is_memo=1&parent_module=Student` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | メモ | メモテンプレート登録 | `SMSMemoTemplates/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | メモ | メモテンプレート一覧 | `SMSMemoTemplates/ListView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 有効性データ | 有効性データ出力 | `Student/LWValidityDataOutput_AN` | `validityDataOutput` | ✓ IchiranPage | ✓ `validity_data_output_test.js` | ✗ | △ 巡回 |
+| 有効性データ | 有効性データ出力 | `Student/LWValidityDataOutput_AN` | `validityDataOutput` | ✓ IchiranPage(studentScreens) | ✓ `validity_data_output_test.js` | ✗ | △ 巡回 |
 | 有効性データ | 有効性データ取込 | `Student/EWValidityImport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 
 ### 講師（icon: `Teacher`）
@@ -129,7 +129,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
 | ショートカット | 講師登録 | `Teacher/EditView` |  | ✓ TeacherKeiriFlowPage | ✗ | ✓ `teacher_keiri_setup_test.js` | △ 巡回 |
-| ショートカット | 講師検索 | `Teacher/index?student_list=false` | `teacherList` | ✓ IchiranPage | ✓ `teacher_list_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 講師検索 | `Teacher/index?student_list=false` | `teacherList` | ✓ IchiranPage(teacherScreens) | ✓ `teacher_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師一覧 | `Teacher/index?student_list=false` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 講師別受講生一覧 | `Teacher/index?student_list=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 講師一覧出力 | `Teacher/EWInterfaceTeacherExport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
@@ -139,7 +139,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
 | ショートカット | 顧客登録 | `Contacts/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 顧客一覧 | `Contacts/index` | `contactModuleList` | ✓ IchiranPage | ✓ `contact_module_list_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 顧客一覧 | `Contacts/index` | `contactModuleList` | ✓ IchiranPage(contactsScreens) | ✓ `contact_module_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 法人/団体 | 法人/団体登録 | `Accounts/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 法人/団体 | 法人/団体一覧 | `Accounts/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | スタッフ | スタッフ登録 | `Staff/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
@@ -199,9 +199,9 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
-| ショートカット | 受注＆売上 | `Keiri/index?keiri_report_type=Invoices` | `keiriInvoices` | ✓ IchiranPage | ✓ `keiri_invoices_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 受注＆売上 | `Keiri/index?keiri_report_type=Invoices` | `keiriInvoices` | ✓ IchiranPage(keiriScreens) | ✓ `keiri_invoices_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師給与 | `Keiri/index?teacher` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 未収金 | `Transaction/LWMishukin_AN` | `mishukinList` | ✓ IchiranPage | ✓ `mishukin_list_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | 未収金 | `Transaction/LWMishukin_AN` | `mishukinList` | ✓ IchiranPage(keiriScreens) | ✓ `mishukin_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 売掛金 | `Transaction/LWUrikakekin_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 月謝一括作成 | `Fee/LWMonthlyFeeCreation_AN` | `monthlyFeeCreation` | ✓ GessyaIkkatuFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` | △ 巡回 |
 | ショートカット | 一括入金処理 | `Transaction/MultiUpdateOverdueView` |  | ✗ | ✗ | ✗ | △ 巡回 |
@@ -213,7 +213,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | 料金 | 料金一覧(共通) | `Fee/LWCommon_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 料金 | 料金パッケージ作成 | `SalesGroup/EditView?template` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 料金 | 料金パッケージ一覧 | `SalesGroup/index?template=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 入出金 | 入出金一覧 | `Transaction/index` | `transactionList` | ✓ IchiranPage | ✓ `transaction_ichiran_test.js` | ✗ | △ 巡回 |
+| 入出金 | 入出金一覧 | `Transaction/index` | `transactionList` | ✓ IchiranPage(keiriScreens) | ✓ `transaction_ichiran_test.js` | ✗ | △ 巡回 |
 | 入出金 | 本日の入出金 | `Transaction/index?date_selection=t_date` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | 口座振替請求データ履歴 | `BankActionsHistory/LWAccountDebitBillData_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | 口座振替請求データ読込 | `Transaction/EWImportAccntDebitBill_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
