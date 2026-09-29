@@ -18,7 +18,7 @@ const KEIRI_SCREEN_B_LOCATORS = {
   textbox:  { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
   pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
   checkbox: { mid_month: '#ltd_mid_month' },
-  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
+  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する', tran_set: 'input[value="売上計上する"]' },
   screen:   { name: '受講生詳細' },
   error:    { container: SELECTORS.ERROR_CONTAINER }
 };
@@ -103,7 +103,10 @@ function createActionExecutor(I, locators, input, expectedErrors) {
       await logScreenUrl(I, '経理ビューB_クラス選択POP_UP閉じたあと');
     },
     transaction: async () => {
-      I.retry({ retries: 2, minTimeout: 500 }).click(locators.button.label_tran_set);
+      // 「売上計上する」はコース料金設定の処理が終わってから押せるようになる。
+      // 押せるまで待ってから押す（すぐ押すと "element is not enabled" で落ちうる。#211）
+      I.waitForEnabled(locators.button.tran_set, TIMEOUTS.ENABLED);
+      I.click(locators.button.label_tran_set);
     },
     verify_errors: async () => {
       await verifyValidationErrors(I, expectedErrors, locators.error.container);

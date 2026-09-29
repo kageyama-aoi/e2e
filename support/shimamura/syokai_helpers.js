@@ -24,6 +24,10 @@ function isSkipValue(value) {
 
 /**
  * 業務的な breakTarget からスキップ対象の step を解決する
+ *
+ * class_category は「クラス適用の時点でエラーになる」ケース（スクール・サロン以外のクラスを選んだ等）。
+ * エラー時は契約日・開始日の欄が有効にならないので、日付入力とコース料金設定を飛ばし、
+ * クラス適用の直後にエラーを確かめる（#211。日付欄が有効になるのを待ってタイムアウトしていた）。
  * @param {string} breakTarget
  * @returns {string[]}
  */
@@ -31,6 +35,7 @@ function getSkipStepsForBreakTarget(breakTarget) {
   const mapping = {
     class_select: ['class_select'],
     class_apply: ['class_apply'],
+    class_category: ['fill_dates', 'course_set', 'log_after_popup_close'],
     course_set: ['course_set'],
     transaction: ['transaction'],
     contract_date: ['fill_dates'],
