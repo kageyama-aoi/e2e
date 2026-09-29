@@ -164,6 +164,11 @@
       "description": "コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認",
       "feature_no": "1000_6_1"
     },
+    "page/classes_by_student_ichiran_test.js":     "受講生別クラス一覧の空検索・店舗絞り込みで結果が表示されることを確認",
+    "page/credit_purchase_customer_ichiran_test.js": "債権買取顧客情報一覧の空検索（当月の日付範囲を解除）・会員番号絞り込みで結果が表示されることを確認",
+    "page/kouho_ichiran_test.js":                  "候補生検索の空検索・姓絞り込みで結果が表示されることを確認",
+    "page/document_request_ichiran_test.js":       "資料請求一覧の空検索・姓絞り込みで結果が表示されることを確認",
+    "page/student_memo_ichiran_test.js":           "メモ一覧（受講生）の空検索・タイトル絞り込みで結果が表示されることを確認",
     "page/class_list_ichiran_test.js": {
       "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
       "feature_no": "1100_4_1"

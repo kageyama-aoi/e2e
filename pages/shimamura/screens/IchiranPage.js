@@ -52,13 +52,17 @@ const base = {
     this._clickShortcut(menuDef.shortcut);
   },
 
-  _clearDateRangeFields() {
-    I.executeScript(() => {
-      ['date_group1_rstart', 'date_group1_rend'].forEach(name => {
-        const el = document.querySelector(`[name="${name}"]`);
-        if (el) el.value = '';
+  // 日付範囲 `<prefix>_rstart` / `<prefix>_rend` を空にする。既定は date_group1。
+  // 画面によっては別名の範囲が既定で当月に埋まっている（例: 債権買取顧客情報一覧の date_entered_range 等）
+  _clearDateRangeFields(prefixes = ['date_group1']) {
+    I.executeScript((prefixList) => {
+      prefixList.forEach(prefix => {
+        [`${prefix}_rstart`, `${prefix}_rend`].forEach(name => {
+          const el = document.querySelector(`[name="${name}"]`);
+          if (el) el.value = '';
+        });
       });
-    });
+    }, prefixes);
   },
 };
 
@@ -73,6 +77,8 @@ const base = {
 //    standardScreens … この共通形に乗る画面（1エントリ = 1画面）
 //    specialScreens  … 乗らない画面の個別メソッド（未収金一覧・受注売上・出席表検索・有効性データ出力 等）
 //
+//  clearDateRange: true = date_group1 を空にする／配列 = 指定した日付範囲の prefix を空にする。
+//
 //  新しい標準一覧画面を追加するとき: 該当アイコンのファイルの standardScreens に1エントリ足すだけ。
 //  新しいアイコンのファイルを作ったら下の ICON_SCREEN_FILES に足す。
 //  （手順は /shimamura-ichiran-dev スキル参照）
@@ -83,7 +89,7 @@ function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRang
       I.say(`【${label}】一覧画面へ遷移`);
       await this._navigateViaMenu(menu);
       I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
-      if (clearDateRange) this._clearDateRangeFields();
+      if (clearDateRange) this._clearDateRangeFields(clearDateRange === true ? undefined : clearDateRange);
     },
 
     [`fill${coreKey}SearchConditions`](data) {

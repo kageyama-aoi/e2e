@@ -109,7 +109,9 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
   label: '{画面名}', menu: menus.{camelCaseName},
   navKey: '{XxxList}',   // navigateTo{navKey}Page の Xxx（テストが呼ぶ名前に合わせる）
   coreKey: '{Xxx}',      // fill/click/verify の接頭辞（navKey と違う場合あり。例: 入出金は navKey=TransactionList / coreKey=Transaction）
-  clearDateRange: true,  // 日付範囲が既定で今日に絞られる画面のみ（空検索が0件になるため）
+  clearDateRange: true,  // 日付範囲が既定で今日／当月に絞られる画面のみ（空検索が0件になるため）
+                         // true = date_group1_rstart/rend を空に。別名の範囲なら prefix の配列で指定
+                         // 例: 債権買取顧客情報一覧 ['date_entered_range', 'date_modified_range', 'moushikomi_last_send_time_range']
   fill: (d) => {
     fillTextFieldsByName(I, { {field1}: d.{field1}, {field2}: d.{field2} });
     selectIfSet('{selectField}', d.{selectField});   // select[name="..."] に値があるときだけ選択
@@ -131,7 +133,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | ヘルパー | 役割 |
 |---|---|
 | `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移 |
-| `_clearDateRangeFields()` | `date_group1_rstart` / `rend` を空にする |
+| `_clearDateRangeFields(prefixes)` | `<prefix>_rstart` / `_rend` を空にする（既定 `['date_group1']`）。通常は `clearDateRange` 経由で呼ばれる |
 | `_clickSearchAndWait()` | `input[name="search"]` をクリックし `a.listViewTdLinkS1` を待つ |
 | `_verifyResultsExist()` / `_verifyRecordInResults(text)` | 結果リンクの存在・文言確認 |
 
@@ -229,7 +231,8 @@ npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shi
 |---|---|---|
 | `input[name="search"]` が見つからない | URL が違う / 画面の検索ボタンが別 name | `*_links.json` で module/action を確認。ボタンが `input[name="button"][value="表示"]` 等なら画面固有メソッドを書く（受注売上ブロック参照） |
 | `a.listViewTdLinkS1` が見つからない | 検索結果が0件 / 結果テーブルの形式が違う | テスト環境にデータがあるか確認。`.listViewPaginationTdS1` 形式なら未収金ブロックを参照 |
-| 空検索で結果ゼロ | 日付範囲フィールドが既定で今日に絞られている | `navigateTo…` 内で `this._clearDateRangeFields()` を呼ぶ |
+| 空検索で結果ゼロ | 日付範囲フィールドが既定で今日／当月に絞られている | エントリに `clearDateRange: true`。`date_group1` 以外の名前（`date_entered_range_rstart` 等）なら prefix 配列を渡す |
+| テキスト欄に入力できない | ポップアップ選択式の欄（`disabled`。例: 受講生別クラス一覧のクラス名） | その欄での絞り込みは諦め、セレクト（店舗等）で条件を作る |
 | 条件検索でヒットしない | `expectedName` がテスト環境データと不一致 | CSV の値をテスト環境の実データに合わせる |
 | `SHIMAMURA_TANTOUSYA` エラー | 環境変数が未設定 | `env/.env.{profile}` に `SHIMAMURA_TANTOUSYA=番号` を追加 |
 | 遷移後に URL が `testgcpindex.php?...` になる | `process.env.BASE_URL`（末尾 `/` なし）を直接連結している | `constants.js` の `BASE_URL`（末尾 `/` 付き）を使う。`IchiranPage._navigateToModule` 経由なら起きない |
