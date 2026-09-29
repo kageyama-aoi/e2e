@@ -183,4 +183,35 @@ module.exports = {
     collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
     shortcut:       '料金一覧(共通)',
   },
+  salesGroupList: {
+    directUrl:      '/index.php?module=SalesGroup&action=index&template=true&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金パッケージ一覧',
+  },
+  transactionToday: {
+    // 入出金一覧を「入出金日＝今日」で絞った状態で開く
+    directUrl:      '/index.php?module=Transaction&action=index&date_selection=t_date&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '本日の入出金',
+  },
+  accountDebitBillHistory: {
+    directUrl:      '/index.php?module=BankActionsHistory&action=LWAccountDebitBillData_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '口座振替請求データ履歴',
+  },
+  refundList: {
+    directUrl:      '/index.php?module=Transaction&action=LWRefundList_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '返金一覧',
+  },
+  smbcContactsList: {
+    directUrl:      '/index.php?module=SmbcContacts&action=LW_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__smbc_sub', menuname: '債権買取' },
+    shortcut:       '債権買取状態一覧',
+  },
 };

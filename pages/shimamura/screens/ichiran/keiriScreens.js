@@ -72,9 +72,68 @@ const standardScreens = [
       selectIfSet('fee_subcategory', d.fee_subcategory);
     },
   },
+  {
+    label: '料金パッケージ一覧', menu: menus.salesGroupList,
+    navKey: 'SalesGroupList', coreKey: 'SalesGroupList',
+    fill: (d) => {
+      fillTextFieldsByName(I, { name: d.name });
+    },
+  },
+  {
+    label: '口座振替請求データ履歴', menu: menus.accountDebitBillHistory,
+    navKey: 'AccountDebitBillHistory', coreKey: 'AccountDebitBillHistory',
+    fill: (d) => {
+      selectIfSet('input_type', d.input_type);
+    },
+  },
+  {
+    // 請求月（claim_month）の既定は来月で、空にしても「すべて」にならず今月扱いになる。
+    // 月が変わると件数が変わるため、CSV の全行で実データのある月を固定で渡す
+    label: '返金一覧', menu: menus.refundList,
+    navKey: 'RefundList', coreKey: 'RefundList',
+    fill: (d) => {
+      fillTextFieldsByName(I, { claim_month: d.claim_month, idnumber: d.idnumber, last_name: d.last_name });
+    },
+  },
+  {
+    label: '債権買取状態一覧', menu: menus.smbcContactsList,
+    navKey: 'SmbcContactsList', coreKey: 'SmbcContactsList',
+    fill: (d) => {
+      fillTextFieldsByName(I, { last_name: d.last_name, idnumber: d.idnumber });
+      selectIfSet('school_id', d.school_id);
+    },
+  },
 ];
 
 const specialScreens = {
+
+  // -- 本日の入出金 (transaction_today) --
+  //  入出金一覧を「入出金日＝今日」で絞った状態で開く画面。当日の入出金が無ければ0件なので、
+  //  結果リンクではなく「今日で絞られていること」と「検索が終わってページ送りが出ること」を確かめる。
+  //  ページ送りは開いた時点では無く、検索後に描かれる（#264 で確認）。
+
+  async navigateToTransactionTodayPage() {
+    I.say('【本日の入出金】一覧画面へ遷移');
+    await this._navigateViaMenu(menus.transactionToday);
+    I.waitForElement('input[name="search"]', TIMEOUTS.ELEMENT);
+  },
+
+  async verifyTransactionTodayPreset() {
+    I.say('【本日の入出金】日付範囲が今日で絞られていることを確認');
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    I.seeInField('date_group1_rstart', today);
+    I.seeInField('date_group1_rend', today);
+  },
+
+  async clickTransactionTodaySearchAndWait() {
+    I.say('【本日の入出金】検索実行');
+    I.click('input[name="search"]');
+    I.waitForElement('.listViewPaginationTdS1', TIMEOUTS.RESULT);
+    const pagination = await I.grabTextFrom('.listViewPaginationTdS1');
+    const total = (pagination.match(/計:\s*(\d+)/) || [])[1];
+    I.say(`【本日の入出金】検索結果 ${total === undefined ? '件数不明' : `${total}件`}`);
+  },
 
   // -- 未収金一覧 (mishukin_list) --
   //  検索結果は listViewTdLinkS1 ではなくページネーションテーブル形式。

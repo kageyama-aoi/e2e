@@ -180,6 +180,11 @@
     "page/pos_response_error_ichiran_test.js":     "POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認",
     "page/fee_list_ichiran_test.js":               "料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認",
     "page/fee_common_list_ichiran_test.js":        "料金一覧(共通)の空検索・料金名絞り込みで結果が表示されることを確認（testgcp はテスト用共通料金を1件登録済み）",
+    "page/sales_group_list_ichiran_test.js":       "料金パッケージ一覧の空検索・パッケージ名絞り込みで結果が表示されることを確認",
+    "page/transaction_today_ichiran_test.js":      "本日の入出金が今日の日付範囲で開き、検索できることを確認（件数は当日の入出金しだいで0件でも可）",
+    "page/account_debit_bill_history_ichiran_test.js": "口座振替請求データ履歴の空検索・種類（読込）絞り込みで結果が表示されることを確認",
+    "page/refund_list_ichiran_test.js":            "返金一覧の請求月（固定の2026-10）のみ検索・会員番号絞り込みで結果が表示されることを確認",
+    "page/smbc_contacts_list_ichiran_test.js":     "債権買取状態一覧の空検索・姓絞り込みで結果が表示されることを確認",
     "page/class_list_ichiran_test.js": {
       "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
       "feature_no": "1100_4_1"

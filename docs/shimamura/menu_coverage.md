@@ -42,11 +42,11 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | コンタクト | 8 | 4 | 4 | 4 | 対象 |
 | 部屋･備品 | 12 | 2 | 2 | 10 | 対象 |
 | Ｅメール | 26 | 0 | 0 | 26 | E（巡回のみ） |
-| 経理 | 39 | 11 | 12 | 27 | 対象 |
+| 経理 | 39 | 16 | 17 | 22 | 対象 |
 | レポート | 1 | 0 | 0 | 1 | E（巡回のみ） |
 | ヘルプ | 5 | 0 | 0 | 5 | E（巡回のみ） |
-| **合計（全体）** | **147** | **36** | **35** | **110** | |
-| **合計（E を除く対象）** | **89** | **36** | **35** | **52** | |
+| **合計（全体）** | **147** | **41** | **40** | **105** | |
+| **合計（E を除く対象）** | **89** | **41** | **40** | **47** | |
 
 ## アイコン別 マッピング表
 
@@ -212,20 +212,20 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | 料金 | 料金一覧 | `Fee/index?general=0` | `feeList` | ✓ IchiranPage(keiriScreens) | ✓ `fee_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 料金 | 料金一覧(共通) | `Fee/LWCommon_AN` | `feeCommonList` | ✓ IchiranPage(keiriScreens) | ✓ `fee_common_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 料金 | 料金パッケージ作成 | `SalesGroup/EditView?template` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 料金 | 料金パッケージ一覧 | `SalesGroup/index?template=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 料金 | 料金パッケージ一覧 | `SalesGroup/index?template=true` | `salesGroupList` | ✓ IchiranPage(keiriScreens) | ✓ `sales_group_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 入出金 | 入出金一覧 | `Transaction/index` | `transactionList` | ✓ IchiranPage(keiriScreens) | ✓ `transaction_ichiran_test.js` | ✗ | △ 巡回 |
-| 入出金 | 本日の入出金 | `Transaction/index?date_selection=t_date` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 入出金 | 口座振替請求データ履歴 | `BankActionsHistory/LWAccountDebitBillData_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 入出金 | 本日の入出金 | `Transaction/index?date_selection=t_date` | `transactionToday` | ✓ IchiranPage(keiriScreens) | ✓ `transaction_today_ichiran_test.js` | ✗ | △ 巡回 |
+| 入出金 | 口座振替請求データ履歴 | `BankActionsHistory/LWAccountDebitBillData_AN` | `accountDebitBillHistory` | ✓ IchiranPage(keiriScreens) | ✓ `account_debit_bill_history_ichiran_test.js` | ✗ | △ 巡回 |
 | 入出金 | 口座振替請求データ読込 | `Transaction/EWImportAccntDebitBill_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | 口座振替データ履歴 | `BankActionsHistory/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | 口座振替スケジュール登録 | `ShimaSchedule/LWAccountTransferScheduleRegistration_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | コンビニ収納結果取込 | `Transaction/Import?combini_import=true&step=1` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | コンビニ収納結果履歴 | `CombiniActionsHistory/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 入出金 | 返金一覧 | `Transaction/LWRefundList_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 入出金 | 返金一覧 | `Transaction/LWRefundList_AN` | `refundList` | ✓ IchiranPage(keiriScreens) | ✓ `refund_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 入出金 | クレジット請求データ履歴 | `CreditActionsHistory/LW_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 債権買取 | 債権買取請求データ履歴 | `SmbcActionsHistory/LWBillingDataHistory_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 債権買取 | 債権買取状態読込 | `SmbcStateSummary/EWSMBCPurchaseStatusImport_AN` |  | ✗ | ✗ | ✓ `smbc_state_import_test.js` | △ 巡回 |
-| 債権買取 | 債権買取状態一覧 | `SmbcContacts/LW_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 債権買取 | 債権買取状態一覧 | `SmbcContacts/LW_AN` | `smbcContactsList` | ✓ IchiranPage(keiriScreens) | ✓ `smbc_contacts_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 講師謝礼 | 講師謝礼計算 | `ShareiNichibetsu/LWKoushiShareiKeisan_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 講師謝礼 | 講師謝礼追加 | `ShareiNichibetsu/EW_KoushiShareiTsuika_AN` |  | ✓ KoushiShareiFlowPage | ✗ | ✓ `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | △ 巡回 |
 | 講師謝礼 | 講師謝礼一覧 | `ShareiNichibetsu/LWShareiIchiran_AN` |  | ✓ KoushiShareiFlowPage | ✗ | ✓ `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | △ 巡回 |
