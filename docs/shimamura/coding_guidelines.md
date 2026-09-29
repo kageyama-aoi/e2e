@@ -14,7 +14,7 @@
   - `auth/LoginPage.js` — ログイン・担当者番号入力
   - `_common/ClassMemberPage.js` — 管理タブ・サブメニューの共通ナビゲーション
   - `_common/sideMenus.js` — サイドバー画面のメニュー定義（directUrl / moduleUrl / shortcut）
-  - `screens/IchiranPage.js` — 一覧検索画面（全一覧画面を1ファイルに集約）
+  - `screens/IchiranPage.js` — 一覧検索画面の共通処理＋結合（画面定義はアイコン別に `screens/ichiran/<icon>Screens.js`）
   - `flow/*FlowPage.js` — 複数画面をまたぐ業務フロー（画面単位ではなくフロー単位）
 - `support/shimamura/`: しまむら固有の共通処理（`utils.js` `constants.js` `hooks.js` `syokai_helpers.js` `accountTransferSchedule.js`）
 

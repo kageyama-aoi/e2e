@@ -64,10 +64,19 @@ tframe は「全メニューの実機採取 → カバレッジ表の自動生�
 
 ## Phase 1: 骨格を作る
 
-1. `IchiranPage.js` の共通処理（sideMenus キーで遷移 → 検索条件入力 → 検索 → 結果表の可視確認）を
-   `pages/shimamura/_common/` の Mixin に切り出す。画面別 PO に分割するかは Phase 0 の画面数で判断
-2. **メニュー巡回テスト**を1本（全メニュー項目を開けること＋スクショ）。全画面に最薄の下地が一気に付く
-3. `/shimamura-ichiran-dev` 等のスキル雛形を新パターンに更新（`feedback_skill_drift` 対策）
+1. ✅ **メニュー巡回テスト**（`tests/shimamura/page/menu_patrol_test.js` ＋ `pages/shimamura/_common/MenuPatrolPage.js`）
+   — スナップショットの全項目をサイドバーから開き、画面エラー・PHP エラーが無いことを確認。
+   2026-09-28 testgcp で **全10アイコン・150項目すべて開けた**（約10分。`--grep @patrol_<module>` でアイコン単位実行可）。
+   各画面が標準一覧形式（`input[name="search"]` あり）かを `output/shimamura_menu_patrol/<module>.json` に記録
+2. **標準一覧かどうかの判定結果**（バケットA 37画面）
+   - 標準形式 **21**: 債権買取顧客情報一覧・受講生別クラス一覧・候補生検索・資料請求一覧・メモ一覧・講師別受講生一覧・法人/団体一覧・スタッフ一覧・保護者一覧・部屋一覧・店舗一覧・売掛金・AFS会員番号検索・POSレスポンスエラー一覧・料金一覧・料金一覧(共通)・料金パッケージ一覧・本日の入出金・口座振替請求データ履歴・返金一覧・債権買取状態一覧
+     → `screens/ichiran/<icon>Screens.js` の `standardScreens` に1エントリ足す形で量産できる見込み（結果リンク `a.listViewTdLinkS1` の有無は着手時に確認）
+   - 非標準 **16**: シラバス一覧・アップファイル一覧・ホームワーク一覧・メモテンプレート一覧・会議室一覧・部屋・備品一覧・テキスト一覧・テキストカテゴリー・テキスト仕入・販売一覧・講師給与・口座振替データ履歴・コンビニ収納結果履歴・クレジット請求データ履歴・債権買取請求データ履歴・料金明細一覧・料金明細一覧詳細
+     → 検索ボタンの形が違う。画面を見て、共通形を1つ増やすか個別メソッドにするか決める
+3. ✅ `IchiranPage.js` をアイコン別に分割（2026-09-28 決定・実施）— 画面定義を `pages/shimamura/screens/ichiran/<icon>Screens.js`
+   （student / course / teacher / contacts / keiri）に移し、`IchiranPage.js` は共通ヘルパー＋ファクトリ＋結合のみ（292行 → 136行）。
+   inject 名・メソッド名（61個）は不変。メソッド名重複は起動時にエラーで検出
+4. ✅ `/shimamura-ichiran-dev` `/shimamura-download-verify` のスキル雛形を分割後の形に更新（`feedback_skill_drift` 対策）
 
 ## Phase 2: バケット分類して横展開
 

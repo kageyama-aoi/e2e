@@ -36,6 +36,8 @@ const SUPPORT_DIR = path.join(ROOT, 'support', 'shimamura');
 const TESTS_DIR = path.join(ROOT, 'tests', 'shimamura');
 const CONF_FILE = path.join(ROOT, 'codecept.conf.js');
 const DOC_FILE = path.join(ROOT, 'docs', 'shimamura', 'menu_coverage.md');
+/** 全メニューを JSON から巡回するテスト（ソース解析では画面を特定できないため、存在すれば全画面に △ 巡回 を付ける） */
+const PATROL_TEST = path.join(TESTS_DIR, 'page', 'menu_patrol_test.js');
 
 const START = '<!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_shimamura_menu_coverage.js。手で編集しない -->';
 const END = '<!-- AUTOGEN:menu-table END -->';
@@ -73,6 +75,16 @@ function walkJs(dir) {
     else if (ent.name.endsWith('.js') && !UNTRACKED.has(abs)) out.push(abs);
   }
   return out.sort();
+}
+
+/**
+ * PO 列の表示名。IchiranPage に結合される画面定義ファイルは `IchiranPage(xxxScreens)` と出す
+ * @param {string} abs
+ * @returns {string}
+ */
+function poLabel(abs) {
+  const base = path.basename(abs, '.js');
+  return path.basename(path.dirname(abs)) === 'ichiran' ? `IchiranPage(${base})` : base;
 }
 
 /** @param {string} abs */
@@ -288,7 +300,7 @@ function main() {
     for (const [name, refs] of closed) resolved.set(name, resolveRefs(refs, sideMenus));
     poAnalysis.set(f, resolved);
     if (f === SIDE_MENUS_FILE) continue;
-    const base = path.basename(f, '.js');
+    const base = poLabel(f);
     for (const ids of resolved.values()) {
       for (const id of ids) {
         if (!idToPO.has(id)) idToPO.set(id, new Set());
@@ -301,6 +313,26 @@ function main() {
   for (const [key, def] of sideMenus) {
     if (def.route) idToMenuKey.set(def.route, key);
     if (def.shortcut) idToMenuKey.set(`label:${def.shortcut}`, key);
+  }
+
+  /**
+   * PO が require している pages/shimamura 配下のファイルのチャンクも合わせた解析結果
+   * （IchiranPage は画面定義を ichiran/*Screens.js から結合しているため、メソッドの実体はそちらにある）
+   * @param {string} abs
+   * @returns {Map<string, Set<string>>}
+   */
+  function chunksWithRequired(abs) {
+    const merged = new Map(poAnalysis.get(abs) || []);
+    const src = fs.readFileSync(abs, 'utf8');
+    const re = /require\(\s*['"](\.{1,2}\/[^'"]+)['"]\s*\)/g;
+    let rq;
+    while ((rq = re.exec(src))) {
+      let dep;
+      try { dep = require.resolve(path.resolve(path.dirname(abs), rq[1])); } catch (_) { continue; }
+      if (!dep.startsWith(PAGES_DIR) || dep === SIDE_MENUS_FILE) continue;
+      for (const [name, ids] of poAnalysis.get(dep) || []) if (name !== '(module)') merged.set(name, ids);
+    }
+    return merged;
   }
 
   // codecept.conf.js の inject 名 -> PO 絶対パス
@@ -321,8 +353,8 @@ function main() {
 
     // inject された PO のメソッド呼び出し
     for (const [varName, poAbs] of injectMap) {
-      const chunks = poAnalysis.get(poAbs);
-      if (!chunks) continue;
+      if (!poAnalysis.has(poAbs)) continue;
+      const chunks = chunksWithRequired(poAbs);
       const callRe = new RegExp(`\\b${varName}\\.([A-Za-z_$][\\w$]*)\\s*\\(`, 'g');
       let cm;
       while ((cm = callRe.exec(src))) (chunks.get(cm[1]) || []).forEach((id) => ids.add(id));
@@ -347,7 +379,8 @@ function main() {
     }
   }
 
-  return render(snap, idToPO, idToTests, idToMenuKey);
+  const hasPatrol = fs.existsSync(PATROL_TEST) && !UNTRACKED.has(PATROL_TEST);
+  return render(snap, idToPO, idToTests, idToMenuKey, hasPatrol);
 }
 
 // ---------------------------------------------------------------------------
@@ -365,7 +398,7 @@ function lookupSet(map, ids) {
   return [...s].sort();
 }
 
-function render(snap, idToPO, idToTests, idToMenuKey) {
+function render(snap, idToPO, idToTests, idToMenuKey, hasPatrol) {
   const rows = []; // { icon, group, item, po[], tests[], menuKey }
   for (const [iconKey, icon] of Object.entries(snap.sideMenu)) {
     for (const group of icon.groups) {
@@ -428,6 +461,7 @@ function render(snap, idToPO, idToTests, idToMenuKey) {
   out.push('- **sideMenus キー** … `pages/shimamura/_common/sideMenus.js` に定義があればそのキー');
   out.push('- **Page Object** … その画面へ遷移・操作する `pages/shimamura/**.js`（URL 直書き / sideMenus 参照 / URL 定数参照）');
   out.push('- **一覧 / フロー / その他テスト** … `tests/shimamura/{page,flow,それ以外}/*_test.js` のうち、その画面に触れるもの');
+  out.push('- **△ 巡回** … `menu_patrol_test.js` がサイドバーから開いてエラーが無いことだけ確認している（サマリの「テストあり」には数えない）');
   out.push('');
   for (const iconKey of iconOrder) {
     const icon = snap.sideMenu[iconKey];
@@ -446,7 +480,8 @@ function render(snap, idToPO, idToTests, idToMenuKey) {
     for (const r of list) {
       const t = (kind) => {
         const fs_ = r.tests.filter((x) => x.kind === kind).map((x) => `\`${x.file}\``).sort();
-        return fs_.length ? `✓ ${fs_.join(' / ')}` : (kind === 'その他' ? '' : '✗');
+        if (kind === 'その他' && hasPatrol && !r.isPdf) fs_.push('△ 巡回');
+        return fs_.length ? (fs_.every((x) => x.startsWith('△')) ? fs_.join(' / ') : `✓ ${fs_.join(' / ')}`) : (kind === 'その他' ? '' : '✗');
       };
       out.push(`| ${r.group} | ${r.item.label} | \`${r.item.route}\` | ${r.menuKey ? `\`${r.menuKey}\`` : ''} | ${r.po.length ? `✓ ${r.po.join(' / ')}` : '✗'} | ${t('一覧')} | ${t('フロー')} | ${t('その他')} |`);
     }

@@ -7,7 +7,7 @@ description: |
   - 「〇〇一覧のテストを作って」という依頼
   - 既存の一覧検索 Page Object メソッド / CSV / テストファイルを修正・追加したい
 
-  ワークフロー: フォーム確認（/shimamura-html-fetch） → sideMenus.js に定義追加 → IchiranPage.js にメソッド追記 → CSV → テストファイル → 実行確認
+  ワークフロー: フォーム確認（/shimamura-html-fetch） → sideMenus.js に定義追加 → screens/ichiran/<icon>Screens.js に画面定義追記 → CSV → テストファイル → 実行確認
 
   ※ 登録・処理フローのテストは /shimamura-registration-dev スキルを使うこと
   ※ 一覧画面でも「出力」ボタンでファイルをダウンロード・検証するテストは /shimamura-download-verify を使うこと
@@ -30,7 +30,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 検索ボタン | `#swSearchButton` | `input[name="search"]`（一部画面は `input[name="button"][value="表示"]` 等） |
 | 検索結果 | `.tf-group-body-search-result tr` | `a.listViewTdLinkS1`（`SELECTORS.RESULT_LINK`）。未収金・出席表は `.listViewPaginationTdS1` |
 | 画面遷移 | URL 直遷移 | `sideMenus.js` の定義 → `IchiranPage._navigateViaMenu()`（既定は directUrl、`SHIMAMURA_NAV=sidebar` でサイドバー経路） |
-| Page Object 置き場 | `pages/tframe/screens/{画面}Page.js`（画面ごと） | `pages/shimamura/screens/IchiranPage.js`（全一覧画面を1ファイルに集約） |
+| Page Object 置き場 | `pages/tframe/screens/{画面}Page.js`（画面ごと） | 画面定義は `pages/shimamura/screens/ichiran/<icon>Screens.js`（アイコン別）、`IchiranPage.js` がそれを結合して1つの PO（inject 名 `ichiranPageShimamura`）にする |
 | 認証 | `loginKannrisyaPage.login()` | `Before(beforeShimamura)`（`support/shimamura/hooks.js`） |
 | CSV dataDir | `'tframe'` を明示 | `'shimamura'` を明示（デフォルト値なし） |
 | エラー表示 | `#tf-message-summary` | `#top_err_info_msg_div`（`SELECTORS.ERROR_CONTAINER`） |
@@ -42,9 +42,10 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 目的 | 参照先 |
 |---|---|
 | **テストファイルの雛形** | `tests/shimamura/page/transaction_ichiran_test.js` |
-| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/IchiranPage.js` の `STANDARD_SCREENS` 配列（入出金一覧のエントリ） |
+| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/ichiran/keiriScreens.js` の `standardScreens`（入出金一覧のエントリ） |
 | メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `pages/shimamura/_common/sideMenus.js` |
-| 結果セレクタが特殊な画面の例 | `IchiranPage.js` の `specialScreens`（未収金一覧・受注売上・出席表検索・有効性データ出力） |
+| 結果セレクタが特殊な画面の例 | `ichiran/*Screens.js` の `specialScreens`（未収金一覧・受注売上＝keiri、出席表検索＝course、有効性データ出力＝student） |
+| 標準一覧かどうかの事前判定 | `menu_patrol_test.js` 実行後の `output/shimamura_menu_patrol/<module>.json` の `standardList`（`input[name="search"]` の有無） |
 | ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
 | 共通ユーティリティ・定数 | `support/shimamura/utils.js`（`fillTextFieldsByName`）、`support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
 | CSV の形式 | `data/shimamura/transaction_ichiran_search_data.csv` |
@@ -63,15 +64,15 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
    - 拾うもの: テキスト入力の `name=`、セレクトの `name=`、検索ボタンのセレクタ、結果テーブルのリンククラス、日付範囲フィールドの有無
 
 2. **URL（module / action）とサイドバー経路を特定する**
-   - `scripts/html/shimamura/main_menu_links.json` または `*_links.json` を参照
+   - `docs/shimamura/menu_coverage.md`（全メニューの route・グループ名）と `pages/shimamura/_common/menuSnapshot/testgcp.json`（`toggleId` = `collapseToggle.icon_id`）を参照
    - URL は `index.php?module=X&action=Y&...` 形式。`sideMenus.js` の先頭 `/` は有無どちらでもよい（`_navigateToModule` が `constants.js` の `BASE_URL`（末尾 `/` 付き）と結合する際に重複を除く）
    - サイドバー経路（`moduleUrl` + `shortcut`、折りたたみがあれば `collapseToggle`）も分かれば書く。分からなければ `directUrl` だけでよい
 
 3. **既存の類似画面が無いか確認する**
-   - `IchiranPage.js` の `STANDARD_SCREENS` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
+   - `pages/shimamura/screens/ichiran/` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
 
 4. **標準一覧画面か・特殊画面かを判定する**
-   - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → `STANDARD_SCREENS` にエントリを1つ足す（Step 3）
+   - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → 該当アイコンファイルの `standardScreens` にエントリを1つ足す（Step 3）
    - **特殊**: 検索ボタンが `input[name="button"][value="表示"]` 等、または結果が `.listViewPaginationTdS1` 等 → `specialScreens` に個別メソッドを書く（未収金一覧・受注売上・出席表を雛形にする）
 
 ---
@@ -93,9 +94,12 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ---
 
-### Step 3: `IchiranPage.js` に画面を追加
+### Step 3: `screens/ichiran/<icon>Screens.js` に画面を追加
 
-#### 標準一覧画面 → `STANDARD_SCREENS` にエントリを1つ足すだけ
+画面が属するアイコン（`menu_coverage.md` の見出し）のファイルに足す: 受講生=`studentScreens.js` / コース=`courseScreens.js` / 講師=`teacherScreens.js` / コンタクト=`contactsScreens.js` / 経理=`keiriScreens.js`。
+新しいアイコン（例: 部屋･備品）は同じ形のファイルを作り、`IchiranPage.js` の `ICON_SCREEN_FILES` に1行足す（メソッド名の重複は起動時にエラーで止まる）。
+
+#### 標準一覧画面 → `standardScreens` にエントリを1つ足すだけ
 
 `createIchiranScreen` ファクトリが `navigateTo{navKey}Page` / `fill{coreKey}SearchConditions` /
 `click{coreKey}SearchAndWait` / `verify{coreKey}ResultsExist` / `verify{coreKey}RecordInResults` の5メソッドを自動生成する。

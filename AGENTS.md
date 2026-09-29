@@ -315,7 +315,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 | 種類 | 雛形（テスト） | 雛形（Page Object / FlowPage） |
 |---|---|---|
-| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/IchiranPage.js`（メニュー定義は `pages/shimamura/_common/sideMenus.js`） |
+| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/ichiran/keiriScreens.js`（画面定義。`IchiranPage.js` が結合）／メニュー定義は `pages/shimamura/_common/sideMenus.js` |
 | 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | — |
 | 複数画面フロー | `tests/shimamura/flow/koushi_sharei_manual_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
 | セットアップ→本体の2段構成（セッションファイル受け渡し） | `tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `pages/shimamura/flow/HappyoukaiFlowPage.js` |

@@ -55,9 +55,12 @@ pages/
 │   │   └── TeacherKeiriFlowPage.js
 │   ├── screens/                # 画面操作 Page Object
 │   │   ├── ContactRegisterPage.js
-│   │   └── IchiranPage.js
+│   │   ├── IchiranPage.js      # 一覧画面の共通処理＋ichiran/ の画面定義を結合（inject: ichiranPageShimamura）
+│   │   └── ichiran/            # 一覧画面の定義（アイコン別: student / course / teacher / contacts / keiri）
 │   └── _common/                # 共通ユーティリティ・複数画面で共有する Page Object
 │       ├── ClassMemberPage.js  # クラス受講生関連の操作（管理タブ遷移・検索・退会処理など）
+│       ├── MenuPatrolPage.js   # 全メニュー巡回（menuSnapshot を元にサイドバーから開く）
+│       ├── menuSnapshot/       # 実機採取したメニュー構成（testgcp.json）
 │       └── sideMenus.js        # サイドメニュー定義
 ├── tframe/           # tframe 固有の Page Object
 │   ├── auth/                   # ログイン・認証系
