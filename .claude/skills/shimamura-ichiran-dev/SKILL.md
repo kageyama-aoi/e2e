@@ -134,7 +134,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 |---|---|
 | `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移 |
 | `_clearDateRangeFields(prefixes)` | `<prefix>_rstart` / `_rend` を空にする（既定 `['date_group1']`）。通常は `clearDateRange` 経由で呼ばれる |
-| `_clickSearchAndWait()` | `input[name="search"]` をクリックし `a.listViewTdLinkS1` を待つ |
+| `_clickSearchAndWait()` | 検索前の結果リンクに `data-e2e-stale` の印を付けてから `input[name="search"]` をクリックし、印の無い（検索後に描かれた）`a.listViewTdLinkS1` を待つ |
 | `_verifyResultsExist()` / `_verifyRecordInResults(text)` | 結果リンクの存在・文言確認 |
 
 ---
@@ -238,3 +238,4 @@ npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shi
 | 遷移後に URL が `testgcpindex.php?...` になる | `process.env.BASE_URL`（末尾 `/` なし）を直接連結している | `constants.js` の `BASE_URL`（末尾 `/` 付き）を使う。`IchiranPage._navigateToModule` 経由なら起きない |
 | サイドバー経路（`SHIMAMURA_NAV=sidebar`）で検索状態が残る | サイドバーリンクに `top_menu=1` がない画面 | `courseIchiran` と同様に `directUrl` のみ定義する |
 | 検索ボタンが AJAX のため結果が出ない | ボタンの onclick が `ajax_AN()` 呼び出し | `_clickSearchAndWait` の `waitForElement` で十分。出ない場合は日付フィルタを疑う |
+| 条件検索の結果確認が、検索しなくても通ってしまう | 開いた時点で結果一覧が出ている画面で、検索前のリンクを見て待ちが即成立していた | `_clickSearchAndWait` は #257 で対策済み（検索後に描かれたリンクを待つ）。specialScreens で独自に結果待ちを書くときも同じく「検索後に描かれた要素」を待つ |

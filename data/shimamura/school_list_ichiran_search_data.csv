@@ -1,0 +1,3 @@
+scenario,name,area_id,expectedName
+空条件検索,,,
+店舗名で絞り込み,nayuta,,nayuta

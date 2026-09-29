@@ -38,15 +38,15 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | カレンダー | 28 | 1 | 1 | 27 | E（巡回のみ） |
 | コース | 9 | 5 | 3 | 4 | 対象 |
 | 受講生 | 17 | 11 | 11 | 6 | 対象 |
-| 講師 | 4 | 2 | 2 | 2 | 対象 |
-| コンタクト | 8 | 1 | 1 | 7 | 対象 |
-| 部屋･備品 | 12 | 0 | 0 | 12 | 対象 |
+| 講師 | 4 | 3 | 3 | 1 | 対象 |
+| コンタクト | 8 | 4 | 4 | 4 | 対象 |
+| 部屋･備品 | 12 | 2 | 2 | 10 | 対象 |
 | Ｅメール | 26 | 0 | 0 | 26 | E（巡回のみ） |
 | 経理 | 39 | 6 | 7 | 32 | 対象 |
 | レポート | 1 | 0 | 0 | 1 | E（巡回のみ） |
 | ヘルプ | 5 | 0 | 0 | 5 | E（巡回のみ） |
-| **合計（全体）** | **147** | **25** | **24** | **121** | |
-| **合計（E を除く対象）** | **89** | **25** | **24** | **63** | |
+| **合計（全体）** | **147** | **31** | **30** | **115** | |
+| **合計（E を除く対象）** | **89** | **31** | **30** | **57** | |
 
 ## アイコン別 マッピング表
 
@@ -131,7 +131,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 講師登録 | `Teacher/EditView` |  | ✓ TeacherKeiriFlowPage | ✗ | ✓ `teacher_keiri_setup_test.js` | △ 巡回 |
 | ショートカット | 講師検索 | `Teacher/index?student_list=false` | `teacherList` | ✓ IchiranPage(teacherScreens) | ✓ `teacher_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師一覧 | `Teacher/index?student_list=false` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 講師別受講生一覧 | `Teacher/index?student_list=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 講師別受講生一覧 | `Teacher/index?student_list=true` | `teacherStudentList` | ✓ IchiranPage(teacherScreens) | ✓ `teacher_student_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師一覧出力 | `Teacher/EWInterfaceTeacherExport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 
 ### コンタクト（icon: `Contacts`）
@@ -141,20 +141,20 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 顧客登録 | `Contacts/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 顧客一覧 | `Contacts/index` | `contactModuleList` | ✓ IchiranPage(contactsScreens) | ✓ `contact_module_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 法人/団体 | 法人/団体登録 | `Accounts/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 法人/団体 | 法人/団体一覧 | `Accounts/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 法人/団体 | 法人/団体一覧 | `Accounts/index` | `accountList` | ✓ IchiranPage(contactsScreens) | ✓ `account_list_ichiran_test.js` | ✗ | △ 巡回 |
 | スタッフ | スタッフ登録 | `Staff/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| スタッフ | スタッフ一覧 | `Staff/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| スタッフ | スタッフ一覧 | `Staff/index` | `staffList` | ✓ IchiranPage(contactsScreens) | ✓ `staff_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 保護者 | 保護者登録 | `ParentSMS/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 保護者 | 保護者一覧 | `ParentSMS/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 保護者 | 保護者一覧 | `ParentSMS/index` | `parentList` | ✓ IchiranPage(contactsScreens) | ✓ `parent_list_ichiran_test.js` | ✗ | △ 巡回 |
 
 ### 部屋･備品（icon: `Resource`）
 
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
-| ショートカット | 部屋一覧 | `Resource/LWClassroom_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 部屋一覧 | `Resource/LWClassroom_AN` | `classroomList` | ✓ IchiranPage(resourceScreens) | ✓ `classroom_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 会議室一覧 | `Resource/index?category=meeting_room` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 部屋・備品一覧 | `Resource/index?category=other` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | 店舗一覧 | `School/index` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 店舗一覧 | `School/index` | `schoolList` | ✓ IchiranPage(resourceScreens) | ✓ `school_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 部屋登録 | `Resource/EWClassroom_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 会議室登録 | `Resource/EditView?category=meeting_room` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 部屋・備品登録 | `Resource/EditView?category=other` |  | ✗ | ✗ | ✗ | △ 巡回 |

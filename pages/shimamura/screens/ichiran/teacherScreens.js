@@ -20,6 +20,15 @@ const standardScreens = [
       selectIfSet('school_id', d.school_id);
     },
   },
+  {
+    // 講師の姓・名とクラス名（name）で絞り込める。結果リンクは講師コード・クラス名・受講生
+    label: '講師別受講生一覧', menu: menus.teacherStudentList,
+    navKey: 'TeacherStudentList', coreKey: 'TeacherStudentList',
+    fill: (d) => {
+      fillTextFieldsByName(I, { last_name: d.last_name, first_name: d.first_name, name: d.name });
+      selectIfSet('school_id', d.school_id);
+    },
+  },
 ];
 
 module.exports = { standardScreens, specialScreens: {} };
