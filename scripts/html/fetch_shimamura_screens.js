@@ -53,6 +53,18 @@ const TARGETS = [
   { name: 'contact_register',
     hint: '問合せ登録（候補生登録）',
     directUrl: `${BASE_URL}index.php?module=Student&action=EditView&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true` },
+  { name: 'courses_by_student',
+    hint: '受講生別クラス一覧',
+    directUrl: `${BASE_URL}index.php?module=Student&action=index&contact_status=0&courses_by_student=true&initial_state&top_menu=1` },
+  { name: 'kouho_search',
+    hint: '候補生検索',
+    directUrl: `${BASE_URL}index.php?module=ContactsKouho&action=LW_AN&top_menu=1` },
+  { name: 'document_request_list',
+    hint: '資料請求一覧',
+    directUrl: `${BASE_URL}index.php?module=Student&action=index&query=1&contact_status=11` },
+  { name: 'memo_list',
+    hint: 'メモ一覧（受講生）',
+    directUrl: `${BASE_URL}index.php?module=SMSMemo&action=ListView&is_memo=1&parent_module=Student&empty_form=1` },
 
   // ── クラス・コース系 ──
   { name: 'class_list',

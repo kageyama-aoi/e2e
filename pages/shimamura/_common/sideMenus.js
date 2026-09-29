@@ -31,6 +31,34 @@ module.exports = {
     moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
     shortcut:  'コース別受講生一覧',
   },
+  classesByStudent: {
+    directUrl: '/index.php?module=Student&action=index&contact_status=0&courses_by_student=true&initial_state&top_menu=1',
+    moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
+    shortcut:  '受講生別クラス一覧',
+  },
+  creditPurchaseCustomer: {
+    directUrl: '/index.php?module=Student&action=LW_CreditPurchaseCustomerInfo_AN&empty_form=1',
+    moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
+    shortcut:  '債権買取顧客情報一覧',
+  },
+  kouhoSearch: {
+    directUrl:      '/index.php?module=ContactsKouho&action=LW_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__candidates_grp_sub', menuname: '候補生' },
+    shortcut:       '候補生検索',
+  },
+  documentRequestList: {
+    directUrl:      '/index.php?module=Student&action=index&query=1&contact_status=11',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__application_sub', menuname: '問合せ' },
+    shortcut:       '資料請求一覧',
+  },
+  studentMemoList: {
+    directUrl:      '/index.php?module=SMSMemo&action=ListView&is_memo=1&parent_module=Student&empty_form=1',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__smsmemo_sub', menuname: 'メモ' },
+    shortcut:       'メモ一覧',
+  },
 
   // ── クラス・コース系 ──────────────────────────────────────────
   classList: {

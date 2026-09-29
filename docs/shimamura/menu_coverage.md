@@ -37,7 +37,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 |---|--:|--:|--:|--:|---|
 | カレンダー | 28 | 1 | 1 | 27 | E（巡回のみ） |
 | コース | 9 | 5 | 3 | 4 | 対象 |
-| 受講生 | 17 | 6 | 6 | 11 | 対象 |
+| 受講生 | 17 | 11 | 11 | 6 | 対象 |
 | 講師 | 4 | 2 | 2 | 2 | 対象 |
 | コンタクト | 8 | 1 | 1 | 7 | 対象 |
 | 部屋･備品 | 12 | 0 | 0 | 12 | 対象 |
@@ -45,8 +45,8 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | 経理 | 39 | 6 | 7 | 32 | 対象 |
 | レポート | 1 | 0 | 0 | 1 | E（巡回のみ） |
 | ヘルプ | 5 | 0 | 0 | 5 | E（巡回のみ） |
-| **合計（全体）** | **147** | **20** | **19** | **126** | |
-| **合計（E を除く対象）** | **89** | **20** | **19** | **68** | |
+| **合計（全体）** | **147** | **25** | **24** | **121** | |
+| **合計（E を除く対象）** | **89** | **25** | **24** | **63** | |
 
 ## アイコン別 マッピング表
 
@@ -108,17 +108,17 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 |---|---|---|---|---|---|---|---|
 | ショートカット | 受講生登録 | `Student/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 受講生検索 | `Student/index` | `studentSearch` | ✓ IchiranPage(studentScreens) | ✓ `student_search_ichiran_test.js` | ✗ | △ 巡回 |
-| ショートカット | 債権買取顧客情報一覧 | `Student/LW_CreditPurchaseCustomerInfo_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 債権買取顧客情報一覧 | `Student/LW_CreditPurchaseCustomerInfo_AN` | `creditPurchaseCustomer` | ✓ IchiranPage(studentScreens) | ✓ `credit_purchase_customer_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | コース別受講生一覧 | `Student/index?contact_status=0&course_list=true` | `courseByStudent` | ✓ IchiranPage(studentScreens) | ✓ `course_by_student_ichiran_test.js` | ✗ | △ 巡回 |
-| ショートカット | 受講生別クラス一覧 | `Student/index?contact_status=0&courses_by_student=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 受講生別クラス一覧 | `Student/index?contact_status=0&courses_by_student=true` | `classesByStudent` | ✓ IchiranPage(studentScreens) | ✓ `classes_by_student_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | EDI会員データ取込 | `ImportCreditSummary/LWEDIMemberDataImport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 見込み客連携 | 見込み客連携 | `Student/EWCustomerInterface_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 見込み客連携 | 受講生詳細 | `Student/DetailView` |  | ✓ GessyaIkkatuFlowPage / StudentSaikenkaiFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` / `student_saikenkai_test.js` | △ 巡回 |
-| 候補生 | 候補生検索 | `ContactsKouho/LW_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 候補生 | 候補生検索 | `ContactsKouho/LW_AN` | `kouhoSearch` | ✓ IchiranPage(studentScreens) | ✓ `kouho_ichiran_test.js` | ✗ | △ 巡回 |
 | 問合せ | 問合せ登録 | `Student/EditView?contact_status=5` |  | ✓ ContactRegisterPage | ✗ | ✓ `contact_register_test.js` | △ 巡回 |
 | 問合せ | 問合せ一覧 | `Student/index?contact_status=5` | `contactList` | ✓ IchiranPage(studentScreens) | ✓ `contact_list_ichiran_test.js` | ✗ | △ 巡回 |
-| 問合せ | 資料請求一覧 | `Student/index?contact_status=11` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| メモ | メモ一覧 | `SMSMemo/ListView?is_memo=1&parent_module=Student` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 問合せ | 資料請求一覧 | `Student/index?contact_status=11` | `documentRequestList` | ✓ IchiranPage(studentScreens) | ✓ `document_request_ichiran_test.js` | ✗ | △ 巡回 |
+| メモ | メモ一覧 | `SMSMemo/ListView?is_memo=1&parent_module=Student` | `studentMemoList` | ✓ IchiranPage(studentScreens) | ✓ `student_memo_ichiran_test.js` | ✗ | △ 巡回 |
 | メモ | メモテンプレート登録 | `SMSMemoTemplates/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | メモ | メモテンプレート一覧 | `SMSMemoTemplates/ListView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 有効性データ | 有効性データ出力 | `Student/LWValidityDataOutput_AN` | `validityDataOutput` | ✓ IchiranPage(studentScreens) | ✓ `validity_data_output_test.js` | ✗ | △ 巡回 |
