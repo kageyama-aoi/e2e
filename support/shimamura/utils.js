@@ -374,6 +374,26 @@ function buildTestName(prefix, row) {
   };
 }
 
+/**
+ * XPath 文字列リテラル（' を含む場合は concat で組む）
+ * @param {string} s
+ * @returns {string}
+ */
+function xpathLiteral(s) {
+  if (!s.includes("'")) return `'${s}'`;
+  return `concat('${s.split("'").join("', \"'\", '")}')`;
+}
+
+/**
+ * 左サイドバーのリンクを表示テキスト完全一致で探す XPath
+ * （withText は部分一致のため「講師一覧」が「講師一覧出力」に、「料金一覧」が「料金一覧(共通)」にも当たる）
+ * @param {string} label - リンクの表示テキスト
+ * @returns {string} XPath
+ */
+function sidebarLinkXPath(label) {
+  return `//*[@id="leftCol"]//a[contains(@class,"subMenuLink")][normalize-space(.)=${xpathLiteral(label)}]`;
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -389,4 +409,5 @@ module.exports = {
   extractRecordId,
   waitForSaveResult,
   buildTestName,
+  sidebarLinkXPath,
 };

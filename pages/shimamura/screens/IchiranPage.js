@@ -1,35 +1,39 @@
 'use strict';
 
 const { I } = inject();
-const { toggleGroupmenu } = require('../../../support/shimamura/utils');
+const { toggleGroupmenu, sidebarLinkXPath } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
+// セレクタリスト（'a, b'）の各要素に :not([data-e2e-stale]) を付ける
+const notStale = (sel) => sel.split(',').map((s) => `${s.trim()}:not([data-e2e-stale])`).join(', ');
+
 // ================================================================
 //  共通ヘルパー（this 経由で全メソッドから使う）
+//  resultSel は結果として見る要素。既定は結果リンク a.listViewTdLinkS1（リンクの無い一覧は画面定義で指定）
 // ================================================================
 const base = {
 
-  // -- 検索実行・結果確認（listViewTdLinkS1 を使う標準一覧画面共通） --
+  // -- 検索実行・結果確認（標準一覧画面共通） --
 
-  // 開いた時点で結果一覧が出ている画面（資料請求一覧・講師別受講生一覧 等）では、単に RESULT_LINK を待つと
-  // 検索前のリンクで即成立し、後続の結果確認が「検索前の一覧」を見て合格しうる（#257）。
-  // 検索前のリンクに印を付け、印の無い＝検索後に描かれたリンクを待つ（全画面リロードでも AJAX 差し替えでも成立）
-  _clickSearchAndWait() {
+  // 開いた時点で結果一覧が出ている画面（資料請求一覧・講師別受講生一覧 等）では、単に結果要素を待つと
+  // 検索前の要素で即成立し、後続の結果確認が「検索前の一覧」を見て合格しうる（#257）。
+  // 検索前の要素に印を付け、印の無い＝検索後に描かれた要素を待つ（全画面リロードでも AJAX 差し替えでも成立）
+  _clickSearchAndWait(resultSel = RESULT_LINK) {
     I.executeScript((sel) => {
-      document.querySelectorAll(sel).forEach((a) => a.setAttribute('data-e2e-stale', '1'));
-    }, RESULT_LINK);
+      document.querySelectorAll(sel).forEach((el) => el.setAttribute('data-e2e-stale', '1'));
+    }, resultSel);
     I.click('input[name="search"]');
-    I.waitForElement(`${RESULT_LINK}:not([data-e2e-stale])`, TIMEOUTS.RESULT);
+    I.waitForElement(notStale(resultSel), TIMEOUTS.RESULT);
   },
 
-  _verifyResultsExist() {
-    I.seeElement(RESULT_LINK);
+  _verifyResultsExist(resultSel = RESULT_LINK) {
+    I.seeElement(resultSel);
   },
 
-  _verifyRecordInResults(expectedText) {
-    I.see(expectedText, RESULT_LINK);
+  _verifyRecordInResults(expectedText, resultSel = RESULT_LINK) {
+    I.see(expectedText, resultSel);
   },
 
   // -- ナビゲーション --
@@ -40,9 +44,10 @@ const base = {
     I.waitForElement('a[class*="subMenuLink"]', TIMEOUTS.ELEMENT);
   },
 
+  // 表示テキスト完全一致（withText の部分一致だと「料金一覧」が「料金一覧(共通)」にも当たる。#260）
   _clickShortcut(linkText) {
     I.say(`【ナビ】サイドバー "${linkText}" をクリック`);
-    I.click(locate('a[class*="subMenuLink"]').withText(linkText));
+    I.click(locate(sidebarLinkXPath(linkText)).first());
   },
 
   async _navigateViaMenu(menuDef) {
@@ -84,12 +89,14 @@ const base = {
 //    specialScreens  … 乗らない画面の個別メソッド（未収金一覧・受注売上・出席表検索・有効性データ出力 等）
 //
 //  clearDateRange: true = date_group1 を空にする／配列 = 指定した日付範囲の prefix を空にする。
+//  resultSelector: 結果として見る要素。省略時は結果リンク a.listViewTdLinkS1。
+//                  リンクの無い一覧（AFS会員番号検索 等）は行のセル 'td.oddListRowS1, td.evenListRowS1' を指定する。
 //
 //  新しい標準一覧画面を追加するとき: 該当アイコンのファイルの standardScreens に1エントリ足すだけ。
 //  新しいアイコンのファイルを作ったら下の ICON_SCREEN_FILES に足す。
 //  （手順は /shimamura-ichiran-dev スキル参照）
 // ================================================================
-function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRange = false }) {
+function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRange = false, resultSelector = RESULT_LINK }) {
   return {
     async [`navigateTo${navKey}Page`]() {
       I.say(`【${label}】一覧画面へ遷移`);
@@ -105,17 +112,17 @@ function createIchiranScreen({ label, menu, navKey, coreKey, fill, clearDateRang
 
     [`click${coreKey}SearchAndWait`]() {
       I.say(`【${label}】検索実行`);
-      this._clickSearchAndWait();
+      this._clickSearchAndWait(resultSelector);
     },
 
     [`verify${coreKey}ResultsExist`]() {
       I.say(`【${label}】検索結果が表示されることを確認`);
-      this._verifyResultsExist();
+      this._verifyResultsExist(resultSelector);
     },
 
     [`verify${coreKey}RecordInResults`](expectedText) {
       I.say(`【${label}】"${expectedText}" が結果に表示されることを確認`);
-      this._verifyRecordInResults(expectedText);
+      this._verifyRecordInResults(expectedText, resultSelector);
     },
   };
 }
