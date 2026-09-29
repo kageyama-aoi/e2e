@@ -169,19 +169,22 @@ async function fillTargetForm(I, input) {
   if (input.area) I.selectOption(S.selects.area, input.area);
 }
 
-// 保存 → 「エラーが出るか、保存ボタンが消える（ページ遷移）」まで動的に待つ → 判定
-// 実装は KoushiShareiFlowPage.saveAndVerify をそのまま真似る
+// 保存 → 「エラーが出るか、詳細画面の edit_button が出る」まで動的に待つ → 判定
+// successMode: 'disappears'（保存ボタンが消えたら成功）は使わない。保存ボタンの無い別画面
+// （二重登録の確認画面など）に移っても成立し、偽合格になる（#232 / #243）
 async function saveAndVerify(I, expectedErrors = []) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
-  // 保存後に詳細画面へ戻る画面は successMode を省略（既定: edit_button 出現）
-  await waitForSaveResult(I, { successSelector: S.buttons.save, successMode: 'disappears' });
+  await waitForSaveResult(I);   // 既定: edit_button 出現（編集画面には edit_button が無いことを確認済みの画面に限る）
   if (expectedErrors.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);
     return;
   }
   await assertNoShimamuraError(I, '登録');
-  I.say('【確認】登録成功');
+  // 新規登録なら、エラーが無いことに加えて URL の record= で保存されたことを確かめる
+  const recordId = extractRecordId(await I.grabCurrentUrl());
+  if (!recordId) throw new Error('【保存】詳細画面の URL に record= がありません（保存されていない）');
+  I.say(`【確認】登録成功 record=${recordId}`);
 }
 
 // --------- オーケストレーター ---------
@@ -383,7 +386,7 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 // セレクタをファイル先頭にまとめる（ローカル定数）
 // エラーコンテナ等の全画面共通セレクタは SELECTORS（support/shimamura/constants.js）を参照する
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName, clickAndWaitForReload } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
@@ -410,9 +413,12 @@ Before(beforeShimamura);
 Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current }) => {
   await navigateToTargetScreen(I);
   await fillTargetForm(I, current);
-  I.click(S.buttons.save);
-  I.waitForElement('body', TIMEOUTS.SCREEN);
+  // 押す前から画面にある要素（body・ファイル選択欄など）を待つと、再描画の前に即成立して
+  // 押す前の画面でエラー確認をしてしまう（#243）。画面が読み込み直されるまで待つ
+  await clickAndWaitForReload(I, S.buttons.save);
   await assertNoShimamuraError(I, '【〇〇処理】保存');
+  // ↑ エラーが無いだけでは成功の証拠にならない。成功時にだけ現れるもの
+  //   （URL の record=、完了メッセージ、取込履歴の新しい行など）を必ず1つ確かめる
   I.saveScreenshotWithTimestamp('TARGET_FORM_result');
 });
 ```
