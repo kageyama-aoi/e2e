@@ -1,11 +1,11 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-29 09:53 (JST)
+> 最終更新: 2026-09-29 10:51 (JST)
 
-**合計 150 テスト**（shimamura 36 / tframe 112 / taskreport 1 / smoke 1）
+**合計 156 テスト**（shimamura 42 / tframe 112 / taskreport 1 / smoke 1）
 
-## shimamura（36件）
+## shimamura（42件）
 
 ### auth/（1件）
 
@@ -40,13 +40,15 @@
 | `taikai_test.js` | 1000_2_2 | 退会処理フローを確認 |
 | `teacher_keiri_setup_test.js` | — | 講師謝礼テスト用の講師バリエーション登録・経理タブ設定を準備 |
 
-### page/（18件）
+### page/（24件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
+| `account_list_ichiran_test.js` | — | 法人/団体一覧の空検索・法人名絞り込みで結果が表示されることを確認（testgcp はテスト用法人を1件登録済み） |
 | `attendance_today_ichiran_test.js` | 1001_5_1 | 本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認 |
 | `class_list_ichiran_test.js` | 1100_4_1 | クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `classes_by_student_ichiran_test.js` | — | 受講生別クラス一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
+| `classroom_list_ichiran_test.js` | — | 部屋一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
 | `contact_list_ichiran_test.js` | 1000_8_1 | 問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認 |
 | `contact_module_list_ichiran_test.js` | 1001_3_2 | コンタクト一覧の空検索で結果が表示されることを確認 |
 | `course_by_student_ichiran_test.js` | 1000_6_1 | コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認 |
@@ -57,9 +59,13 @@
 | `kouho_ichiran_test.js` | — | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
 | `menu_patrol_test.js` | — | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
 | `mishukin_list_ichiran_test.js` | 1600_2_1 | 未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認 |
+| `parent_list_ichiran_test.js` | — | 保護者一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `school_list_ichiran_test.js` | — | 店舗一覧の空検索・店舗名絞り込みで結果が表示されることを確認 |
+| `staff_list_ichiran_test.js` | — | スタッフ一覧の空検索・姓絞り込みで結果が表示されることを確認 |
 | `student_memo_ichiran_test.js` | — | メモ一覧（受講生）の空検索・タイトル絞り込みで結果が表示されることを確認 |
 | `student_search_ichiran_test.js` | 1000_5_1 | 受講生検索の空検索・姓絞り込みで結果が表示されることを確認 |
 | `teacher_list_ichiran_test.js` | 1200_3_1 | 講師一覧の空検索で結果が表示されることを確認 |
+| `teacher_student_list_ichiran_test.js` | — | 講師別受講生一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 

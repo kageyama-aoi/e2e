@@ -13,9 +13,15 @@ const base = {
 
   // -- 検索実行・結果確認（listViewTdLinkS1 を使う標準一覧画面共通） --
 
+  // 開いた時点で結果一覧が出ている画面（資料請求一覧・講師別受講生一覧 等）では、単に RESULT_LINK を待つと
+  // 検索前のリンクで即成立し、後続の結果確認が「検索前の一覧」を見て合格しうる（#257）。
+  // 検索前のリンクに印を付け、印の無い＝検索後に描かれたリンクを待つ（全画面リロードでも AJAX 差し替えでも成立）
   _clickSearchAndWait() {
+    I.executeScript((sel) => {
+      document.querySelectorAll(sel).forEach((a) => a.setAttribute('data-e2e-stale', '1'));
+    }, RESULT_LINK);
     I.click('input[name="search"]');
-    I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
+    I.waitForElement(`${RESULT_LINK}:not([data-e2e-stale])`, TIMEOUTS.RESULT);
   },
 
   _verifyResultsExist() {
@@ -124,6 +130,7 @@ const ICON_SCREEN_FILES = [
   require('./ichiran/teacherScreens'),
   require('./ichiran/contactsScreens'),
   require('./ichiran/keiriScreens'),
+  require('./ichiran/resourceScreens'),
 ];
 
 const screenMethods = [

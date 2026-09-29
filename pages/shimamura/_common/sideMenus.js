@@ -82,12 +82,47 @@ module.exports = {
     moduleUrl: '/index.php?module=Teacher&action=index&top_menu=1',
     shortcut:  '講師検索',
   },
+  teacherStudentList: {
+    directUrl: '/index.php?module=Teacher&action=index&return_module=Teacher&return_action=index&student_list=true&query=true',
+    moduleUrl: '/index.php?module=Teacher&action=index&top_menu=1',
+    shortcut:  '講師別受講生一覧',
+  },
 
   // ── コンタクト ────────────────────────────────────────────────
   contactModuleList: {
     directUrl: '/index.php?module=Contacts&action=index&top_menu=1',
     moduleUrl: '/index.php?module=Contacts&action=index&top_menu=1',
     shortcut:  '顧客一覧',
+  },
+  accountList: {
+    directUrl:      '/index.php?module=Accounts&action=index&return_module=Accounts&return_action=DetailView&query=true',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__account_sub', menuname: '法人/団体' },
+    shortcut:       '法人/団体一覧',
+  },
+  staffList: {
+    directUrl:      '/index.php?module=Staff&action=index&query=true',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__employee_sub', menuname: 'スタッフ' },
+    shortcut:       'スタッフ一覧',
+  },
+  parentList: {
+    directUrl:      '/index.php?module=ParentSMS&action=index',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__parent_sub', menuname: '保護者' },
+    shortcut:       '保護者一覧',
+  },
+
+  // ── 部屋･備品 ────────────────────────────────────────────────
+  classroomList: {
+    directUrl: '/index.php?module=Resource&action=LWClassroom_AN&query=1',
+    moduleUrl: '/index.php?module=Resource&action=LWClassroom_AN&top_menu=1',
+    shortcut:  '部屋一覧',
+  },
+  schoolList: {
+    directUrl: '/index.php?module=School&action=index&query=1',
+    moduleUrl: '/index.php?module=Resource&action=LWClassroom_AN&top_menu=1',
+    shortcut:  '店舗一覧',
   },
 
   // ── 有効性データ ──────────────────────────────────────────────

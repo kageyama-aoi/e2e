@@ -1,0 +1,3 @@
+scenario,name,school_id,expectedName
+空条件検索,,,
+店舗で絞り込み,,POS試験用_旧河原町オーパ店,M01
