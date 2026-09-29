@@ -1,0 +1,3 @@
+scenario,claim_month,idnumber,last_name,expectedName
+請求月のみ検索,2026-10-01,,,
+請求月＋会員番号で絞り込み,2026-10-01,TK20250812039,,チルドレン39

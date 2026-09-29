@@ -241,4 +241,6 @@ npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shi
 | 遷移後に URL が `testgcpindex.php?...` になる | `process.env.BASE_URL`（末尾 `/` なし）を直接連結している | `constants.js` の `BASE_URL`（末尾 `/` 付き）を使う。`IchiranPage._navigateToModule` 経由なら起きない |
 | サイドバー経路（`SHIMAMURA_NAV=sidebar`）で検索状態が残る | サイドバーリンクに `top_menu=1` がない画面 | `courseIchiran` と同様に `directUrl` のみ定義する |
 | 検索ボタンが AJAX のため結果が出ない | ボタンの onclick が `ajax_AN()` 呼び出し | `_clickSearchAndWait` の `waitForElement` で十分。出ない場合は日付フィルタを疑う |
+| 空検索が0件で、日付を空にすると別の画面と同じになる | 「本日の〜」のように、今日で絞ること自体が画面の役割（本日の入出金） | 結果リンクは見ず、「今日で絞られていること」と「検索後にページ送りが出ること」を確かめる specialScreens にする（keiriScreens.js の本日の入出金） |
+| 月が変わると件数が変わる／条件を空にしても全件にならない | 既定値が月に連動する条件欄（返金一覧の請求月＝来月。空にすると今月扱い） | CSV の全行で実データのある月を固定で渡す |
 | 条件検索の結果確認が、検索しなくても通ってしまう | 開いた時点で結果一覧が出ている画面で、検索前のリンクを見て待ちが即成立していた | `_clickSearchAndWait` は #257 で対策済み（検索後に描かれたリンクを待つ）。specialScreens で独自に結果待ちを書くときも同じく「検索後に描かれた要素」を待つ |
