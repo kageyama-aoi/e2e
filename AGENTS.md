@@ -335,6 +335,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `extractRecordId(url)` | 同上 | URL / href から `record=` の ID を取り出す（保存後の詳細画面 URL や一覧リンクから） |
 | `waitForSaveResult(I, {successSelector, successMode})` | 同上 | 保存後「エラー表示 or 成功状態」まで動的に待つ。`appears`（既定: `edit_button` 出現）/ `disappears`（`save_button` 消失）/ `hasText`（完了メッセージ） |
 | `buildTestName(prefix, row)` | 同上 | セットアップ系で受講生名を「prefix+MMDD / testNo+scenario」に組み立てる |
+| `sidebarLinkXPath(label)` | 同上 | 左サイドバーのリンクを表示テキスト完全一致で探す XPath（`withText` は部分一致で「料金一覧」が「料金一覧(共通)」にも当たる） |
 | `ensureAccountTransferSchedules(I, {claimMonth, …})` | `support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
 | `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |

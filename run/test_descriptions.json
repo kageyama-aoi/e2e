@@ -175,6 +175,11 @@
     "page/parent_list_ichiran_test.js":            "保護者一覧の空検索・姓絞り込みで結果が表示されることを確認",
     "page/classroom_list_ichiran_test.js":         "部屋一覧の空検索・店舗絞り込みで結果が表示されることを確認",
     "page/school_list_ichiran_test.js":            "店舗一覧の空検索・店舗名絞り込みで結果が表示されることを確認",
+    "page/urikakekin_ichiran_test.js":             "売掛金の基準日のみ検索・基準日＋姓絞り込みで結果が表示されることを確認",
+    "page/afs_member_ichiran_test.js":             "AFS会員番号検索の空検索・カナ氏名絞り込みで結果の行が表示されることを確認",
+    "page/pos_response_error_ichiran_test.js":     "POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認",
+    "page/fee_list_ichiran_test.js":               "料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認",
+    "page/fee_common_list_ichiran_test.js":        "料金一覧(共通)の空検索・料金名絞り込みで結果が表示されることを確認（testgcp はテスト用共通料金を1件登録済み）",
     "page/class_list_ichiran_test.js": {
       "description": "クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認",
       "feature_no": "1100_4_1"

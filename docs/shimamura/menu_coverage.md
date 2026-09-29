@@ -42,11 +42,11 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | コンタクト | 8 | 4 | 4 | 4 | 対象 |
 | 部屋･備品 | 12 | 2 | 2 | 10 | 対象 |
 | Ｅメール | 26 | 0 | 0 | 26 | E（巡回のみ） |
-| 経理 | 39 | 6 | 7 | 32 | 対象 |
+| 経理 | 39 | 11 | 12 | 27 | 対象 |
 | レポート | 1 | 0 | 0 | 1 | E（巡回のみ） |
 | ヘルプ | 5 | 0 | 0 | 5 | E（巡回のみ） |
-| **合計（全体）** | **147** | **31** | **30** | **115** | |
-| **合計（E を除く対象）** | **89** | **31** | **30** | **57** | |
+| **合計（全体）** | **147** | **36** | **35** | **110** | |
+| **合計（E を除く対象）** | **89** | **36** | **35** | **52** | |
 
 ## アイコン別 マッピング表
 
@@ -202,15 +202,15 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 受注＆売上 | `Keiri/index?keiri_report_type=Invoices` | `keiriInvoices` | ✓ IchiranPage(keiriScreens) | ✓ `keiri_invoices_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師給与 | `Keiri/index?teacher` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 未収金 | `Transaction/LWMishukin_AN` | `mishukinList` | ✓ IchiranPage(keiriScreens) | ✓ `mishukin_list_ichiran_test.js` | ✗ | △ 巡回 |
-| ショートカット | 売掛金 | `Transaction/LWUrikakekin_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | 売掛金 | `Transaction/LWUrikakekin_AN` | `urikakekin` | ✓ IchiranPage(keiriScreens) | ✓ `urikakekin_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 月謝一括作成 | `Fee/LWMonthlyFeeCreation_AN` | `monthlyFeeCreation` | ✓ GessyaIkkatuFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` | △ 巡回 |
 | ショートカット | 一括入金処理 | `Transaction/MultiUpdateOverdueView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 源泉税率マスタ | `MasterKanri/DWGensenZeiritsuMaster_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | AFS会員番号検索 | `Keiri/LW_ACSMemberNumberSearch_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| ショートカット | POSレスポンスエラー一覧 | `PosResponseError/LWPOSResponseErrorList_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| ショートカット | AFS会員番号検索 | `Keiri/LW_ACSMemberNumberSearch_AN` | `afsMemberSearch` | ✓ IchiranPage(keiriScreens) | ✓ `afs_member_ichiran_test.js` | ✗ | △ 巡回 |
+| ショートカット | POSレスポンスエラー一覧 | `PosResponseError/LWPOSResponseErrorList_AN` | `posResponseError` | ✓ IchiranPage(keiriScreens) | ✓ `pos_response_error_ichiran_test.js` | ✗ | △ 巡回 |
 | 料金 | 料金設定（入会金用） | `Fee/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 料金 | 料金一覧 | `Fee/index?general=0` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 料金 | 料金一覧(共通) | `Fee/LWCommon_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
+| 料金 | 料金一覧 | `Fee/index?general=0` | `feeList` | ✓ IchiranPage(keiriScreens) | ✓ `fee_list_ichiran_test.js` | ✗ | △ 巡回 |
+| 料金 | 料金一覧(共通) | `Fee/LWCommon_AN` | `feeCommonList` | ✓ IchiranPage(keiriScreens) | ✓ `fee_common_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 料金 | 料金パッケージ作成 | `SalesGroup/EditView?template` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 料金 | 料金パッケージ一覧 | `SalesGroup/index?template=true` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 入出金 | 入出金一覧 | `Transaction/index` | `transactionList` | ✓ IchiranPage(keiriScreens) | ✓ `transaction_ichiran_test.js` | ✗ | △ 巡回 |

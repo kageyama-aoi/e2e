@@ -12,7 +12,7 @@
  */
 
 const { I } = inject();
-const { toggleGroupmenu } = require('../../../support/shimamura/utils');
+const { toggleGroupmenu, sidebarLinkXPath } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 const snapshot = require('./menuSnapshot/testgcp.json');
 
@@ -28,26 +28,6 @@ function routeToUrl(route) {
   const [ma, query] = route.split('?');
   const [module, action] = ma.split('/');
   return `index.php?module=${module}&action=${action}${query ? `&${query}` : ''}&top_menu=1`;
-}
-
-/**
- * XPath 文字列リテラル（' を含む場合は concat で組む）
- * @param {string} s
- * @returns {string}
- */
-function xpathLiteral(s) {
-  if (!s.includes("'")) return `'${s}'`;
-  return `concat('${s.split("'").join("', \"'\", '")}')`;
-}
-
-/**
- * サイドバーのリンクを表示テキスト完全一致で探すロケータ
- * （withText は部分一致のため「講師一覧」が「講師一覧出力」にも当たる）
- * @param {string} label
- * @returns {string} XPath
- */
-function sidebarLinkXPath(label) {
-  return `//*[@id="leftCol"]//a[contains(@class,"subMenuLink")][normalize-space(.)=${xpathLiteral(label)}]`;
 }
 
 module.exports = {

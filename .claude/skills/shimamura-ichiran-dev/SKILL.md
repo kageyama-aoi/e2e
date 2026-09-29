@@ -112,6 +112,8 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
   clearDateRange: true,  // 日付範囲が既定で今日／当月に絞られる画面のみ（空検索が0件になるため）
                          // true = date_group1_rstart/rend を空に。別名の範囲なら prefix の配列で指定
                          // 例: 債権買取顧客情報一覧 ['date_entered_range', 'date_modified_range', 'moushikomi_last_send_time_range']
+  // resultSelector: 'td.oddListRowS1, td.evenListRowS1',
+  //                       // 結果がリンクでなく行だけの一覧のみ（省略時は a.listViewTdLinkS1）。例: AFS会員番号検索・POSレスポンスエラー一覧
   fill: (d) => {
     fillTextFieldsByName(I, { {field1}: d.{field1}, {field2}: d.{field2} });
     selectIfSet('{selectField}', d.{selectField});   // select[name="..."] に値があるときだけ選択
@@ -122,6 +124,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 - `navKey` / `coreKey` はテストが呼ぶメソッド名から逆算する（テストは既存の `*_ichiran_test.js` を雛形にする）
 - `fill` は `fillTextFieldsByName`（テキスト）+ `selectIfSet`（セレクト）で書く。`executeScript` を直書きしない
 - CSV 列名とフィールド `name=` が違う場合は `fill` 内で吸収する（例: コース一覧は CSV 列 `name` → フィールド `course_name`）
+- 巡回テストの「標準一覧」判定は検索ボタンの有無だけで、結果の形までは見ていない。着手時に空検索して、結果リンク `a.listViewTdLinkS1` が出るか（出なければ `resultSelector`）、必須の検索条件が無いか（売掛金の基準日など）を確かめる
 
 #### 特殊画面（標準の共通形に乗らない） → `specialScreens` に個別メソッド
 
@@ -132,10 +135,10 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 | ヘルパー | 役割 |
 |---|---|
-| `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移 |
+| `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移。サイドバーのリンクは表示テキストの**完全一致**で押す（`sidebarLinkXPath`） |
 | `_clearDateRangeFields(prefixes)` | `<prefix>_rstart` / `_rend` を空にする（既定 `['date_group1']`）。通常は `clearDateRange` 経由で呼ばれる |
-| `_clickSearchAndWait()` | 検索前の結果リンクに `data-e2e-stale` の印を付けてから `input[name="search"]` をクリックし、印の無い（検索後に描かれた）`a.listViewTdLinkS1` を待つ |
-| `_verifyResultsExist()` / `_verifyRecordInResults(text)` | 結果リンクの存在・文言確認 |
+| `_clickSearchAndWait(resultSel)` | 検索前の結果要素に `data-e2e-stale` の印を付けてから `input[name="search"]` をクリックし、印の無い（検索後に描かれた）結果要素を待つ。`resultSel` 省略時は `a.listViewTdLinkS1` |
+| `_verifyResultsExist(resultSel)` / `_verifyRecordInResults(text, resultSel)` | 結果要素の存在・文言確認 |
 
 ---
 

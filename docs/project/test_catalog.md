@@ -1,11 +1,11 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-29 10:51 (JST)
+> 最終更新: 2026-09-29 11:57 (JST)
 
-**合計 156 テスト**（shimamura 42 / tframe 112 / taskreport 1 / smoke 1）
+**合計 161 テスト**（shimamura 47 / tframe 112 / taskreport 1 / smoke 1）
 
-## shimamura（42件）
+## shimamura（47件）
 
 ### auth/（1件）
 
@@ -40,11 +40,12 @@
 | `taikai_test.js` | 1000_2_2 | 退会処理フローを確認 |
 | `teacher_keiri_setup_test.js` | — | 講師謝礼テスト用の講師バリエーション登録・経理タブ設定を準備 |
 
-### page/（24件）
+### page/（29件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
 | `account_list_ichiran_test.js` | — | 法人/団体一覧の空検索・法人名絞り込みで結果が表示されることを確認（testgcp はテスト用法人を1件登録済み） |
+| `afs_member_ichiran_test.js` | — | AFS会員番号検索の空検索・カナ氏名絞り込みで結果の行が表示されることを確認 |
 | `attendance_today_ichiran_test.js` | 1001_5_1 | 本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認 |
 | `class_list_ichiran_test.js` | 1100_4_1 | クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `classes_by_student_ichiran_test.js` | — | 受講生別クラス一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
@@ -55,11 +56,14 @@
 | `course_ichiran_test.js` | 1100_3_1 | コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認 |
 | `credit_purchase_customer_ichiran_test.js` | — | 債権買取顧客情報一覧の空検索（当月の日付範囲を解除）・会員番号絞り込みで結果が表示されることを確認 |
 | `document_request_ichiran_test.js` | — | 資料請求一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `fee_common_list_ichiran_test.js` | — | 料金一覧(共通)の空検索・料金名絞り込みで結果が表示されることを確認（testgcp はテスト用共通料金を1件登録済み） |
+| `fee_list_ichiran_test.js` | — | 料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認 |
 | `keiri_invoices_ichiran_test.js` | 1001_4_2 | 受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認 |
 | `kouho_ichiran_test.js` | — | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
 | `menu_patrol_test.js` | — | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
 | `mishukin_list_ichiran_test.js` | 1600_2_1 | 未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認 |
 | `parent_list_ichiran_test.js` | — | 保護者一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `pos_response_error_ichiran_test.js` | — | POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認 |
 | `school_list_ichiran_test.js` | — | 店舗一覧の空検索・店舗名絞り込みで結果が表示されることを確認 |
 | `staff_list_ichiran_test.js` | — | スタッフ一覧の空検索・姓絞り込みで結果が表示されることを確認 |
 | `student_memo_ichiran_test.js` | — | メモ一覧（受講生）の空検索・タイトル絞り込みで結果が表示されることを確認 |
@@ -67,6 +71,7 @@
 | `teacher_list_ichiran_test.js` | 1200_3_1 | 講師一覧の空検索で結果が表示されることを確認 |
 | `teacher_student_list_ichiran_test.js` | — | 講師別受講生一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
+| `urikakekin_ichiran_test.js` | — | 売掛金の基準日のみ検索・基準日＋姓絞り込みで結果が表示されることを確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
 ## tframe（112件）

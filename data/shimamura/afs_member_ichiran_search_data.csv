@@ -1,0 +1,3 @@
+scenario,acsno,idnumber,card_kananame,expectedName
+空条件検索,,,,
+カナ氏名で絞り込み,,,ヤマダイチロウ,ヤマダイチロウ

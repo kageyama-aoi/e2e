@@ -1,0 +1,3 @@
+scenario,fee_name,course_name,last_name,school_id,expectedName
+空条件検索,,,,,
+コース名で絞り込み,,ピアノルーム_カゲヤマ,,,ピアノルーム_カゲヤマ

@@ -155,4 +155,32 @@ module.exports = {
     moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
     shortcut:  '月謝一括作成',
   },
+  urikakekin: {
+    // サイドバーのリンクは query_date=当日 付きだが、directUrl では基準日を検索条件で渡す
+    directUrl: '/index.php?module=Transaction&action=LWUrikakekin_AN&query=true',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  '売掛金',
+  },
+  afsMemberSearch: {
+    directUrl: '/index.php?module=Keiri&action=LW_ACSMemberNumberSearch_AN',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  'AFS会員番号検索',
+  },
+  posResponseError: {
+    directUrl: '/index.php?module=PosResponseError&action=LWPOSResponseErrorList_AN',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  'POSレスポンスエラー一覧',
+  },
+  feeList: {
+    directUrl:      '/index.php?module=Fee&action=index&general=0&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金一覧',
+  },
+  feeCommonList: {
+    directUrl:      '/index.php?module=Fee&action=LWCommon_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金一覧(共通)',
+  },
 };

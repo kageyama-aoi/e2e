@@ -13,6 +13,9 @@ const { TIMEOUTS } = require('../../../../support/shimamura/constants');
 const menus = require('../../_common/sideMenus');
 const { selectIfSet } = require('./_helpers');
 
+// 結果がリンクではなく行だけの一覧（AFS会員番号検索・POSレスポンスエラー一覧）で結果として見るセル
+const RESULT_ROW_CELL = 'td.oddListRowS1, td.evenListRowS1';
+
 const standardScreens = [
   {
     label: '入出金一覧', menu: menus.transactionList,
@@ -24,6 +27,49 @@ const standardScreens = [
       selectIfSet('smsgroup',     d.smsgroup);
       selectIfSet('claim_type',   d.claim_type);
       selectIfSet('payment_type', d.payment_type);
+    },
+  },
+  {
+    // 基準日（query_date）が必須。未入力で検索すると「日付をご入力ください。」で0件
+    label: '売掛金', menu: menus.urikakekin,
+    navKey: 'Urikakekin', coreKey: 'Urikakekin',
+    fill: (d) => {
+      fillTextFieldsByName(I, { query_date: d.query_date, last_name: d.last_name, first_name: d.first_name });
+      selectIfSet('school_id', d.school_id);
+    },
+  },
+  {
+    label: 'AFS会員番号検索', menu: menus.afsMemberSearch,
+    navKey: 'AfsMemberSearch', coreKey: 'AfsMember', resultSelector: RESULT_ROW_CELL,
+    fill: (d) => {
+      fillTextFieldsByName(I, { acsno: d.acsno, idnumber: d.idnumber, card_kananame: d.card_kananame });
+    },
+  },
+  {
+    // エラー登録日（date_entered）が既定で当日に絞られている
+    label: 'POSレスポンスエラー一覧', menu: menus.posResponseError,
+    navKey: 'PosResponseError', coreKey: 'PosResponseError',
+    clearDateRange: ['date_entered'], resultSelector: RESULT_ROW_CELL,
+    fill: (d) => {
+      selectIfSet('error_resource_id', d.error_resource_id);
+    },
+  },
+  {
+    label: '料金一覧', menu: menus.feeList,
+    navKey: 'FeeList', coreKey: 'FeeList', clearDateRange: true,
+    fill: (d) => {
+      fillTextFieldsByName(I, { fee_name: d.fee_name, course_name: d.course_name, last_name: d.last_name });
+      selectIfSet('school_id', d.school_id);
+    },
+  },
+  {
+    // testgcp は元データ0件のため、テスト用共通料金「E2E一覧検索用共通料金」を1件登録済み（#260）。
+    // 既定の絞り込み（店舗 TESTモール太田店・料金サブ区分 入会金）がこのデータと一致する
+    label: '料金一覧(共通)', menu: menus.feeCommonList,
+    navKey: 'FeeCommonList', coreKey: 'FeeCommonList',
+    fill: (d) => {
+      fillTextFieldsByName(I, { fee_name: d.fee_name });
+      selectIfSet('fee_subcategory', d.fee_subcategory);
     },
   },
 ];
