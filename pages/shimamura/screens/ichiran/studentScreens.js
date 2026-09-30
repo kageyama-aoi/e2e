@@ -30,10 +30,11 @@ const standardScreens = [
     },
   },
   {
+    // コース名欄はポップアップ選択式（表示欄は disabled・実値は hidden）なので、絞り込みはコース区分のセレクトで行う（#209）
     label: 'コース別受講生一覧', menu: menus.courseByStudent,
     navKey: 'CourseByStudent', coreKey: 'CourseByStudent',
     fill: (d) => {
-      fillTextFieldsByName(I, { course_name: d.course_name });
+      selectIfSet('course_category', d.course_category);
       selectIfSet('school_id', d.school_id);
     },
   },
