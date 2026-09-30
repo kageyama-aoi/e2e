@@ -20,10 +20,14 @@
 gessya_ikkatu_setup_test.js  … 受講生を準備（請求方法設定＋クラス登録）
         ↓ output/gessya_ikkatu_session.json（record UUID・退会フラグ・期待値）
 gessya_ikkatu_test.js        … 月謝一括作成バッチ実行 → 各受講生の翌月料金を検証
+                               ＋ @skp: バッチを2回実行しても翌月料金が重複しないことを検証（#166）
 ```
 
 - setup 側は `BeforeSuite` で session.json を空配列にリセットしてから、CSV 各行の受講生を作り、その **record UUID** を追記していく。
 - 本体側は session.json を読み込み、UUID で受講生詳細に直接遷移して検証する（同名受講生が複数いても取り違えない設計）。
+- 二重作成防止（SKP・`@skp` #166）は、1回目のバッチ後に受講生ごとの翌月の「会費合計（経理カルテ `#tbl_carte` の月行）」と
+  「料金名の一覧（月リンク先の料金一覧）」を控え、2回目のバッチ後に同じであること・同じ料金名が2つ無いことを確かめる。
+  バッチは testgcp 全体に効くため、このシナリオは1回の実行でバッチを2回回す点に注意。
 
 ## データソース: `data/shimamura/gessya_ikkatu_setup_data.csv`
 
