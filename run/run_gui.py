@@ -1231,7 +1231,11 @@ class RunnerApp(tk.Tk):
         ttk.Entry(bottom, textvariable=self.cmd_var, state='readonly').pack(fill=tk.X, pady=(0, 8))
 
         ttk.Label(bottom, text='Log').pack(anchor='w')
-        self.log_text = ScrolledText(bottom, wrap=tk.WORD, font=LOG_FONT)
+        # height を明示しないと Text の既定（24行相当）が bottom の要求サイズに乗り、
+        # PanedWindow の初期配分計算で left（実行条件＋ボタン群）側が不足分を取られて
+        # Login & Hold・Settings ボタンが見切れる不具合が起きていた。fill+expand で
+        # 実行時にはどのみち広がるため、要求サイズだけ小さく申告する（test_list の height=8 と同じ考え方）。
+        self.log_text = ScrolledText(bottom, wrap=tk.WORD, font=LOG_FONT, height=8)
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log_text.configure(state='disabled')
         self._configure_log_tags()
