@@ -3,7 +3,7 @@
  *
  * **テスト内容**
  * - 空条件で検索 → 結果に1件以上表示される
- * - コース名で絞り込み → 結果に1件以上表示される
+ * - コース区分で絞り込み → 期待する受講生が結果に表示される（コース名欄はポップアップ選択式のため #209）
  *
  * **データソース**
  * - `data/shimamura/course_by_student_ichiran_search_data.csv`
@@ -23,7 +23,7 @@ Before(beforeShimamura);
 Data(csvData).Scenario('コース別受講生一覧で検索できる @dev', async ({ I, ichiranPageShimamura, current }) => {
   await ichiranPageShimamura.navigateToCourseByStudentPage();
 
-  const hasCondition = current.course_name;
+  const hasCondition = current.course_category;
   if (hasCondition) ichiranPageShimamura.fillCourseByStudentSearchConditions(current);
 
   ichiranPageShimamura.clickCourseByStudentSearchAndWait();
