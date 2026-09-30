@@ -79,8 +79,8 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
   // Step1: 候補生検索 → 受講生へ移動（昇格） → 請求方法編集
   const recordId = await runStudentPaymentSetup(I, classMemberPageShimamura, current);
 
-  // Step2: 経理ビューA/B でクラス登録（1クラス目）
-  await openKeirisyoriScreenA(I, classMemberPageShimamura);
+  // Step2: 経理ビューA/B でクラス登録（1クラス目）。受講生の UUID が分かっているので経理ビューは URL で開く（#244）
+  await openKeirisyoriScreenA(I, classMemberPageShimamura, { recordId });
   await fillKeirisyoriScreenB(I, buildClassInput(I, current));
   await confirmKeirisyoriScreenE(I);
 
@@ -126,6 +126,7 @@ Data(csvData).Scenario('受講生の請求方法を設定しコースに登録�
     await executeTaikai(I, classMemberPageShimamura, {
       taikaiYear:  resolved.year,
       taikaiMonth: resolved.month,
+      recordId,
     });
   }
 });
