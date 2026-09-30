@@ -250,4 +250,68 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
   }
 }
 
-module.exports = { runStudentPaymentSetup, editStudentPaymentBySubmit, runMonthlyFeeCreation, verifyMonthlyFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
+/**
+ * session ファイルから、月謝を確かめる対象（退会していない受講生）を読む
+ * @returns {Array<object>}
+ */
+function loadActiveSessionStudents() {
+  let session = [];
+  try { session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8')); } catch {}
+  return session.filter((s) => !s.withdrawn);
+}
+
+/**
+ * 経理カルテビューから、指定月の会費合計と料金一覧（料金名）を読む（#166 二重作成防止の比較用）。
+ * 会費はカルテの月別行（#tbl_carte）、料金名は月リンク先の料金一覧（Fee LW_AN）から取る。
+ * @param {object} I
+ * @param {string} recordId - 受講生の record UUID
+ * @param {string} targetYearMonth - 'YYYY/MM'
+ * @returns {Promise<{total: number, feeNames: string[]}>}
+ */
+async function grabMonthFeeSummary(I, recordId, targetYearMonth) {
+  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.waitForElement('#tbl_carte', TIMEOUTS.SCREEN);
+  const row = await I.executeScript((ym) => {
+    const link = [...document.querySelectorAll('#tbl_carte a')].find((a) => a.innerText.trim() === ym);
+    if (!link) return null;
+    const cells = [...link.closest('tr').children].map((c) => c.innerText.trim());
+    return { total: cells[1], href: link.getAttribute('href') };
+  }, targetYearMonth);
+  if (!row) throw new Error(`【月謝確認】経理カルテに ${targetYearMonth} の行がありません（record=${recordId}）`);
+
+  // 月リンク先は、その受講生のその月の料金一覧（1料金＝1行）
+  I.amOnPage(BASE_URL + row.href);
+  I.waitForElement('.listView', TIMEOUTS.SCREEN);
+  const feeNames = await I.executeScript(() => {
+    const trs = [...document.querySelectorAll('.listView tr')];
+    const header = trs.find((tr) => tr.innerText.includes('料金名'));
+    if (!header) return [];
+    const col = [...header.children].findIndex((c) => c.innerText.includes('料金名'));
+    return trs.slice(trs.indexOf(header) + 1)
+      .map((tr) => (tr.children[col] ? tr.children[col].innerText.trim() : ''))
+      .filter(Boolean);
+  });
+  return { total: Number(String(row.total).replace(/,/g, '')), feeNames };
+}
+
+/**
+ * 月謝一括作成の2回目で料金が重複して作られていないことを確かめる（#166 SKP）。
+ * 実行前後で会費合計と料金名の一覧が同じで、同じ料金名が2つ無いこと。
+ * @param {object} I
+ * @param {{name: string, targetYearMonth: string, before: object, after: object}} snapshot
+ *   before / after は {@link grabMonthFeeSummary} の戻り値（1回目の後・2回目の後）
+ */
+function assertNoDuplicateFees(I, { name, targetYearMonth, before, after }) {
+  const dupes = after.feeNames.filter((n, i) => after.feeNames.indexOf(n) !== i);
+  if (dupes.length > 0) {
+    throw new Error(`【二重作成】${name} の ${targetYearMonth} に同じ料金が複数あります: ${[...new Set(dupes)].join(', ')}`);
+  }
+  if (after.total !== before.total || after.feeNames.join('|') !== before.feeNames.join('|')) {
+    throw new Error(`【二重作成】${name} の ${targetYearMonth} の料金が2回目の月謝一括作成で変わりました`
+      + `\n  前: ${before.total}円 [${before.feeNames.join(', ')}]\n  後: ${after.total}円 [${after.feeNames.join(', ')}]`);
+  }
+  I.say(`  ✓ ${name}: ${targetYearMonth} は ${after.total}円 [${after.feeNames.join(', ')}] のまま（重複なし）`);
+}
+
+module.exports = { runStudentPaymentSetup, editStudentPaymentBySubmit, runMonthlyFeeCreation, verifyMonthlyFees,
+  loadActiveSessionStudents, grabMonthFeeSummary, assertNoDuplicateFees, verifyKanrihiFee, verifyKanrihiWinnerByClassName, resolveRelativeMonth, SESSION_FILE };
