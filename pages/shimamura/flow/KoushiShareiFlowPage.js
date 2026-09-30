@@ -4,11 +4,13 @@ const fs = require('fs');
 const { logScreenUrl } = require('../../../support/utils');
 const {
   verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector, waitForSaveResult, toggleGroupmenu,
+  extractRecordId,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const NAV = {
   directUrl: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
+  detailAction: 'DW_KoushiShareiTsuika_AN', // 保存後に移る講師謝礼詳細
   sidebar: {
     moduleUrl:      'index.php?module=ShareiNichibetsu&action=LWShareiIchiran_AN&top_menu=1',
     // 謝礼一覧のサイドバーでは「講師謝礼」グループが折りたたまれており、
@@ -43,10 +45,14 @@ const S = {
     save:          'input[name="save_button"]'
   },
   teacher_popup: {
-    result: `a${SELECTORS.RESULT_LINK}`
+    lastName:  'input[name="last_name"]',
+    firstName: 'input[name="first_name"]',
+    search:    'input[name="search"]',
+    result:    `a${SELECTORS.RESULT_LINK}`
   },
   message: {
-    error: SELECTORS.ERROR_CONTAINER
+    error:       SELECTORS.ERROR_CONTAINER,
+    detailTitle: '.moduleTitle', // 講師謝礼詳細の見出し「講師謝礼詳細 ：<講師名>」
   }
 };
 
@@ -65,15 +71,30 @@ async function navigateToTsuikaScreen(I) {
   await logScreenUrl(I, '講師謝礼追加');
 }
 
-async function selectTeacher(I) {
-  I.say('【講師選択】ポップアップを開く');
+/**
+ * 講師選択ポップアップで、指定の講師を氏名で検索して選ぶ。
+ * 先頭の結果は休任中の講師のこともあるため、先頭固定では選ばない（#210）。
+ * @param {object} I
+ * @param {string} teacherName - 「姓 名」（例: 'E2Eテスト 内部課税'）
+ */
+async function selectTeacher(I, teacherName) {
+  I.say(`【講師選択】ポップアップを開いて「${teacherName}」を選ぶ`);
   I.click(S.buttons.teacher_popup);
-  I.switchToNextTab();
-  I.waitForElement(S.teacher_popup.result, TIMEOUTS.RESULT);
-  I.say('【講師選択】最初の結果を選択');
-  I.click(locate(S.teacher_popup.result).first());
+  // ポップアップのタブは少し遅れて開くため、開くまで切り替えを再試行する（他の FlowPage と同じ #210）
+  I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();
+  I.waitForElement(S.teacher_popup.lastName, TIMEOUTS.SCREEN);
+  const [lastName, firstName = ''] = teacherName.split(' ');
+  fillTextFieldsBySelector(I, [
+    [S.teacher_popup.lastName,  lastName],
+    [S.teacher_popup.firstName, firstName],
+  ]);
+  I.click(S.teacher_popup.search);
+  const resultLink = locate(S.teacher_popup.result).withText(teacherName);
+  I.waitForElement(resultLink, TIMEOUTS.RESULT);
+  I.click(resultLink);
   // ポップアップタブが閉じた後、元のタブへ戻る
   I.switchToNextTab();
+  I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
 }
 
 async function fillMainForm(I, input) {
@@ -99,7 +120,15 @@ async function fillMainForm(I, input) {
   ]);
 }
 
-async function saveAndVerify(I, expectedErrors) {
+/**
+ * 保存して結果を確かめる。
+ * 成功時は講師謝礼詳細（action=DW_KoushiShareiTsuika_AN&record=...）へ移り、見出しに講師名が出る（完了メッセージは出ない #210）。
+ * 保存ボタンが消えただけでは別画面に移っても合格してしまうため、移り先と講師名まで確かめる（#243 から引き継ぎ）。
+ * @param {object} I
+ * @param {string[]} expectedErrors - 期待するエラー文言（空なら成功を期待）
+ * @param {{teacherName: (string|undefined)}} [options]
+ */
+async function saveAndVerify(I, expectedErrors, { teacherName } = {}) {
   I.say('【保存】保存ボタンをクリック');
   I.click(S.buttons.save);
   // エラーが出るか保存ボタンが消える（ページ遷移）まで動的に待機
@@ -109,14 +138,22 @@ async function saveAndVerify(I, expectedErrors) {
     return;
   }
   await assertNoShimamuraError(I, '登録');
-  I.say('【確認】登録成功');
+
+  const url = await I.grabCurrentUrl();
+  const recordId = extractRecordId(url);
+  if (!url.includes(`action=${NAV.detailAction}`) || !recordId) {
+    throw new Error(`【登録】講師謝礼詳細に移っていません（保存されていない可能性）: ${url}`);
+  }
+  if (teacherName) I.see(teacherName, S.message.detailTitle);
+  I.say(`【確認】登録成功（講師謝礼 record=${recordId}）`);
+  await logScreenUrl(I, '講師謝礼詳細');
 }
 
 async function runKoushiShareiManualFlow(I, input) {
   await navigateToTsuikaScreen(I);
-  await selectTeacher(I);
+  await selectTeacher(I, input.teacher_name);
   await fillMainForm(I, input);
-  await saveAndVerify(I, input.expectedErrors || []);
+  await saveAndVerify(I, input.expectedErrors || [], { teacherName: input.teacher_name });
 }
 
 async function runKoushiShareiValidationFlow(I, input) {
