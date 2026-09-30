@@ -7,6 +7,7 @@
     "gui": "python run/run_gui.py",
     "test": "npx codeceptjs run --grep @wip --invert",
     "test_wip": "npx codeceptjs run --grep @wip",
+    "test:unit": "node --test \"tests/unit/*.test.js\"",
     "--- SHIMAMURA TESTS ---": "echo '--- SHIMAMURA TESTS ---'",
     "pretest_s": "node scripts/check_pause.js",
     "test_s": "npx codeceptjs run ./tests/shimamura/**/*_test.js --profile shimamura.testgcp --grep @wip --invert",
