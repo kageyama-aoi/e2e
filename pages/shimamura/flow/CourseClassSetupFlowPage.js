@@ -46,11 +46,13 @@ const S = {
   },
   courseTab: {
     tabLink:        '#tab_link_course_tab',
+    content:        '#course_tab',
     selectPopupBtn: '#course_selection_popup_popup_button',
     applyButton:    'input[name="apply_course"]',
   },
   scheduleTab: {
     tabLink:      '#tab_link_schedule_tab',
+    content:      '#schedule_tab',
     bulkCreate:   'input[value*="全体スケジュール"]',
     startYear:    '#event_start_year',
     startMonth:   '#event_start_month',
@@ -220,7 +222,20 @@ async function linkCourseToClass(I, { classRecordId, courseName, courseCategory 
   I.waitForElement(S.courseTab.applyButton, TIMEOUTS.SCREEN);
   I.click(S.courseTab.applyButton);
   I.wait(TIMEOUTS.TAB_SWITCH);
-  I.say(`  ✓ コース紐づけ完了`);
+  verifyCourseLinked(I, { classRecordId, courseName });
+  I.say('  ✓ コース紐づけ完了');
+}
+
+/**
+ * クラスのコースタブの一覧に指定コースが出ることを確かめる（出なければ紐づいていない。#243）
+ * @param {object} I
+ * @param {{classRecordId: string, courseName: string}} params
+ */
+function verifyCourseLinked(I, { classRecordId, courseName }) {
+  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.waitForElement(S.courseTab.tabLink, TIMEOUTS.SCREEN);
+  I.click(S.courseTab.tabLink);
+  I.waitForText(courseName, TIMEOUTS.SCREEN, S.courseTab.content);
 }
 
 /**
@@ -273,7 +288,28 @@ async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, month
   I.click(S.scheduleTab.saveButton);
   I.wait(TIMEOUTS.TAB_SWITCH);
   await logScreenUrl(I, 'スケジュール作成完了');
-  I.say(`  ✓ スケジュール作成完了`);
+
+  const total = await verifyClassScheduleCreated(I, { classRecordId });
+  I.say(`  ✓ スケジュール作成完了（${total}件）`);
+}
+
+/**
+ * クラスのスケジュールタブのページ送り「(1 - 15 計: 26)」の件数で、1件以上あることを確かめる（#243）
+ * @param {object} I
+ * @param {{classRecordId: string}} params
+ * @returns {Promise<number>} スケジュール件数
+ */
+async function verifyClassScheduleCreated(I, { classRecordId }) {
+  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.waitForElement(S.scheduleTab.tabLink, TIMEOUTS.SCREEN);
+  I.click(S.scheduleTab.tabLink);
+  I.waitForElement(S.scheduleTab.content, TIMEOUTS.SCREEN);
+  const scheduleText = await I.grabTextFrom(S.scheduleTab.content);
+  const total = Number((scheduleText.match(/計:\s*(\d+)/) || [])[1] || 0);
+  if (total < 1) {
+    throw new Error(`【スケジュール作成】クラス(${classRecordId}) にスケジュールが作成されていません`);
+  }
+  return total;
 }
 
 /**
@@ -333,5 +369,7 @@ module.exports = {
   createClassBySubmit,
   linkCourseToClass,
   createClassSchedule,
+  verifyCourseLinked,
+  verifyClassScheduleCreated,
   setupLinkedCourseAndClass,
 };

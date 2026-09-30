@@ -11,11 +11,16 @@
  *
  * **注意**
  * - このテストは探索用途。PASS/FAIL でなくエラー内容の記録が目的
- * - エラーコンテナが存在しない場合は「エラーなし（登録成功）」と記録する
+ * - 結果は URL とエラー枠で3つに分けて記録する（#243）
+ *   - 登録成功: 詳細画面へ遷移し URL に record= が付く → 作った受講生はその場で削除する
+ *   - エラー: エラー枠にメッセージ（必須フィールド不足など）
+ *   - 保存されず: どちらでもない別画面（例: 同姓同名の「二重登録の可能性のある受講生一覧」）
+ * - 同姓同名で二重登録画面に止まらないよう、名に実行時刻を付けて毎回一意にする
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { fillTextFieldsByName } = require('../../../support/shimamura/utils');
+const { fillTextFieldsByName, clickAndWaitForReload, extractRecordId } = require('../../../support/shimamura/utils');
+const { submitDeleteForm } = require('../../../support/shimamura/editViewSubmit');
 const { TIMEOUTS, URLS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 const S = {
@@ -52,23 +57,32 @@ Data(csvData).Scenario('請求方法ごとの必須フィールドを確認す�
   I.amOnPage(BASE_URL + URLS.CONTACT_REGISTER);
   I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
 
-  fillTextFieldsByName(I, BASE_INPUT);
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const input = { ...BASE_INPUT, first_name: `${BASE_INPUT.first_name}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}` };
+  fillTextFieldsByName(I, input);
   I.selectOption(S.fields.bankPaymentType, current.bank_payment_type);
 
   I.say('【探索】保存ボタンをクリック');
-  I.click(S.button.save);
-  I.waitForElement('body', TIMEOUTS.SCREEN);
+  await clickAndWaitForReload(I, S.button.save, { timeout: TIMEOUTS.SCREEN });
 
   I.saveScreenshotWithTimestamp(`bank_payment_type_${current.bank_payment_type}_result`, true);
 
+  const label = `bank_payment_type=${current.bank_payment_type}`;
+  const url = await I.grabCurrentUrl();
+  const recordId = extractRecordId(url);
   const errorText = await I.executeScript((selector) => {
     const el = document.querySelector(selector);
     return el ? el.innerText.trim() : '';
   }, SELECTORS.ERROR_CONTAINER);
 
-  if (errorText) {
-    I.say(`【探索結果】bank_payment_type=${current.bank_payment_type}: ${errorText}`);
+  if (recordId) {
+    I.say(`【探索結果】${label}: 登録成功（record=${recordId}）→ 削除する`);
+    await submitDeleteForm(I, { module: 'Student', recordId, label: `${input.last_name} ${input.first_name}` });
+  } else if (errorText) {
+    I.say(`【探索結果】${label}: エラー: ${errorText}`);
   } else {
-    I.say(`【探索結果】bank_payment_type=${current.bank_payment_type}: エラーなし（登録成功）`);
+    const title = await I.executeScript(() => (document.querySelector('h2, .moduleTitle') || document.body).innerText.trim().slice(0, 80));
+    I.say(`【探索結果】${label}: 保存されず（エラー表示のない別画面: ${title} / ${url}）`);
   }
 });

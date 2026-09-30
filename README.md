@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-09-25 18:11:45
+Last updated: 2026-09-28 17:36:07
 
 ```text
 e2e/
@@ -283,11 +283,7 @@ e2e/
 │   │   ├── 2026-07-03-1435.md
 │   │   ├── 2026-07-06-1038.md
 │   │   ├── 2026-07-06-1418.md
-│   │   ├── 2026-07-07-1619.md
-│   │   ├── 2026-09-10-1604.md
-│   │   ├── 2026-09-11-1822.md
-│   │   ├── 2026-09-24-1825.md
-│   │   └── HANDOFF.md
+│   │   └── 2026-07-07-1619.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
 │   │   ├── MEMORY.md
@@ -1018,6 +1014,7 @@ e2e/
 │       ├── account_touroku_data.csv
 │       ├── account_touroku_data_minimum.csv
 │       ├── announcement_ichiran_search_data.csv
+│       ├── announcement_ichiran_sort_data.csv
 │       ├── announcement_touroku_data.csv
 │       ├── attendance_ichiran_search_data.csv
 │       ├── bank_actions_history_ichiran_search_data.csv
@@ -1031,6 +1028,7 @@ e2e/
 │       ├── chosekin_touroku_data.csv
 │       ├── contact_ichiran_search_data.csv
 │       ├── contract_ichiran_search_data.csv
+│       ├── contract_ichiran_sort_data.csv
 │       ├── course_detail_student_sort_data.csv
 │       ├── course_detail_student_sort_data_tframe.culture_beta.csv
 │       ├── course_ichiran_search_data.csv
@@ -1039,19 +1037,26 @@ e2e/
 │       ├── courseBySt_ichiran_search_data.csv
 │       ├── courseBySt_ichiran_sort_data.csv
 │       ├── email_ichiran_search_data.csv
+│       ├── email_ichiran_sort_data.csv
 │       ├── email_template_category_ichiran_search_data.csv
+│       ├── email_template_category_ichiran_sort_data.csv
 │       ├── email_template_category_touroku_data.csv
 │       ├── email_template_ichiran_search_data.csv
+│       ├── email_template_ichiran_sort_data.csv
 │       ├── email_template_touroku_data.csv
 │       ├── email_template_touroku_data_tframe.juku_beta.csv
 │       ├── entrance_log_ichiran_search_data.csv
+│       ├── entrance_log_ichiran_sort_data.csv
+│       ├── entrance_log_ichiran_sort_data_tframe.juku_beta.csv
 │       ├── entrance_log_touroku_data.csv
 │       ├── fee_ichiran_search_data.csv
+│       ├── fee_ichiran_sort_data.csv
 │       ├── infoHistory_ichiran_search_data.csv
+│       ├── infoHistory_ichiran_sort_data.csv
 │       ├── infoHistoryTemplate_ichiran_search_data.csv
+│       ├── infoHistoryTemplate_ichiran_sort_data.csv
 │       ├── infoHistoryTemplate_touroku_data.csv
 │       ├── jukusei_course_link_flow_data.csv
-│       ├── jukusei_ichiran_extract_data.csv
 │       ├── jukusei_ichiran_search_data.csv
 │       ├── jukusei_ichiran_sort_data.csv
 │       ├── jukusei_touroku_data.csv
@@ -1063,11 +1068,14 @@ e2e/
 │       ├── kyoshitsu_ichiran_sort_data.csv
 │       ├── kyoshitsu_touroku_data.csv
 │       ├── payment_ichiran_search_data.csv
+│       ├── payment_ichiran_sort_data.csv
 │       ├── payment_statement_output_data.csv
 │       ├── poll_ichiran_search_data.csv
+│       ├── poll_ichiran_sort_data.csv
 │       ├── proByCourse_ichiran_search_data.csv
 │       ├── proByCourse_ichiran_sort_data.csv
 │       ├── prospect_list_ichiran_search_data.csv
+│       ├── prospect_list_ichiran_sort_data.csv
 │       ├── prospect_list_touroku_data.csv
 │       ├── README.md
 │       ├── report_inquiry_ichiran_search_data.csv
@@ -1075,8 +1083,12 @@ e2e/
 │       ├── report_stschedule_ichiran_search_data.csv
 │       ├── report_teschedule_ichiran_search_data.csv
 │       ├── ryokin_master_ichiran_search_data.csv
+│       ├── ryokin_master_ichiran_sort_data.csv
+│       ├── ryokin_master_ichiran_sort_data_tframe.juku_beta.csv
 │       ├── ryokin_master_touroku_data.csv
 │       ├── ryokin_package_ichiran_search_data.csv
+│       ├── ryokin_package_ichiran_sort_data.csv
+│       ├── ryokin_package_ichiran_sort_data_tframe.juku_beta.csv
 │       ├── ryokin_package_touroku_data.csv
 │       ├── sharei_total_ichiran_search_data.csv
 │       ├── shohin_ichiran_search_data.csv
@@ -1096,8 +1108,10 @@ e2e/
 │       ├── teByStudent_ichiran_search_data.csv
 │       ├── teByStudent_ichiran_sort_data.csv
 │       ├── transaction_ichiran_search_data.csv
+│       ├── transaction_ichiran_sort_data.csv
 │       ├── tuition_fee_bulk_create_data.csv
-│       └── unpaid_amount_ichiran_search_data.csv
+│       ├── unpaid_amount_ichiran_search_data.csv
+│       └── unpaid_amount_ichiran_sort_data.csv
 ├── env/ 
 │   ├── .env.shimamura.MySQL84_dev
 │   ├── .env.shimamura.smbcpos_training
@@ -1239,7 +1253,6 @@ e2e/
 │   │   │   ├── emailTemplate_touroku.html
 │   │   │   ├── emailTemplateCategory_touroku.html
 │   │   │   ├── entranceLog_list.html
-│   │   │   ├── entranceLog_touroku.html
 │   │   │   ├── error_screenshot.png
 │   │   │   ├── infoHistory_student_list.html
 │   │   │   ├── infoHistoryTemplate_student_list.html
@@ -1533,6 +1546,7 @@ e2e/
 │       │   ├── account_ichiran_test.js
 │       │   ├── account_info_data_import_test.js
 │       │   ├── account_touroku_test.js
+│       │   ├── announcement_ichiran_sort_test.js
 │       │   ├── announcement_ichiran_test.js
 │       │   ├── announcement_touroku_test.js
 │       │   ├── attendance_ichiran_test.js
@@ -1547,6 +1561,7 @@ e2e/
 │       │   ├── chosekin_ichiran_test.js
 │       │   ├── chosekin_touroku_test.js
 │       │   ├── contact_ichiran_test.js
+│       │   ├── contract_ichiran_sort_test.js
 │       │   ├── contract_ichiran_test.js
 │       │   ├── course_detail_student_sort_test.js
 │       │   ├── course_ichiran_sort_test.js
@@ -1555,21 +1570,27 @@ e2e/
 │       │   ├── course_touroku_test.js
 │       │   ├── courseBySt_ichiran_sort_test.js
 │       │   ├── courseBySt_ichiran_test.js
+│       │   ├── email_ichiran_sort_test.js
 │       │   ├── email_ichiran_test.js
+│       │   ├── email_template_category_ichiran_sort_test.js
 │       │   ├── email_template_category_ichiran_test.js
 │       │   ├── email_template_category_touroku_test.js
+│       │   ├── email_template_ichiran_sort_test.js
 │       │   ├── email_template_ichiran_test.js
 │       │   ├── email_template_touroku_test.js
 │       │   ├── email_test.js
+│       │   ├── entrance_log_ichiran_sort_test.js
 │       │   ├── entrance_log_ichiran_test.js
 │       │   ├── entrance_log_touroku_test.js
+│       │   ├── fee_ichiran_sort_test.js
 │       │   ├── fee_ichiran_test.js
 │       │   ├── help_test.js
 │       │   ├── home_test.js
+│       │   ├── infoHistory_ichiran_sort_test.js
 │       │   ├── infoHistory_ichiran_test.js
+│       │   ├── infoHistoryTemplate_ichiran_sort_test.js
 │       │   ├── infoHistoryTemplate_ichiran_test.js
 │       │   ├── infoHistoryTemplate_touroku_test.js
-│       │   ├── jukusei_ichiran_extract_test.js
 │       │   ├── jukusei_ichiran_sort_test.js
 │       │   ├── jukusei_ichiran_test.js
 │       │   ├── jukusei_test.js
@@ -1583,11 +1604,14 @@ e2e/
 │       │   ├── kyoshitsu_ichiran_test.js
 │       │   ├── kyoshitsu_touroku_test.js
 │       │   ├── master_menu_test.js
+│       │   ├── payment_ichiran_sort_test.js
 │       │   ├── payment_ichiran_test.js
 │       │   ├── payment_statement_output_test.js
+│       │   ├── poll_ichiran_sort_test.js
 │       │   ├── poll_ichiran_test.js
 │       │   ├── proByCourse_ichiran_sort_test.js
 │       │   ├── proByCourse_ichiran_test.js
+│       │   ├── prospect_list_ichiran_sort_test.js
 │       │   ├── prospect_list_ichiran_test.js
 │       │   ├── prospect_list_touroku_test.js
 │       │   ├── report_inquiry_ichiran_test.js
@@ -1595,8 +1619,10 @@ e2e/
 │       │   ├── report_stschedule_ichiran_test.js
 │       │   ├── report_teschedule_ichiran_test.js
 │       │   ├── report_test.js
+│       │   ├── ryokin_master_ichiran_sort_test.js
 │       │   ├── ryokin_master_ichiran_test.js
 │       │   ├── ryokin_master_touroku_test.js
+│       │   ├── ryokin_package_ichiran_sort_test.js
 │       │   ├── ryokin_package_ichiran_test.js
 │       │   ├── ryokin_package_touroku_test.js
 │       │   ├── sharei_total_ichiran_test.js
@@ -1613,8 +1639,10 @@ e2e/
 │       │   ├── te_reward_total_calc_test.js
 │       │   ├── teByStudent_ichiran_sort_test.js
 │       │   ├── teByStudent_ichiran_test.js
+│       │   ├── transaction_ichiran_sort_test.js
 │       │   ├── transaction_ichiran_test.js
 │       │   ├── tuition_fee_bulk_create_test.js
+│       │   ├── unpaid_amount_ichiran_sort_test.js
 │       │   └── unpaid_amount_ichiran_test.js
 │       └── util/ 
 │           └── sort_spec_probe.js

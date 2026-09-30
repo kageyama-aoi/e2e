@@ -39,8 +39,9 @@
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage` tframe アイコン別マッピング表（`docs/tframe/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。
-- `npm run docs:all` ツリー＋カタログ＋メニュー表をまとめて更新。
-- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。
+- `npm run docs:menu-coverage:shimamura` shimamura アイコン別マッピング表（`docs/shimamura/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。メニュー採取は `node scripts/html/fetch_shimamura_menus.js shimamura.testgcp`（読むだけ・データ変更なし）。
+- `npm run docs:all` ツリー＋カタログ＋メニュー表（tframe / shimamura）をまとめて更新。
+- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）・shimamura メニュー表（`pages/shimamura/` `support/shimamura/` `tests/shimamura/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。フックからは `--exclude-untracked` 付きで呼ぶため、git 未追跡の作業中ファイルは載らない（手動の `npm run docs:*` は作業ツリー全体を数える）。
 
 ## ディレクトリ配置ルール
 
@@ -49,7 +50,7 @@
 | ディレクトリ | 置いてよいもの | 置いてはいけないもの |
 |---|---|---|
 | `tests/` | テストシナリオ（`*_test.js`）。`<product>/util/` にのみ GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾）を許可 | Page Object、汎用ユーティリティ、データ |
-| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`）、実機採取メニュースナップショット（`tframe/_common/menuSnapshot/*.json`） | テスト入力データ、汎用ユーティリティ |
+| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`）、実機採取メニュースナップショット（`<product>/_common/menuSnapshot/*.json`。tframe / shimamura） | テスト入力データ、汎用ユーティリティ |
 | `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
 | `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
 | `scripts/` | 単体で起動する補助ツール（Python・Node） | テスト実行中に `require()` されるJS |
@@ -106,6 +107,7 @@
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
 | `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
 | tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
+| shimamura の PO / テストの追加、shimamura メニューの改定 | `docs/shimamura/menu_coverage.md` のサマリ・アイコン別表は commit 時に自動再生成（`gen_shimamura_menu_coverage.js`）。メニュー改定時は `scripts/html/fetch_shimamura_menus.js` で `pages/shimamura/_common/menuSnapshot/testgcp.json` を採取し直す。**未着手画面・逆引きはこの自動生成表を見る** |
 | **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
 | `scripts/` 配下のスクリプトを移動・リネーム | `package.json` の該当 npm script、`.github/workflows/*.yaml`（CI がこれらを直接パス指定で呼んでいないか）。**CI 設定は push して実行されるまでローカルで気付けない**ため、移動時は必ず `grep -rn "旧パス" .github/ package.json` まで確認する（`/local-safe-move` Step 1 の対象拡張済み） |
 
@@ -313,7 +315,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 | 種類 | 雛形（テスト） | 雛形（Page Object / FlowPage） |
 |---|---|---|
-| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/IchiranPage.js`（メニュー定義は `pages/shimamura/_common/sideMenus.js`） |
+| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/ichiran/keiriScreens.js`（画面定義。`IchiranPage.js` が結合）／メニュー定義は `pages/shimamura/_common/sideMenus.js` |
 | 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | — |
 | 複数画面フロー | `tests/shimamura/flow/koushi_sharei_manual_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
 | セットアップ→本体の2段構成（セッションファイル受け渡し） | `tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `pages/shimamura/flow/HappyoukaiFlowPage.js` |
@@ -332,7 +334,9 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `clickCheckboxByLabelOrName` / `verifyCheckboxCheckedByLabelOrName` | 同上 | 特殊 DOM のチェックボックス操作 |
 | `extractRecordId(url)` | 同上 | URL / href から `record=` の ID を取り出す（保存後の詳細画面 URL や一覧リンクから） |
 | `waitForSaveResult(I, {successSelector, successMode})` | 同上 | 保存後「エラー表示 or 成功状態」まで動的に待つ。`appears`（既定: `edit_button` 出現）/ `disappears`（`save_button` 消失）/ `hasText`（完了メッセージ） |
+| `clickAndWaitForReload(I, locator, {timeout})` | 同上 | クリックして画面が読み込み直されるまで待つ。押す前から画面にある要素（body・ファイル選択欄等）を待つと再描画前に即成立し、押す前の画面で判定してしまう（#243） |
 | `buildTestName(prefix, row)` | 同上 | セットアップ系で受講生名を「prefix+MMDD / testNo+scenario」に組み立てる |
+| `sidebarLinkXPath(label)` | 同上 | 左サイドバーのリンクを表示テキスト完全一致で探す XPath（`withText` は部分一致で「料金一覧」が「料金一覧(共通)」にも当たる） |
 | `ensureAccountTransferSchedules(I, {claimMonth, …})` | `support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
 | `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |

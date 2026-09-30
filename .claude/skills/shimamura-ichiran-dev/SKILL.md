@@ -7,7 +7,7 @@ description: |
   - 「〇〇一覧のテストを作って」という依頼
   - 既存の一覧検索 Page Object メソッド / CSV / テストファイルを修正・追加したい
 
-  ワークフロー: フォーム確認（/shimamura-html-fetch） → sideMenus.js に定義追加 → IchiranPage.js にメソッド追記 → CSV → テストファイル → 実行確認
+  ワークフロー: フォーム確認（/shimamura-html-fetch） → sideMenus.js に定義追加 → screens/ichiran/<icon>Screens.js に画面定義追記 → CSV → テストファイル → 実行確認
 
   ※ 登録・処理フローのテストは /shimamura-registration-dev スキルを使うこと
   ※ 一覧画面でも「出力」ボタンでファイルをダウンロード・検証するテストは /shimamura-download-verify を使うこと
@@ -30,7 +30,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 検索ボタン | `#swSearchButton` | `input[name="search"]`（一部画面は `input[name="button"][value="表示"]` 等） |
 | 検索結果 | `.tf-group-body-search-result tr` | `a.listViewTdLinkS1`（`SELECTORS.RESULT_LINK`）。未収金・出席表は `.listViewPaginationTdS1` |
 | 画面遷移 | URL 直遷移 | `sideMenus.js` の定義 → `IchiranPage._navigateViaMenu()`（既定は directUrl、`SHIMAMURA_NAV=sidebar` でサイドバー経路） |
-| Page Object 置き場 | `pages/tframe/screens/{画面}Page.js`（画面ごと） | `pages/shimamura/screens/IchiranPage.js`（全一覧画面を1ファイルに集約） |
+| Page Object 置き場 | `pages/tframe/screens/{画面}Page.js`（画面ごと） | 画面定義は `pages/shimamura/screens/ichiran/<icon>Screens.js`（アイコン別）、`IchiranPage.js` がそれを結合して1つの PO（inject 名 `ichiranPageShimamura`）にする |
 | 認証 | `loginKannrisyaPage.login()` | `Before(beforeShimamura)`（`support/shimamura/hooks.js`） |
 | CSV dataDir | `'tframe'` を明示 | `'shimamura'` を明示（デフォルト値なし） |
 | エラー表示 | `#tf-message-summary` | `#top_err_info_msg_div`（`SELECTORS.ERROR_CONTAINER`） |
@@ -42,13 +42,14 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 目的 | 参照先 |
 |---|---|
 | **テストファイルの雛形** | `tests/shimamura/page/transaction_ichiran_test.js` |
-| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/IchiranPage.js` の `STANDARD_SCREENS` 配列（入出金一覧のエントリ） |
+| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/ichiran/keiriScreens.js` の `standardScreens`（入出金一覧のエントリ） |
 | メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `pages/shimamura/_common/sideMenus.js` |
-| 結果セレクタが特殊な画面の例 | `IchiranPage.js` の `specialScreens`（未収金一覧・受注売上・出席表検索・有効性データ出力） |
+| 結果セレクタが特殊な画面の例 | `ichiran/*Screens.js` の `specialScreens`（未収金一覧・受注売上＝keiri、出席表検索＝course、有効性データ出力＝student） |
+| 標準一覧かどうかの事前判定 | `menu_patrol_test.js` 実行後の `output/shimamura_menu_patrol/<module>.json` の `standardList`（`input[name="search"]` の有無） |
 | ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
 | 共通ユーティリティ・定数 | `support/shimamura/utils.js`（`fillTextFieldsByName`）、`support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
 | CSV の形式 | `data/shimamura/transaction_ichiran_search_data.csv` |
-| 画面 URL 一覧 | `scripts/html/shimamura/main_menu_links.json` / `*_links.json` |
+| 画面 URL 一覧・未着手画面の確認 | `docs/shimamura/menu_coverage.md`（全メニュー × PO/テスト有無の自動生成表。route と折りたたみグループ名・`toggleId` もここで引ける）。元データは `pages/shimamura/_common/menuSnapshot/testgcp.json` |
 | フォルダ配置ルール | `AGENTS.md` |
 
 ---
@@ -63,15 +64,15 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
    - 拾うもの: テキスト入力の `name=`、セレクトの `name=`、検索ボタンのセレクタ、結果テーブルのリンククラス、日付範囲フィールドの有無
 
 2. **URL（module / action）とサイドバー経路を特定する**
-   - `scripts/html/shimamura/main_menu_links.json` または `*_links.json` を参照
+   - `docs/shimamura/menu_coverage.md`（全メニューの route・グループ名）と `pages/shimamura/_common/menuSnapshot/testgcp.json`（`toggleId` = `collapseToggle.icon_id`）を参照
    - URL は `index.php?module=X&action=Y&...` 形式。`sideMenus.js` の先頭 `/` は有無どちらでもよい（`_navigateToModule` が `constants.js` の `BASE_URL`（末尾 `/` 付き）と結合する際に重複を除く）
    - サイドバー経路（`moduleUrl` + `shortcut`、折りたたみがあれば `collapseToggle`）も分かれば書く。分からなければ `directUrl` だけでよい
 
 3. **既存の類似画面が無いか確認する**
-   - `IchiranPage.js` の `STANDARD_SCREENS` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
+   - `pages/shimamura/screens/ichiran/` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
 
 4. **標準一覧画面か・特殊画面かを判定する**
-   - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → `STANDARD_SCREENS` にエントリを1つ足す（Step 3）
+   - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → 該当アイコンファイルの `standardScreens` にエントリを1つ足す（Step 3）
    - **特殊**: 検索ボタンが `input[name="button"][value="表示"]` 等、または結果が `.listViewPaginationTdS1` 等 → `specialScreens` に個別メソッドを書く（未収金一覧・受注売上・出席表を雛形にする）
 
 ---
@@ -93,9 +94,12 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ---
 
-### Step 3: `IchiranPage.js` に画面を追加
+### Step 3: `screens/ichiran/<icon>Screens.js` に画面を追加
 
-#### 標準一覧画面 → `STANDARD_SCREENS` にエントリを1つ足すだけ
+画面が属するアイコン（`menu_coverage.md` の見出し）のファイルに足す: 受講生=`studentScreens.js` / コース=`courseScreens.js` / 講師=`teacherScreens.js` / コンタクト=`contactsScreens.js` / 経理=`keiriScreens.js`。
+新しいアイコン（例: 部屋･備品）は同じ形のファイルを作り、`IchiranPage.js` の `ICON_SCREEN_FILES` に1行足す（メソッド名の重複は起動時にエラーで止まる）。
+
+#### 標準一覧画面 → `standardScreens` にエントリを1つ足すだけ
 
 `createIchiranScreen` ファクトリが `navigateTo{navKey}Page` / `fill{coreKey}SearchConditions` /
 `click{coreKey}SearchAndWait` / `verify{coreKey}ResultsExist` / `verify{coreKey}RecordInResults` の5メソッドを自動生成する。
@@ -105,7 +109,11 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
   label: '{画面名}', menu: menus.{camelCaseName},
   navKey: '{XxxList}',   // navigateTo{navKey}Page の Xxx（テストが呼ぶ名前に合わせる）
   coreKey: '{Xxx}',      // fill/click/verify の接頭辞（navKey と違う場合あり。例: 入出金は navKey=TransactionList / coreKey=Transaction）
-  clearDateRange: true,  // 日付範囲が既定で今日に絞られる画面のみ（空検索が0件になるため）
+  clearDateRange: true,  // 日付範囲が既定で今日／当月に絞られる画面のみ（空検索が0件になるため）
+                         // true = date_group1_rstart/rend を空に。別名の範囲なら prefix の配列で指定
+                         // 例: 債権買取顧客情報一覧 ['date_entered_range', 'date_modified_range', 'moushikomi_last_send_time_range']
+  // resultSelector: 'td.oddListRowS1, td.evenListRowS1',
+  //                       // 結果がリンクでなく行だけの一覧のみ（省略時は a.listViewTdLinkS1）。例: AFS会員番号検索・POSレスポンスエラー一覧
   fill: (d) => {
     fillTextFieldsByName(I, { {field1}: d.{field1}, {field2}: d.{field2} });
     selectIfSet('{selectField}', d.{selectField});   // select[name="..."] に値があるときだけ選択
@@ -116,6 +124,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 - `navKey` / `coreKey` はテストが呼ぶメソッド名から逆算する（テストは既存の `*_ichiran_test.js` を雛形にする）
 - `fill` は `fillTextFieldsByName`（テキスト）+ `selectIfSet`（セレクト）で書く。`executeScript` を直書きしない
 - CSV 列名とフィールド `name=` が違う場合は `fill` 内で吸収する（例: コース一覧は CSV 列 `name` → フィールド `course_name`）
+- 巡回テストの「標準一覧」判定は検索ボタンの有無だけで、結果の形までは見ていない。着手時に空検索して、結果リンク `a.listViewTdLinkS1` が出るか（出なければ `resultSelector`）、必須の検索条件が無いか（売掛金の基準日など）を確かめる
 
 #### 特殊画面（標準の共通形に乗らない） → `specialScreens` に個別メソッド
 
@@ -126,10 +135,10 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 | ヘルパー | 役割 |
 |---|---|
-| `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移 |
-| `_clearDateRangeFields()` | `date_group1_rstart` / `rend` を空にする |
-| `_clickSearchAndWait()` | `input[name="search"]` をクリックし `a.listViewTdLinkS1` を待つ |
-| `_verifyResultsExist()` / `_verifyRecordInResults(text)` | 結果リンクの存在・文言確認 |
+| `_navigateViaMenu(menuDef)` | `sideMenus.js` の定義に従って directUrl / サイドバー経路で遷移。サイドバーのリンクは表示テキストの**完全一致**で押す（`sidebarLinkXPath`） |
+| `_clearDateRangeFields(prefixes)` | `<prefix>_rstart` / `_rend` を空にする（既定 `['date_group1']`）。通常は `clearDateRange` 経由で呼ばれる |
+| `_clickSearchAndWait(resultSel)` | 検索前の結果要素に `data-e2e-stale` の印を付けてから `input[name="search"]` をクリックし、印の無い（検索後に描かれた）結果要素を待つ。`resultSel` 省略時は `a.listViewTdLinkS1` |
+| `_verifyResultsExist(resultSel)` / `_verifyRecordInResults(text, resultSel)` | 結果要素の存在・文言確認 |
 
 ---
 
@@ -225,9 +234,13 @@ npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shi
 |---|---|---|
 | `input[name="search"]` が見つからない | URL が違う / 画面の検索ボタンが別 name | `*_links.json` で module/action を確認。ボタンが `input[name="button"][value="表示"]` 等なら画面固有メソッドを書く（受注売上ブロック参照） |
 | `a.listViewTdLinkS1` が見つからない | 検索結果が0件 / 結果テーブルの形式が違う | テスト環境にデータがあるか確認。`.listViewPaginationTdS1` 形式なら未収金ブロックを参照 |
-| 空検索で結果ゼロ | 日付範囲フィールドが既定で今日に絞られている | `navigateTo…` 内で `this._clearDateRangeFields()` を呼ぶ |
+| 空検索で結果ゼロ | 日付範囲フィールドが既定で今日／当月に絞られている | エントリに `clearDateRange: true`。`date_group1` 以外の名前（`date_entered_range_rstart` 等）なら prefix 配列を渡す |
+| テキスト欄に入力できない | ポップアップ選択式の欄（`disabled`。例: 受講生別クラス一覧のクラス名） | その欄での絞り込みは諦め、セレクト（店舗等）で条件を作る |
 | 条件検索でヒットしない | `expectedName` がテスト環境データと不一致 | CSV の値をテスト環境の実データに合わせる |
 | `SHIMAMURA_TANTOUSYA` エラー | 環境変数が未設定 | `env/.env.{profile}` に `SHIMAMURA_TANTOUSYA=番号` を追加 |
 | 遷移後に URL が `testgcpindex.php?...` になる | `process.env.BASE_URL`（末尾 `/` なし）を直接連結している | `constants.js` の `BASE_URL`（末尾 `/` 付き）を使う。`IchiranPage._navigateToModule` 経由なら起きない |
 | サイドバー経路（`SHIMAMURA_NAV=sidebar`）で検索状態が残る | サイドバーリンクに `top_menu=1` がない画面 | `courseIchiran` と同様に `directUrl` のみ定義する |
 | 検索ボタンが AJAX のため結果が出ない | ボタンの onclick が `ajax_AN()` 呼び出し | `_clickSearchAndWait` の `waitForElement` で十分。出ない場合は日付フィルタを疑う |
+| 空検索が0件で、日付を空にすると別の画面と同じになる | 「本日の〜」のように、今日で絞ること自体が画面の役割（本日の入出金） | 結果リンクは見ず、「今日で絞られていること」と「検索後にページ送りが出ること」を確かめる specialScreens にする（keiriScreens.js の本日の入出金） |
+| 月が変わると件数が変わる／条件を空にしても全件にならない | 既定値が月に連動する条件欄（返金一覧の請求月＝来月。空にすると今月扱い） | CSV の全行で実データのある月を固定で渡す |
+| 条件検索の結果確認が、検索しなくても通ってしまう | 開いた時点で結果一覧が出ている画面で、検索前のリンクを見て待ちが即成立していた | `_clickSearchAndWait` は #257 で対策済み（検索後に描かれたリンクを待つ）。specialScreens で独自に結果待ちを書くときも同じく「検索後に描かれた要素」を待つ |

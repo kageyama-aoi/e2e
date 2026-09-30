@@ -31,7 +31,7 @@ const {
   attachErrorScreenshot,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { verifyValidationErrors, assertNoShimamuraError, clickAndWaitForReload } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
 
 // ── セレクタ定数 ─────────────────────────────────────────────
@@ -40,6 +40,7 @@ const S = {
   importBtn:   'input[name="save_button"]',  // 買取保留/解除ファイル読込ボタン（#import_btn）
   error:       SELECTORS.ERROR_CONTAINER,
   resultTable: '.listView',
+  historyTopRow: '.listView tr:nth-child(2)', // 取込履歴の先頭行（1行目は見出し。取込日時の降順）
 };
 
 // ── CSV ──────────────────────────────────────────────────────
@@ -65,6 +66,18 @@ async function navigateToImportScreen(I) {
   await logScreenUrl(I, '債権買取状態読込');
 }
 
+/**
+ * 取込履歴の先頭行のテキスト（行が無ければ空文字）
+ * @param {CodeceptJS.I} I
+ * @returns {Promise<string>}
+ */
+async function grabHistoryTopRow(I) {
+  return I.executeScript((sel) => {
+    const row = document.querySelector(sel);
+    return row ? row.innerText.replace(/\s+/g, ' ').trim() : '';
+  }, S.historyTopRow);
+}
+
 async function selectAndImportFile(I, filePath, expectedErrors) {
   if (filePath) {
     I.say(`【ファイル選択】${filePath}`);
@@ -72,21 +85,31 @@ async function selectAndImportFile(I, filePath, expectedErrors) {
   } else {
     I.say('【ファイル選択】ファイルなし（スキップ）');
   }
+  const topRowBefore = await grabHistoryTopRow(I);
 
   I.say('【ファイル読込】ボタンをクリック');
   // 前日データ欠損時に window.confirm() が出る場合があるため、クリック前にオーバーライドしておく
   // (I.acceptPopup() はポップアップ表示中にしか使えないため executeScript で対応)
   await I.executeScript(() => { window.confirm = () => true; });
-  I.click(S.importBtn);
-  // フォーム送信後、ページリロードでファイル入力欄が再表示されるまで待つ
-  I.waitForElement(S.fileInput, TIMEOUTS.RESULT);
+  // ファイル選択欄は押す前から画面にあるため、それを待つと再描画前の画面で判定しうる（#243）。
+  // 画面が読み込み直されるまで待つ
+  await clickAndWaitForReload(I, S.importBtn);
+  I.waitForElement(S.fileInput, TIMEOUTS.SCREEN);
 
   if (expectedErrors?.length > 0) {
     await verifyValidationErrors(I, expectedErrors, S.error);
     return;
   }
   await assertNoShimamuraError(I, '【ファイル読込】');
-  I.say('【ファイル読込】取込完了');
+
+  // エラーが無いだけでは取り込まれた証拠にならない。取込履歴の先頭に今日の行が増えたことを確かめる
+  const topRowAfter = await grabHistoryTopRow(I);
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  if (topRowAfter === topRowBefore || !topRowAfter.startsWith(today)) {
+    throw new Error(`【ファイル読込】取込履歴に今回の行がありません（取込されていない）\n  前: ${topRowBefore}\n  後: ${topRowAfter}`);
+  }
+  I.say(`【ファイル読込】取込完了（取込履歴: ${topRowAfter}）`);
   await logScreenUrl(I, '債権買取状態読込_取込後');
 }
 

@@ -73,6 +73,7 @@ async function goodExample() {
 
 ```js
 module.exports = {
+  navigateToKouhosei,
   KEIRI_SCREEN_B_LOCATORS,
   runRegistrationFlow,
   openKeirisyoriScreenA,
@@ -85,7 +86,7 @@ module.exports = {
 ```
 
 `module.exports` に書いたものだけが、他のファイルから `require` で使えます。  
-書いていない関数（`searchAndSelectKouhosei` など）はこのファイルの中だけで使えるプライベートな関数です。
+書いていない関数（`fillClassSearchForm` など）はこのファイルの中だけで使えるプライベートな関数です。
 
 ```
 公開（module.exports に書く）→ テストファイルや他の FlowPage から呼べる
@@ -157,13 +158,14 @@ I.waitForElement(SELECTORS.RESULT_LINK, TIMEOUTS.RESULT);     // 10秒
 ```
 [定数]      KEIRI_SCREEN_B_LOCATORS      ← 経理ビューBのセレクタ一覧
             KEIRI_SUBMENU                ← 「閲覧/登録・経理ビュー」サブメニューの定義
+            buildDuplicateCheckSQL       ← 会員番号重複エラー時に表示する調査用 SQL
 [部品]      navigateToKeirisyoriView     ← サブメニューを開いて経理ビューへ（recordId を渡すと URL 直指定 #244）
             fillClassSearchForm          ← クラス選択ポップアップの検索条件入力
             fillAccountingDates          ← 契約日・開始日・月途中チェック
             createActionExecutor         ← 実行プランのステップを1つずつ動かす仕組み
 [画面関数]  navigateToStudentGroup       ← 候補生検索ページへ遷移
-            searchAndSelectKouhosei      ← 候補生を姓で検索して選択
-            promoteKouhoseiToStudent     ← 候補生詳細で「受講生へ移動」
+            navigateToKouhosei           ← 候補生を姓で検索し、先頭から順に「受講生へ移動」を試す
+                                            （月謝一括作成準備・発表会準備も使う）
             openKeirisyoriScreenA        ← 経理ビューAで「クラス追加/更新する」
             selectClassInPopup           ← 別タブでクラスを検索して完全一致行を選ぶ
             fillKeirisyoriScreenB        ← 経理ビューB（クラス適用〜売上計上）
@@ -184,7 +186,7 @@ const KEIRI_SCREEN_B_LOCATORS = {
   textbox:  { keiyaku_date: '#contract_dateclass_operation', kaishi_date: '#start_dateclass_operation', class_name: '#course_name' },
   pulldown: { area: '#AN_1_area_id', tenpo: '#school_id', couse_category: '#course_category', remaining_classes: '#remaining_times' },
   checkbox: { mid_month: '#ltd_mid_month' },
-  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する' },
+  button:   { class_select: '#course_popup_popup_button', label_class_set: 'クラス適用', label_course_set: 'コース料金設定', label_tran_set: '売上計上する', tran_set: 'input[value="売上計上する"]' },
   screen:   { name: '受講生詳細' },
   error:    { container: SELECTORS.ERROR_CONTAINER }
 };
@@ -203,32 +205,24 @@ HTML側でIDが変わったとき、この1箇所だけ直せばすべての操�
 画面関数はすべて同じパターンで書かれています：
 
 ```js
-async function searchAndSelectKouhosei(I, last_name) {
-  // ① 使うセレクタをまとめる（共通のものは SELECTORS から）
-  const S = {
-    button: { search: '検索' },
-    result: { list: SELECTORS.RESULT_LINK, link: `a${SELECTORS.RESULT_LINK}` }
-  };
+// navigateToKouhosei の前半（候補生を姓で検索する部分）
+  // ① 今何をしているかログに出す
+  I.say(`【候補生一覧】姓 "${lastName}" で検索`);
 
-  // ② 今何をしているかログに出す
-  I.say('【候補生検索】一覧表示＆検索実行');
-
-  // ③ 画面が表示されるまで待つ
+  // ② 画面が表示されるまで待つ
   I.waitForElement(locate('body').withText('候補生一覧'), TIMEOUTS.SCREEN);
 
-  // ④ 操作する（テキスト入力は共通ユーティリティ fillTextFieldsByName で）
-  fillTextFieldsByName(I, { last_name });
-  I.click(S.button.search);
-  I.waitForElement(S.result.list, TIMEOUTS.RESULT);
+  // ③ 操作する（テキスト入力は共通ユーティリティ fillTextFieldsByName で）
+  fillTextFieldsByName(I, { last_name: lastName });
+  I.click('検索');
+  I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);   // RESULT_LINK は SELECTORS から組み立てた共通セレクタ
 
-  // ⑤ ログ（Allure レポート用）
+  // ④ ログ（Allure レポート用）
   await logScreenUrl(I, '候補生一覧');
 
-  // ⑥ 値を取得して返す（必要な場合だけ）
-  const student_name = await I.grabTextFrom(S.result.link);
-  I.click(locate(S.result.list));
-  return student_name;
-}
+  // ⑤ 値を取得する（必要な場合だけ）。全件ほしいときは grabAttributeFromAll
+  //    （grabAttributeFrom は先頭1件しか返さない）
+  const hrefs = await I.grabAttributeFromAll(RESULT_LINK, 'href');
 ```
 
 **読み方のコツ**: `I.say(...)` の日本語を拾うだけで操作の流れがわかります。
@@ -239,10 +233,7 @@ async function searchAndSelectKouhosei(I, last_name) {
 
 ```js
 async function runRegistrationFlow(I, classMemberPageShimamura, input) {
-  await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
-  await navigateToStudentGroup(I, classMemberPageShimamura);
-  const student_name = await searchAndSelectKouhosei(I, input.lastName);
-  await promoteKouhoseiToStudent(I, student_name);
+  await navigateToKouhosei(I, classMemberPageShimamura, input.lastName);   // 候補生検索〜受講生へ昇格
   await openKeirisyoriScreenA(I, classMemberPageShimamura);
   await fillKeirisyoriScreenB(I, input);
 }
@@ -399,8 +390,8 @@ input.keiyaku_date = '2026-09-10'          ← 過去月だったので本日に
         ↓ runRegistrationFlow(I, page, input)
 
 【SyokaiFlowPage.js の各関数が input を使って画面を操作】
-searchAndSelectKouhosei(I, input.lastName)
-  → 「かげやま」で候補生を検索
+navigateToKouhosei(I, page, input.lastName)
+  → 「かげやま」で候補生を検索し、受講生へ昇格
 
 fillKeirisyoriScreenB(I, input)
   → 「ピアノ水曜日_01_01」のクラスを選択

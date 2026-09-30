@@ -33,6 +33,7 @@ const { fillTextFields } = require('../../../support/utils');
 const { verifyBulkActionResult, verifyGuardMessage, selectAreaThenBranch, isEnglish } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 /**
  * 経理系一覧でセッション記憶される主要な絞り込みセレクトを「すべて」へ戻す。
@@ -455,6 +456,54 @@ module.exports = {
   async verifyResultRowsExist() {
     await verifyResultRowsExist('経理一覧');
   },
+
+  // ----------------------------------------------------------------
+  //  ソート定義（#226 バッチ6・culture_beta で実機確認）
+  // ----------------------------------------------------------------
+  // 5画面とも一覧画面の標準手順（openListCase）で開き、CSV の dateFrom / dateTo で日付レンジを広げる
+  // （各 fill*SearchConditions が resetSearchForm の後に日付を入れ直す）。
+  // 口座振替データ履歴・講師謝礼合計一覧はソート可能列が無いため定義しない。
+  // 売上No は英字の大小を区別しない順。氏名はフリガナ順のため grouped。
+
+  /** 料金一覧のソート定義。第2キーなし。 */
+  feeSortTable: createSortableTable({
+    label: '料金一覧',
+    container: LIST_CONTAINER,
+    columns: { sellDate: 'string', salesno: 'stringCi', startDate: 'string' },
+    secondary: null,
+  }),
+
+  /** 契約一覧のソート定義。第2キーなし。 */
+  contractSortTable: createSortableTable({
+    label: '契約一覧',
+    container: LIST_CONTAINER,
+    columns: { salesno: 'stringCi', sellDate: 'string' },
+    secondary: null,
+  }),
+
+  /** 入金一覧のソート定義。第2キー=更新日時の降順。 */
+  paymentSortTable: createSortableTable({
+    label: '入金一覧',
+    container: LIST_CONTAINER,
+    columns: { tDate: 'string', updatedAt: 'datetime' },
+    secondary: { key: 'updatedAt', type: 'string', dir: 'desc' },
+  }),
+
+  /** 未収金一覧のソート定義。第2キーなし。 */
+  unpaidAmountSortTable: createSortableTable({
+    label: '未収金一覧',
+    container: LIST_CONTAINER,
+    columns: { sellDate: 'string', dueDate: 'string', fullName: 'grouped', salesno: 'stringCi' },
+    secondary: null,
+  }),
+
+  /** 入出金一覧のソート定義。第2キーなし。 */
+  transactionSortTable: createSortableTable({
+    label: '入出金一覧',
+    container: LIST_CONTAINER,
+    columns: { sellDate: 'string', fullName: 'grouped', salesno: 'stringCi', dueDate: 'string', tDate: 'string' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('経理一覧'),
 };

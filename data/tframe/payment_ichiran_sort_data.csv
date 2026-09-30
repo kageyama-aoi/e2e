@@ -1,0 +1,5 @@
+scenario,sortKey,sortDir,dateFrom,dateTo,lastName
+入金日_昇順,tDate,asc,2015-01-01,2035-12-31,
+入金日_降順,tDate,desc,2015-01-01,2035-12-31,
+更新日時_昇順,updatedAt,asc,2015-01-01,2035-12-31,
+更新日時_降順,updatedAt,desc,2015-01-01,2035-12-31,

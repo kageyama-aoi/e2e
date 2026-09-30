@@ -14,7 +14,7 @@
   - `auth/LoginPage.js` — ログイン・担当者番号入力
   - `_common/ClassMemberPage.js` — 管理タブ・サブメニューの共通ナビゲーション
   - `_common/sideMenus.js` — サイドバー画面のメニュー定義（directUrl / moduleUrl / shortcut）
-  - `screens/IchiranPage.js` — 一覧検索画面（全一覧画面を1ファイルに集約）
+  - `screens/IchiranPage.js` — 一覧検索画面の共通処理＋結合（画面定義はアイコン別に `screens/ichiran/<icon>Screens.js`）
   - `flow/*FlowPage.js` — 複数画面をまたぐ業務フロー（画面単位ではなくフロー単位）
 - `support/shimamura/`: しまむら固有の共通処理（`utils.js` `constants.js` `hooks.js` `syokai_helpers.js` `accountTransferSchedule.js`）
 
@@ -22,10 +22,10 @@
 - `tests/` → `pages/`・`support/` にのみ依存
 - `pages/` → `support/` には依存してよい（ユーティリティ共通化）
 - `support/` → `tests/`・`pages/` に依存しない
-- FlowPage 同士の依存は可（例: `HappyoukaiFlowPage` が `GessyaIkkatuFlowPage.navigateToKouhosei` と `CourseClassSetupFlowPage.setupLinkedCourseAndClass` を再利用）。同じ業務語のロジックを別 FlowPage に再実装しない
+- FlowPage 同士の依存は可（例: `HappyoukaiFlowPage` が `SyokaiFlowPage.navigateToKouhosei` と `CourseClassSetupFlowPage.setupLinkedCourseAndClass` を再利用）。同じ業務語のロジックを別 FlowPage に再実装しない
 
 ## 命名規則
-- 関数: `verbNoun`（例: `navigateToStudentGroup`, `searchAndSelectKouhosei`, `fillKeirisyoriScreenB`, `executeTaikai`）
+- 関数: `verbNoun`（例: `navigateToStudentGroup`, `navigateToKouhosei`, `fillKeirisyoriScreenB`, `executeTaikai`）
 - 画面遷移: `navigateTo...` / `open...` / `goTo...`
 - 旧パターン `ShouldBeOn...` は 2026-07 に全廃済み。新規追加はもちろん、既存コードでも見つけたら `verbNoun` に直す
 - FlowPage のオーケストレーターは `run...Flow` / `run...`（例: `runRegistrationFlow`, `runSaikenkaiFlow`）

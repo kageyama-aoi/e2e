@@ -1,0 +1,3 @@
+scenario,school_id,genjukousha,expectedName
+空条件検索,,,
+店舗で絞り込み,生徒登録用店舗,,

@@ -563,6 +563,7 @@ class CsvEditorWindow(tk.Toplevel):
     # ── UI 構築 ───────────────────────────────────────
 
     def _build_ui(self):
+        self._build_path_bar()
         if not self._headers:
             ttk.Label(self, text='CSVが空です。').pack(padx=16, pady=16)
             ttk.Button(self, text='閉じる', style=BTN_TERTIARY, command=self.destroy).pack()
@@ -626,6 +627,24 @@ class CsvEditorWindow(tk.Toplevel):
             foreground='#888888', font=UI_FONT_SMALL,
         ).pack(anchor='w', padx=10, pady=(0, 6))
         self._update_status()
+
+    def _build_path_bar(self):
+        """フルパス表示＋コピーボタン。表で編集するより外部エディタで直接開いた方が早い場合用。"""
+        bar = ttk.Frame(self)
+        bar.pack(fill=tk.X, padx=8, pady=(8, 0))
+        self._copy_btn = ttk.Button(bar, text='Copy', style=BTN_SECONDARY, command=self._copy_path)
+        self._copy_btn.pack(side=tk.RIGHT, padx=(4, 0))
+        # StringVar はローカル変数だと GC されて表示が空になるため self に保持する
+        self._path_var = tk.StringVar(value=os.path.abspath(self.csv_path))
+        # readonly Entry なので、ボタンを使わず一部だけ選択コピーすることもできる
+        ttk.Entry(bar, textvariable=self._path_var, state='readonly', font=UI_FONT_SMALL).pack(
+            side=tk.LEFT, fill=tk.X, expand=True)
+
+    def _copy_path(self):
+        self.clipboard_clear()
+        self.clipboard_append(os.path.abspath(self.csv_path))
+        self._copy_btn.configure(text='Copied!')
+        self.after(1500, lambda: self._copy_btn.winfo_exists() and self._copy_btn.configure(text='Copy'))
 
     # ── テーブル操作 ──────────────────────────────────
 

@@ -31,6 +31,34 @@ module.exports = {
     moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
     shortcut:  'コース別受講生一覧',
   },
+  classesByStudent: {
+    directUrl: '/index.php?module=Student&action=index&contact_status=0&courses_by_student=true&initial_state&top_menu=1',
+    moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
+    shortcut:  '受講生別クラス一覧',
+  },
+  creditPurchaseCustomer: {
+    directUrl: '/index.php?module=Student&action=LW_CreditPurchaseCustomerInfo_AN&empty_form=1',
+    moduleUrl: '/index.php?module=Student&action=index&top_menu=1',
+    shortcut:  '債権買取顧客情報一覧',
+  },
+  kouhoSearch: {
+    directUrl:      '/index.php?module=ContactsKouho&action=LW_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__candidates_grp_sub', menuname: '候補生' },
+    shortcut:       '候補生検索',
+  },
+  documentRequestList: {
+    directUrl:      '/index.php?module=Student&action=index&query=1&contact_status=11',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__application_sub', menuname: '問合せ' },
+    shortcut:       '資料請求一覧',
+  },
+  studentMemoList: {
+    directUrl:      '/index.php?module=SMSMemo&action=ListView&is_memo=1&parent_module=Student&empty_form=1',
+    moduleUrl:      '/index.php?module=Student&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__smsmemo_sub', menuname: 'メモ' },
+    shortcut:       'メモ一覧',
+  },
 
   // ── クラス・コース系 ──────────────────────────────────────────
   classList: {
@@ -54,12 +82,47 @@ module.exports = {
     moduleUrl: '/index.php?module=Teacher&action=index&top_menu=1',
     shortcut:  '講師検索',
   },
+  teacherStudentList: {
+    directUrl: '/index.php?module=Teacher&action=index&return_module=Teacher&return_action=index&student_list=true&query=true',
+    moduleUrl: '/index.php?module=Teacher&action=index&top_menu=1',
+    shortcut:  '講師別受講生一覧',
+  },
 
   // ── コンタクト ────────────────────────────────────────────────
   contactModuleList: {
     directUrl: '/index.php?module=Contacts&action=index&top_menu=1',
     moduleUrl: '/index.php?module=Contacts&action=index&top_menu=1',
     shortcut:  '顧客一覧',
+  },
+  accountList: {
+    directUrl:      '/index.php?module=Accounts&action=index&return_module=Accounts&return_action=DetailView&query=true',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__account_sub', menuname: '法人/団体' },
+    shortcut:       '法人/団体一覧',
+  },
+  staffList: {
+    directUrl:      '/index.php?module=Staff&action=index&query=true',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__employee_sub', menuname: 'スタッフ' },
+    shortcut:       'スタッフ一覧',
+  },
+  parentList: {
+    directUrl:      '/index.php?module=ParentSMS&action=index',
+    moduleUrl:      '/index.php?module=Contacts&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__parent_sub', menuname: '保護者' },
+    shortcut:       '保護者一覧',
+  },
+
+  // ── 部屋･備品 ────────────────────────────────────────────────
+  classroomList: {
+    directUrl: '/index.php?module=Resource&action=LWClassroom_AN&query=1',
+    moduleUrl: '/index.php?module=Resource&action=LWClassroom_AN&top_menu=1',
+    shortcut:  '部屋一覧',
+  },
+  schoolList: {
+    directUrl: '/index.php?module=School&action=index&query=1',
+    moduleUrl: '/index.php?module=Resource&action=LWClassroom_AN&top_menu=1',
+    shortcut:  '店舗一覧',
   },
 
   // ── 有効性データ ──────────────────────────────────────────────
@@ -91,5 +154,64 @@ module.exports = {
     directUrl: '/index.php?module=Fee&action=LWMonthlyFeeCreation_AN',
     moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
     shortcut:  '月謝一括作成',
+  },
+  urikakekin: {
+    // サイドバーのリンクは query_date=当日 付きだが、directUrl では基準日を検索条件で渡す
+    directUrl: '/index.php?module=Transaction&action=LWUrikakekin_AN&query=true',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  '売掛金',
+  },
+  afsMemberSearch: {
+    directUrl: '/index.php?module=Keiri&action=LW_ACSMemberNumberSearch_AN',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  'AFS会員番号検索',
+  },
+  posResponseError: {
+    directUrl: '/index.php?module=PosResponseError&action=LWPOSResponseErrorList_AN',
+    moduleUrl: '/index.php?module=Keiri&action=index&top_menu=1',
+    shortcut:  'POSレスポンスエラー一覧',
+  },
+  feeList: {
+    directUrl:      '/index.php?module=Fee&action=index&general=0&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金一覧',
+  },
+  feeCommonList: {
+    directUrl:      '/index.php?module=Fee&action=LWCommon_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金一覧(共通)',
+  },
+  salesGroupList: {
+    directUrl:      '/index.php?module=SalesGroup&action=index&template=true&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__fees_sub', menuname: '料金' },
+    shortcut:       '料金パッケージ一覧',
+  },
+  transactionToday: {
+    // 入出金一覧を「入出金日＝今日」で絞った状態で開く
+    directUrl:      '/index.php?module=Transaction&action=index&date_selection=t_date&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '本日の入出金',
+  },
+  accountDebitBillHistory: {
+    directUrl:      '/index.php?module=BankActionsHistory&action=LWAccountDebitBillData_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '口座振替請求データ履歴',
+  },
+  refundList: {
+    directUrl:      '/index.php?module=Transaction&action=LWRefundList_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__transaction_sub', menuname: '入出金' },
+    shortcut:       '返金一覧',
+  },
+  smbcContactsList: {
+    directUrl:      '/index.php?module=SmbcContacts&action=LW_AN&top_menu=1',
+    moduleUrl:      '/index.php?module=Keiri&action=index&top_menu=1',
+    collapseToggle: { icon_id: 'submenu__smbc_sub', menuname: '債権買取' },
+    shortcut:       '債権買取状態一覧',
   },
 };

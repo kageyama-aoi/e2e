@@ -1,0 +1,3 @@
+scenario,input_type,expectedName
+空条件検索,,
+種類（読込）で絞り込み,読込,読込

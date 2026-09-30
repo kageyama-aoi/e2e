@@ -8,6 +8,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const { isEnglish, submitTframeFormAndVerify } = require('../../../support/tframe/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 module.exports = {
 
@@ -86,6 +87,17 @@ module.exports = {
     fillTextFields(I, { name: data.name });
     if (data.valid) I.selectOption('#valid', data.valid);
   },
+
+  /**
+   * 料金パッケージ一覧のソート定義（#226 バッチ8・juku_beta で実機確認）。
+   * パッケージ名は表示値と別の順で並ぶため grouped。第2キーなし。
+   */
+  listSortTable: createSortableTable({
+    label: '料金パッケージ一覧',
+    container: LIST_CONTAINER,
+    columns: { name: 'grouped', updatedAt: 'datetime' },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('料金パッケージ一覧'),
 };

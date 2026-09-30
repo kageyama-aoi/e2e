@@ -1,11 +1,11 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-09-25 18:11 (JST)
+> 最終更新: 2026-09-29 16:34 (JST)
 
-**合計 129 テスト**（shimamura 30 / tframe 97 / taskreport 1 / smoke 1）
+**合計 166 テスト**（shimamura 52 / tframe 112 / taskreport 1 / smoke 1）
 
-## shimamura（30件）
+## shimamura（52件）
 
 ### auth/（1件）
 
@@ -40,24 +40,46 @@
 | `taikai_test.js` | 1000_2_2 | 退会処理フローを確認 |
 | `teacher_keiri_setup_test.js` | — | 講師謝礼テスト用の講師バリエーション登録・経理タブ設定を準備 |
 
-### page/（12件）
+### page/（34件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
+| `account_debit_bill_history_ichiran_test.js` | — | 口座振替請求データ履歴の空検索・種類（読込）絞り込みで結果が表示されることを確認 |
+| `account_list_ichiran_test.js` | — | 法人/団体一覧の空検索・法人名絞り込みで結果が表示されることを確認（testgcp はテスト用法人を1件登録済み） |
+| `afs_member_ichiran_test.js` | — | AFS会員番号検索の空検索・カナ氏名絞り込みで結果の行が表示されることを確認 |
 | `attendance_today_ichiran_test.js` | 1001_5_1 | 本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認 |
 | `class_list_ichiran_test.js` | 1100_4_1 | クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
+| `classes_by_student_ichiran_test.js` | — | 受講生別クラス一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
+| `classroom_list_ichiran_test.js` | — | 部屋一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
 | `contact_list_ichiran_test.js` | 1000_8_1 | 問合せ一覧（候補生）の空検索・姓絞り込みで結果が表示されることを確認 |
 | `contact_module_list_ichiran_test.js` | 1001_3_2 | コンタクト一覧の空検索で結果が表示されることを確認 |
 | `course_by_student_ichiran_test.js` | 1000_6_1 | コース別受講生一覧の空検索・コース名絞り込みで結果が表示されることを確認 |
 | `course_ichiran_test.js` | 1100_3_1 | コース一覧（管理）の空検索・コース名絞り込みで結果が表示されることを確認 |
+| `credit_purchase_customer_ichiran_test.js` | — | 債権買取顧客情報一覧の空検索（当月の日付範囲を解除）・会員番号絞り込みで結果が表示されることを確認 |
+| `document_request_ichiran_test.js` | — | 資料請求一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `fee_common_list_ichiran_test.js` | — | 料金一覧(共通)の空検索・料金名絞り込みで結果が表示されることを確認（testgcp はテスト用共通料金を1件登録済み） |
+| `fee_list_ichiran_test.js` | — | 料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認 |
 | `keiri_invoices_ichiran_test.js` | 1001_4_2 | 受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認 |
+| `kouho_ichiran_test.js` | — | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
+| `menu_patrol_test.js` | — | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
 | `mishukin_list_ichiran_test.js` | 1600_2_1 | 未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認 |
+| `parent_list_ichiran_test.js` | — | 保護者一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `pos_response_error_ichiran_test.js` | — | POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認 |
+| `refund_list_ichiran_test.js` | — | 返金一覧の請求月（固定の2026-10）のみ検索・会員番号絞り込みで結果が表示されることを確認 |
+| `sales_group_list_ichiran_test.js` | — | 料金パッケージ一覧の空検索・パッケージ名絞り込みで結果が表示されることを確認 |
+| `school_list_ichiran_test.js` | — | 店舗一覧の空検索・店舗名絞り込みで結果が表示されることを確認 |
+| `smbc_contacts_list_ichiran_test.js` | — | 債権買取状態一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `staff_list_ichiran_test.js` | — | スタッフ一覧の空検索・姓絞り込みで結果が表示されることを確認 |
+| `student_memo_ichiran_test.js` | — | メモ一覧（受講生）の空検索・タイトル絞り込みで結果が表示されることを確認 |
 | `student_search_ichiran_test.js` | 1000_5_1 | 受講生検索の空検索・姓絞り込みで結果が表示されることを確認 |
 | `teacher_list_ichiran_test.js` | 1200_3_1 | 講師一覧の空検索で結果が表示されることを確認 |
+| `teacher_student_list_ichiran_test.js` | — | 講師別受講生一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `transaction_ichiran_test.js` | 1600_9_1 | 入出金一覧の空検索と姓での絞り込み検索を確認 |
+| `transaction_today_ichiran_test.js` | — | 本日の入出金が今日の日付範囲で開き、検索できることを確認（件数は当日の入出金しだいで0件でも可） |
+| `urikakekin_ichiran_test.js` | — | 売掛金の基準日のみ検索・基準日＋姓絞り込みで結果が表示されることを確認 |
 | `validity_data_output_test.js` | 2000_2_1 | 有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証 |
 
-## tframe（97件）
+## tframe（112件）
 
 ### api/（1件）
 
@@ -89,7 +111,7 @@
 | `navigation_after_login_student_test.js` | — | 受講生アカウントでログイン後の画面遷移を確認 |
 | `navigation_after_login_test.js` | — | 管理者ログイン後にメニュー各画面へ遷移できるか確認 |
 
-### page/（87件）
+### page/（102件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -97,6 +119,7 @@
 | `account_ichiran_test.js` | — | アカウント一覧の空検索と法人名での絞り込み検索を確認 |
 | `account_info_data_import_test.js` | — | 口座情報データ取込のガードメッセージを確認（juku_beta 専用・実データは変更しない） |
 | `account_touroku_test.js` | — | 法人・団体の新規登録フォームへの入力・保存を確認 |
+| `announcement_ichiran_sort_test.js` | — | お知らせ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `announcement_ichiran_test.js` | — | お知らせ一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `announcement_touroku_test.js` | — | お知らせ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `attendance_ichiran_test.js` | — | 本日の出席表一覧の全期間検索とコースカテゴリ絞り込みを確認（culture_beta のみ・校舎データ依存） |
@@ -111,6 +134,7 @@
 | `chosekin_ichiran_test.js` | — | 調整金一覧の空検索と年度での絞り込み検索を確認 |
 | `chosekin_touroku_test.js` | — | 経理タブの調整金新規登録フォームへの入力・保存を確認 |
 | `contact_ichiran_test.js` | — | 連絡一覧の全期間検索を確認（juku_beta 専用・環境にデータ無しのため結果テーブル描画のみ確認） |
+| `contract_ichiran_sort_test.js` | — | 契約一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `contract_ichiran_test.js` | — | 契約一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `courseBySt_ichiran_sort_test.js` | — | 受講生別コース一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `courseBySt_ichiran_test.js` | — | 受講生別コース一覧の空検索と受講生姓での絞り込み検索を確認 |
@@ -119,21 +143,27 @@
 | `course_ichiran_test.js` | — | コース一覧の空検索とコース名での絞り込み検索を確認 |
 | `course_test.js` | — | コース一覧・詳細画面の表示を確認 |
 | `course_touroku_test.js` | — | コースの新規登録フォームへの入力・保存を確認 |
+| `email_ichiran_sort_test.js` | — | Eメール一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `email_ichiran_test.js` | — | Eメール一覧の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
+| `email_template_category_ichiran_sort_test.js` | — | Eメールテンプレートカテゴリ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `email_template_category_ichiran_test.js` | — | Eメールテンプレートカテゴリ一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_template_category_touroku_test.js` | — | Eメールテンプレートカテゴリ編集の新規登録を確認（culture_beta / juku_beta 両対応） |
+| `email_template_ichiran_sort_test.js` | — | Eメールテンプレート一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `email_template_ichiran_test.js` | — | Eメールテンプレート一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `email_template_touroku_test.js` | — | Eメールテンプレート編集の新規登録を確認（culture_beta / juku_beta 両対応・categoryIdは環境別CSVで切替） |
 | `email_test.js` | — | メール送信画面の表示・操作を確認 |
+| `entrance_log_ichiran_sort_test.js` | — | 入退記録一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `entrance_log_ichiran_test.js` | — | 入退記録一覧の全期間検索を確認（juku_beta 専用） |
 | `entrance_log_touroku_test.js` | — | 入退記録編集の新規登録を確認（juku_beta 専用・受講生ポップアップから選択） |
+| `fee_ichiran_sort_test.js` | — | 料金一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `fee_ichiran_test.js` | — | 料金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `help_test.js` | — | ヘルプページの表示を確認 |
 | `home_test.js` | — | ログイン後のホーム画面の表示を確認 |
+| `infoHistoryTemplate_ichiran_sort_test.js` | — | 対応履歴テンプレート一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `infoHistoryTemplate_ichiran_test.js` | — | 対応履歴テンプレート一覧の空検索とテンプレート名での絞り込みを確認 |
 | `infoHistoryTemplate_touroku_test.js` | — | 対応履歴テンプレートの登録フォーム入力と保存を確認 |
+| `infoHistory_ichiran_sort_test.js` | — | 対応履歴一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時の降順）の並びを検証 |
 | `infoHistory_ichiran_test.js` | — | 対応履歴一覧の空検索と件名での絞り込みを受講生・講師の両メニューで確認 |
-| `jukusei_ichiran_extract_test.js` | — | 受講生一覧を検索条件＋ソートキー指定で検索し、結果テーブルをCSV抽出（POC・ページ送りなし） |
 | `jukusei_ichiran_sort_test.js` | — | 受講生一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードID昇順）の並びを検証 |
 | `jukusei_ichiran_test.js` | — | 受講生一覧の空検索と姓での絞り込み検索を確認 |
 | `jukusei_test.js` | — | 受講生一覧・管理画面の表示・操作を確認 |
@@ -147,11 +177,14 @@
 | `kyoshitsu_ichiran_test.js` | — | 教室一覧の空検索と教室名での絞り込み検索を確認 |
 | `kyoshitsu_touroku_test.js` | — | 教室の新規登録フォームへの入力・保存を確認 |
 | `master_menu_test.js` | — | マスター設定メニューの各項目への遷移を確認 |
+| `payment_ichiran_sort_test.js` | — | 入金一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時の降順）の並びを検証 |
 | `payment_ichiran_test.js` | — | 入金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `payment_statement_output_test.js` | — | 支払調書の出力と成功メッセージ表示を確認（culture_beta 専用・ファイル中身は未検証） |
+| `poll_ichiran_sort_test.js` | — | アンケート一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `poll_ichiran_test.js` | — | アンケート一覧の全期間検索とタイトルでの絞り込み検索を確認（juku_beta 主） |
 | `proByCourse_ichiran_sort_test.js` | — | コース別商品一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `proByCourse_ichiran_test.js` | — | コース別商品一覧の空検索と商品名での絞り込み検索を確認（culture_beta のみ） |
+| `prospect_list_ichiran_sort_test.js` | — | 名簿リスト一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（更新日時降順）の並びを検証 |
 | `prospect_list_ichiran_test.js` | — | 名簿リスト一覧の空検索と名称での絞り込み検索を確認（juku_beta 主） |
 | `prospect_list_touroku_test.js` | — | 名簿リスト編集の新規登録を確認（culture_beta / juku_beta 両対応） |
 | `report_inquiry_ichiran_test.js` | — | 問合せ・入学・退学レポートの空検索と受講生ステイタス絞り込みを確認（culture_beta 主） |
@@ -159,8 +192,10 @@
 | `report_stschedule_ichiran_test.js` | — | 受講生スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
 | `report_teschedule_ichiran_test.js` | — | 講師スケジュールレポートの全期間検索とキャンセル除外検索を確認（culture_beta 主） |
 | `report_test.js` | — | レポート画面の表示・出力操作を確認 |
+| `ryokin_master_ichiran_sort_test.js` | — | 料金マスタ一覧の列ヘッダソート（昇順/降順）で第1キー→第2キー（レコードIDの降順）の並びを検証 |
 | `ryokin_master_ichiran_test.js` | — | 料金マスタ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_master_touroku_test.js` | — | 料金マスタの新規作成フォームへの入力・保存を確認（juku_test のみ） |
+| `ryokin_package_ichiran_sort_test.js` | — | 料金パッケージ一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `ryokin_package_ichiran_test.js` | — | 料金パッケージ一覧の空検索と名前での絞り込み検索を確認（juku_test のみ） |
 | `ryokin_package_touroku_test.js` | — | 料金パッケージの新規作成フォームへの入力・保存を確認（juku_test のみ） |
 | `sharei_total_ichiran_test.js` | — | 講師謝礼合計一覧の空検索と謝礼項目絞り込みを確認（culture_beta 専用） |
@@ -177,8 +212,10 @@
 | `teByStudent_ichiran_test.js` | — | 講師別受講生一覧の空検索と講師姓での絞り込み検索を確認 |
 | `te_reward_calc_test.js` | — | 講師謝礼計算の実行と成功メッセージ表示を確認（culture_beta 専用） |
 | `te_reward_total_calc_test.js` | — | 講師謝礼計算→講師謝礼合計計算の実行と結果メッセージを確認（culture_beta 専用） |
+| `transaction_ichiran_sort_test.js` | — | 入出金一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `transaction_ichiran_test.js` | — | 入出金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 | `tuition_fee_bulk_create_test.js` | — | 翌月月謝一括作成の実行と結果メッセージ（成功/対象なし）を確認（culture_beta / juku_beta 両対応・冪等） |
+| `unpaid_amount_ichiran_sort_test.js` | — | 未収金一覧の列ヘッダソート（昇順/降順）で第1キーの並びを検証（第2キーなし） |
 | `unpaid_amount_ichiran_test.js` | — | 未収金一覧（経理）の全期間検索と受講生姓での絞り込み検索を確認（juku_beta 主） |
 
 ## taskreport（1件）

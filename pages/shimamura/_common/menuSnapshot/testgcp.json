@@ -1,0 +1,989 @@
+{
+  "capturedAt": "2026-09-28",
+  "profile": "shimamura.testgcp",
+  "product": "shimamura",
+  "baseUrl": "https://tcns.shimamura.co.jp/testgcp/",
+  "note": "scripts/html/fetch_shimamura_menus.js で採取。上部アイコン（＋右上の管理）ごとに #leftCol を走査。route は module/action ＋ 画面を区別するパラメータ。toggleId は折りたたみグループの展開対象 ID（sideMenus.js の collapseToggle.icon_id に対応）。",
+  "topMenu": [
+    {
+      "label": "カレンダー",
+      "route": "Calendar/index"
+    },
+    {
+      "label": "コース",
+      "route": "Course/index"
+    },
+    {
+      "label": "受講生",
+      "route": "Student/index"
+    },
+    {
+      "label": "講師",
+      "route": "Teacher/index"
+    },
+    {
+      "label": "コンタクト",
+      "route": "Contacts/index"
+    },
+    {
+      "label": "部屋･備品",
+      "route": "Resource/LWClassroom_AN"
+    },
+    {
+      "label": "Ｅメール",
+      "route": "Emails/LW_AN"
+    },
+    {
+      "label": "経理",
+      "route": "Keiri/index"
+    },
+    {
+      "label": "レポート",
+      "route": "SMSReports/report_handler"
+    },
+    {
+      "label": "メインメニュー",
+      "route": "Main/index"
+    },
+    {
+      "label": "ヘルプ",
+      "route": "SMSHelp/index"
+    }
+  ],
+  "sideMenu": {
+    "Calendar": {
+      "iconLabel": "カレンダー",
+      "iconRoute": "Calendar/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "今日のコース",
+              "route": "Calendar/index?el[]=all&event_category=course&view=day"
+            },
+            {
+              "label": "今日の講師スケジュール",
+              "route": "Calendar/index?people_category=teacher&pl[]=all&view=day"
+            },
+            {
+              "label": "今日の教室スケジュール",
+              "route": "Calendar/index?resource_category=classroom&rl[]=all&view=day"
+            },
+            {
+              "label": "今週のコース",
+              "route": "Calendar/index?el[]=all&event_category=course&view=week"
+            },
+            {
+              "label": "今日のマイスケジュール",
+              "route": "Calendar/index?people_category=staff&pl[]=*&view=day"
+            },
+            {
+              "label": "今日のミーティング",
+              "route": "Calendar/index?el[]=all&event_category=meeting&view=day"
+            },
+            {
+              "label": "本日の出席表一覧",
+              "route": "Course/AttendanceViewDetailed"
+            }
+          ]
+        },
+        {
+          "name": "入退室",
+          "toggleId": "submenu__entrance_sub",
+          "items": [
+            {
+              "label": "入退記録作成",
+              "route": "Entrance/EditView"
+            },
+            {
+              "label": "入退記録一覧",
+              "route": "Entrance/index"
+            },
+            {
+              "label": "入退・出席一覧",
+              "route": "Entrance/index?shusseki=1"
+            }
+          ]
+        },
+        {
+          "name": "ミーティング",
+          "toggleId": "submenu__meeting_sub",
+          "items": [
+            {
+              "label": "ミーティング設定",
+              "route": "SMSMeeting/EditViewSchedule"
+            },
+            {
+              "label": "ミーティング一覧",
+              "route": "SMSMeeting/index"
+            },
+            {
+              "label": "今週のミーティング",
+              "route": "Calendar/index?el[]=all&event_category=meeting&view=week"
+            }
+          ]
+        },
+        {
+          "name": "カウンセリング",
+          "toggleId": "submenu__counseling_sub",
+          "items": [
+            {
+              "label": "カウンセリング設定",
+              "route": "SMSCounseling/EditViewSchedule"
+            },
+            {
+              "label": "カウンセリング一覧",
+              "route": "SMSCounseling/index"
+            },
+            {
+              "label": "今週のカウンセリング",
+              "route": "Calendar/index?el[]=all&event_category=counseling&view=week"
+            }
+          ]
+        },
+        {
+          "name": "セミナー",
+          "toggleId": "submenu__seminar_sub",
+          "items": [
+            {
+              "label": "セミナー設定",
+              "route": "SMSSeminar/EditViewSchedule"
+            },
+            {
+              "label": "セミナー一覧",
+              "route": "SMSSeminar/index"
+            },
+            {
+              "label": "今週のセミナー",
+              "route": "Calendar/index?el[]=all&event_category=seminar&view=week"
+            }
+          ]
+        },
+        {
+          "name": "イベント",
+          "toggleId": "submenu__event_sub",
+          "items": [
+            {
+              "label": "イベント設定",
+              "route": "SMSEvent/EW_AN"
+            },
+            {
+              "label": "イベント一覧",
+              "route": "SMSEvent/index"
+            },
+            {
+              "label": "今週のイベント",
+              "route": "Calendar/index?el[]=all&event_category=event&view=week"
+            }
+          ]
+        },
+        {
+          "name": "休校日",
+          "toggleId": "submenu__holiday_sub",
+          "items": [
+            {
+              "label": "休校日設定",
+              "route": "SMSHoliday/EditViewSchedule"
+            },
+            {
+              "label": "休校日一覧",
+              "route": "SMSHoliday/index"
+            },
+            {
+              "label": "今月の休校日",
+              "route": "Calendar/index?el[]=all&event_category=holiday&view=month"
+            }
+          ]
+        },
+        {
+          "name": "休日",
+          "toggleId": "submenu__vacation_sub",
+          "items": [
+            {
+              "label": "休日一覧",
+              "route": "SMSVacation/index?module_called_from=Calendar"
+            },
+            {
+              "label": "今月の休日",
+              "route": "Calendar/index?el[]=all&event_category=vacation&view=month"
+            }
+          ]
+        },
+        {
+          "name": "コマの管理",
+          "toggleId": "submenu__timeslots_sub",
+          "items": [
+            {
+              "label": "コマの管理",
+              "route": "SMSSchedule/EditViewTimeslot"
+            }
+          ]
+        }
+      ]
+    },
+    "Course": {
+      "iconLabel": "コース",
+      "iconRoute": "Course/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "コース一覧",
+              "route": "ShimaCourse/LW_AN"
+            },
+            {
+              "label": "コース設定",
+              "route": "ShimaCourse/EditView"
+            },
+            {
+              "label": "クラス一覧",
+              "route": "Course/ListView?course_list=true"
+            },
+            {
+              "label": "クラス編集",
+              "route": "Course/EditView"
+            },
+            {
+              "label": "本日の出席表一覧",
+              "route": "Course/AttendanceViewDetailed"
+            }
+          ]
+        },
+        {
+          "name": "シラバス",
+          "toggleId": "submenu__syllabus_sub",
+          "items": [
+            {
+              "label": "シラバス一覧",
+              "route": "Syllabus/index"
+            },
+            {
+              "label": "アップファイル一覧",
+              "route": "SMSDocument/index"
+            },
+            {
+              "label": "ホームワーク一覧",
+              "route": "HomeWork/index"
+            }
+          ]
+        },
+        {
+          "name": "コマ割の設定",
+          "toggleId": "submenu__timeslot_sub",
+          "items": [
+            {
+              "label": "コマ設定",
+              "route": "SMSSchedule/EditViewTimeslot"
+            }
+          ]
+        }
+      ]
+    },
+    "Student": {
+      "iconLabel": "受講生",
+      "iconRoute": "Student/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "受講生登録",
+              "route": "Student/EditView"
+            },
+            {
+              "label": "受講生検索",
+              "route": "Student/index"
+            },
+            {
+              "label": "債権買取顧客情報一覧",
+              "route": "Student/LW_CreditPurchaseCustomerInfo_AN"
+            },
+            {
+              "label": "コース別受講生一覧",
+              "route": "Student/index?contact_status=0&course_list=true"
+            },
+            {
+              "label": "受講生別クラス一覧",
+              "route": "Student/index?contact_status=0&courses_by_student=true"
+            },
+            {
+              "label": "EDI会員データ取込",
+              "route": "ImportCreditSummary/LWEDIMemberDataImport_AN"
+            }
+          ]
+        },
+        {
+          "name": "見込み客連携",
+          "toggleId": "submenu__customer_interface_grp_sub",
+          "items": [
+            {
+              "label": "見込み客連携",
+              "route": "Student/EWCustomerInterface_AN"
+            },
+            {
+              "label": "受講生詳細",
+              "route": "Student/DetailView"
+            }
+          ]
+        },
+        {
+          "name": "候補生",
+          "toggleId": "submenu__candidates_grp_sub",
+          "items": [
+            {
+              "label": "候補生検索",
+              "route": "ContactsKouho/LW_AN"
+            }
+          ]
+        },
+        {
+          "name": "問合せ",
+          "toggleId": "submenu__application_sub",
+          "items": [
+            {
+              "label": "問合せ登録",
+              "route": "Student/EditView?contact_status=5"
+            },
+            {
+              "label": "問合せ一覧",
+              "route": "Student/index?contact_status=5"
+            },
+            {
+              "label": "資料請求一覧",
+              "route": "Student/index?contact_status=11"
+            }
+          ]
+        },
+        {
+          "name": "メモ",
+          "toggleId": "submenu__smsmemo_sub",
+          "items": [
+            {
+              "label": "メモ一覧",
+              "route": "SMSMemo/ListView?is_memo=1&parent_module=Student"
+            },
+            {
+              "label": "メモテンプレート登録",
+              "route": "SMSMemoTemplates/EditView"
+            },
+            {
+              "label": "メモテンプレート一覧",
+              "route": "SMSMemoTemplates/ListView"
+            }
+          ]
+        },
+        {
+          "name": "有効性データ",
+          "toggleId": "submenu__validity_data_sub",
+          "items": [
+            {
+              "label": "有効性データ出力",
+              "route": "Student/LWValidityDataOutput_AN"
+            },
+            {
+              "label": "有効性データ取込",
+              "route": "Student/EWValidityImport_AN"
+            }
+          ]
+        }
+      ]
+    },
+    "Teacher": {
+      "iconLabel": "講師",
+      "iconRoute": "Teacher/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "講師登録",
+              "route": "Teacher/EditView"
+            },
+            {
+              "label": "講師検索",
+              "route": "Teacher/index?student_list=false"
+            },
+            {
+              "label": "講師一覧",
+              "route": "Teacher/index?student_list=false"
+            },
+            {
+              "label": "講師別受講生一覧",
+              "route": "Teacher/index?student_list=true"
+            },
+            {
+              "label": "講師一覧出力",
+              "route": "Teacher/EWInterfaceTeacherExport_AN"
+            }
+          ]
+        }
+      ]
+    },
+    "Contacts": {
+      "iconLabel": "コンタクト",
+      "iconRoute": "Contacts/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "顧客登録",
+              "route": "Contacts/EditView"
+            },
+            {
+              "label": "顧客一覧",
+              "route": "Contacts/index"
+            }
+          ]
+        },
+        {
+          "name": "法人/団体",
+          "toggleId": "submenu__account_sub",
+          "items": [
+            {
+              "label": "法人/団体登録",
+              "route": "Accounts/EditView"
+            },
+            {
+              "label": "法人/団体一覧",
+              "route": "Accounts/index"
+            }
+          ]
+        },
+        {
+          "name": "スタッフ",
+          "toggleId": "submenu__employee_sub",
+          "items": [
+            {
+              "label": "スタッフ登録",
+              "route": "Staff/EditView"
+            },
+            {
+              "label": "スタッフ一覧",
+              "route": "Staff/index"
+            }
+          ]
+        },
+        {
+          "name": "保護者",
+          "toggleId": "submenu__parent_sub",
+          "items": [
+            {
+              "label": "保護者登録",
+              "route": "ParentSMS/EditView"
+            },
+            {
+              "label": "保護者一覧",
+              "route": "ParentSMS/index"
+            }
+          ]
+        }
+      ]
+    },
+    "Resource": {
+      "iconLabel": "部屋･備品",
+      "iconRoute": "Resource/LWClassroom_AN",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "部屋一覧",
+              "route": "Resource/LWClassroom_AN"
+            },
+            {
+              "label": "会議室一覧",
+              "route": "Resource/index?category=meeting_room"
+            },
+            {
+              "label": "部屋・備品一覧",
+              "route": "Resource/index?category=other"
+            },
+            {
+              "label": "店舗一覧",
+              "route": "School/index"
+            },
+            {
+              "label": "部屋登録",
+              "route": "Resource/EWClassroom_AN"
+            },
+            {
+              "label": "会議室登録",
+              "route": "Resource/EditView?category=meeting_room"
+            },
+            {
+              "label": "部屋・備品登録",
+              "route": "Resource/EditView?category=other"
+            }
+          ]
+        },
+        {
+          "name": "テキスト在庫",
+          "toggleId": "submenu__product_sub",
+          "items": [
+            {
+              "label": "テキスト一覧",
+              "route": "Product/index"
+            },
+            {
+              "label": "テキスト登録",
+              "route": "Product/EditView"
+            },
+            {
+              "label": "テキストカテゴリー",
+              "route": "ProductCategory/index"
+            },
+            {
+              "label": "テキスト仕入・販売一覧",
+              "route": "ProductInOut/index"
+            },
+            {
+              "label": "テキスト仕入・販売登録",
+              "route": "ProductInOut/EditView"
+            }
+          ]
+        }
+      ]
+    },
+    "Emails": {
+      "iconLabel": "Ｅメール",
+      "iconRoute": "Emails/LW_AN",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "メール検索",
+              "route": "Emails/LW_AN"
+            }
+          ]
+        },
+        {
+          "name": "メールテンプレート",
+          "toggleId": "submenu__emailtemplates_sub",
+          "items": [
+            {
+              "label": "テンプレートカテゴリー作成",
+              "route": "EmailTemplatesCategory/EditView"
+            },
+            {
+              "label": "テンプレートカテゴリー一覧",
+              "route": "EmailTemplatesCategory/index"
+            },
+            {
+              "label": "文面登録",
+              "route": "EmailTemplates/EditView"
+            },
+            {
+              "label": "文面テンプレート一覧",
+              "route": "EmailTemplates/index"
+            }
+          ]
+        },
+        {
+          "name": "キャンペーン",
+          "toggleId": "submenu__campaigns_sub",
+          "items": [
+            {
+              "label": "キャンペーン一覧",
+              "route": "Campaigns/index"
+            },
+            {
+              "label": "キャンペーン作成",
+              "route": "Campaigns/EditView"
+            }
+          ]
+        },
+        {
+          "name": "名簿リスト",
+          "toggleId": "submenu__prospects_sub",
+          "items": [
+            {
+              "label": "名簿リスト作成",
+              "route": "ProspectLists/EditView"
+            },
+            {
+              "label": "名簿リスト一覧",
+              "route": "ProspectLists/index"
+            }
+          ]
+        },
+        {
+          "name": "フォーラム",
+          "toggleId": "submenu__forums_sub",
+          "items": [
+            {
+              "label": "フォーラム一覧",
+              "route": "Forums/index"
+            },
+            {
+              "label": "フォーラム作成",
+              "route": "Forums/EditView"
+            }
+          ]
+        },
+        {
+          "name": "プロジェクト",
+          "toggleId": "submenu__project_management_sub",
+          "items": [
+            {
+              "label": "私のプロジェクト",
+              "route": "Project/index?current_user_only=on"
+            },
+            {
+              "label": "プロジェクト一覧",
+              "route": "Project/index"
+            },
+            {
+              "label": "プロジェクト作成",
+              "route": "Project/EditView"
+            },
+            {
+              "label": "プロジェクトタスク一覧",
+              "route": "ProjectTask/index"
+            },
+            {
+              "label": "プロジェクトタスク作成",
+              "route": "ProjectTask/EditView"
+            }
+          ]
+        },
+        {
+          "name": "タスク",
+          "toggleId": "submenu__tasks_sub",
+          "items": [
+            {
+              "label": "私のタスク",
+              "route": "Tasks/index?current_user_only=on"
+            },
+            {
+              "label": "タスク一覧",
+              "route": "Tasks/index"
+            },
+            {
+              "label": "タスク作成",
+              "route": "Tasks/EditView"
+            }
+          ]
+        },
+        {
+          "name": "連絡",
+          "toggleId": "submenu__notices_sub",
+          "items": [
+            {
+              "label": "私宛の連絡",
+              "route": "SMSMemo/index?do_not_search_school=1&is_notice=1&my_inbox=1"
+            },
+            {
+              "label": "私が送った連絡",
+              "route": "SMSMemo/index?do_not_search_school=1&is_notice=1&my_sent=1"
+            },
+            {
+              "label": "連絡一覧",
+              "route": "SMSMemo/index?do_not_search_school=1&is_notice=1"
+            },
+            {
+              "label": "連絡作成",
+              "route": "SMSMemo/EditView?is_notice=1"
+            }
+          ]
+        },
+        {
+          "name": "お知らせ",
+          "toggleId": "submenu__announcements_sub",
+          "items": [
+            {
+              "label": "お知らせ作成",
+              "route": "SMSMemo/EditView?is_announcement=1"
+            },
+            {
+              "label": "お知らせ一覧",
+              "route": "SMSMemo/index?do_not_search_school=1&is_announcement=1"
+            }
+          ]
+        },
+        {
+          "name": "はがき",
+          "toggleId": "submenu__postcard_sub",
+          "items": [
+            {
+              "label": "はがき作成",
+              "route": "Postcard/EditView"
+            }
+          ]
+        }
+      ]
+    },
+    "Keiri": {
+      "iconLabel": "経理",
+      "iconRoute": "Keiri/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "受注＆売上",
+              "route": "Keiri/index?keiri_report_type=Invoices"
+            },
+            {
+              "label": "講師給与",
+              "route": "Keiri/index?teacher"
+            },
+            {
+              "label": "未収金",
+              "route": "Transaction/LWMishukin_AN"
+            },
+            {
+              "label": "売掛金",
+              "route": "Transaction/LWUrikakekin_AN"
+            },
+            {
+              "label": "月謝一括作成",
+              "route": "Fee/LWMonthlyFeeCreation_AN"
+            },
+            {
+              "label": "一括入金処理",
+              "route": "Transaction/MultiUpdateOverdueView"
+            },
+            {
+              "label": "源泉税率マスタ",
+              "route": "MasterKanri/DWGensenZeiritsuMaster_AN"
+            },
+            {
+              "label": "AFS会員番号検索",
+              "route": "Keiri/LW_ACSMemberNumberSearch_AN"
+            },
+            {
+              "label": "POSレスポンスエラー一覧",
+              "route": "PosResponseError/LWPOSResponseErrorList_AN"
+            }
+          ]
+        },
+        {
+          "name": "料金",
+          "toggleId": "submenu__fees_sub",
+          "items": [
+            {
+              "label": "料金設定（入会金用）",
+              "route": "Fee/EditView"
+            },
+            {
+              "label": "料金一覧",
+              "route": "Fee/index?general=0"
+            },
+            {
+              "label": "料金一覧(共通)",
+              "route": "Fee/LWCommon_AN"
+            },
+            {
+              "label": "料金パッケージ作成",
+              "route": "SalesGroup/EditView?template"
+            },
+            {
+              "label": "料金パッケージ一覧",
+              "route": "SalesGroup/index?template=true"
+            }
+          ]
+        },
+        {
+          "name": "入出金",
+          "toggleId": "submenu__transaction_sub",
+          "items": [
+            {
+              "label": "入出金一覧",
+              "route": "Transaction/index"
+            },
+            {
+              "label": "本日の入出金",
+              "route": "Transaction/index?date_selection=t_date"
+            },
+            {
+              "label": "口座振替請求データ履歴",
+              "route": "BankActionsHistory/LWAccountDebitBillData_AN"
+            },
+            {
+              "label": "口座振替請求データ読込",
+              "route": "Transaction/EWImportAccntDebitBill_AN"
+            },
+            {
+              "label": "口座振替データ履歴",
+              "route": "BankActionsHistory/index"
+            },
+            {
+              "label": "口座振替スケジュール登録",
+              "route": "ShimaSchedule/LWAccountTransferScheduleRegistration_AN"
+            },
+            {
+              "label": "コンビニ収納結果取込",
+              "route": "Transaction/Import?combini_import=true&step=1"
+            },
+            {
+              "label": "コンビニ収納結果履歴",
+              "route": "CombiniActionsHistory/index"
+            },
+            {
+              "label": "返金一覧",
+              "route": "Transaction/LWRefundList_AN"
+            },
+            {
+              "label": "クレジット請求データ履歴",
+              "route": "CreditActionsHistory/LW_AN"
+            }
+          ]
+        },
+        {
+          "name": "債権買取",
+          "toggleId": "submenu__smbc_sub",
+          "items": [
+            {
+              "label": "債権買取請求データ履歴",
+              "route": "SmbcActionsHistory/LWBillingDataHistory_AN"
+            },
+            {
+              "label": "債権買取状態読込",
+              "route": "SmbcStateSummary/EWSMBCPurchaseStatusImport_AN"
+            },
+            {
+              "label": "債権買取状態一覧",
+              "route": "SmbcContacts/LW_AN"
+            }
+          ]
+        },
+        {
+          "name": "講師謝礼",
+          "toggleId": "submenu__sharei_koshi_sub",
+          "items": [
+            {
+              "label": "講師謝礼計算",
+              "route": "ShareiNichibetsu/LWKoushiShareiKeisan_AN"
+            },
+            {
+              "label": "講師謝礼追加",
+              "route": "ShareiNichibetsu/EW_KoushiShareiTsuika_AN"
+            },
+            {
+              "label": "講師謝礼一覧",
+              "route": "ShareiNichibetsu/LWShareiIchiran_AN"
+            },
+            {
+              "label": "当月報酬明細",
+              "route": "Keiri/LWTantouHoushuuMeisai_AN"
+            },
+            {
+              "label": "当月支払集計表",
+              "route": "ShareiNichibetsu/LWTougetsuShiharaiShuukeiHyou_AN"
+            },
+            {
+              "label": "講師謝礼支払明細",
+              "route": "Keiri/LW_TeacherDetailedPayment_AN"
+            },
+            {
+              "label": "講師謝礼支払明細メッセージ",
+              "route": "ShareiMeisaiMsg/EW_AN"
+            },
+            {
+              "label": "支払調書",
+              "route": "ShareiNichibetsu/LWShiharaiChousho_AN"
+            },
+            {
+              "label": "講師支払調書データ出力",
+              "route": "ShareiNichibetsu/LW_MPInterfacePaymentRecord_AN"
+            },
+            {
+              "label": "講師支払明細出力",
+              "route": "ShareiNichibetsu/LWTeacherInvoiceOutput_AN"
+            }
+          ]
+        },
+        {
+          "name": "料金明細",
+          "toggleId": "submenu__salesgroup_sub",
+          "items": [
+            {
+              "label": "料金明細一覧",
+              "route": "SalesGroup/index"
+            },
+            {
+              "label": "料金明細一覧詳細",
+              "route": "SalesGroup/index?list_detailed"
+            }
+          ]
+        }
+      ]
+    },
+    "SMSReports": {
+      "iconLabel": "レポート",
+      "iconRoute": "SMSReports/report_handler",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "レポート",
+              "route": "SMSReports/report_handler?report_category=student"
+            }
+          ]
+        }
+      ]
+    },
+    "Main": {
+      "iconLabel": "メインメニュー",
+      "iconRoute": "Main/index",
+      "groups": []
+    },
+    "SMSHelp": {
+      "iconLabel": "ヘルプ",
+      "iconRoute": "SMSHelp/index",
+      "groups": [
+        {
+          "name": "ショートカット",
+          "items": [
+            {
+              "label": "総合ヘルプ",
+              "route": "SMSHelp/index"
+            },
+            {
+              "label": "ヘルプ検索",
+              "route": "SMSHelp/Search"
+            },
+            {
+              "label": "アニメーションヘルプ",
+              "route": "SMSHelp/index?animation=1"
+            },
+            {
+              "label": "システム体験レッスン",
+              "route": "SMSHelp/index?animation=2"
+            },
+            {
+              "label": "初めて使うには",
+              "route": "../include/help/ja/QuickStart.pdf"
+            },
+            {
+              "label": "全体説明",
+              "route": "../include/help/ja/SMSgeneric.pdf"
+            },
+            {
+              "label": "クイックマニュアル",
+              "route": "../include/help/ja/quick_manual.pdf"
+            },
+            {
+              "label": "FAQ（よくある質問）",
+              "route": "SMSHelp/index?faq"
+            },
+            {
+              "label": "ヘルプご使用にあたって",
+              "route": "../include/help/ja/guidance.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "Administration": {
+      "iconLabel": "管理",
+      "iconRoute": "Administration/index",
+      "groups": []
+    }
+  }
+}

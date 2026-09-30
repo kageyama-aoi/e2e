@@ -23,6 +23,7 @@ const { I } = inject();
 const { fillTextFields } = require('../../../support/utils');
 const createIchiranMixin = require('../_common/IchiranMixin');
 const { setDateField, resetSelects, verifyResultRowsExist } = require('../_common/IchiranSearchMixin');
+const { createSortableTable, LIST_CONTAINER } = require('../_common/SortableTable');
 
 /**
  * Eメール系一覧でセッション記憶される主要な絞り込みセレクトを「すべて」へ戻す。
@@ -229,6 +230,71 @@ module.exports = {
   async verifyResultRowsExist() {
     await verifyResultRowsExist('Eメール系一覧');
   },
+
+  // ----------------------------------------------------------------
+  //  ソート定義（#226 バッチ4・culture_beta で実機確認）
+  // ----------------------------------------------------------------
+  // 6画面とも一覧画面の標準手順（openListCase）で開ける。日付欄は resetSearchForm で空になり
+  // 全期間が対象になる（Eメール一覧・お知らせ一覧・アンケート一覧も空のまま検索できる）。
+
+  /**
+   * Eメール一覧のソート定義。氏名・対象区分は裏の値で並ぶため grouped。
+   * 送信日時は秒まで表示されるので string。第2キーなし（同値内はレコードIDでも送信日時でもない）。
+   */
+  emailSortTable: createSortableTable({
+    label: 'Eメール一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      subject: 'string', fullName: 'grouped', branchName: 'stringCi', smsgroup: 'grouped',
+      username: 'stringCi', sendDateTime: 'string',
+    },
+    secondary: null,
+  }),
+
+  /** Eメールテンプレート一覧のソート定義。第2キー=更新日時の降順。 */
+  templateSortTable: createSortableTable({
+    label: 'Eメールテンプレート一覧',
+    container: LIST_CONTAINER,
+    columns: { categoryName: 'string', name: 'string', updated_at: 'datetime', created_at: 'datetime' },
+    secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
+  }),
+
+  /** Eメールテンプレートカテゴリ一覧のソート定義。第2キー=更新日時の降順（テンプレート一覧に合わせる）。 */
+  templateCategorySortTable: createSortableTable({
+    label: 'Eメールテンプレートカテゴリ一覧',
+    container: LIST_CONTAINER,
+    columns: { name: 'string', template_category_status: 'grouped', updated_at: 'datetime', created_at: 'datetime' },
+    secondary: { key: 'updated_at', type: 'string', dir: 'desc' },
+  }),
+
+  /** 名簿リスト一覧のソート定義。第2キー=更新日時の降順。 */
+  prospectListSortTable: createSortableTable({
+    label: '名簿リスト一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      name: 'string', branch_name: 'stringCi', username: 'stringCi', createdAt: 'datetime', updatedAt: 'datetime',
+    },
+    secondary: { key: 'updatedAt', type: 'string', dir: 'desc' },
+  }),
+
+  /** お知らせ一覧のソート定義。第2キー=更新日時の降順。 */
+  announcementSortTable: createSortableTable({
+    label: 'お知らせ一覧',
+    container: LIST_CONTAINER,
+    columns: { title: 'string', postStart: 'string', postEnd: 'string', updatedAt: 'datetime' },
+    secondary: { key: 'updatedAt', type: 'string', dir: 'desc' },
+  }),
+
+  /** アンケート一覧のソート定義。ステイタスは内部コード順のため grouped。第2キーなし。 */
+  pollSortTable: createSortableTable({
+    label: 'アンケート一覧',
+    container: LIST_CONTAINER,
+    columns: {
+      title: 'string', createdAt: 'datetime', startDate: 'string', endDate: 'string',
+      pollStatus: 'grouped', pollTotalVotes: 'number',
+    },
+    secondary: null,
+  }),
 
   ...createIchiranMixin('Eメール系一覧'),
 };

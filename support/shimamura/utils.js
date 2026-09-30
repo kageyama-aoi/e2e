@@ -357,6 +357,24 @@ async function waitForSaveResult(I, {
 }
 
 /**
+ * クリックして、画面が読み込み直されるまで待つ（フォーム送信で全画面が再描画される画面用）。
+ * 押す前から画面にある要素（ファイル選択欄・保存ボタン等）を待つと、再描画の前に即成立して
+ * 「押す前の画面」でエラー確認をして合格しうる（#243）。押す前の window に印を付け、
+ * 印が消えた＝新しい画面に入れ替わったことを待つ。
+ * @param {CodeceptJS.I} I
+ * @param {string} locator - クリックする要素
+ * @param {{timeout: (number|undefined)}} [options]
+ */
+async function clickAndWaitForReload(I, locator, { timeout = TIMEOUTS.RESULT } = {}) {
+  await I.executeScript(() => { window.__e2eBeforeReload = true; });
+  I.click(locator);
+  await I.waitForFunction(
+    () => !window.__e2eBeforeReload && document.readyState === 'complete',
+    timeout
+  );
+}
+
+/**
  * セットアップ系テストで受講生の名前を「実行日時＋シナリオ名」に書き換えるための名前を組み立てる。
  * 同じ姓（prefix+MMDD）でまとめて検索できるようにし、名にはシナリオを埋め込んで区別する。
  * @param {string} prefix - 姓のプレフィックス（例: '月謝テスト', '発表会テスト'）
@@ -374,6 +392,26 @@ function buildTestName(prefix, row) {
   };
 }
 
+/**
+ * XPath 文字列リテラル（' を含む場合は concat で組む）
+ * @param {string} s
+ * @returns {string}
+ */
+function xpathLiteral(s) {
+  if (!s.includes("'")) return `'${s}'`;
+  return `concat('${s.split("'").join("', \"'\", '")}')`;
+}
+
+/**
+ * 左サイドバーのリンクを表示テキスト完全一致で探す XPath
+ * （withText は部分一致のため「講師一覧」が「講師一覧出力」に、「料金一覧」が「料金一覧(共通)」にも当たる）
+ * @param {string} label - リンクの表示テキスト
+ * @returns {string} XPath
+ */
+function sidebarLinkXPath(label) {
+  return `//*[@id="leftCol"]//a[contains(@class,"subMenuLink")][normalize-space(.)=${xpathLiteral(label)}]`;
+}
+
 module.exports = {
   validateShimamuraEnv,
   toggleGroupmenu,
@@ -388,5 +426,7 @@ module.exports = {
   resolveDynamicDateIfPast,
   extractRecordId,
   waitForSaveResult,
+  clickAndWaitForReload,
   buildTestName,
+  sidebarLinkXPath,
 };
