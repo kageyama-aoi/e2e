@@ -26,6 +26,7 @@ const {
   attachBusinessContext,
   attachErrorScreenshot
 } = require('../../../support/utils');
+const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const {
   runKoushiShareiManualFlow,
@@ -42,6 +43,20 @@ const validationErrorData = withScenarioLabel(
   (row) => row.scenario || 'バリデーションエラー'
 );
 
+/**
+ * 計上日が過去月なら今日に直し、対象月はその前月にそろえる（計上日の年月＝対象月の翌月・計上日は当月以降 #210）
+ * @returns {{keijoubi: string, from_datetime: string}}
+ */
+function resolveShareiDates(I, keijoubi, fromDatetime) {
+  const resolved = resolveDynamicDateIfPast(I, keijoubi, '計上日');
+  if (resolved === keijoubi) return { keijoubi, from_datetime: fromDatetime };
+  const d = new Date(resolved);
+  const prev = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+  const from_datetime = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`;
+  I.say(`⚠ 【動的日付補正】対象月: 計上日の前月にそろえる → "${from_datetime}"`);
+  return { keijoubi: resolved, from_datetime };
+}
+
 Feature('講師謝礼手動入力登録');
 
 Before(beforeShimamura);
@@ -54,8 +69,8 @@ Data(csvData).Scenario('講師謝礼を1件登録できる @dev @normal', async 
   });
 
   const input = {
-    keijoubi:      current.keijoubi,
-    from_datetime: current.from_datetime,
+    ...resolveShareiDates(I, current.keijoubi, current.from_datetime),
+    teacher_name:  current.teacher_name,
     sharei_komoku: current.sharei_komoku,
     houshugaku:    current.houshugaku,
     student_count: current.student_count,
