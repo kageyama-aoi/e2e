@@ -22,6 +22,7 @@
 - `npm run test_s` しまむらテスト（実行前に `pretest_s` フックが `pause()` 残存をチェック）。
 - `npm run test_t` T-Frame テスト一式（`tframe.culture_beta`。別環境は GUI か `--profile` を手で指定）。
 - `npm run test_taskreport` Taskreport テスト。
+- `npm run test:unit` 支援コードの単体テスト（`node --test`、`tests/unit/*.test.js`。ブラウザ不要。codecept は `*_test.js` だけを拾うので混ざらない）。
 - `npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
 
 ### Allure レポート

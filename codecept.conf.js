@@ -7,6 +7,7 @@ require('./support/envLoader.js');
 const fs = require('fs');
 const path = require('path');
 const { setCommonPlugins } = require('@codeceptjs/configure');
+const { resolveRunOutputPaths, ensureRunOutputDirs } = require('./support/runOutputPaths.js');
 
 // ------------------------------------------------------
 //  共通プラグインのON/OFFを環境変数で切り替え
@@ -16,58 +17,20 @@ if (process.env.USE_COMMON_PLUGINS === 'true') {
   setCommonPlugins();
 }
 
-function sanitizePathSegment(value) {
-  return (value || 'default').replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_');
-}
+// ------------------------------------------------------
+//  実行ごとの出力フォルダ（output/<profile>/<日時>_<テスト名>）
+//  計算とフォルダ作成は support/runOutputPaths.js に分離（#230）
+// ------------------------------------------------------
+const runOutputPaths = resolveRunOutputPaths();
+ensureRunOutputDirs(runOutputPaths, __dirname);
+const { runtimeOutputDir, runtimeAllureResultsDir } = runOutputPaths;
 
-function detectRunTargetFromArgs(argv) {
-  const args = Array.isArray(argv) ? argv : [];
-  const testArg = args.find((arg) => /_test\.js$/i.test(String(arg)));
-  if (testArg) {
-    const normalized = String(testArg).replace(/\\/g, '/');
-    const fileName = normalized.split('/').pop() || normalized;
-    const withoutExt = fileName.replace(/\.[^/.]+$/, '');
-    return sanitizePathSegment(withoutExt || 'all');
-  }
-
-  const runIndex = args.lastIndexOf('run');
-  if (runIndex >= 0 && args[runIndex + 1] && !String(args[runIndex + 1]).startsWith('-')) {
-    const candidate = String(args[runIndex + 1]);
-    const normalized = candidate.replace(/\\/g, '/');
-    const fileName = normalized.split('/').pop() || normalized;
-    const withoutExt = fileName.replace(/\.[^/.]+$/, '');
-    return sanitizePathSegment(withoutExt || 'all');
-  }
-
-  return 'all';
-}
-
-function buildRunTimestamp() {
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hh = String(now.getHours()).padStart(2, '0');
-  const mi = String(now.getMinutes()).padStart(2, '0');
-  const ss = String(now.getSeconds()).padStart(2, '0');
-  return `${yyyy}${mm}${dd}_${hh}${mi}${ss}`;
-}
-
-const runProfile = sanitizePathSegment(process.env.PROFILE || process.env.profile || 'default');
-const runTimestamp = buildRunTimestamp();
-const runTarget = detectRunTargetFromArgs(process.argv);
-const runDirName = `${runTimestamp}_${runTarget}`;
-const runtimeOutputDir = `./output/${runProfile}/${runDirName}`;
-const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runDirName}`;
 // 全プロファイル共通のビューポート設定（旧名 TFRAME_VIEWPORT_* もフォールバックとして読む）
 const viewportWidth  = Number(process.env.VIEWPORT_WIDTH  || process.env.TFRAME_VIEWPORT_WIDTH  || 1600);
 const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || process.env.TFRAME_VIEWPORT_HEIGHT || 1200);
 const windowSize = `${viewportWidth}x${viewportHeight}`;
 // 実際に起動するブラウザ（Allure の Environment 表示にも同じ値を出す）
 const playwrightBrowser = 'chromium';
-
-fs.mkdirSync(path.resolve(__dirname, runtimeOutputDir), { recursive: true });
-fs.mkdirSync(path.resolve(__dirname, runtimeAllureResultsDir), { recursive: true });
 
 /** @type {CodeceptJS.MainConfig} */
 exports.config = {
