@@ -22,10 +22,10 @@
 - `tests/` → `pages/`・`support/` にのみ依存
 - `pages/` → `support/` には依存してよい（ユーティリティ共通化）
 - `support/` → `tests/`・`pages/` に依存しない
-- FlowPage 同士の依存は可（例: `HappyoukaiFlowPage` が `GessyaIkkatuFlowPage.navigateToKouhosei` と `CourseClassSetupFlowPage.setupLinkedCourseAndClass` を再利用）。同じ業務語のロジックを別 FlowPage に再実装しない
+- FlowPage 同士の依存は可（例: `HappyoukaiFlowPage` が `SyokaiFlowPage.navigateToKouhosei` と `CourseClassSetupFlowPage.setupLinkedCourseAndClass` を再利用）。同じ業務語のロジックを別 FlowPage に再実装しない
 
 ## 命名規則
-- 関数: `verbNoun`（例: `navigateToStudentGroup`, `searchAndSelectKouhosei`, `fillKeirisyoriScreenB`, `executeTaikai`）
+- 関数: `verbNoun`（例: `navigateToStudentGroup`, `navigateToKouhosei`, `fillKeirisyoriScreenB`, `executeTaikai`）
 - 画面遷移: `navigateTo...` / `open...` / `goTo...`
 - 旧パターン `ShouldBeOn...` は 2026-07 に全廃済み。新規追加はもちろん、既存コードでも見つけたら `verbNoun` に直す
 - FlowPage のオーケストレーターは `run...Flow` / `run...`（例: `runRegistrationFlow`, `runSaikenkaiFlow`）

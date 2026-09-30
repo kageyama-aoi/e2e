@@ -13,19 +13,16 @@
 - 残 1 件 `正常登録_講師報酬` は講師選択ポップアップ段階の別問題 → **#210 で追跡**
 - 調査メモ（#206）: 講師謝礼グループ id = `submenu__sharei_koshi_sub`（display:none 開始・onclick は親 tr の `HandleSubmenuDisplay('submenu__sharei_koshi')`）
 
-#### コミットB（系統3＝候補生昇格の堅牢版寄せ） — 見送り（2026-09-11・ユーザー判断）
-- やりたかったこと: `GessyaIkkatuFlowPage.navigateToKouhosei`（会員番号重複検知＋複数候補リトライ）を
-  `SyokaiFlowPage.runRegistrationFlow` の簡易版（`searchAndSelectKouhosei` + `promoteKouhoseiToStudent`）に統合。
-  置き場所は `SyokaiFlowPage` or `support/shimamura/kouhosei.js`（Gessya / Happyoukai も import 元）。
-- 見送り理由: 回帰比較の必須条件「変更前後で `syokai_touroku_test` が同じく通る」が満たせない。
-  **変更前ベースライン（testgcp・2026-09-11）= 一括 0/3**。単独実行では `@error 開始日が過去日` のみ緑、
-  他2本は**経理ビューB のフォーム未活性**（`売上計上する` / `#contract_dateclass_operation` が not enabled）で失敗。
-  候補生昇格自体は動作しており失敗は全て後段 → **#211 で追跡**。
-- 再開条件: #211（経理ビューB）が緑に戻ったら、`開始日が過去日` を回帰アンカーに統合を実施。
-  現状はコード側に両実装が残り、`SyokaiFlowPage.searchAndSelectKouhosei` 冒頭コメントで理由を明記済み。
+#### コミットB（系統3＝候補生昇格の堅牢版寄せ） — 完了（2026-09-29・#269）
+- 2026-09-11 は `syokai_touroku_test` の変更前ベースラインが 0/3 で回帰比較できず見送り → #211 で経理ビューBを直して 3/3 に復帰（PR #268）
+- #269 で `navigateToKouhosei`（会員番号重複検知＋複数候補リトライ）を `GessyaIkkatuFlowPage` から `SyokaiFlowPage` へ移し、
+  `runRegistrationFlow` もこれを使うよう変更。簡易版（`searchAndSelectKouhosei` + `promoteKouhoseiToStudent`）は削除。
+  Gessya / Happyoukai の import 元は `SyokaiFlowPage`（Gessya → Syokai の既存依存と同じ向きで循環しない）
+- 統合時に発見: 候補生リンクの取得が `grabAttributeFrom`（先頭1件のみ）だったため、「次の候補を試す」は一度も働いていなかった → `grabAttributeFromAll` に修正
 
 ## 派生バグ（別 Issue で追跡）
 - #203 tframe 側ドキュメントの参照ドリフト 30 件
+- ~~#211 syokai_touroku が経理ビューBで失敗~~ → PR #268 で修正（2026-09-29）
 - ~~#206 koushi_sharei_manual がサイドバー経路で「講師謝礼」グループ未展開のため全件失敗~~ → コミットA で修正・クローズ（2026-09-11）
 - #210 koushi_sharei_manual の「正常登録_講師報酬」が講師選択ポップアップ（`#teacher_id_popup_button` → `switchToNextTab`）で失敗（既存・#206 とは別原因）
 - #211 syokai_touroku_test が経理ビューB のフィールド未活性で失敗（+ #h コミットB＝候補生昇格の堅牢版統合がこれ待ちで保留）
