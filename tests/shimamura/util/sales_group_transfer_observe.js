@@ -25,6 +25,7 @@
  * | OBS_COMMISSION | 上段の手数料 | 入れない |
  * | OBS_PAYMENT_TYPE | 上段の支払方法（option の value） | cash |
  * | OBS_SIMULATE_SHIMEBI | 締日を模擬（YYYY-MM-DD。ブラウザ側で応答を書き換えるだけ） | 模擬しない |
+ * | OBS_MODE | `manual` なら入金分配を使わず、入金日が空の入力欄の行へ直接入力する（入金日=上段の入金日・入金額=入金予定額・支払方法=現金）。問い合わせの「分配しなくても起きるか」の確認用（#284） | 入金分配（divide） |
  * | OBS_SAVE | `1` なら最後に保存して、保存後の画面とメッセージを記録する（**データが変わる**。締日の模擬中は使えない） | 保存しない |
  *
  * 入金済みの明細で OBS_IN_AMOUNT を入れると、分配しきれない余りが最後の行に足される経路
@@ -51,6 +52,8 @@ const TOP_INPUT = {
   paymentType: process.env.OBS_PAYMENT_TYPE || 'cash',
 };
 const SAVE = process.env.OBS_SAVE === '1';
+const MODE = process.env.OBS_MODE || 'divide';
+if (!['divide', 'manual'].includes(MODE)) throw new Error(`OBS_MODE は divide か manual: ${MODE}`);
 if (SAVE && TARGET.simulateShimebi) throw new Error('OBS_SAVE と OBS_SIMULATE_SHIMEBI は同時に使えません（模擬した画面で保存しない）');
 
 Feature('shimamura 料金明細 編集画面（入金）の観察');
@@ -66,9 +69,18 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（O
   logRows(I, '分配前', before.rows);
   const previewBefore = await page.grabSaveRequestPreview();
 
-  page.fillTopInput(TOP_INPUT);
-  if (TOP_INPUT.inAmount === undefined) page.clickCopyBalance();
-  page.clickDivideTransfer();
+  if (MODE === 'manual') {
+    // 入金分配を使わず、未入金（入金日が空）の入力欄の行へ直接入力する
+    const tDate = TOP_INPUT.tDate || before.top.top_t_date;
+    for (const row of before.rows.filter((r) => r.editable && !r.t_date)) {
+      I.say(`【観察】手入力 #${row.index} ${row.description} 入金日=${tDate} 入金額=${row.in_amount}`);
+      await page.fillRowPayment(row.index, { tDate, actualInAmount: row.in_amount, paymentType: 'cash' });
+    }
+  } else {
+    page.fillTopInput(TOP_INPUT);
+    if (TOP_INPUT.inAmount === undefined) page.clickCopyBalance();
+    page.clickDivideTransfer();
+  }
 
   const after = await page.grabScreenState();
   logRows(I, '分配後', after.rows);
@@ -97,7 +109,7 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（O
   const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
   const outFile = path.join(outDir, `${TARGET.salesno}_${stamp}.json`);
   fs.writeFileSync(outFile, JSON.stringify({
-    target: TARGET, topInput: TOP_INPUT, before, previewBefore, after, previewAfter, predictions, saveResult,
+    target: TARGET, mode: MODE, topInput: TOP_INPUT, before, previewBefore, after, previewAfter, predictions, saveResult,
   }, null, 2), 'utf8');
   I.say(`【観察】記録: ${path.relative(repoRoot, outFile)}`);
   I.saveScreenshotWithTimestamp('SALES_GROUP_TRANSFER_OBSERVE', true);
