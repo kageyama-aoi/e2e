@@ -1,0 +1,3 @@
+scenario,lastName,firstName,idnumber,personStatus,school_area_id,school_branch_id,sortKey,sortDir
+全件_ID番号昇順,,,,,,,Id Number,asc
+ステイタス受講生_更新日時降順,,,,3,,,Updated At,desc
