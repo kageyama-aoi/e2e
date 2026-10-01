@@ -1,11 +1,11 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-10-01 15:41 (JST)
+> 最終更新: 2026-10-01 16:11 (JST)
 
-**合計 167 テスト**（shimamura 52 / tframe 113 / taskreport 1 / smoke 1）
+**合計 168 テスト**（shimamura 53 / tframe 113 / taskreport 1 / smoke 1）
 
-## shimamura（52件）
+## shimamura（53件）
 
 ### auth/（1件）
 
@@ -20,7 +20,7 @@
 | `bank_payment_type_check_test.js` | — | 請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト |
 | `shimamura_class_existence_check_test.js` | 1100_4_1 | 指定クラスが存在するか一括チェック |
 
-### flow/（15件）
+### flow/（16件）
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
@@ -33,6 +33,7 @@
 | `keiri_hennkin_syori_test.js` | 1600_17_1 | [WIP] 経理の返金処理フロー（ひな形・未実装。@wip で既定実行から除外） |
 | `koushi_sharei_manual_test.js` | 1600_19_1 | 講師謝礼の手動入力登録フローを確認 |
 | `koushi_sharei_tsuika_test.js` | 1600_19_1 | 講師謝礼のCSVファイル一括取込フローを確認 |
+| `sales_group_transfer_setup_test.js` | — | 料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み） |
 | `shimamura_class_member_registration_test.js` | 1100_15_1 | [WIP] クラスへのメンバー登録フロー（pause 待ちで未完成。@wip で既定実行から除外） |
 | `smbc_state_import_test.js` | 4000_3_1 | 債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認 |
 | `student_saikenkai_test.js` | — | SMBC債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認 |

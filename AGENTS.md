@@ -351,6 +351,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。**FlowPage 内で 3 行の遷移を再実装しない。**
   受講生の UUID が分かっているデータ準備では `navigateToKeirisyoriView(I, page, { recordId })`（`openKeirisyoriScreenA` / `executeTaikai` も `recordId` を受け取る）で
   経理ビューを URL 直指定で開く（`SHIMAMURA_NAV=sidebar` でも URL。約8秒/行短縮 #244）。サイドバー経路の確認は recordId を渡さない初回登録テストに残す。
+  データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`SyokaiFlowPage.js` の
+  `enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })` で画面操作なしに同じ通信を出せる（約22秒→約8秒 #280）。
 - URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。
 
 詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。
