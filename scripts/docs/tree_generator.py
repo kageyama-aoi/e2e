@@ -138,25 +138,30 @@ def iter_children_sorted(dir_path: Path) -> list[Path]:
 
 
 def list_untracked(root: Path) -> set[Path]:
-    """git の未追跡ファイル・ディレクトリ（.gitignore 対象は除く）の絶対パス集合を返します。
+    """git 管理外（未追跡・無視）のファイル・ディレクトリの絶対パス集合を返します。
 
+    未追跡（作業中のファイル）に加えて、.gitignore や .git/info/exclude で無視されているもの
+    （worktree・接続設定の .env・スクショ等、手元にしか無いもの）も含めます（#283）。
     git が使えない・リポジトリ外の場合は空集合を返します（除外なしで続行）。
 
     Args:
         root (Path): 走査のルートディレクトリ（git コマンドの実行場所）。
 
     Returns:
-        set[Path]: 未追跡パスの集合。未追跡ディレクトリは配下を列挙せずディレクトリ自体を返します。
+        set[Path]: 管理外パスの集合。管理外ディレクトリは配下を列挙せずディレクトリ自体を返します。
     """
-    try:
-        out = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard", "--directory", "-z"],
-            cwd=root, capture_output=True, check=True,
-        ).stdout.decode("utf-8")
-    except (OSError, subprocess.CalledProcessError):
-        print("[tree_generator] git ls-files に失敗したため未追跡ファイルの除外をスキップします")
-        return set()
-    return {(root / e.rstrip("/")).resolve() for e in out.split("\0") if e}
+    entries: list[str] = []
+    for extra in ([], ["--ignored"]):
+        try:
+            out = subprocess.run(
+                ["git", "ls-files", "--others", *extra, "--exclude-standard", "--directory", "-z"],
+                cwd=root, capture_output=True, check=True,
+            ).stdout.decode("utf-8")
+        except (OSError, subprocess.CalledProcessError):
+            print("[tree_generator] git ls-files に失敗したため git 管理外ファイルの除外をスキップします")
+            return set()
+        entries.extend(e for e in out.split("\0") if e)
+    return {(root / e.rstrip("/")).resolve() for e in entries}
 
 
 def build_tree_lines(
@@ -347,7 +352,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--exclude-untracked",
         action="store_true",
-        help="git の未追跡ファイルを表示しない（pre-commit フック用。作業中ファイルの混入を防ぐ）",
+        help="git 管理外（未追跡・無視）のファイルを表示しない（pre-commit フック用。作業中ファイルや手元にしか無いファイルの混入を防ぐ）",
     )
     return p.parse_args()
 
