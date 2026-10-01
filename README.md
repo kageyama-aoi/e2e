@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-01 15:41:01
+Last updated: 2026-10-01 16:01:51
 
 ```text
 e2e/
@@ -1851,6 +1851,7 @@ e2e/
 │   │   │   ├── GessyaIkkatuFlowPage.js
 │   │   │   ├── HappyoukaiFlowPage.js
 │   │   │   ├── KoushiShareiFlowPage.js
+│   │   │   ├── SalesGroupTransferFlowPage.js
 │   │   │   ├── StudentSaikenkaiFlowPage.js
 │   │   │   ├── SyokaiFlowPage.js
 │   │   │   └── TeacherKeiriFlowPage.js
@@ -2222,6 +2223,7 @@ e2e/
 │   │   │   ├── keiri_hennkin_syori_test.js
 │   │   │   ├── koushi_sharei_manual_test.js
 │   │   │   ├── koushi_sharei_tsuika_test.js
+│   │   │   ├── sales_group_transfer_setup_test.js
 │   │   │   ├── shimamura_class_member_registration_test.js
 │   │   │   ├── smbc_state_import_test.js
 │   │   │   ├── student_saikenkai_test.js

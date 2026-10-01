@@ -19,9 +19,11 @@ const { TIMEOUTS, BASE_URL } = require('../../../support/shimamura/constants');
  * 例外として締日（`transaction_array.shimebi`）より前に入金された行は文字表示だけになり、
  * `sales_arr` には DB の値（文字列）がそのまま入る。
  *
- * **このPOでできないこと**
- * 保存はしない（データを変えない下準備 #279）。送信 JSON は `prepareForm()` を呼んで
- * hidden に入る値を読むだけで、フォームは送らない。
+ * **保存について**
+ * 観察用のメソッド（`grabSaveRequestPreview` 等）は保存しない。送信 JSON は `prepareForm()` を呼んで
+ * hidden に入る値を読むだけで、フォームは送らない（#279）。
+ * 保存するのは `clickSaveAndGrabResult()` だけで、テストデータを作るとき（未入金の行を入金する #280）
+ * と、保存した結果のエラーを確かめるときに使う。
  */
 module.exports = {
 
@@ -33,7 +35,9 @@ module.exports = {
     topPaymentType: 'select[name="top_payment_type"]',
     copyBalanceButton: 'input[onclick^="CopyBalance"]',
     divideTransferButton: 'input[onclick^="DivideTransfer"]',
+    saveButton: 'input[type="submit"][title="保存"]',
     firstRowTDate: '#t_date_0',
+    messages: ['#top_err_info_msg_div', '#top_message_dialog_div_id'],
   },
 
   /**
@@ -127,6 +131,63 @@ module.exports = {
     if (inAmount !== undefined) I.fillField(this.locators.topInAmount, inAmount);
     if (commission !== undefined) I.fillField(this.locators.topCommission, commission);
     if (paymentType !== undefined) I.selectOption(this.locators.topPaymentType, paymentType);
+  },
+
+  /**
+   * 1行分の入金欄（入金日・入金額・支払方法）を埋めます。渡さなかった項目は触らない。
+   * 行の支払方法の select には name/id が無いため、`sales_arr[index].payment_type` から操作する。
+   * 入力後に画面の再計算（バランス・合計）を走らせる。
+   *
+   * @param {number} index 行番号（0 始まり。`grabScreenState().rows[i].index`）
+   * @param {{tDate: (string|undefined), actualInAmount: (string|undefined), paymentType: (string|undefined)}} values
+   *   paymentType は option の value（この画面の選択肢は `cash` と空だけ）
+   */
+  async fillRowPayment(index, { tDate, actualInAmount, paymentType }) {
+    await I.executeScript(([i, v]) => {
+      /* global sales_arr, RecalculateGrandTotal */
+      const sale = sales_arr[i];
+      if (!sale || typeof sale.t_date !== 'object') throw new Error(`入力欄のある行ではありません: ${i}`);
+      if (v.tDate !== null) sale.t_date.value = v.tDate;
+      if (v.actualInAmount !== null) sale.actual_in_amount.value = v.actualInAmount;
+      if (v.paymentType !== null) {
+        if (![...sale.payment_type.options].some((o) => o.value === v.paymentType)) {
+          throw new Error(`支払方法の選択肢にありません: ${v.paymentType}`);
+        }
+        sale.payment_type.value = v.paymentType;
+      }
+      RecalculateGrandTotal();
+    }, [index, {
+      tDate: tDate === undefined ? null : tDate,
+      actualInAmount: actualInAmount === undefined ? null : actualInAmount,
+      paymentType: paymentType === undefined ? null : paymentType,
+    }]);
+  },
+
+  /**
+   * 保存ボタンを押し、保存後の画面と表示されたメッセージを返します（**データが変わる**）。
+   * 成功すると料金明細の詳細画面（`action=DetailView`）へ移る。サーバーのチェックに当たると
+   * 編集画面に戻り、画面上部にメッセージが出る（#279 の仕様書 ④）。
+   * 画面側のチェック（入金日の未入力など）で止まった場合は alert の文言が `alerts` に入り、画面は移らない。
+   *
+   * @returns {Promise<{saved: boolean, url: string, messages: Array<string>, alerts: Array<string>}>}
+   */
+  async clickSaveAndGrabResult() {
+    const beforeUrl = await I.grabCurrentUrl();
+    I.click(this.locators.saveButton);
+    I.wait(TIMEOUTS.TAB_SWITCH);
+    I.waitForElement('body', TIMEOUTS.SCREEN);
+    const url = await I.grabCurrentUrl();
+    const { messages, alerts } = await I.executeScript((selectors) => ({
+      messages: selectors
+        .map((s) => document.querySelector(s))
+        .filter(Boolean)
+        .map((el) => el.innerText.replace(/\s+/g, ' ').trim())
+        .filter(Boolean),
+      alerts: (window.__e2eAlerts || []).slice(),
+    }), this.locators.messages);
+    const saved = /action=DetailView/.test(url) && messages.length === 0;
+    I.say(`【料金明細】保存 ${saved ? '成功' : '失敗または未送信'} url変化=${beforeUrl !== url} メッセージ=${messages.join(' / ') || 'なし'}`);
+    return { saved, url, messages, alerts };
   },
 
   /** 「バランスを入力」: 上段の入金額に合計バランスを写す（バランスが 0 以下なら何もしない画面仕様） */
