@@ -40,16 +40,37 @@ module.exports = {
    * 明細番号を指定して料金明細 編集画面（入金入力モード）を URL 直指定で開きます。
    * 画面の `alert()` は記録用に差し替える（分配・再計算で出る警告文を後から読めるように）。
    *
-   * @param {{salesno: string, contactId: string}} target 明細番号（record）と受講生番号（salesno_contactid）
+   * `simulateShimebi`（YYYY-MM-DD）を渡すと、画面の応答 HTML に埋め込まれた締日
+   * （`transaction_array.shimebi`）だけをブラウザ側で書き換えてから描画させる。締日の設定が無い
+   * 環境（testgcp は 2001-01-01）で「締日より前に入金された行＝文字表示だけの行」を作って観察するための
+   * 模擬で、サーバーの設定やデータは変わらない。保存すると本物の締日で判定されるので、模擬中は保存しないこと。
+   *
+   * @param {{salesno: string, contactId: string, simulateShimebi: (string|undefined)}} target
+   *   明細番号（record）・受講生番号（salesno_contactid）・模擬する締日
    */
-  async openTransferEdit({ salesno, contactId }) {
+  async openTransferEdit({ salesno, contactId, simulateShimebi }) {
     if (!salesno || !contactId) throw new Error('openTransferEdit: salesno と contactId は必須です');
     I.say(`【料金明細】編集画面（入金）を開く 明細番号=${salesno}`);
+    if (simulateShimebi) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(simulateShimebi)) throw new Error(`simulateShimebi は YYYY-MM-DD: ${simulateShimebi}`);
+      I.say(`【料金明細】締日を ${simulateShimebi} に模擬（ブラウザ側の書き換えのみ）`);
+      await I.usePlaywrightTo('締日の模擬', async ({ page }) => {
+        await page.route(/module=SalesGroup&action=EditView/, async (route) => {
+          const response = await route.fetch();
+          const body = (await response.text())
+            .replace(/"shimebi":"[^"]*"/, `"shimebi":"${simulateShimebi}"`);
+          await route.fulfill({ response, body });
+        });
+      });
+    }
     I.amOnPage(BASE_URL + 'index.php?module=SalesGroup&action=EditView'
       + `&record=${encodeURIComponent(salesno)}&return_module=SalesGroup&return_action=DetailView`
       + `&transfer=1&return_id=${encodeURIComponent(salesno)}`
       + `&salesno_contactid=${encodeURIComponent(contactId)}&isDuplicate=0&submittype=`);
     I.waitForElement(this.locators.divideTransferButton, TIMEOUTS.ELEMENT);
+    if (simulateShimebi) {
+      await I.usePlaywrightTo('締日の模擬を解除', async ({ page }) => { await page.unroute(/module=SalesGroup&action=EditView/); });
+    }
     await I.executeScript(() => {
       window.__e2eAlerts = [];
       window.alert = (msg) => { window.__e2eAlerts.push(String(msg)); };

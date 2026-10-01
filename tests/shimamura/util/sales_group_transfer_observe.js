@@ -23,9 +23,12 @@
  * | OBS_IN_AMOUNT | 上段の入金額 | 「バランスを入力」を押す（合計バランスを写す。0 なら空のまま） |
  * | OBS_COMMISSION | 上段の手数料 | 入れない |
  * | OBS_PAYMENT_TYPE | 上段の支払方法（option の value） | cash |
+ * | OBS_SIMULATE_SHIMEBI | 締日を模擬（YYYY-MM-DD。ブラウザ側で応答を書き換えるだけ） | 模擬しない |
  *
  * 入金済みの明細で OBS_IN_AMOUNT を入れると、分配しきれない余りが最後の行に足される経路
  * （Issue の仮説 B）を観察できる。
+ * OBS_SIMULATE_SHIMEBI に「ある行の入金日より後の日付」を入れると、その行が締日前の文字表示行になり、
+ * 保存前チェックの例外（仮説 D）と支払方法が空で送られる件（仮説 E）を観察できる。
  */
 
 const fs = require('fs');
@@ -37,6 +40,7 @@ const { predictServerChecks } = require('../../../support/shimamura/salesGroupTr
 const TARGET = {
   salesno: process.env.SALESNO || '14000000482',
   contactId: process.env.SALESNO_CONTACT_ID || '29TK202510046',
+  simulateShimebi: process.env.OBS_SIMULATE_SHIMEBI || undefined,
 };
 const TOP_INPUT = {
   tDate: process.env.OBS_T_DATE || undefined,
