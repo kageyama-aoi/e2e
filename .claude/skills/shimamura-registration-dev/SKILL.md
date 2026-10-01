@@ -216,6 +216,7 @@ module.exports = { run{FlowName}Flow };
 |---|---|---|
 | 登録画面を URL で開いて新規登録 | `submitEditViewForm(I, { path, fields, label })` | `CourseClassSetupFlowPage.createShimaCourseBySubmit()` |
 | 詳細画面から編集ボタンで開いて保存 | `editOpenRecordBySubmit(I, { fields, label })`（保存後の詳細を開いて返す） | `GessyaIkkatuFlowPage.editStudentPaymentBySubmit()` |
+| 経理ビュー B〜E（クラス適用〜確認完了）で受講生をクラスに登録 | `SyokaiFlowPage.enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })`（クラス UUID は名前から検索。UI 版の約 22s → 約 8s。#280） | `SalesGroupTransferFlowPage.enrollClass()` |
 
 - `fields` のキーは画面の **name 属性**。select は value でも表示名でもよい。checkbox は `true`。**画面の上から順に書く**（AJAX 連動の `area_id` → `school_id` など）
 - **その画面自体を検証するテストでは使わない**（画面側の入力制御を通らないため。検証は UI 操作の Scenario で行う）

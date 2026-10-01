@@ -9,6 +9,7 @@
  * 流れ:
  * 1. 問合せ登録のフォーム送信で受講生を作る（請求方法=現金。候補生は消費しない）
  * 2. 経理ビューでクラス（分類「スクール」）を適用して確定 → 月謝と運営管理費が同じ明細番号でできる
+ *    （既定はフォーム送信版 `enrollClassBySubmit`。UI 版も選べる）
  * 3. 経理ビューA の入出金一覧から、2行以上ある明細番号を選ぶ
  * 4. 料金明細 編集画面で1行目だけ入金して保存（この画面の支払方法は現金だけ）
  * 5. 入出金の詳細 → 編集（`Transaction/EW_AN`）で1行目の支払方法を変える（任意）
@@ -22,6 +23,7 @@ const { TIMEOUTS, BASE_URL, SELECTORS } = require('../../../support/shimamura/co
 const { assertNoShimamuraError, buildTestName } = require('../../../support/shimamura/utils');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 const {
+  enrollClassBySubmit,
   navigateToKeirisyoriView,
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
@@ -53,12 +55,19 @@ async function createStudent(contactRegisterPageShimamura) {
 
 /**
  * 経理ビューでクラスを適用して確定する（画面A → B → E）。
+ * 既定はフォーム送信版（`enrollClassBySubmit`。画面操作なしで同じ通信を出す）。
+ * `bySubmit: false` なら従来の UI 操作（クラス選択ポップアップ → クラス適用 → コース料金設定 → 売上計上 → 確認完了）。
  * @param {object} classMemberPageShimamura
- * @param {string} contactId 受講生番号
- * @param {{className: string, courseCategory: string, keiyakuDate: string, kaishiDate: string}} cls
+ * @param {string} contactId 受講生の record
+ * @param {{className: string, courseCategory: string, keiyakuDate: string, kaishiDate: string, bySubmit: (boolean|undefined)}} cls
  */
-async function enrollClass(classMemberPageShimamura, contactId, { className, courseCategory, keiyakuDate, kaishiDate }) {
-  I.say(`【明細データ】クラス適用 ${className}（${courseCategory}）契約日=${keiyakuDate}`);
+async function enrollClass(classMemberPageShimamura, contactId, { className, courseCategory, keiyakuDate, kaishiDate, bySubmit = true }) {
+  if (bySubmit) {
+    await enrollClassBySubmit(I, { recordId: contactId, className, courseCategory, keiyakuDate, kaishiDate });
+    return;
+  }
+  I.say(`【明細データ】クラス適用（UI）${className}（${courseCategory}）契約日=${keiyakuDate}`);
+  const startedAt = Date.now();
   // フォーム送信で作った直後は受講生詳細を開いていないので、経理ビューを URL で開いてから A → B に進む
   await navigateToKeirisyoriView(I, classMemberPageShimamura, { recordId: contactId });
   await openKeirisyoriScreenA(I, classMemberPageShimamura, { skipNav: true });
@@ -67,6 +76,7 @@ async function enrollClass(classMemberPageShimamura, contactId, { className, cou
   });
   await confirmKeirisyoriScreenE(I);
   await assertNoShimamuraError(I, '経理ビュー確定後');
+  I.say(`【明細データ】クラス適用（UI）完了（${Date.now() - startedAt} ms）`);
 }
 
 /**

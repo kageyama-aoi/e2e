@@ -9,6 +9,7 @@
  * **処理フロー**
  * 1. 問合せ登録のフォーム送信で受講生を作る（請求方法=現金。受講生を1人消費する）
  * 2. 経理ビューでクラス（分類「スクール」）を適用して確定 → 月謝と運営管理費が同じ明細番号でできる
+ *    （既定はフォーム送信。`SGT_UI=1` なら UI 操作）
  * 3. 料金明細 編集画面で1行目だけ現金で入金して保存
  * 4. 入出金の編集画面で1行目の支払方法を変える（既定 card。`SGT_FIRST_ROW_PAYMENT=cash` なら変えない）
  * 5. 同じ明細を開き直し、残りを「バランスを入力」→「入金分配」して送信内容を観察（保存しない）
@@ -31,6 +32,8 @@ const flow = require('../../../pages/shimamura/flow/SalesGroupTransferFlowPage')
 /** 分類「スクール」でコースが紐づいたクラス（月謝一括作成準備と同じ。月謝＋運営管理費ができる） */
 const CLASS = { className: 'ピアノ水曜日_02', courseCategory: 'スクール' };
 const FIRST_ROW_PAYMENT = process.env.SGT_FIRST_ROW_PAYMENT || 'card';
+/** 経理ビューを UI 操作で通す（既定はフォーム送信版。比較・UI 経路の確認用） */
+const BY_SUBMIT = process.env.SGT_UI !== '1';
 
 function today() {
   const d = new Date();
@@ -49,7 +52,7 @@ Scenario('同一明細番号で1行目だけ入金済みの明細を作り、入
   // 1〜2: 受講生を作ってクラスを適用
   const { contactId, lastName } = await flow.createStudent(contactRegisterPageShimamura);
   I.say(`【明細データ】受講生 ${lastName} 受講生番号=${contactId}`);
-  await flow.enrollClass(classMemberPageShimamura, contactId, { ...CLASS, keiyakuDate: date, kaishiDate: date });
+  await flow.enrollClass(classMemberPageShimamura, contactId, { ...CLASS, keiyakuDate: date, kaishiDate: date, bySubmit: BY_SUBMIT });
 
   const rows = await flow.grabTransactionRows(contactId);
   rows.forEach((r) => I.say(`  入出金: ${r.salesno} ${r.feeName} 予定=${r.inAmount} 入金日=${r.tDate} 方法=${r.paymentLabel}`));
