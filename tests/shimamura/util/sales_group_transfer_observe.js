@@ -9,7 +9,8 @@
  *   - 保存したら送られるはずの JSON（hidden sales_details。prepareForm を呼んで読むだけ）
  *   - DB の元の値との差分と、サーバーのチェック（Check2/3/5）に当たりそうか（予測）
  *   - 出た alert の文言
- * をログと JSON ファイル（output/sales_group_transfer_observe/）に残す。保存ボタンは押さない。
+ * をログと JSON ファイル（output/sales_group_transfer_observe/）に残す。既定では保存ボタンは押さない
+ * （`OBS_SAVE=1` のときだけ、最後に保存して本物の結果を記録する。**データが変わる**）。
  *
  * 実行例（引数は環境変数。値は ASCII だけなので文字化けしない）:
  *   SALESNO=14000000482 SALESNO_CONTACT_ID=29TK202510046 OBS_IN_AMOUNT=1000 \
@@ -24,6 +25,7 @@
  * | OBS_COMMISSION | 上段の手数料 | 入れない |
  * | OBS_PAYMENT_TYPE | 上段の支払方法（option の value） | cash |
  * | OBS_SIMULATE_SHIMEBI | 締日を模擬（YYYY-MM-DD。ブラウザ側で応答を書き換えるだけ） | 模擬しない |
+ * | OBS_SAVE | `1` なら最後に保存して、保存後の画面とメッセージを記録する（**データが変わる**。締日の模擬中は使えない） | 保存しない |
  *
  * 入金済みの明細で OBS_IN_AMOUNT を入れると、分配しきれない余りが最後の行に足される経路
  * （Issue の仮説 B）を観察できる。
@@ -48,12 +50,14 @@ const TOP_INPUT = {
   commission: process.env.OBS_COMMISSION || undefined,
   paymentType: process.env.OBS_PAYMENT_TYPE || 'cash',
 };
+const SAVE = process.env.OBS_SAVE === '1';
+if (SAVE && TARGET.simulateShimebi) throw new Error('OBS_SAVE と OBS_SIMULATE_SHIMEBI は同時に使えません（模擬した画面で保存しない）');
 
 Feature('shimamura 料金明細 編集画面（入金）の観察');
 
 Before(beforeShimamura);
 
-Scenario('入金分配の前後で画面の値と送信 JSON を記録する（保存しない）', async ({ I, salesGroupTransferPageShimamura }) => {
+Scenario('入金分配の前後で画面の値と送信 JSON を記録する（OBS_SAVE=1 のときだけ保存）', async ({ I, salesGroupTransferPageShimamura }) => {
   const page = salesGroupTransferPageShimamura;
   await page.openTransferEdit(TARGET);
 
@@ -80,6 +84,12 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（�
     I.say(`        予測: ${p.predicted.join(' / ') || 'チェックに当たらない'}`);
   });
 
+  let saveResult = null;
+  if (SAVE) {
+    I.say('【観察】OBS_SAVE=1 のため保存する（データが変わる）');
+    saveResult = await page.clickSaveAndGrabResult();
+  }
+
   const outDir = path.join(repoRoot, 'output', 'sales_group_transfer_observe');
   fs.mkdirSync(outDir, { recursive: true });
   const now = new Date();
@@ -87,7 +97,7 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（�
   const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
   const outFile = path.join(outDir, `${TARGET.salesno}_${stamp}.json`);
   fs.writeFileSync(outFile, JSON.stringify({
-    target: TARGET, topInput: TOP_INPUT, before, previewBefore, after, previewAfter, predictions,
+    target: TARGET, topInput: TOP_INPUT, before, previewBefore, after, previewAfter, predictions, saveResult,
   }, null, 2), 'utf8');
   I.say(`【観察】記録: ${path.relative(repoRoot, outFile)}`);
   I.saveScreenshotWithTimestamp('SALES_GROUP_TRANSFER_OBSERVE', true);
