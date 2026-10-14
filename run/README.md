@@ -63,7 +63,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 |---|---|
 | **Product** | `tests/` 直下のサブフォルダを自動スキャン。選択するとテスト・プロファイルリストが絞り込まれる |
 | **Test File** | 選択 Product の `*_test.js` 一覧（`check/` `page/` などサブフォルダ付き、等幅整形） |
-| **説明テキスト** | テストファイル選択時に `test_descriptions.json` の日本語説明を表示 |
+| **説明テキスト** | テストファイル選択時に `test_descriptions.json` の日本語説明を表示。未登録なら「（説明なし）」。右の **Copy Key** で JSON のキー（例: `page/calendar_test.js`）をコピー |
 | **Profile** | `env/.env.<profile>` を自動スキャン。Product 名と一致するプロファイルのみに絞り込む |
 | **Grep（任意）** | テストファイル内の `@タグ` を自動抽出してドロップダウンに表示。文字入力での自由指定も可 |
 | **デバッグモード** | `--steps --debug` を付加し、ブラウザを閉じずに残す（`KEEP_BROWSER_OPEN=1`） |
@@ -199,6 +199,8 @@ CustomTkinter への全面移行は以下の理由で見送った：
   }
 }
 ```
+
+ランチャーで対象テストを選び **Copy Key** を押すとキーがコピーされるので、エディタで JSON を開いて Ctrl+F に貼れば該当行に飛べる。説明欄が「（説明なし）」のテストは未登録（書き足す対象）。
 
 `tests/tframe/` に新テストを追加した場合はこのファイルも必ず更新すること（AGENTS.md のドキュメント連動ルール）。
 

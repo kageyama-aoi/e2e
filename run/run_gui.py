@@ -1150,13 +1150,22 @@ class RunnerApp(tk.Tk):
         tsb_x.grid(row=1, column=0, sticky='ew')
         self.test_list.bind('<<ListboxSelect>>', self._on_test_select)
 
-        # Test description
+        # Test description ＋ test_descriptions.json のキーコピー（説明文を直すとき Ctrl+F に貼る用）
+        desc_row = ttk.Frame(test_group)
+        desc_row.grid(row=2, column=0, columnspan=2, sticky='ew', pady=(4, 0))
+        desc_row.columnconfigure(0, weight=1)
         self.desc_var = tk.StringVar(value='')
         desc_label = ttk.Label(
-            test_group, textvariable=self.desc_var, font=UI_FONT_SMALL,
+            desc_row, textvariable=self.desc_var, font=UI_FONT_SMALL,
             foreground='#555555', wraplength=600, justify='left',
         )
-        desc_label.grid(row=2, column=0, columnspan=2, sticky='w', pady=(4, 0))
+        desc_label.grid(row=0, column=0, sticky='w')
+        self._desc_key = ''
+        self.desc_key_btn = ttk.Button(
+            desc_row, text='Copy Key', style=BTN_SECONDARY, command=self._copy_desc_key,
+        )
+        self.desc_key_btn.grid(row=0, column=1, sticky='ne', padx=(8, 0))
+        self.desc_key_btn.state(['disabled'])
 
         # Profile
         self.profile_label = ttk.Label(cond_group, text='Profile')
@@ -1396,8 +1405,24 @@ class RunnerApp(tk.Tk):
         prefix = f'./tests/{product}/'
         test = self.test_var.get()
         key = test[len(prefix):] if test.startswith(prefix) else test
+        self._desc_key = key
+        if not key:
+            self.desc_var.set('')
+            self.desc_key_btn.state(['disabled'])
+            return
         entry = self._descriptions.get(product, {}).get(key, '')
-        self.desc_var.set(get_desc_text(entry))
+        # 未登録・空文字は「（説明なし）」と出して、test_descriptions.json の書き漏れに気づけるようにする
+        self.desc_var.set(get_desc_text(entry) or '（説明なし）')
+        self.desc_key_btn.state(['!disabled'])
+
+    def _copy_desc_key(self):
+        """選択中テストの test_descriptions.json キー（例: page/calendar_test.js）をコピーする。"""
+        if not self._desc_key:
+            return
+        self.clipboard_clear()
+        self.clipboard_append(self._desc_key)
+        self.desc_key_btn.configure(text='Copied!')
+        self.after(1500, lambda: self.desc_key_btn.winfo_exists() and self.desc_key_btn.configure(text='Copy Key'))
 
     def _update_csv_btn(self):
         product = self.product_var.get()

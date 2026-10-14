@@ -191,7 +191,9 @@ RunnerApp._build_ui()
         │           ├── row=0  テストリスト（tk.Listbox） ← rowconfigure weight=1で伸縮
         │           ├         縦スクロールバー (column=1)
         │           ├── row=1  横スクロールバー
-        │           └── row=2  説明ラベル（選択中テストの日本語説明）
+        │           └── row=2  desc_row（Frame）
+        │               ├── 説明ラベル（選択中テストの日本語説明／未登録なら「（説明なし）」）
+        │               └── Copy Key（BTN_SECONDARY／test_descriptions.json のキーをコピー）
         └── bottom = Frame(pack, weight=2)   ← 全幅・下段
             ├── Command 表示
             ├── Log エリア（ScrolledText）
@@ -202,6 +204,8 @@ RunnerApp._build_ui()
 
 新しいボタンを追加する際は必ず `btn_frame` (= `left_bot` の子) に grid で追加し、
 `left` や `product_group` / `cond_group` に直接追加しないこと。
+例外は「特定ウィジェットに付随する小ボタン」を伸縮ペイン側に置く場合だけ（例: `test_group` の
+Copy Key。テストリスト行が高さを吸収するので row=2 は見切れない）。`left` 配下には例外を作らない。
 また `style=BTN_PRIMARY` / `BTN_SECONDARY` / `BTN_TERTIARY` のいずれかを必ず指定すること
 （無指定の素の `ttk.Button` は使わない。詳細は `run/README.md`「UI テーマについて」）。
 
