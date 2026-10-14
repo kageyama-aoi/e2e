@@ -165,19 +165,19 @@
     "page/contact_module_list_ichiran_test.js":         { "feature_no": "1001_3_2",  "description": "コンタクト一覧の空検索で結果が表示されることを確認" },
     "page/mishukin_list_ichiran_test.js":               { "feature_no": "1600_2_1",  "description": "未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認" },
     "page/keiri_invoices_ichiran_test.js":              { "feature_no": "1001_4_2",  "description": "受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認" },
-    "page/attendance_today_ichiran_test.js":            { "feature_no": "1001_5_1",  "description": "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認" },
+    "page/attendance_today_ichiran_test.js":            { "feature_no": "0000",      "description": "本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認" },
     "page/transaction_ichiran_test.js":                 { "feature_no": "1600_9_1",  "description": "入出金一覧の空検索と姓での絞り込み検索を確認" },
-    "page/menu_patrol_test.js":                         { "feature_no": "",          "description": "全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込）" },
+    "page/menu_patrol_test.js":                         { "feature_no": "0000",      "description": "全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込）" },
     "page/validity_data_output_test.js":                { "feature_no": "2000_2_1",  "description": "有効性データ出力画面からCSVをダウンロードし、ヘッダ行・明細行の存在を検証" },
     "check/shimamura_class_existence_check_test.js":    { "feature_no": "1100_4_1",  "description": "指定クラスが存在するか一括チェック" },
-    "check/bank_payment_type_check_test.js":            { "feature_no": "",          "description": "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト" },
-    "flow/gessya_ikkatu_setup_test.js":                 { "feature_no": "",          "description": "月謝一括作成 準備（受講生請求方法設定）" },
-    "flow/sales_group_transfer_setup_test.js":          { "feature_no": "",          "description": "料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み）" },
+    "check/bank_payment_type_check_test.js":            { "feature_no": "0000",      "description": "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト" },
+    "flow/gessya_ikkatu_setup_test.js":                 { "feature_no": "1600_1_1",  "description": "月謝一括作成 準備（受講生請求方法設定）" },
+    "flow/sales_group_transfer_setup_test.js":          { "feature_no": "0020_1_1",  "description": "料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み）" },
     "flow/sales_group_transfer_check_test.js":          { "feature_no": "",          "description": "料金明細 編集画面（入金）の保存時チェック・正常保存（デシジョンテーブルの定義から TC を実行）" },
-    "flow/gessya_ikkatu_test.js":                       { "feature_no": "",          "description": "月謝一括作成 実行" },
+    "flow/gessya_ikkatu_test.js":                       { "feature_no": "1600_1_1",  "description": "月謝一括作成 実行" },
     "flow/course_class_setup_test.js":                  { "feature_no": "",          "description": "コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用）" },
-    "flow/happyoukai_setup_test.js":                    { "feature_no": "",          "description": "発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加）" },
-    "flow/happyoukai_touroku_test.js":                  { "feature_no": "",          "description": "発表会 参加者更新の実行と画面反映の検証" }
+    "flow/happyoukai_setup_test.js":                    { "feature_no": "1100_15_1", "description": "発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加）" },
+    "flow/happyoukai_touroku_test.js":                  { "feature_no": "1100_15_1", "description": "発表会 参加者更新の実行と画面反映の検証" }
   },
   "taskreport": {
     "taskreport_sample_test.js": { "feature_no": "",          "description": "Taskreport 機能のサンプルテスト" }

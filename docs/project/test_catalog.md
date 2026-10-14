@@ -1,7 +1,7 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-10-14 11:13 (JST)
+> 最終更新: 2026-10-14 11:28 (JST)
 
 **合計 169 テスト**（shimamura 54 / tframe 113 / taskreport 1 / smoke 1）
 
@@ -17,7 +17,7 @@
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
-| `bank_payment_type_check_test.js` | — | 請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト |
+| `bank_payment_type_check_test.js` | 0000 | 請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト |
 | `shimamura_class_existence_check_test.js` | 1100_4_1 | 指定クラスが存在するか一括チェック |
 
 ### flow/（17件）
@@ -26,15 +26,15 @@
 |---|---|---|
 | `contact_register_test.js` | — | 問合せ登録で受講生を直接登録（保存を record で確認→削除）する正常系とバリデーションエラーを確認 |
 | `course_class_setup_test.js` | — | コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用） |
-| `gessya_ikkatu_setup_test.js` | — | 月謝一括作成 準備（受講生請求方法設定） |
-| `gessya_ikkatu_test.js` | — | 月謝一括作成 実行 |
-| `happyoukai_setup_test.js` | — | 発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加） |
-| `happyoukai_touroku_test.js` | — | 発表会 参加者更新の実行と画面反映の検証 |
+| `gessya_ikkatu_setup_test.js` | 1600_1_1 | 月謝一括作成 準備（受講生請求方法設定） |
+| `gessya_ikkatu_test.js` | 1600_1_1 | 月謝一括作成 実行 |
+| `happyoukai_setup_test.js` | 1100_15_1 | 発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加） |
+| `happyoukai_touroku_test.js` | 1100_15_1 | 発表会 参加者更新の実行と画面反映の検証 |
 | `keiri_hennkin_syori_test.js` | 1600_17_1 | [WIP] 経理の返金処理フロー（ひな形・未実装。@wip で既定実行から除外） |
 | `koushi_sharei_manual_test.js` | 1600_19_1 | 講師謝礼の手動入力登録フローを確認 |
 | `koushi_sharei_tsuika_test.js` | 1600_19_1 | 講師謝礼のCSVファイル一括取込フローを確認 |
 | `sales_group_transfer_check_test.js` | — | 料金明細 編集画面（入金）の保存時チェック・正常保存（デシジョンテーブルの定義から TC を実行） |
-| `sales_group_transfer_setup_test.js` | — | 料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み） |
+| `sales_group_transfer_setup_test.js` | 0020_1_1 | 料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み） |
 | `shimamura_class_member_registration_test.js` | 1100_15_1 | [WIP] クラスへのメンバー登録フロー（pause 待ちで未完成。@wip で既定実行から除外） |
 | `smbc_state_import_test.js` | 4000_3_1 | 債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認 |
 | `student_saikenkai_test.js` | — | SMBC債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認 |
@@ -49,7 +49,7 @@
 | `account_debit_bill_history_ichiran_test.js` | — | 口座振替請求データ履歴の空検索・種類（読込）絞り込みで結果が表示されることを確認 |
 | `account_list_ichiran_test.js` | — | 法人/団体一覧の空検索・法人名絞り込みで結果が表示されることを確認（testgcp はテスト用法人を1件登録済み） |
 | `afs_member_ichiran_test.js` | — | AFS会員番号検索の空検索・カナ氏名絞り込みで結果の行が表示されることを確認 |
-| `attendance_today_ichiran_test.js` | 1001_5_1 | 本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認 |
+| `attendance_today_ichiran_test.js` | 0000 | 本日の出席表一覧のデフォルト日付・日付範囲指定で表示が正常に完了することを確認 |
 | `class_list_ichiran_test.js` | 1100_4_1 | クラス一覧の空検索・クラス名絞り込みで結果が表示されることを確認 |
 | `classes_by_student_ichiran_test.js` | — | 受講生別クラス一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
 | `classroom_list_ichiran_test.js` | — | 部屋一覧の空検索・店舗絞り込みで結果が表示されることを確認 |
@@ -63,7 +63,7 @@
 | `fee_list_ichiran_test.js` | — | 料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認 |
 | `keiri_invoices_ichiran_test.js` | 1001_4_2 | 受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認 |
 | `kouho_ichiran_test.js` | — | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
-| `menu_patrol_test.js` | — | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
+| `menu_patrol_test.js` | 0000 | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
 | `mishukin_list_ichiran_test.js` | 1600_2_1 | 未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認 |
 | `parent_list_ichiran_test.js` | — | 保護者一覧の空検索・姓絞り込みで結果が表示されることを確認 |
 | `pos_response_error_ichiran_test.js` | — | POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認 |
