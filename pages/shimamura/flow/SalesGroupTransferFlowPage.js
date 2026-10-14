@@ -4,6 +4,7 @@
  * 料金明細の入金不具合（#279）を再現するテストデータを作る FlowPage（#280）
  *
  * 作るもの: 同じ明細番号（salesno）に入出金が2行以上あり、**1行目だけ入金済み**の明細。
+ * `createStatement` で、1行だけの明細・入金していない明細も作れる（#296）。
  * 1行目の支払方法は、入出金の編集画面（裏技）で現金以外（カード等）に変えられる。
  *
  * 流れ:
@@ -11,6 +12,7 @@
  * 2. 経理ビューでクラス（分類「スクール」）を適用して確定 → 月謝と運営管理費が同じ明細番号でできる
  *    （既定はフォーム送信版 `enrollClassBySubmit`。UI 版も選べる）
  * 3. 経理ビューA の入出金一覧から、2行以上ある明細番号を選ぶ
+ *    （1行の明細にするときは、料金タブの「削除」で余分な料金を消す。入出金の行も一緒に消える）
  * 4. 料金明細 編集画面で1行目だけ入金して保存（この画面の支払方法は現金だけ）
  * 5. 入出金の詳細 → 編集（`Transaction/EW_AN`）で1行目の支払方法を変える（任意）
  *
@@ -124,16 +126,50 @@ function pickMultiRowSalesno(rows) {
 }
 
 /**
+ * 経理ビューA の料金タブで、指定した明細番号の料金を1件だけ残して削除する（1行だけの明細を作る）。
+ * 料金を削除すると、ひもづく入出金の行も一緒に消える（2026-10-14 確認）。未入金のうちに行うこと。
+ * 削除リンクは確認ダイアログ（confirm）を出すので、画面の confirm を常に OK にしてから押す。
+ * @param {string} contactId 受講生番号
+ * @param {string} salesno 明細番号
+ * @param {string} keepFeeName 残す料金名（例: 月謝（10月））
+ */
+async function deleteFeesExcept(contactId, salesno, keepFeeName) {
+  const rows = await grabTransactionRows(contactId);
+  const targets = rows.filter((r) => r.salesno === salesno && r.feeName !== keepFeeName).map((r) => r.feeName);
+  for (const feeName of targets) {
+    I.say(`【明細データ】料金を削除 ${feeName}（明細番号=${salesno}）`);
+    const clicked = await I.executeScript(({ fee, no }) => {
+      const link = [...document.querySelectorAll('a[href*="module=Fee"][href*="submittype=delete"]')]
+        .find((a) => {
+          const cells = [...a.closest('tr').querySelectorAll('td')].map((td) => td.innerText.trim());
+          return cells.includes(fee) && cells.includes(no);
+        });
+      if (!link) return false;
+      window.confirm = () => true;
+      link.click();
+      return true;
+    }, { fee: feeName, no: salesno });
+    if (!clicked) throw new Error(`料金タブに削除リンクが見つかりません: ${feeName}（明細番号=${salesno}）`);
+    // 料金タブ・入出金タブは ajax で描き直される。入出金の行が消えるまで待つ
+    I.waitForFunction((fee) => ![...document.querySelectorAll('a[href*="module=Transaction&action=DW_AN"]')]
+      .some((a) => a.closest('tr').innerText.includes(fee)), [feeName], TIMEOUTS.ELEMENT);
+  }
+  const left = (await grabTransactionRows(contactId)).filter((r) => r.salesno === salesno);
+  if (left.length !== 1) throw new Error(`明細 ${salesno} を1行にできませんでした（${left.length}行）`);
+}
+
+/**
  * 料金明細 編集画面で1行目だけ入金して保存する（支払方法=現金）。
  * @param {object} salesGroupTransferPageShimamura
- * @param {{salesno: string, contactId: string, tDate: string}} params
+ * @param {{salesno: string, contactId: string, tDate: string, minRows: (number|undefined)}} params
+ *   minRows: 明細に最低限あるはずの行数（既定 2。1行の明細なら 1）
  * @returns {Promise<{paidTransactionId: string, paidFeeName: string}>}
  */
-async function payFirstRow(salesGroupTransferPageShimamura, { salesno, contactId, tDate }) {
+async function payFirstRow(salesGroupTransferPageShimamura, { salesno, contactId, tDate, minRows = 2 }) {
   const page = salesGroupTransferPageShimamura;
   await page.openTransferEdit({ salesno, contactId });
   const state = await page.grabScreenState();
-  if (state.rows.length < 2) throw new Error(`明細 ${salesno} の行が2行未満です（${state.rows.length}行）`);
+  if (state.rows.length < minRows) throw new Error(`明細 ${salesno} の行が${minRows}行未満です（${state.rows.length}行）`);
   const first = state.rows[0];
   const db = state.initial[0];
   if (Number(String(db.actual_in_amount || 0).replace(/,/g, '')) !== 0 || db.t_date) {
@@ -168,39 +204,62 @@ function todayYmd() {
 }
 
 /**
- * 1〜5 をまとめて行い、「同じ明細番号に2行以上・1行目だけ入金済み」の明細を1つ作る（受講生を1人使う）。
+ * 1〜5 をまとめて行い、テスト用の明細を1つ作る（受講生を1人使う）。
+ * - rowCount: 1 なら、入金する前に料金タブで余分な料金を削除して1行の明細にする（`deleteFeesExcept`）。省略時は4行のまま
+ * - firstRowPayment: 1行目を入金済みにするときの支払方法（cash 以外は入出金の編集画面で変える）。null なら入金しない
  * @param {{contactRegisterPageShimamura: Object, classMemberPageShimamura: Object, salesGroupTransferPageShimamura: Object}} pages
- * @param {{firstRowPayment: (string|undefined), bySubmit: (boolean|undefined), cls: (Object|undefined)}} [options]
- *   firstRowPayment: 1行目の支払方法（既定 cash。cash 以外は入出金の編集画面で変える）
- * @returns {Promise<{contactId: string, lastName: string, salesno: string, paidTransactionId: string, paidFeeName: string, rows: Array<Object>}>}
+ * @param {{rowCount: (number|undefined), firstRowPayment: (string|null|undefined), bySubmit: (boolean|undefined), cls: (Object|undefined)}} [options]
+ * @returns {Promise<{contactId: string, lastName: string, salesno: string, paidTransactionId: (string|null), paidFeeName: (string|null), rows: Array<Object>}>}
  */
-async function createPaidFirstRowStatement(pages, { firstRowPayment = 'cash', bySubmit = true, cls = DEFAULT_CLASS } = {}) {
+async function createStatement(pages, { rowCount, firstRowPayment = 'cash', bySubmit = true, cls = DEFAULT_CLASS } = {}) {
   const date = todayYmd();
   const { contactId, lastName } = await createStudent(pages.contactRegisterPageShimamura);
   I.say(`【明細データ】受講生 ${lastName} 受講生番号=${contactId}`);
   await enrollClass(pages.classMemberPageShimamura, contactId, { ...cls, keiyakuDate: date, kaishiDate: date, bySubmit });
 
-  const rows = await grabTransactionRows(contactId);
+  let rows = await grabTransactionRows(contactId);
   rows.forEach((r) => I.say(`  入出金: ${r.salesno} ${r.feeName} 予定=${r.inAmount} 入金日=${r.tDate} 方法=${r.paymentLabel}`));
   const salesno = pickMultiRowSalesno(rows);
   if (!salesno) throw new Error(`同じ明細番号の行が2行以上ありません（クラスにコースが紐づいているか確認）: ${rows.length}行`);
   I.say(`【明細データ】対象の明細番号=${salesno}`);
 
-  const { paidTransactionId, paidFeeName } = await payFirstRow(pages.salesGroupTransferPageShimamura, { salesno, contactId, tDate: date });
+  if (rowCount === 1) {
+    const keep = rows.find((r) => r.salesno === salesno).feeName;
+    await deleteFeesExcept(contactId, salesno, keep);
+    rows = rows.filter((r) => r.salesno !== salesno || r.feeName === keep);
+  }
+
+  if (!firstRowPayment) return { contactId, lastName, salesno, paidTransactionId: null, paidFeeName: null, rows };
+  const { paidTransactionId, paidFeeName } = await payFirstRow(pages.salesGroupTransferPageShimamura, {
+    salesno, contactId, tDate: date, minRows: rowCount === 1 ? 1 : 2,
+  });
   if (firstRowPayment !== 'cash') {
     await changeTransactionPaymentType({ transactionId: paidTransactionId, paymentType: firstRowPayment });
   }
   return { contactId, lastName, salesno, paidTransactionId, paidFeeName, rows };
 }
 
+/**
+ * 「同じ明細番号に2行以上・1行目だけ入金済み」の明細を1つ作る（`createStatement` の4行・入金済み版）。
+ * @param {{contactRegisterPageShimamura: Object, classMemberPageShimamura: Object, salesGroupTransferPageShimamura: Object}} pages
+ * @param {{firstRowPayment: (string|undefined), bySubmit: (boolean|undefined), cls: (Object|undefined)}} [options]
+ *   firstRowPayment: 1行目の支払方法（既定 cash。cash 以外は入出金の編集画面で変える）
+ * @returns {Promise<{contactId: string, lastName: string, salesno: string, paidTransactionId: string, paidFeeName: string, rows: Array<Object>}>}
+ */
+function createPaidFirstRowStatement(pages, { firstRowPayment = 'cash', bySubmit = true, cls = DEFAULT_CLASS } = {}) {
+  return createStatement(pages, { firstRowPayment, bySubmit, cls });
+}
+
 module.exports = {
   TEST_LAST_NAME,
   DEFAULT_CLASS,
+  createStatement,
   createPaidFirstRowStatement,
   createStudent,
   enrollClass,
   grabTransactionRows,
   pickMultiRowSalesno,
   payFirstRow,
+  deleteFeesExcept,
   changeTransactionPaymentType,
 };

@@ -137,15 +137,19 @@ const tables = [
 ];
 
 /**
- * テストで使う明細の初期状態。どれも4行（同じ明細番号）で、1行目だけ入金済み。
+ * テストで使う明細の初期状態。シンプルなもの（1行）から複雑なもの（4行・入金済みと未入金が混在）へ並べる。
+ * - rowCount: 1 なら、経理ビューA の料金タブで余分な料金を削除して1行の明細にする。省略時はクラス適用でできた4行のまま
+ * - firstRowPayment: 1行目を入金済みにするときの支払方法（cash / card）。null なら入金しない
  * 値は記号: t（入金日）= TODAY / ''、a（入金額）= FULL（入金予定額と同じ）/ '0'、p（支払方法）= cash / card / ''、due = DUE。
  * 実データは tests/shimamura/flow/sales_group_transfer_check_test.js が SalesGroupTransferFlowPage で作る。
  */
 const paidRow = (p) => ({ t: 'TODAY', a: 'FULL', p, due: 'DUE' });
 const unpaidRow = { t: '', a: '0', p: '', due: 'DUE' };
 const fixtures = {
-  paidCash: { label: '1行目だけ現金で入金済み', firstRowPayment: 'cash', rows: [paidRow('cash'), unpaidRow, unpaidRow, unpaidRow] },
-  paidCard: { label: '1行目だけカードで入金済み', firstRowPayment: 'card', rows: [paidRow('card'), unpaidRow, unpaidRow, unpaidRow] },
+  unpaid1: { label: '1行・未入金', rowCount: 1, firstRowPayment: null, rows: [unpaidRow] },
+  paid1Cash: { label: '1行・現金で入金済み', rowCount: 1, firstRowPayment: 'cash', rows: [paidRow('cash')] },
+  paidCash: { label: '4行・1行目だけ現金で入金済み', firstRowPayment: 'cash', rows: [paidRow('cash'), unpaidRow, unpaidRow, unpaidRow] },
+  paidCard: { label: '4行・1行目だけカードで入金済み', firstRowPayment: 'card', rows: [paidRow('card'), unpaidRow, unpaidRow, unpaidRow] },
 };
 
 /**
@@ -155,28 +159,35 @@ const fixtures = {
  * - mode: 'save'（保存して結果を見る）/ 'observe'（保存せず送る内容を見る）
  * - simulateShimebi: 締日を模擬する（observe のときだけ）
  *
+ * **並び順＝実行順**。シンプルなデータから複雑なデータへ（段1 → 段2 → 段3）。
+ * 同じ段の中は、チェックされる順（開いただけ → 画面の alert（DT-01）→ サーバーのエラー（DT-03 の Check2 → 3 → 5）→ 保存成功）。
  * 番号: 01〜 は普段の画面で起きるケース。**100番台は本番・testgcp では起きない異質なケース**で、配列の最後に置き最後に実行する。
  */
 const testCases = [
-  { id: 'TC-01', title: '入金日の形式不正と、入金額ありで入金日空の行が両方ある', fixture: 'paidCash', mode: 'save',
+  // ---- 段1: 1行・未入金 ----
+  { id: 'TC-01', title: '入金日の形式が不正', fixture: 'unpaid1', mode: 'save', edit: { 0: { t: 'INVALID', a: 'FULL', p: 'cash' } } },
+  { id: 'TC-02', title: '入金額と支払方法を入れ、入金日が空', fixture: 'unpaid1', mode: 'save', edit: { 0: { t: '', a: 'FULL', p: 'cash' } } },
+  { id: 'TC-03', title: '入金額だけ入れ、入金日・支払方法が空', fixture: 'unpaid1', mode: 'save', edit: { 0: { a: 'FULL' } } },
+  { id: 'TC-04', title: '入金日・入金額を入れ、支払方法が空', fixture: 'unpaid1', mode: 'save', edit: { 0: { t: 'TODAY', a: 'FULL', p: '' } } },
+  { id: 'TC-05', title: '支払方法だけ「現金」にする', fixture: 'unpaid1', mode: 'save', edit: { 0: { p: 'cash' } } },
+  { id: 'TC-06', title: '締切日だけ変える', fixture: 'unpaid1', mode: 'save', edit: { 0: { due: 'OTHER' } } },
+  { id: 'TC-07', title: '普通に入金して保存', fixture: 'unpaid1', mode: 'save', mutates: true, edit: { 0: { t: 'TODAY', a: 'FULL', p: 'cash' } } },
+  // ---- 段2: 1行・現金で入金済み ----
+  { id: 'TC-08', title: '開くと、DB の支払方法（現金）がそのまま送られる', fixture: 'paid1Cash', mode: 'observe', edit: {} },
+  { id: 'TC-09', title: '入金日と支払方法を消す（入金額は残す）', fixture: 'paid1Cash', mode: 'save', edit: { 0: { t: '', p: '' } } },
+  { id: 'TC-10', title: '入金日を別の日に変える', fixture: 'paid1Cash', mode: 'save', edit: { 0: { t: 'OTHER' } } },
+  { id: 'TC-11', title: '支払方法だけ空にする', fixture: 'paid1Cash', mode: 'save', edit: { 0: { p: '' } } },
+  { id: 'TC-12', title: '入金日を消し、入金額を 0 にする（支払方法は残す）', fixture: 'paid1Cash', mode: 'save', edit: { 0: { t: '', a: '0' } } },
+  { id: 'TC-13', title: '入金日・入金額・支払方法をすべて空にする', fixture: 'paid1Cash', mode: 'save', edit: { 0: { t: '', a: '0', p: '' } } },
+  // ---- 段3: 4行・入金済みと未入金が混在 ----
+  { id: 'TC-14', title: '入金日の形式不正の行と、入金額ありで入金日空の行が両方ある', fixture: 'paidCash', mode: 'save',
     edit: { 1: { t: 'INVALID', a: 'FULL', p: 'cash' }, 2: { t: '', a: 'FULL', p: 'cash' } } },
-  { id: 'TC-02', title: '入金日の形式が不正', fixture: 'paidCash', mode: 'save', edit: { 1: { t: 'INVALID', a: 'FULL', p: 'cash' } } },
-  { id: 'TC-03', title: '入金額だけ入れて入金日が空', fixture: 'paidCash', mode: 'save', edit: { 1: { t: '', a: 'FULL', p: 'cash' } } },
-  { id: 'TC-04', title: '入金済みの行の入金日を消し、入金額を 0 にする（支払方法は残す）', fixture: 'paidCash', mode: 'save', edit: { 0: { t: '', a: '0' } } },
-  { id: 'TC-05', title: '入金済みの行の支払方法だけ空にする', fixture: 'paidCash', mode: 'save', edit: { 0: { p: '' } } },
-  { id: 'TC-06', title: '入金済みの行の入金日を別の日に変える', fixture: 'paidCash', mode: 'save', edit: { 0: { t: 'OTHER' } } },
-  { id: 'TC-07', title: '入金済みの行の入金日・入金額・支払方法をすべて空にする', fixture: 'paidCash', mode: 'save', edit: { 0: { t: '', a: '0', p: '' } } },
-  { id: 'TC-08', title: '未入金の行の支払方法だけ「現金」にする', fixture: 'paidCash', mode: 'save', edit: { 1: { p: 'cash' } } },
-  { id: 'TC-09', title: '未入金の行の締切日だけ変える', fixture: 'paidCash', mode: 'save', edit: { 1: { due: 'OTHER' } } },
-  { id: 'TC-10', title: '未入金の行に入金日・入金額を入れ、支払方法を空にする', fixture: 'paidCash', mode: 'save', edit: { 1: { t: 'TODAY', a: 'FULL', p: '' } } },
-  { id: 'TC-11', title: '入金済みの行の入金日と支払方法を消す（入金額は残す）→ 画面側で止まる', fixture: 'paidCash', mode: 'save', edit: { 0: { t: '', p: '' } } },
-  { id: 'TC-12', title: '未入金の行に入金額だけ入れ、入金日・支払方法を空にする → 画面側で止まる', fixture: 'paidCash', mode: 'save', edit: { 1: { a: 'FULL' } } },
-  { id: 'TC-13', title: '現金で入金済みの行を開くと、DB の支払方法がそのまま送られる', fixture: 'paidCash', mode: 'observe', edit: {} },
-  { id: 'TC-14', title: '問い合わせ: 1行目がカード入金済み → 未入金の行を入金して保存', fixture: 'paidCard', mode: 'save',
+  { id: 'TC-15', title: '未入金の行の支払方法だけ「現金」にする（ほかの行にエラーが出ない）', fixture: 'paidCash', mode: 'save', edit: { 1: { p: 'cash' } } },
+  { id: 'TC-16', title: '未入金の行を普通に入金して保存（現金で入金済みの行があっても保存できる）', fixture: 'paidCash', mode: 'save', mutates: true,
+    edit: { 1: { t: 'TODAY', a: 'FULL', p: 'cash' } } },
+  { id: 'TC-17', title: '問い合わせ: 1行目がカード入金済み → 未入金の行を入金して保存', fixture: 'paidCard', mode: 'save',
     edit: { 1: { t: 'TODAY', a: 'FULL', p: 'cash' } }, tags: ['@known-bug'],
     note: '問い合わせの不具合（カード入金の行が「現金」で送られる）。今の動きを期待値にしている。直ったらこのケースが落ちる' },
-  { id: 'TC-15', title: '未入金の行を普通に入金して保存（ほかの行は触らない）', fixture: 'paidCash', mode: 'save', mutates: true,
-    edit: { 1: { t: 'TODAY', a: 'FULL', p: 'cash' } } },
   // ---- 100番台: 本番・testgcp では起きない異質なケース（締日を画面の中だけで書き換えて観察する）----
   { id: 'TC-101', title: '締日より前に入金済みの行は編集できず、支払方法が空で送られる（締日を模擬）', fixture: 'paidCash', mode: 'observe', simulateShimebi: true, edit: {},
     note: '異質なケース。締日は testgcp・本番とも 2001-01-01（実質なし）で、この行は普段の画面に出ない。画面の中だけ締日を書き換えて観察する（保存しない）' },
@@ -189,8 +200,8 @@ const exclusions = [
   { table: 'DT-01', when: { C1: true }, reason: '締日が実質なし（2001-01-01）で、この行は普段の画面に出ない（TC-101 で画面の中だけ締日を書き換えて観察）' },
   { table: 'DT-02', when: { C4: true }, reason: 'POS 送信済みの行を作る手段が無い' },
   { table: 'DT-03', when: { C6: true, C7: false, C8: true, C9: true, C10: true }, reason: '支払方法が空の入金済みの行を DB に作る手段が無い（入金日も空なら画面からも DT-01 R4 で止まる）' },
-  { table: 'DT-03', when: { C6: false, C7: true, C8: true, C9: true, C10: true }, reason: '画面からは DT-01 R4 で止まる（TC-12 で止まることを確認）' },
-  { table: 'DT-03', when: { C6: true, C7: true, C8: true, C9: true, C10: true }, reason: '画面からは DT-01 R4 で止まる（TC-11 で止まることを確認）' },
+  { table: 'DT-03', when: { C6: false, C7: true, C8: true, C9: true, C10: true }, reason: '画面からは DT-01 R4 で止まる（TC-03 で止まることを確認）' },
+  { table: 'DT-03', when: { C6: true, C7: true, C8: true, C9: true, C10: true }, reason: '画面からは DT-01 R4 で止まる（TC-09 で止まることを確認）' },
   { table: 'DT-05', when: null, reason: '入金分配は次の段階' },
 ];
 

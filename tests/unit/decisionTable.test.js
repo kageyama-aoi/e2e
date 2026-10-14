@@ -52,15 +52,19 @@ test('料金明細の仕様モデル: テストケースの期待結果', () => 
     return [tc.id, `${outcome.kind} ${detail}`.trim()];
   }));
   assert.deepStrictEqual(summary, {
-    'TC-01': 'alerts A2+A1', 'TC-02': 'alerts A1', 'TC-03': 'alerts A2',
-    'TC-04': 'serverErrors 0:A8+A10', 'TC-05': 'serverErrors 0:A8+A9', 'TC-06': 'serverErrors 0:A8',
-    'TC-07': 'serverErrors 0:A8+A10', 'TC-08': 'serverErrors 1:A10', 'TC-09': 'serverErrors 1:A10',
-    'TC-10': 'serverErrors 1:A9', 'TC-11': 'alerts A2', 'TC-12': 'alerts A2',
-    'TC-13': 'observed cash,,,', 'TC-14': 'serverErrors 0:A8', 'TC-15': 'saved', 'TC-101': 'observed ,,,',
+    // 段1: 1行・未入金
+    'TC-01': 'alerts A1', 'TC-02': 'alerts A2', 'TC-03': 'alerts A2', 'TC-04': 'serverErrors 0:A9',
+    'TC-05': 'serverErrors 0:A10', 'TC-06': 'serverErrors 0:A10', 'TC-07': 'saved',
+    // 段2: 1行・現金で入金済み
+    'TC-08': 'observed cash', 'TC-09': 'alerts A2', 'TC-10': 'serverErrors 0:A8', 'TC-11': 'serverErrors 0:A8+A9',
+    'TC-12': 'serverErrors 0:A8+A10', 'TC-13': 'serverErrors 0:A8+A10',
+    // 段3: 4行・混在
+    'TC-14': 'alerts A2+A1', 'TC-15': 'serverErrors 1:A10', 'TC-16': 'saved', 'TC-17': 'serverErrors 0:A8',
+    'TC-101': 'observed ,,,',
   });
 });
 
 test('料金明細の仕様モデル: 問い合わせのケースは DT-04 R3 を通る', () => {
-  const tc = def.testCases.find((t) => t.id === 'TC-14');
+  const tc = def.testCases.find((t) => t.id === 'TC-17');
   assert.match(formatTrace(evaluateCase(def, tc).trace), /DT-04 R3（行1）/);
 });
