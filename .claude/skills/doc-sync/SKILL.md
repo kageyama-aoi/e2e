@@ -141,9 +141,9 @@ npm run docs:update-readme-map
 `run/test_descriptions.json` を読み込み、該当プロダクトのセクション（`"tframe"` / `"shimamura"` 等）に追記する：
 
 ```json
-"page/{module}_ichiran_test.js":  "{画面名}一覧の空検索と条件絞り込み検索を確認",
-"page/{module}_touroku_test.js":  "{画面名}の新規登録フォームへの入力・保存を確認",
-"flow/{prefix}_touroku_test.js":  "{業務名}の登録フローを確認",
+"page/{module}_ichiran_test.js":  { "feature_no": "",          "description": "{画面名}一覧の空検索と条件絞り込み検索を確認" },
+"page/{module}_touroku_test.js":  { "feature_no": "",          "description": "{画面名}の新規登録フォームへの入力・保存を確認" },
+"flow/{prefix}_touroku_test.js":  { "feature_no": "",          "description": "{業務名}の登録フローを確認" },
 ```
 
 登録とフォーマット：
