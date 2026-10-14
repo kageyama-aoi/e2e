@@ -15,12 +15,14 @@
  * - ①遷移直後 → ②テスト値を入力 → ③保存ボタン押下後（観察だけのケースは ③送る内容の確認）の3枚
  * - ③の結果（alert・画面のメッセージ・送る支払方法）はテキストでも添付する
  *
+ * **番号**: 100番台（TC-101 など）は本番・testgcp では起きない異質なケース（締日を画面の中だけ書き換えて観察）。最後に実行する
+ *
  * **印**
  * - `@known-bug`: 問い合わせの不具合（カード入金の行が「現金」で送られる）。今の動きを期待値にしている。直ったら落ちる
  *
  * 実行例:
  *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp
- *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp --grep "TC-15"
+ *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp --grep "TC-14"
  */
 'use strict';
 

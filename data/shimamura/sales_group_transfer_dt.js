@@ -13,7 +13,7 @@
  */
 
 const conditions = [
-  { id: 'C1', table: 'DT-01', label: '文字表示の行より後ろに入力欄の行がある', basis: '🔵' },
+  { id: 'C1', table: 'DT-01', label: '締日より前に入金済みで編集できない行の下に、編集できる行がある', basis: '🔵' },
   { id: 'C2', table: 'DT-01', label: '入力欄の行に、入金日の形式が不正なものがある（空欄は除く）', basis: '🔵🟢' },
   { id: 'C3', table: 'DT-01', label: '入力欄の行に、入金額 > 0 なのに入金日が空のものがある', basis: '🔵🟢' },
   { id: 'C4', table: 'DT-02', label: 'POS 送信済みの行（pos_status=1 かつ access_token あり）がある', basis: '🟡' },
@@ -23,7 +23,7 @@ const conditions = [
   { id: 'C8', table: 'DT-03', label: '送る入金日が空', basis: '🟡' },
   { id: 'C9', table: 'DT-03', label: '送る入金日か入金額（0 以外）に値がある', basis: '🟡（入金額 0 を「値あり」とみなすかは未確認）' },
   { id: 'C10', table: 'DT-03', label: '送る支払方法が空', basis: '🟡' },
-  { id: 'C11', table: 'DT-04', label: '文字表示の行（入金日 < 締日）', basis: '🔵🟢' },
+  { id: 'C11', table: 'DT-04', label: '締日より前に入金済みで編集できない行（入金日 < 締日）', basis: '🔵🟢' },
   { id: 'C12', table: 'DT-04', label: 'DB の支払方法が画面の選択肢（現金・空）にある', basis: '🔵' },
   { id: 'C13', table: 'DT-05', label: 'その行の入金日が空', basis: '🔵' },
   { id: 'C14', table: 'DT-05', label: 'その行のバランスがマイナス（過入金）', basis: '🔵' },
@@ -71,7 +71,7 @@ const tables = [
     },
     notes: [
       'R2 の alert は「入金日を入力してください。」→「入金日の入力形式が不正です。」の順に2つ出る 🔵。',
-      'C2・C3 は入力欄の行だけを見る。入金日チェックのループは「最後の入力欄の行の番号」まで回るので、文字表示の行が最後にあるときは C1=N 🟢。',
+      'C2・C3 は入力欄の行だけを見る。入金日チェックのループは「最後の入力欄の行の番号」まで回るので、編集できない行が最後にあるときは C1=N 🟢。',
       'R1 で POST された内容（`sales_details` が空）をサーバーがどう扱うかは未確認 🟡。',
     ],
   },
@@ -154,6 +154,8 @@ const fixtures = {
  * - edit: 行番号 → 変える値（記号: t=TODAY/OTHER/INVALID/''、a=FULL/'0'、p=cash/''、due=OTHER）
  * - mode: 'save'（保存して結果を見る）/ 'observe'（保存せず送る内容を見る）
  * - simulateShimebi: 締日を模擬する（observe のときだけ）
+ *
+ * 番号: 01〜 は普段の画面で起きるケース。**100番台は本番・testgcp では起きない異質なケース**で、配列の最後に置き最後に実行する。
  */
 const testCases = [
   { id: 'TC-01', title: '入金日の形式不正と、入金額ありで入金日空の行が両方ある', fixture: 'paidCash', mode: 'save',
@@ -170,19 +172,21 @@ const testCases = [
   { id: 'TC-11', title: '入金済みの行の入金日と支払方法を消す（入金額は残す）→ 画面側で止まる', fixture: 'paidCash', mode: 'save', edit: { 0: { t: '', p: '' } } },
   { id: 'TC-12', title: '未入金の行に入金額だけ入れ、入金日・支払方法を空にする → 画面側で止まる', fixture: 'paidCash', mode: 'save', edit: { 1: { a: 'FULL' } } },
   { id: 'TC-13', title: '現金で入金済みの行を開くと、DB の支払方法がそのまま送られる', fixture: 'paidCash', mode: 'observe', edit: {} },
-  { id: 'TC-14', title: '締日より前に入金された行は、支払方法が空で送られる（締日を模擬）', fixture: 'paidCash', mode: 'observe', simulateShimebi: true, edit: {} },
-  { id: 'TC-15', title: '問い合わせ: 1行目がカード入金済み → 未入金の行を入金して保存', fixture: 'paidCard', mode: 'save',
+  { id: 'TC-14', title: '問い合わせ: 1行目がカード入金済み → 未入金の行を入金して保存', fixture: 'paidCard', mode: 'save',
     edit: { 1: { t: 'TODAY', a: 'FULL', p: 'cash' } }, tags: ['@known-bug'],
     note: '問い合わせの不具合（カード入金の行が「現金」で送られる）。今の動きを期待値にしている。直ったらこのケースが落ちる' },
-  { id: 'TC-16', title: '未入金の行を普通に入金して保存（ほかの行は触らない）', fixture: 'paidCash', mode: 'save', mutates: true,
+  { id: 'TC-15', title: '未入金の行を普通に入金して保存（ほかの行は触らない）', fixture: 'paidCash', mode: 'save', mutates: true,
     edit: { 1: { t: 'TODAY', a: 'FULL', p: 'cash' } } },
+  // ---- 100番台: 本番・testgcp では起きない異質なケース（締日を画面の中だけで書き換えて観察する）----
+  { id: 'TC-101', title: '締日より前に入金済みの行は編集できず、支払方法が空で送られる（締日を模擬）', fixture: 'paidCash', mode: 'observe', simulateShimebi: true, edit: {},
+    note: '異質なケース。締日は testgcp・本番とも 2001-01-01（実質なし）で、この行は普段の画面に出ない。画面の中だけ締日を書き換えて観察する（保存しない）' },
 ];
 
 /**
  * テストしないルールと理由（生成する表の「テスト」行に出す）。when は表の条件の値（DC は書かない）。
  */
 const exclusions = [
-  { table: 'DT-01', when: { C1: true }, reason: '締日が設定された環境が無い（TC-14 で文字表示の行だけ模擬して観察）' },
+  { table: 'DT-01', when: { C1: true }, reason: '締日が実質なし（2001-01-01）で、この行は普段の画面に出ない（TC-101 で画面の中だけ締日を書き換えて観察）' },
   { table: 'DT-02', when: { C4: true }, reason: 'POS 送信済みの行を作る手段が無い' },
   { table: 'DT-03', when: { C6: true, C7: false, C8: true, C9: true, C10: true }, reason: '支払方法が空の入金済みの行を DB に作る手段が無い（入金日も空なら画面からも DT-01 R4 で止まる）' },
   { table: 'DT-03', when: { C6: false, C7: true, C8: true, C9: true, C10: true }, reason: '画面からは DT-01 R4 で止まる（TC-12 で止まることを確認）' },

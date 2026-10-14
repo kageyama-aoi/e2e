@@ -16,7 +16,7 @@ const { TIMEOUTS, BASE_URL } = require('../../../support/shimamura/constants');
  * `t_date_0`, `actual_in_amount_1` のような「項目名_連番」。`sales_arr[i].t_date` には
  * 値ではなく入力欄（DOM 要素）が入っていて、保存時の送信 JSON（hidden `sales_details`）は
  * 保存の瞬間に各欄の `.value` を読み直して作る（GetAllSalesDetails）。
- * 例外として締日（`transaction_array.shimebi`）より前に入金された行は文字表示だけになり、
+ * 例外として締日（`transaction_array.shimebi`）より前に入金済みの行は編集できず値が文字で表示されるだけになり（testgcp・本番は締日 2001-01-01 で普段は起きない）、
  * `sales_arr` には DB の値（文字列）がそのまま入る。
  *
  * **保存について**
@@ -46,7 +46,7 @@ module.exports = {
    *
    * `simulateShimebi`（YYYY-MM-DD）を渡すと、画面の応答 HTML に埋め込まれた締日
    * （`transaction_array.shimebi`）だけをブラウザ側で書き換えてから描画させる。締日の設定が無い
-   * 環境（testgcp は 2001-01-01）で「締日より前に入金された行＝文字表示だけの行」を作って観察するための
+   * 環境（testgcp は 2001-01-01）で「締日より前に入金済みで編集できない行」を作って観察するための
    * 模擬で、サーバーの設定やデータは変わらない。保存すると本物の締日で判定されるので、模擬中は保存しないこと。
    *
    * @param {{salesno: string, contactId: string, simulateShimebi: (string|undefined)}} target
@@ -84,7 +84,7 @@ module.exports = {
   /**
    * 画面の状態をまとめて読みます（読み取りのみ）。
    * - `initial`: サーバーが渡した DB の値（`transaction_array.transactions`）
-   * - `rows`: いま画面にある各行の値。入力欄の行は `.value`、締日前の文字表示行は DB の値
+   * - `rows`: いま画面にある各行の値。入力欄の行は `.value`、締日より前に入金済みで編集できない行は DB の値
    * - `top`: 上段（合計欄・入力欄）の値
    * - `alerts`: 開いてから出た alert の文言
    *
