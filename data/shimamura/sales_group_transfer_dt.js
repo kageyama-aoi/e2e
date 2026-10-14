@@ -35,8 +35,8 @@ const conditions = [
  * 動作。`message` はテストが画面で確かめる文言（{fee} は料金名）。
  */
 const actions = [
-  { id: 'A1', table: 'DT-01', label: 'alert「入金日の入力形式が不正です。」で止まる', basis: '🔵', alert: '入金日の入力形式が不正です。' },
-  { id: 'A2', table: 'DT-01', label: 'alert「入金日を入力してください。」で止まる', basis: '🔵', alert: '入金日を入力してください。' },
+  { id: 'A1', table: 'DT-01', label: 'alert「入金日の入力形式が不正です。」で止まる', basis: '🔵🟢', alert: '入金日の入力形式が不正です。' },
+  { id: 'A2', table: 'DT-01', label: 'alert「入金日を入力してください。」で止まる', basis: '🔵🟢', alert: '入金日を入力してください。' },
   { id: 'A3', table: 'DT-01', label: '送る内容（hidden `sales_details`）を作って送信する', basis: '🔵🟢' },
   { id: 'A4', table: 'DT-01', label: '送る内容を作らずに送信する（入金日チェックが存在しない入力欄を読んで例外 → onclick が途中で終わり、送信だけが進む）', basis: '🔵' },
   { id: 'S1', table: 'DT-01', label: '→ DT-02 明細全体のサーバーチェック' },
@@ -45,8 +45,8 @@ const actions = [
   { id: 'A7', table: 'DT-02', label: 'DB を更新して料金明細の詳細画面へ移る', basis: '🟢' },
   { id: 'S2', table: 'DT-02', label: '→ DT-03 1行分のサーバーチェック（全行に当てる）' },
   { id: 'A8', table: 'DT-03', label: 'Check2「既に入金済みのため、入金処理は不可です(料金名:xxx)」', basis: '🟡🟢', message: '既に入金済みのため、入金処理は不可です(料金名:{fee})' },
-  { id: 'A9', table: 'DT-03', label: 'Check3「入金時には、支払方法を設定してください(料金名:xxx)」', basis: '🟡', message: '入金時には、支払方法を設定してください(料金名:{fee})' },
-  { id: 'A10', table: 'DT-03', label: 'Check5「入金日は必須項目です(料金名:xxx)」', basis: '🟡', message: '入金日は必須項目です(料金名:{fee})' },
+  { id: 'A9', table: 'DT-03', label: 'Check3「入金時には、支払方法を設定してください(料金名:xxx)」', basis: '🟡🟢', message: '入金時には、支払方法を設定してください(料金名:{fee})' },
+  { id: 'A10', table: 'DT-03', label: 'Check5「入金日は必須項目です(料金名:xxx)」', basis: '🟡🟢', message: '入金日は必須項目です(料金名:{fee})' },
   { id: 'A11', table: 'DT-03', label: 'この行はチェックを通る', basis: '🟡🟢' },
   { id: 'A12', table: 'DT-04', label: 'DB の値をそのまま送る', basis: '🔵🟢' },
   { id: 'A13', table: 'DT-04', label: '先頭の選択肢「現金」を送る（画面にも「現金」と表示される）', basis: '🔵🟢' },
