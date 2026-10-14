@@ -134,21 +134,22 @@ module.exports = {
   },
 
   /**
-   * 1行分の入金欄（入金日・入金額・支払方法）を埋めます。渡さなかった項目は触らない。
+   * 1行分の入金欄（入金日・入金額・支払方法・締切日）を埋めます。渡さなかった項目は触らない。
    * 行の支払方法の select には name/id が無いため、`sales_arr[index].payment_type` から操作する。
    * 入力後に画面の再計算（バランス・合計）を走らせる。
    *
    * @param {number} index 行番号（0 始まり。`grabScreenState().rows[i].index`）
-   * @param {{tDate: (string|undefined), actualInAmount: (string|undefined), paymentType: (string|undefined)}} values
+   * @param {{tDate: (string|undefined), actualInAmount: (string|undefined), paymentType: (string|undefined), dueDate: (string|undefined)}} values
    *   paymentType は option の value（この画面の選択肢は `cash` と空だけ）
    */
-  async fillRowPayment(index, { tDate, actualInAmount, paymentType }) {
+  async fillRowPayment(index, { tDate, actualInAmount, paymentType, dueDate }) {
     await I.executeScript(([i, v]) => {
       /* global sales_arr, RecalculateGrandTotal */
       const sale = sales_arr[i];
       if (!sale || typeof sale.t_date !== 'object') throw new Error(`入力欄のある行ではありません: ${i}`);
       if (v.tDate !== null) sale.t_date.value = v.tDate;
       if (v.actualInAmount !== null) sale.actual_in_amount.value = v.actualInAmount;
+      if (v.dueDate !== null) sale.due_date.value = v.dueDate;
       if (v.paymentType !== null) {
         if (![...sale.payment_type.options].some((o) => o.value === v.paymentType)) {
           throw new Error(`支払方法の選択肢にありません: ${v.paymentType}`);
@@ -160,6 +161,7 @@ module.exports = {
       tDate: tDate === undefined ? null : tDate,
       actualInAmount: actualInAmount === undefined ? null : actualInAmount,
       paymentType: paymentType === undefined ? null : paymentType,
+      dueDate: dueDate === undefined ? null : dueDate,
     }]);
   },
 
@@ -185,7 +187,8 @@ module.exports = {
         .filter(Boolean),
       alerts: (window.__e2eAlerts || []).slice(),
     }), this.locators.messages);
-    const saved = /action=DetailView/.test(url) && messages.length === 0;
+    // 編集画面の URL にも return_action=DetailView が含まれるので、action パラメータそのものを見る
+    const saved = new URL(url).searchParams.get('action') === 'DetailView' && messages.length === 0;
     I.say(`【料金明細】保存 ${saved ? '成功' : '失敗または未送信'} url変化=${beforeUrl !== url} メッセージ=${messages.join(' / ') || 'なし'}`);
     return { saved, url, messages, alerts };
   },

@@ -1,46 +1,50 @@
-# HANDOFF - 2026-09-29 18:34
+# HANDOFF - 2026-10-01 18:19
 
 ## 使用ツール
-Claude Code（Opus 5.5）
+Claude Code（Opus 5.5）。ブラウザ確認に Claude in Chrome、testgcp 実行に CodeceptJS + Playwright、GitHub 操作に gh CLI。
 
 ## 現在のタスクと進捗
-作業はすべて worktree `C:\Users\kageyama\Tools\testcode\e2e-251` で実施（本体 `e2e` は別セッションの tframe 作業用。ブランチ切替・stash しない）。
-
-- [x] **#260 経理の一覧・前半5画面**（売掛金・AFS・POSエラー・料金一覧・料金一覧(共通)）— PR #263 マージ済み
-- [x] **#243 偽合格の洗い出し** — PR #266 マージ済み
-  - smbc 取込：`clickAndWaitForReload`（support/shimamura/utils.js 新設）で再描画を待ち、取込履歴の先頭行で成否判定
-  - コース・クラス設定：`verifyCourseLinked` / `verifyClassScheduleCreated` を追加
-  - 請求方法の探索テスト：結果を「登録成功／エラー／保存されず」に記録し分け、作った受講生は削除
-  - `/shimamura-registration-dev` の雛形の弱い判定も修正、AGENTS.md に追記
-  - 別に回した：#265（smbc 正常系が一度しか取り込めず毎回失敗）、#210 に講師謝礼の手入力判定を引継ぎ
-- [x] **#264 経理の一覧・後半5画面**（料金パッケージ・本日の入出金・口座振替請求データ履歴・返金一覧・債権買取状態一覧）— PR #267 マージ済み。**#251 Phase 2（標準一覧21画面）完了**（#251 にコメント済み）
-- [x] **#211 syokai_touroku が経理ビューBで失敗** — PR #268 マージ済み。3/3 合格（9/11 は 0/3）
-  - カテゴリー異常系はテスト側の問題 → `syokai_helpers.js` に breakTarget `class_category` 追加
-  - 「売上計上する」は `waitForEnabled` してから押す
-- [ ] **#269 候補生昇格を堅牢版に一本化（#200 #h コミットB）** — **PR #270 作成・マージ待ち**
-  - `navigateToKouhosei` を GessyaIkkatuFlowPage → SyokaiFlowPage へ移動、簡易版2関数を削除、Gessya/Happyoukai の import 元変更
-  - 統合中に発見：候補生リンクを `grabAttributeFrom`（先頭1件のみ）で取っており「次の候補を試す」が効いていなかった → `grabAttributeFromAll` に修正
+- [x] #279 料金明細 編集画面（`SalesGroup/EditView` transfer=1）の PO・観察ランナー・エラーチェック仕様（PR #281 マージ済み）
+- [x] #280 再現データ作成（`sales_group_transfer_setup_test.js`）と経理ビュー B〜E のフォーム送信版 `SyokaiFlowPage.enrollClassBySubmit`（22.6s→7.6s）（PR #282 マージ済み）
+- [x] 問い合わせ「同一明細番号で入金済みがあると入金処理できない」を testgcp で再現。原因は支払方法の選択肢が「現金・空」だけで、カード入金の行が「現金」で送られサーバーの Check2「既に入金済み…」に当たること（DT-04 R3）。入金分配は無関係
+- [x] #284 予想の確認（手入力でも再現・現金入金なら起きない）（PR #286 マージ済み）
+- [x] #283 README ツリー生成が git 無視ファイル（.claude/worktrees・env/.env.* 等）を載せていたのを修正（PR #285 マージ済み）
+- [ ] **#287 デシジョンテーブル駆動のテスト導入：中断中（未コミット、ブランチ `feat-287-salesgroup-dt-tests`）**
+  - できたもの（すべて未コミット）
+    - `support/decisionTable.js`：展開・N/A・縮約の汎用エンジン（記法ガイド準拠。DC は有効列を囲む最小範囲だけ）
+    - `data/shimamura/sales_group_transfer_dt.js`：条件・動作・decide・fixtures・TC-01〜16・exclusions（**正はこの1ファイル**）
+    - `support/shimamura/salesGroupTransferModel.js`：TC を DT-04→01→03→02 の順に評価し期待結果を決める
+    - `scripts/docs/gen_decision_tables.js`：仕様書の AUTOGEN 区間（②④⑤）を生成。`npm run docs:decision-tables`、`--check`、pre-commit 2.6 に組み込み済み
+    - `tests/unit/decisionTable.test.js`（`npm run test:unit` 19 passed）
+    - `tests/shimamura/flow/sales_group_transfer_check_test.js`（TC を1件1シナリオで実行）
+    - PO `fillRowPayment` に dueDate、FlowPage に `createPaidFirstRowStatement`（setup テストもこれを使う形に変更）、`run/test_descriptions.json` 追記
+  - E2E 初回実行：TC-01〜03 が失敗した時点でユーザー指示で中断。TC-04 以降は未実行
 
 ## 試したこと・結果
-- 成功：Issue テンプレートが無いリポジトリなので、子Issue は #255/#257/#260 と同じ書式（概要・対象画面表・作業チェックリスト・補足）で作成
-- 成功：一覧画面の事前調査は「検索欄と既定値・空検索件数・結果がリンクか行か」をダンプする使い捨て Codecept テスト（tests/…/zz_probe*_test.js、使用後削除）が速い
-- 成功：経理ビューBの調査は `createContactBySubmit` で作った受講生（候補生を消費しない）で手順を踏めば再現・確認できた。受講生は `submitDeleteForm` で削除可
-- 成功：directUrl 経路の確認は `SHIMAMURA_NAV=direct` にした一時プロファイル `env/.env.shimamura.tmpdirect` を作って実行→削除
-- 失敗→解決：worktree のコミットで pre-commit が README.md のツリー最上位を `e2e-251/` に書き換える。1コミットなら `git checkout HEAD~1 -- README.md && git commit --amend --no-edit --no-verify` をユーザーに `!` で実行してもらう。複数コミットは `git rebase -x "git checkout <main> -- README.md docs/project/test_catalog.md && git commit --amend --no-edit --no-verify" <main>`（README を含むコミットが2つ以上だと途中で競合 → checkout+add+`GIT_EDITOR=true git rebase --continue` で解決）。README が変わらないコミットもある
-- 失敗（仕様）：返金一覧の請求月は空にすると「すべて」ではなく今月扱い → CSV で 2026-10 固定
-- 失敗（仕様）：本日の入出金は当日データが無ければ0件 → specialScreens で「今日で絞られている＋検索後にページ送りが出る」を確認
-- 失敗（未解決・範囲外）：講師謝礼の保存後の遷移先が不明（#210 の講師選択で止まるため確認できない）
+- 成功
+  - 画面 HTML/JS をローカル保存して読む（Chrome 拡張の JS 実行は CSRF・URL を含む出力をブロックするため）
+  - 観察ランナー（`tests/shimamura/util/sales_group_transfer_observe.js`）：`OBS_SAVE=1` で保存、`OBS_MODE=manual` で手入力、`OBS_SIMULATE_SHIMEBI` で締日を模擬
+  - 入出金の編集画面（経理ビューA の契約日リンク → `Transaction/DW_AN` → 編集 → `Transaction/EW_AN`）で支払方法をカードに変えられる（ユーザー提供の裏技）
+  - 経理ビュー B〜E のフォーム送信化（クラス UUID は `Course/LWPopup_AN` の search から名前で引く）
+  - 縮約エンジンが記法ガイドの送料判定の例をそのまま再現
+- 失敗・注意
+  - 最初の仮説「締日（shimebi）前の行が原因」は、ユーザー談で運用上の締め日が無いと分かり本命から外した（別経路として仕様書に残す）
+  - 共有されたデシジョンテーブル（R1〜R10）は「入金分配が原因」「起こりえない組み合わせ」等の誤りあり → 仕様書⑥に指摘
+  - Python の heredoc で JS を書き換えるとエスケープ（`\0`・`\r\n`・正規表現）が壊れる → JS の細かい置換は Edit ツールで行う
+  - CodeceptJS の Scenario 引数で `{ x: alias }` の別名は注入されない
+  - TaskStop 後も codeceptjs の node プロセスが残る → PowerShell で CommandLine を見て止める
 
 ## 次のセッションで最初にやること
-1. PR #270 のマージを確認（未マージならユーザーに `! gh pr merge 270 --merge` を依頼）。マージ後、worktree `e2e-251` で `git fetch` → `git switch --detach origin/main`、`refactor-269-kouhosei-robust` をローカル・リモートとも削除
-2. 月謝一括作成準備・発表会準備は #269 の変更を dry-run でしか確認していないので、次に流すときに通るか見る
-3. 次の作業候補をユーザーと決める：#251 Phase 3 以降（B出力7・C取込5・D登録16・X一括3・非標準一覧16）／#265（smbc 正常系・testgcp の債権買取状態を変える件の方針決め）／PR #245（#244、9/25 からマージ待ち）／#210・#207・#209・#166・#99
+1. ブランチ `feat-287-salesgroup-dt-tests` で、E2E の TC-01〜03（画面側 alert）の失敗原因を調べる。スクショ（`output/shimamura.testgcp/20261001_181628_sales_group_transfer_check_test/`）では入力・未遷移は正しいので、alert の捕捉（`window.alert` 差し替え）か比較の問題を疑う。`--grep "TC-03"` で1件だけ流して確認
+2. 明細が TC ごとに作られていた（70600000327〜329）＝ `sharedStatements` の使い回しが効いていない原因を調べる
+3. 縮約ロジック変更で DT-03 の R 番号が変わったので、仕様書の手書き部分（③④の注記・⑥⑦の「DT-03 R4」「R1・R8」等）と `exclusions` の理由文の参照を見直す（`npm run docs:decision-tables` で生成部分は自動）
+4. 全 TC を testgcp で通し、AGENTS.md に配置ルール・コマンド（定義ファイル＝data/、エンジン＝support/、生成＝scripts/docs/）を追記 → コミット → PR（`Closes #287`）
 
 ## 注意点・ブロッカー
-- `gh pr merge` と README を戻す checkout+amend は auto mode で止められる → ユーザーに `!` で実行してもらう運用
-- 候補生「かげやま」は有限（9/29 に計8人消費、残り約410人）。候補生を使うテストは必要最小限、調査はフォーム送信で作った受講生で代替する
-- testgcp に検証データが増えている：コース・クラス（E2E調査243_* / E2Eドライラン_* 等。画面から削除不可）、テスト用法人「E2E一覧検索用法人」、共通料金「E2E一覧検索用共通料金」（後2つは「削除しないでください」）
-- Bash→codeceptjs の `--grep` に日本語を渡すと化けて全件実行される → 英字タグで絞る
-- `npm run docs:check-refs` の ERROR 1件（`.claude/skills/shimamura-download-verify/SKILL.md:68` の `scripts/html/shimamura/nav__leftcol.html` が無い）は既存の無関係な指摘・未対応
-- スケジュール一括作成は画面の既定値（日曜09:00）で作られ、クラスの曜日・時間は反映されない（仕様と思われる・未対応）
-- 本体 `e2e` の未コミット変更（tframe 系・CSV・run_gui.py 等）は別セッションのもの。触らない
+- E2E は testgcp の受講生を消費する（check テスト1回で3人程度の想定、使い回しが壊れていると TC 数だけ消費）。ユーザーは消費 OK と言っているが無駄打ちは避ける
+- 問い合わせの不具合（TC-15）は今の動きを期待値にして `@known-bug`。直ったら落ちるのが正しい
+- 「日をまたぐと」起きる理由は未確認（カード入金結果の翌日反映と推測）。ユーザーに当日の行の状態を聞く
+- 試作で使った受講生 `62710608-…`（明細入金1001）はクラス適用だけで経理処理未完了のまま残置
+- `.agent/handoff/2026-09-29-1834.md` は以前からの未追跡ファイル（触っていない）
+- PR の `Closes #N` は効いたり効かなかったりする（10/1 は効いた）。マージ後に Issue 状態を確認する
+- ユーザーへの返答は必ず日本語（このセッションで英語に切り替わり3回指摘された）

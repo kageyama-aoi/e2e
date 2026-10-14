@@ -35,7 +35,8 @@
     "docs:menu-coverage": "node scripts/docs/gen_tframe_menu_coverage.js",
     "docs:menu-coverage:shimamura": "node scripts/docs/gen_shimamura_menu_coverage.js",
     "docs:check-refs": "python scripts/docs/check_doc_refs.py --check",
-    "docs:all": "npm run docs:update-readme-map && npm run docs:catalog && npm run docs:menu-coverage && npm run docs:menu-coverage:shimamura"
+    "docs:decision-tables": "node scripts/docs/gen_decision_tables.js",
+    "docs:all": "npm run docs:update-readme-map && npm run docs:catalog && npm run docs:menu-coverage && npm run docs:menu-coverage:shimamura && npm run docs:decision-tables"
   },
   "keywords": [
     "codeceptjs",

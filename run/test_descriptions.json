@@ -173,6 +173,7 @@
     "check/bank_payment_type_check_test.js":            { "feature_no": "",          "description": "請求方法（1〜4）ごとに姓名のみで保存し、必須フィールドエラーをスクショ・ログに記録する探索テスト" },
     "flow/gessya_ikkatu_setup_test.js":                 { "feature_no": "",          "description": "月謝一括作成 準備（受講生請求方法設定）" },
     "flow/sales_group_transfer_setup_test.js":          { "feature_no": "",          "description": "料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み）" },
+    "flow/sales_group_transfer_check_test.js":          { "feature_no": "",          "description": "料金明細 編集画面（入金）の保存時チェック・正常保存（デシジョンテーブルの定義から TC を実行）" },
     "flow/gessya_ikkatu_test.js":                       { "feature_no": "",          "description": "月謝一括作成 実行" },
     "flow/course_class_setup_test.js":                  { "feature_no": "",          "description": "コース・クラス新規作成＋紐づけPage Objectのドライラン（運営管理費テスト用）" },
     "flow/happyoukai_setup_test.js":                    { "feature_no": "",          "description": "発表会 準備（クラス・コース作成／候補生の受講生登録／名簿リスト経由でのクラス追加）" },

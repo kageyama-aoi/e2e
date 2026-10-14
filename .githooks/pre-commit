@@ -60,6 +60,19 @@ if echo "$changed" | grep -qE '^(pages/shimamura/|support/shimamura/|tests/shima
   fi
 fi
 
+# --- 2.6) デシジョンテーブルから仕様書の表を再生成（#287） ---------------------
+# 定義ファイル（data/**/*_dt.js）・エンジン・モデル・仕様書のどれかが変わったら、仕様書の AUTOGEN 区間を作り直す。
+if echo "$changed" | grep -qE '^(data/.*_dt\.js$|support/decisionTable\.js$|support/shimamura/salesGroupTransferModel\.js$|scripts/docs/gen_decision_tables\.js$|docs/shimamura/concepts/)'; then
+  if command -v node >/dev/null 2>&1; then
+    echo "[pre-commit] デシジョンテーブルから仕様書の表を再生成..."
+    # 生成先（REGISTRY の仕様書）だけをステージする（同じフォルダの編集中ファイルを巻き込まない）
+    node scripts/docs/gen_decision_tables.js \
+      && node -e "require('./scripts/docs/gen_decision_tables').REGISTRY.forEach((r) => console.log(r.doc))" \
+         | while IFS= read -r doc; do git add -- "$doc"; done \
+      || { echo "[pre-commit] gen_decision_tables.js 失敗（定義ファイルを確認）"; exit 1; }
+  fi
+fi
+
 # --- 3) tree + test catalog 再生成 ---------------------------------------------
 echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
 
