@@ -41,7 +41,8 @@
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage` tframe アイコン別マッピング表（`docs/tframe/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage:shimamura` shimamura アイコン別マッピング表（`docs/shimamura/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。メニュー採取は `node scripts/html/fetch_shimamura_menus.js shimamura.testgcp`（読むだけ・データ変更なし）。
-- `npm run docs:all` ツリー＋カタログ＋メニュー表（tframe / shimamura）をまとめて更新。
+- `npm run docs:decision-tables` デシジョンテーブルの定義（`data/**/*_dt.js`）から仕様書の AUTOGEN 区間（条件・動作の一覧、DT 表、テストケース一覧）を再生成。`--check` でドリフト検出。対象は `scripts/docs/gen_decision_tables.js` の `REGISTRY`（新しい表を足したら1行追加）。
+- `npm run docs:all` ツリー＋カタログ＋メニュー表（tframe / shimamura）＋デシジョンテーブルをまとめて更新。
 - ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）・shimamura メニュー表（`pages/shimamura/` `support/shimamura/` `tests/shimamura/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。フックからは `--exclude-untracked` 付きで呼ぶため、git 未追跡の作業中ファイルは載らない（手動の `npm run docs:*` は作業ツリー全体を数える）。
 
 ## ディレクトリ配置ルール
@@ -342,6 +343,8 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
 | `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
+| `expandTable` / `findCollapsedRule` | `support/decisionTable.js` | デシジョンテーブルの展開・N/A・縮約（社内「デシジョンテーブル記法ガイド」準拠）。プロダクト共通 |
+| `evaluateCase` / `formatTrace` | `support/shimamura/salesGroupTransferModel.js` | 料金明細 入金の仕様モデル。テストケースを DT-04→01→03→02 で評価し期待結果を決める（#287） |
 
 ナビゲーション：
 - 一覧画面へは `sideMenus.js` に定義を足し、`IchiranPage._navigateViaMenu(menus.xxx)` 経由で遷移する（`SHIMAMURA_NAV=sidebar` でサイドバー経路、既定は directUrl）。
@@ -354,6 +357,12 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`SyokaiFlowPage.js` の
   `enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })` で画面操作なしに同じ通信を出せる（約22秒→約8秒 #280）。
 - URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。
+
+デシジョンテーブル駆動のテスト（#287）：
+- **定義ファイル1つが正**：条件・動作・判定（`decide`）・初期状態（fixtures）・テストケース・対象外の理由を `data/<product>/<画面>_dt.js` に書く（テスト入力の性質なので `data/`）。
+  仕様書の表は `npm run docs:decision-tables` で生成（手で直さない）、テストは同じ定義を読み、期待結果は仕様モデル（`support/<product>/*Model.js`）が表から決める。
+- 汎用エンジンは `support/decisionTable.js`（テスト実行中に require されるので `support/`）、生成スクリプトは `scripts/docs/gen_decision_tables.js`（単体で起動するので `scripts/`）。
+- 今の不具合を期待値にしたケースは `@known-bug` を付ける（直ったら落ちるのが正しい）。例: `tests/shimamura/flow/sales_group_transfer_check_test.js`
 
 詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。
 

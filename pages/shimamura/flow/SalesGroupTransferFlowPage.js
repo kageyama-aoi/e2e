@@ -159,8 +159,44 @@ async function changeTransactionPaymentType({ transactionId, paymentType }) {
   await editOpenRecordBySubmit(I, { fields: { payment_type: paymentType }, label: '入出金の編集' });
 }
 
+/** 分類「スクール」でコースが紐づいたクラス（月謝一括作成準備と同じ。月謝＋運営管理費ができる） */
+const DEFAULT_CLASS = { className: 'ピアノ水曜日_02', courseCategory: 'スクール' };
+
+function todayYmd() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * 1〜5 をまとめて行い、「同じ明細番号に2行以上・1行目だけ入金済み」の明細を1つ作る（受講生を1人使う）。
+ * @param {{contactRegisterPageShimamura: Object, classMemberPageShimamura: Object, salesGroupTransferPageShimamura: Object}} pages
+ * @param {{firstRowPayment: (string|undefined), bySubmit: (boolean|undefined), cls: (Object|undefined)}} [options]
+ *   firstRowPayment: 1行目の支払方法（既定 cash。cash 以外は入出金の編集画面で変える）
+ * @returns {Promise<{contactId: string, lastName: string, salesno: string, paidTransactionId: string, paidFeeName: string, rows: Array<Object>}>}
+ */
+async function createPaidFirstRowStatement(pages, { firstRowPayment = 'cash', bySubmit = true, cls = DEFAULT_CLASS } = {}) {
+  const date = todayYmd();
+  const { contactId, lastName } = await createStudent(pages.contactRegisterPageShimamura);
+  I.say(`【明細データ】受講生 ${lastName} 受講生番号=${contactId}`);
+  await enrollClass(pages.classMemberPageShimamura, contactId, { ...cls, keiyakuDate: date, kaishiDate: date, bySubmit });
+
+  const rows = await grabTransactionRows(contactId);
+  rows.forEach((r) => I.say(`  入出金: ${r.salesno} ${r.feeName} 予定=${r.inAmount} 入金日=${r.tDate} 方法=${r.paymentLabel}`));
+  const salesno = pickMultiRowSalesno(rows);
+  if (!salesno) throw new Error(`同じ明細番号の行が2行以上ありません（クラスにコースが紐づいているか確認）: ${rows.length}行`);
+  I.say(`【明細データ】対象の明細番号=${salesno}`);
+
+  const { paidTransactionId, paidFeeName } = await payFirstRow(pages.salesGroupTransferPageShimamura, { salesno, contactId, tDate: date });
+  if (firstRowPayment !== 'cash') {
+    await changeTransactionPaymentType({ transactionId: paidTransactionId, paymentType: firstRowPayment });
+  }
+  return { contactId, lastName, salesno, paidTransactionId, paidFeeName, rows };
+}
+
 module.exports = {
   TEST_LAST_NAME,
+  DEFAULT_CLASS,
+  createPaidFirstRowStatement,
   createStudent,
   enrollClass,
   grabTransactionRows,

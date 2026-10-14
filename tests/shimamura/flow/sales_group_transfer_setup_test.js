@@ -29,16 +29,9 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { predictServerChecks } = require('../../../support/shimamura/salesGroupTransferCheck');
 const flow = require('../../../pages/shimamura/flow/SalesGroupTransferFlowPage');
 
-/** 分類「スクール」でコースが紐づいたクラス（月謝一括作成準備と同じ。月謝＋運営管理費ができる） */
-const CLASS = { className: 'ピアノ水曜日_02', courseCategory: 'スクール' };
 const FIRST_ROW_PAYMENT = process.env.SGT_FIRST_ROW_PAYMENT || 'card';
 /** 経理ビューを UI 操作で通す（既定はフォーム送信版。比較・UI 経路の確認用） */
 const BY_SUBMIT = process.env.SGT_UI !== '1';
-
-function today() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
 
 Feature('料金明細の入金不具合 再現データ作成');
 
@@ -47,26 +40,11 @@ Before(beforeShimamura);
 Scenario('同一明細番号で1行目だけ入金済みの明細を作り、入金分配の送信内容を観察する @setup', async ({
   I, contactRegisterPageShimamura, classMemberPageShimamura, salesGroupTransferPageShimamura,
 }) => {
-  const date = today();
-
-  // 1〜2: 受講生を作ってクラスを適用
-  const { contactId, lastName } = await flow.createStudent(contactRegisterPageShimamura);
-  I.say(`【明細データ】受講生 ${lastName} 受講生番号=${contactId}`);
-  await flow.enrollClass(classMemberPageShimamura, contactId, { ...CLASS, keiyakuDate: date, kaishiDate: date, bySubmit: BY_SUBMIT });
-
-  const rows = await flow.grabTransactionRows(contactId);
-  rows.forEach((r) => I.say(`  入出金: ${r.salesno} ${r.feeName} 予定=${r.inAmount} 入金日=${r.tDate} 方法=${r.paymentLabel}`));
-  const salesno = flow.pickMultiRowSalesno(rows);
-  if (!salesno) throw new Error(`同じ明細番号の行が2行以上ありません（クラスにコースが紐づいているか確認）: ${rows.length}行`);
-  I.say(`【明細データ】対象の明細番号=${salesno}`);
-
-  // 3: 1行目だけ入金
-  const { paidTransactionId, paidFeeName } = await flow.payFirstRow(salesGroupTransferPageShimamura, { salesno, contactId, tDate: date });
-
-  // 4: 1行目の支払方法を変える（裏技）
-  if (FIRST_ROW_PAYMENT !== 'cash') {
-    await flow.changeTransactionPaymentType({ transactionId: paidTransactionId, paymentType: FIRST_ROW_PAYMENT });
-  }
+  // 1〜4: 受講生を作ってクラスを適用し、1行目だけ入金（支払方法を変える）
+  const { contactId, lastName, salesno, paidTransactionId, paidFeeName, rows } = await flow.createPaidFirstRowStatement(
+    { contactRegisterPageShimamura, classMemberPageShimamura, salesGroupTransferPageShimamura },
+    { firstRowPayment: FIRST_ROW_PAYMENT, bySubmit: BY_SUBMIT },
+  );
 
   // 5: 開き直して、残りを入金分配した送信内容を観察（保存しない）
   const page = salesGroupTransferPageShimamura;
