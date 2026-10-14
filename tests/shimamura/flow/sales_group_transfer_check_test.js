@@ -5,11 +5,17 @@
  * 期待結果は仕様モデル（support/shimamura/salesGroupTransferModel.js）が表から決めるので、ここには書かない。
  * 仕様書 docs/shimamura/concepts/料金明細入金チェックの仕様.md の ⑤ が同じ定義から生成した一覧。
  *
+ * **並び順**（#296）: シンプルなデータから複雑なデータへ。定義ファイルの並び＝実行順
+ * - 段1 TC-01〜07: 1行・未入金
+ * - 段2 TC-08〜13: 1行・現金で入金済み
+ * - 段3 TC-14〜17: 4行・入金済みと未入金が混在（問い合わせの不具合は TC-17）
+ * - 同じ段の中は、チェックされる順（開いただけ → 画面の alert → サーバーのエラー → 保存成功）
+ *
  * **データ**
- * 明細（同じ明細番号に4行・1行目だけ入金済み）を SalesGroupTransferFlowPage で作る。
+ * 明細は SalesGroupTransferFlowPage の createStatement で作る（1行の明細は、料金タブで余分な料金を削除して作る）。
  * - エラーになるケース・観察だけのケースはデータを変えないので、初期状態ごとに1つ作って使い回す
  * - 保存が成功するケース（`mutates: true`）は、毎回新しい明細を作る
- * 1回の実行で testgcp の受講生を3人ほど使う。
+ * 1回の実行で testgcp の受講生を6人ほど使う。
  *
  * **エビデンス**（設計書の無い画面なので、Allure に段階ごとのスクショを残す）
  * - ①遷移直後 → ②テスト値を入力 → ③保存ボタン押下後（観察だけのケースは ③送る内容の確認）の3枚
@@ -22,7 +28,7 @@
  *
  * 実行例:
  *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp
- *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp --grep "TC-14"
+ *   npx codeceptjs run ./tests/shimamura/flow/sales_group_transfer_check_test.js --profile shimamura.testgcp --grep "TC-17"
  */
 'use strict';
 
@@ -78,7 +84,7 @@ Data(cases).Scenario('DT検証', async ({
   const pages = { contactRegisterPageShimamura, classMemberPageShimamura, salesGroupTransferPageShimamura };
   let statement = tc.mutates ? null : sharedStatements[tc.fixture];
   if (!statement) {
-    statement = await flow.createPaidFirstRowStatement(pages, { firstRowPayment: fixture.firstRowPayment });
+    statement = await flow.createStatement(pages, { rowCount: fixture.rowCount, firstRowPayment: fixture.firstRowPayment });
     if (!tc.mutates) sharedStatements[tc.fixture] = statement;
   }
 
@@ -92,7 +98,7 @@ Data(cases).Scenario('DT検証', async ({
   const attachText = (name, value) => withAllure((allure) => allure.addAttachment(name, typeof value === 'string' ? value : JSON.stringify(value, null, 2), 'text/plain'));
   await evidence('1_open', '①遷移直後');
   assert.strictEqual(state.rows.length, fixture.rows.length, `${tc.id}: 明細の行数が初期状態と違う`);
-  assert.strictEqual(state.initial[0].payment_type, fixture.firstRowPayment, `${tc.id}: 1行目の支払方法が初期状態と違う（前のケースでデータが変わった可能性）`);
+  assert.strictEqual(state.initial[0].payment_type || '', fixture.firstRowPayment || '', `${tc.id}: 1行目の支払方法が初期状態と違う（前のケースでデータが変わった可能性）`);
 
   // 操作
   for (const [rowIndex, edit] of Object.entries(tc.edit || {})) {
