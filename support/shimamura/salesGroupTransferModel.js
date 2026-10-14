@@ -45,7 +45,7 @@ function evaluateCase(def, tc, cache = expandAll(def)) {
     return col.actions;
   };
 
-  // DT-04: 各行の支払方法の送る値（文字表示の行は締日を模擬したときだけ）
+  // DT-04: 各行の支払方法の送る値（締日より前に入金済みで編集できない行は、締日を模擬したときだけ）
   const rows = fixture.rows.map((db, i) => {
     const textOnly = Boolean(tc.simulateShimebi) && db.t !== '';
     const acts = apply('DT-04', { C11: textOnly, C12: SELECT_OPTIONS.includes(db.p) }, i);
@@ -53,7 +53,7 @@ function evaluateCase(def, tc, cache = expandAll(def)) {
     const sent = { t: db.t, a: textOnly && isZero(db.a) ? '' : db.a, p, due: db.due };
     const edit = (tc.edit || {})[i];
     if (edit) {
-      if (textOnly) throw new Error(`${tc.id}: 文字表示の行（${i}）は編集できません`);
+      if (textOnly) throw new Error(`${tc.id}: 締日より前に入金済みの行（${i}）は編集できません`);
       Object.assign(sent, edit);
     }
     return { index: i, db, sent, textOnly };

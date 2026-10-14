@@ -56,11 +56,11 @@ test('料金明細の仕様モデル: テストケースの期待結果', () => 
     'TC-04': 'serverErrors 0:A8+A10', 'TC-05': 'serverErrors 0:A8+A9', 'TC-06': 'serverErrors 0:A8',
     'TC-07': 'serverErrors 0:A8+A10', 'TC-08': 'serverErrors 1:A10', 'TC-09': 'serverErrors 1:A10',
     'TC-10': 'serverErrors 1:A9', 'TC-11': 'alerts A2', 'TC-12': 'alerts A2',
-    'TC-13': 'observed cash,,,', 'TC-14': 'observed ,,,', 'TC-15': 'serverErrors 0:A8', 'TC-16': 'saved',
+    'TC-13': 'observed cash,,,', 'TC-14': 'serverErrors 0:A8', 'TC-15': 'saved', 'TC-101': 'observed ,,,',
   });
 });
 
 test('料金明細の仕様モデル: 問い合わせのケースは DT-04 R3 を通る', () => {
-  const tc = def.testCases.find((t) => t.id === 'TC-15');
+  const tc = def.testCases.find((t) => t.id === 'TC-14');
   assert.match(formatTrace(evaluateCase(def, tc).trace), /DT-04 R3（行1）/);
 });
