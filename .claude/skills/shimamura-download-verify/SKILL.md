@@ -332,7 +332,7 @@ scenario
 `run/test_descriptions.json` の `"shimamura"` セクションに追記する。
 
 ```json
-"page/{prefix}_test.js": "{画面名}からファイルをダウンロードし、{検証内容}を検証",
+"page/{prefix}_test.js": { "feature_no": "",          "description": "{画面名}からファイルをダウンロードし、{検証内容}を検証" },
 ```
 
 ---

@@ -155,7 +155,7 @@ culture_beta 環境は既存の `screens/` Page Object と実際のフォーム�
 `run/test_descriptions.json` の `"tframe"` セクションに追記する。
 
 ```json
-"flow/{機能名}_flow_test.js": "{業務フロー名}の一連の画面遷移を確認",
+"flow/{機能名}_flow_test.js": { "feature_no": "",          "description": "{業務フロー名}の一連の画面遷移を確認" },
 ```
 
 ---

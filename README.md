@@ -245,10 +245,10 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-14 10:10:48
+Last updated: 2026-10-14 11:13:54
 
 ```text
-e2e/
+e2e-287/
 ├── .agent/ 
 │   ├── handoff/ 
 │   │   ├── 2026-04-07-0937.md
@@ -290,6 +290,8 @@ e2e/
 │   │   ├── 2026-09-25-1139.md
 │   │   ├── 2026-09-28-1658.md
 │   │   ├── 2026-09-28-1815.md
+│   │   ├── 2026-09-29-1834.md
+│   │   ├── 2026-09-30-1835.md
 │   │   └── HANDOFF.md
 │   ├── memory/ 
 │   │   ├── docs_reorganization_plan.md
@@ -955,6 +957,7 @@ e2e/
 │       ├── decisionTable.test.js
 │       ├── runOutputPaths.test.js
 │       └── salesGroupTransferCheck.test.js
+├── .git
 ├── .gitattributes
 ├── .gitignore
 ├── _temp_refactor_run_gui.md

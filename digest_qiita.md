@@ -1,8 +1,9 @@
-# Qiita「Claude Code」タグ新着記事ダイジェスト
+# Qiita「Claude Code」タグ 新着記事ダイジェスト
 
-実行日時（UTC）: 2026-09-30T21:06:47Z
+実行日時（UTC）: 2026-10-13T21:08:13Z
 
-タグ: `claude-code`（https://qiita.com/tags/claude-code の Atom フィードより取得）
+対象タグ: `claude-code`（https://qiita.com/tags/claude-code ）
+フィード: https://qiita.com/tags/claude-code/feed.atom
 
 - [AIが既存決定を無視する本当の理由 — ADR文脈自動注入hookの手法](https://qiita.com/chooser/items/db8241406c2d1dde224b)
 - [VOICEVOX互換を信じたら、肝心の値が全部ゼロだった](https://qiita.com/jun-uen0/items/07c6268e849a226596d4)
