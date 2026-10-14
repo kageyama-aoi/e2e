@@ -248,7 +248,7 @@ python scripts/html/extract_body_only_fields.py
 Last updated: 2026-10-14 11:13:54
 
 ```text
-e2e-287/
+e2e/
 ├── .agent/ 
 │   ├── handoff/ 
 │   │   ├── 2026-04-07-0937.md
@@ -957,7 +957,6 @@ e2e-287/
 │       ├── decisionTable.test.js
 │       ├── runOutputPaths.test.js
 │       └── salesGroupTransferCheck.test.js
-├── .git
 ├── .gitattributes
 ├── .gitignore
 ├── _temp_refactor_run_gui.md
