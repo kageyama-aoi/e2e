@@ -105,6 +105,23 @@ function attachScreenshotFromOutput(fileName, attachmentName = '画面キャプ�
 }
 
 /**
+ * 画面のスクリーンショットを撮り、読める名前で Allure に添付する（エビデンス用）。
+ * 設計書の無い画面で「遷移直後 → 値を入力 → ボタン押下後」のように段階ごとに残すときに使う。
+ * `saveScreenshotWithTimestamp` は添付名が日時になるので、名前で見分けたいときはこちらを使う。
+ * @param {CodeceptJS.I} I
+ * @param {string} fileBase 保存するファイル名（拡張子なし。同じ実行内で重複しないように TC 番号等を含める）
+ * @param {string} attachmentName Allure に表示する名前（例: '①遷移直後'）
+ * @param {boolean} [fullPage=true] ページ全体を撮る
+ * @returns {Promise<string>} 保存したファイル名
+ */
+async function attachEvidenceScreenshot(I, fileBase, attachmentName, fullPage = true) {
+  const fileName = `${String(fileBase).replace(/[\\/:*?"<>|\s]/g, '_')}.png`;
+  await I.saveScreenshot(fileName, fullPage);
+  attachScreenshotFromOutput(fileName, attachmentName);
+  return fileName;
+}
+
+/**
  * 環境変数をbooleanとして取得する
  * @param {string} envKey - 環境変数名
  * @returns {boolean}
@@ -253,5 +270,6 @@ module.exports = {
   attachBusinessContext,
   attachErrorScreenshot,
   attachScreenshotFromOutput,
+  attachEvidenceScreenshot,
 };
 

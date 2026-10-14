@@ -11,6 +11,10 @@
  * - 保存が成功するケース（`mutates: true`）は、毎回新しい明細を作る
  * 1回の実行で testgcp の受講生を3人ほど使う。
  *
+ * **エビデンス**（設計書の無い画面なので、Allure に段階ごとのスクショを残す）
+ * - ①遷移直後 → ②テスト値を入力 → ③保存ボタン押下後（観察だけのケースは ③送る内容の確認）の3枚
+ * - ③の結果（alert・画面のメッセージ・送る支払方法）はテキストでも添付する
+ *
  * **印**
  * - `@known-bug`: 問い合わせの不具合（カード入金の行が「現金」で送られる）。今の動きを期待値にしている。直ったら落ちる
  *
@@ -21,7 +25,7 @@
 'use strict';
 
 const assert = require('assert');
-const { withScenarioLabel } = require('../../../support/utils');
+const { withScenarioLabel, withAllure, attachEvidenceScreenshot } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const def = require('../../../data/shimamura/sales_group_transfer_dt');
 const { expandAll, evaluateCase, formatTrace } = require('../../../support/shimamura/salesGroupTransferModel');
@@ -57,7 +61,8 @@ Feature('料金明細 編集画面（入金）の保存時チェック');
 
 Before(beforeShimamura);
 
-Data(cases).Scenario('デシジョンテーブルのテストケース', async ({
+// シナリオ名は「DT検証 | TC-03 …」と表示される（DT = デシジョンテーブル）
+Data(cases).Scenario('DT検証', async ({
   I, current, contactRegisterPageShimamura, classMemberPageShimamura, salesGroupTransferPageShimamura,
 }) => {
   const tc = current;
@@ -81,6 +86,9 @@ Data(cases).Scenario('デシジョンテーブルのテストケース', async (
     simulateShimebi: tc.simulateShimebi ? addDays(ymd(new Date()), 1) : undefined,
   });
   const state = await page.grabScreenState();
+  const evidence = (step, name) => attachEvidenceScreenshot(I, `${tc.id}_${step}`, name);
+  const attachText = (name, value) => withAllure((allure) => allure.addAttachment(name, typeof value === 'string' ? value : JSON.stringify(value, null, 2), 'text/plain'));
+  await evidence('1_open', '①遷移直後');
   assert.strictEqual(state.rows.length, fixture.rows.length, `${tc.id}: 明細の行数が初期状態と違う`);
   assert.strictEqual(state.initial[0].payment_type, fixture.firstRowPayment, `${tc.id}: 1行目の支払方法が初期状態と違う（前のケースでデータが変わった可能性）`);
 
@@ -91,16 +99,21 @@ Data(cases).Scenario('デシジョンテーブルのテストケース', async (
     I.say(`【${tc.id}】行${Number(rowIndex) + 1}（${row.description}）に入力: ${JSON.stringify(values)}`);
     await page.fillRowPayment(row.index, values);
   }
+  await evidence('2_input', '②テスト値を入力');
 
   // 結果の確認
   if (outcome.kind === 'observed') {
     const preview = await page.grabSaveRequestPreview();
     const sent = preview.salesDetails.transactions.map((t) => t.payment_type || '');
+    await evidence('3_preview', '③送る内容の確認（保存しない）');
+    attachText('③の結果', { 送る支払方法: sent });
     assert.deepStrictEqual(sent, outcome.sentPayments, `${tc.id}: 送る支払方法`);
     return;
   }
 
   const result = await page.clickSaveAndGrabResult();
+  await evidence('3_save', '③保存ボタン押下後');
+  attachText('③の結果', { 保存: result.saved ? '成功' : '失敗または未送信', alert: result.alerts, メッセージ: result.messages, URL: result.url });
   // 期待どおりでないのに保存されたら、使い回している明細はもう使えない
   if (result.saved && outcome.kind !== 'saved') delete sharedStatements[tc.fixture];
 

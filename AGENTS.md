@@ -343,6 +343,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
 | `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
+| `attachEvidenceScreenshot(I, fileBase, name)` | `support/utils.js` | スクショを読める名前（例: `①遷移直後`）で Allure に添付。設計書の無い画面で「遷移直後 → 入力後 → ボタン押下後」を残すときに使う |
 | `expandTable` / `findCollapsedRule` | `support/decisionTable.js` | デシジョンテーブルの展開・N/A・縮約（社内「デシジョンテーブル記法ガイド」準拠）。プロダクト共通 |
 | `evaluateCase` / `formatTrace` | `support/shimamura/salesGroupTransferModel.js` | 料金明細 入金の仕様モデル。テストケースを DT-04→01→03→02 で評価し期待結果を決める（#287） |
 
