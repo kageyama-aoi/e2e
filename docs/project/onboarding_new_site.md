@@ -82,7 +82,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 - 新サイトのキー（`tests/<site>/` のトップレベル名と一致させる）を追加し、各テストファイルの日本語説明を書く：
   ```json
   "newsite": {
-    "page/foo_test.js": "〇〇画面の表示・操作を確認"
+    "page/foo_test.js": { "feature_no": "",          "description": "〇〇画面の表示・操作を確認" }
   }
   ```
 - **これを忘れると `run/run_gui.py`（GUI）の TestFile 欄で日本語説明が表示されない。**

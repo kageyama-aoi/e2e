@@ -241,17 +241,17 @@ npx codeceptjs run ./tests/tframe/page/{module}_touroku_test.js --profile tframe
 **これを忘れると GUI の TestFile 欄にテストを選んでも日本語説明が表示されない。**
 
 ```json
-"page/{module}_touroku_test.js": "{画面名}の新規登録フォームへの入力・保存を確認",
+"page/{module}_touroku_test.js": { "feature_no": "",          "description": "{画面名}の新規登録フォームへの入力・保存を確認" },
 ```
 
 例：
 ```json
-"page/kyoshitsu_touroku_test.js": "教室の新規登録フォームへの入力・保存を確認",
+"page/kyoshitsu_touroku_test.js": { "feature_no": "",          "description": "教室の新規登録フォームへの入力・保存を確認" },
 ```
 
 一覧検索テスト（`_ichiran_test.js`）を追加した場合も同様に追記する：
 ```json
-"page/{module}_ichiran_test.js": "{画面名}一覧の空検索と条件絞り込み検索を確認",
+"page/{module}_ichiran_test.js": { "feature_no": "",          "description": "{画面名}一覧の空検索と条件絞り込み検索を確認" },
 ```
 
 #### 保存後の検証テキスト（`submitAndVerifyRegistration` の引数）の決め方

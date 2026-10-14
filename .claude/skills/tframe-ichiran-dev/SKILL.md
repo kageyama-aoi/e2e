@@ -267,7 +267,7 @@ const hasCondition = current.name || current.idnumber || current.personStatus;
 **これを忘れると GUI の TestFile 欄で日本語説明が表示されない。**
 
 ```json
-"page/{module}_ichiran_test.js": "{画面名}一覧の空検索と条件絞り込み検索を確認",
+"page/{module}_ichiran_test.js": { "feature_no": "",          "description": "{画面名}一覧の空検索と条件絞り込み検索を確認" },
 ```
 
 ---
