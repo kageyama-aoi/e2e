@@ -183,6 +183,17 @@ AllureResultsDir=${runtimeAllureResultsDir}
             const loginPageShimamura = require('./pages/shimamura/auth/LoginPage.js');
             loginPageShimamura.seeLoggedIn();
           },
+          // 保存した Cookie を戻す。既定の I.setCookie(cookies) は Cookie の中身が丸ごとステップ名になり
+          // Allure で読みにくいので、usePlaywrightTo で短い名前のステップにする（中身は同じ addCookies）。
+          // 関数もステップ名に toString() で出るので、表示用の文字列に差し替える
+          restore: (I, cookies) => {
+            I.amOnPage('/');
+            const addCookies = async ({ browserContext }) => {
+              await browserContext.addCookies(Array.isArray(cookies) ? cookies : [cookies]);
+            };
+            addCookies.toString = () => 'addCookies';
+            I.usePlaywrightTo('ログイン情報（Cookie）を戻す', addCookies);
+          },
         },
       },
     },
