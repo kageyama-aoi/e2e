@@ -48,7 +48,7 @@ run/run_gui.bat をダブルクリック
 │  │ Profile ← .env.* 一覧      │                           │
 │  │ Grep（任意）                │                           │
 │  └──────────────────────────┘  │                           │
-│  [Run Test] [Stop] [Open Allure] [Open CSV] [Settings]    │
+│  [Run Test] [Stop] [Open Allure] [Open CSV] [Settings] [Open JSDoc] │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -77,6 +77,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 | **Open Allure** | `allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
 | **Open CSV** | テストファイルに対応する `data/<product>/*_data*.csv` をデフォルトアプリで開く |
 | **Settings (.env)** | 選択中プロファイルの `.env` ファイルをGUIで編集する（`EnvSettingsWindow`）。設定項目は HEADLESS / SCREENSHOT_ON_NAVIGATION / CHECKBOX_DEBUG / FORM_FILL_FAST / SHIMAMURA_NAV の5項目。Save で即時書き込み |
+| **Open JSDoc** | `npm run docs:jsdoc` で JSDoc を作り直し（約10秒・生成中はボタン無効）、`docs/generated/html/index.html` を既定ブラウザで開く。生成に失敗したらログに ERROR を出して開かない |
 | **Login & Hold (shimamura)** | shimamura プロファイル専用。新しいコンソールウィンドウでブラウザを起動し、ログイン後に手動操作できる状態で待機させる。ターミナルに `resume` を入力するか Ctrl+C × 2 で終了 |
 
 ### 右ペイン

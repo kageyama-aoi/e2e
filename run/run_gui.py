@@ -36,6 +36,7 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 _DOWNLOADS_DIR   = os.path.join('output', 'downloads')
 _ALLURE_SCRIPT   = os.path.join('scripts', 'allure', 'serve_latest.js')
+_JSDOC_INDEX     = os.path.join('docs', 'generated', 'html', 'index.html')
 _LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
 
 _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
@@ -1248,7 +1249,11 @@ class RunnerApp(tk.Tk):
         self.login_hold_btn.grid(row=3, column=0, columnspan=2, sticky='ew', pady=(4, 2))
 
         self.settings_btn = ttk.Button(btn_frame, text='Settings (.env)', style=BTN_SECONDARY, command=self._on_open_settings)
-        self.settings_btn.grid(row=4, column=0, columnspan=2, sticky='ew', pady=(2, 2))
+        self.settings_btn.grid(row=4, column=0, sticky='ew', padx=(0, 2), pady=(2, 2))
+        # 行を増やさず Settings の右に置く（ボタン群が高くなると下端が見切れるため）
+        self.jsdoc_btn = ttk.Button(btn_frame, text='Open JSDoc', style=BTN_SECONDARY, command=self._on_open_jsdoc)
+        self.jsdoc_btn.grid(row=4, column=1, sticky='ew', padx=(2, 0), pady=(2, 2))
+        _Tooltip(self.jsdoc_btn, tk.StringVar(value='npm run docs:jsdoc で作り直してからブラウザで開きます（約10秒）'))
 
         # ---- 下段（Command / Log / Downloads。全幅で表示） ----
         ttk.Label(bottom, text='Command (参照用)').pack(anchor='w')
@@ -1711,6 +1716,31 @@ class RunnerApp(tk.Tk):
                 self.log_queue.put(line)
         except Exception as exc:
             self.log_queue.put(f'\nERROR: Allure open failed: {exc}\n')
+
+    def _on_open_jsdoc(self):
+        cmd = ['npm', 'run', 'docs:jsdoc']
+        self.jsdoc_btn.state(['disabled'])
+        self._append_log('\n=== Open JSDoc ===\n')
+        self._append_log(f'--- run: {" ".join(cmd)}\n')
+        threading.Thread(target=self._run_jsdoc_process, args=(cmd,), daemon=True).start()
+
+    def _run_jsdoc_process(self, cmd):
+        index_path = os.path.join(self.repo_root, _JSDOC_INDEX)
+        try:
+            proc = self._pipe_process_output(cmd)
+            for line in proc.stdout:
+                self.log_queue.put(line)
+            if proc.wait() != 0:
+                self.log_queue.put(f'\nERROR: JSDoc 生成に失敗しました（exit {proc.returncode}）\n')
+            elif not os.path.isfile(index_path):
+                self.log_queue.put(f'\nERROR: 生成物が見つかりません: {index_path}\n')
+            else:
+                self.log_queue.put(f'--- open: {index_path}\n')
+                os.startfile(index_path)
+        except Exception as exc:
+            self.log_queue.put(f'\nERROR: JSDoc open failed: {exc}\n')
+        finally:
+            self.after(0, lambda: self.jsdoc_btn.state(['!disabled']))
 
     def _pipe_process_output(self, cmd, env=None):
         """cmd を実行して stdout を log_queue に流す準備をした Popen オブジェクトを返す。"""

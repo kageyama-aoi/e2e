@@ -185,7 +185,7 @@ RunnerApp._build_ui()
         │   │           ├── row=1 Run Test(BTN_PRIMARY) / Stop(BTN_SECONDARY)
         │   │           ├── row=2 Open Allure / Open CSV（ともに BTN_SECONDARY）
         │   │           ├── row=3 Login & Hold（BTN_SECONDARY）
-        │   │           └── row=4 Settings (.env)（BTN_SECONDARY）
+        │   │           └── row=4 Settings (.env) / Open JSDoc（ともに BTN_SECONDARY）
         │   └── test_panel (grid, rowconfigure(0)=1, weight=3)   ← Test File 専用の幅広ペイン
         │       └── test_group = LabelFrame('Test File') (grid row=0, sticky=nsew)
         │           ├── row=0  テストリスト（tk.Listbox） ← rowconfigure weight=1で伸縮
