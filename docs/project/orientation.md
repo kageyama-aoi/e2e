@@ -25,8 +25,10 @@
 
 | 見るもの | わかること |
 |---|---|
-| [.agent/handoff/HANDOFF.md](../../.agent/handoff/HANDOFF.md) | 直近セッションの進捗・次のアクション・ハマりどころ |
-| `gh issue list --state open` | 未着手・仕掛かりの Issue |
+| `gh issue list --state open` | 残作業の全体（**作業状況の正は Issue**。AGENTS.md「作業状況の置き場所」） |
+| `gh issue list -l blocked` / `gh issue list -l waiting-user` | 止まっているもの。理由・再開条件は各 Issue のコメント |
+| `gh issue list -l shimamura`（`tframe` / `launcher` / `tooling`） | 対象ごとの残作業 |
+| [.agent/handoff/HANDOFF.md](../../.agent/handoff/HANDOFF.md) | 直近セッションで触った Issue 番号と一時メモ |
 | `git log --oneline -20` | 最近のコミット |
 
 ## 4. 手を動かす前に
