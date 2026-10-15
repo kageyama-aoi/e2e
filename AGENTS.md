@@ -11,7 +11,7 @@
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
 - `output/`, `allure-results/`, `allure-report/` は生成物。
-- `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別）。
+- `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別、`digest/`=claude.ai の定期実行が毎日・毎月書き込む Qiita ダイジェスト。手で編集しない）。
 
 ## ビルド・テスト・開発コマンド
 
