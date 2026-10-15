@@ -23,7 +23,12 @@ function getProfileFromArgs() {
   // 2. 引数 --profile を検索
   let profile = null;
   for (let i = args.length - 1; i >= 0; i--) {
-    if (args[i] === '--profile' && args[i + 1]) {
+    if (args[i] === '--profile') {
+      // 値の書き忘れ（`--profile` が末尾、または直後が別のフラグ）は codeceptjs 側で
+      // profile=true 扱いになり allure-results/true/ に出力されていた（#310）
+      if (!args[i + 1] || args[i + 1].startsWith('-')) {
+        exitWithProfileError('--profile の後ろにプロファイル名がありません。');
+      }
       profile = args[i + 1];
       break;
     }
@@ -69,9 +74,36 @@ function loadEnv() {
         override: true
       });
     } else {
-      console.log('--- DEBUG: Env file not found, skipping override:', envPath);
+      // 以前はここで読み飛ばして続行し、ルート .env の接続先でテストが走っていた（#310）
+      exitWithProfileError(`プロファイル "${profile}" の env ファイルがありません: ${envPath}`);
     }
   }
+}
+
+/**
+ * env/ にある `.env.<profile>` からプロファイル名の一覧を返す（`.template` は除く）
+ * @param {string} [envDir]
+ * @returns {string[]}
+ */
+function listAvailableProfiles(envDir = path.resolve(process.cwd(), 'env')) {
+  if (!fs.existsSync(envDir)) return [];
+  return fs.readdirSync(envDir)
+    .filter((name) => name.startsWith('.env.') && !name.endsWith('.template'))
+    .map((name) => name.slice('.env.'.length))
+    .sort();
+}
+
+/**
+ * プロファイル指定の誤りを、使えるプロファイル一覧つきで表示して終了する。
+ * 意図しない接続先（ルート .env）でテストが走るのを防ぐため、続行はしない。
+ * @param {string} message
+ */
+function exitWithProfileError(message) {
+  console.error(`\n[envLoader] ERROR: ${message}`);
+  console.error('[envLoader] 使えるプロファイル:');
+  listAvailableProfiles().forEach((name) => console.error(`  - ${name}`));
+  console.error('');
+  process.exit(1);
 }
 
 // このファイルを require した際に loadEnv を実行する
