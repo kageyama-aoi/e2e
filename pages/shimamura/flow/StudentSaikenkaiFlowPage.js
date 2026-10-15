@@ -56,7 +56,16 @@ async function searchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) 
   const url = await I.grabCurrentUrl();
   const recordId = extractRecordId(url);
   if (!recordId) throw new Error(`record ID が URL から取得できませんでした: ${url}`);
-  I.say(`【受講生詳細】DetailView へ切替 (record=${recordId})`);
+  await openDetailView(I, recordId);
+}
+
+/**
+ * 受講生詳細（DetailView）を record で直接開く。
+ * @param {object} I
+ * @param {string} recordId 受講生の record UUID
+ */
+async function openDetailView(I, recordId) {
+  I.say(`【受講生詳細】DetailView を開く (record=${recordId})`);
   // detailview=1 が必須: これがないと smbc_button が表示されない
   I.amOnPage(pageUrl({
     module: 'Student', action: 'DetailView', detailview: '1',
@@ -267,8 +276,13 @@ async function saveSmbcForm(I, expectedErrors) {
 // 手順: 先に債権買取顧客情報登録 → 次に請求方法を債権買取に変更して保存
 
 async function runSaikenkaiFlow(I, ichiranPageShimamura, input) {
-  // Step 1: 受講生を検索して DetailView へ
-  await searchAndNavigateToDetailView(I, ichiranPageShimamura, input.idnumber);
+  // Step 1: 受講生の DetailView へ。テストで作った受講生（recordId）なら直接開き、
+  // CSV の会員番号（idnumber）が指定されていれば受講生検索で探す
+  if (input.recordId) {
+    await openDetailView(I, input.recordId);
+  } else {
+    await searchAndNavigateToDetailView(I, ichiranPageShimamura, input.idnumber);
+  }
 
   // Step 2: 受講生基本情報を先に登録（SMBCフォームの readonly 項目の事前準備）
   await fillAndSaveStudentBasicInfo(I, input);
