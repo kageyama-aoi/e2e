@@ -84,7 +84,7 @@ $ node output/debug_syokai.js
 
 ### 手順
 
-1. `pages/shimamura/flow/SyokaiFlowPage.js`（`fillKeirisyoriScreenB` や `actions` の中）や
+1. `pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB` や `actions` の中）や
    `support/shimamura/syokai_helpers.js` に、方法1と同じようにブレークポイントを置く。
 2. 「実行とデバッグ」パネルのドロップダウンで上記いずれかの設定を選び、`F5`。
 3. `codecept.conf.js` の Playwright設定で `show: process.env.HEADLESS !== 'true'` となっているため、

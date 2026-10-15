@@ -20,7 +20,7 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const { extractRecordId } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
 const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
 
 const S = {
@@ -74,7 +74,7 @@ const S = {
  */
 async function createShimaCourse(I, { courseCd, courseName, courseCategory = 'スクール', kanrihi, kingaku }) {
   I.say(`【コース作成】${courseName}（${courseCd}） / 運営管理費(税抜): ${kanrihi ?? '未設定'} / 金額: ${kingaku ?? '未設定'}`);
-  I.amOnPage(`${BASE_URL}index.php?module=ShimaCourse&action=EditView&return_module=ShimaCourse&return_action=DetailView`);
+  I.amOnPage(pageUrl({ module: 'ShimaCourse', action: 'EditView', return_module: 'ShimaCourse', return_action: 'DetailView' }));
   I.waitForElement(S.course.cd, TIMEOUTS.SCREEN);
   I.fillField(S.course.cd, courseCd);
   I.fillField(S.course.name, courseName);
@@ -135,7 +135,7 @@ async function createClass(I, {
   weekdaySelector, startH, startM, endH, endM, teiin = '10',
 }) {
   I.say(`【クラス作成】${name}`);
-  I.amOnPage(`${BASE_URL}index.php?module=Course&action=EditView&return_module=Course&return_action=DetailView`);
+  I.amOnPage(pageUrl({ module: 'Course', action: 'EditView', return_module: 'Course', return_action: 'DetailView' }));
   I.waitForElement(S.class.area, TIMEOUTS.SCREEN);
   I.fillField(S.class.name, name);
   I.selectOption(S.class.area, areaValue);
@@ -204,7 +204,7 @@ async function createClassBySubmit(I, {
  */
 async function linkCourseToClass(I, { classRecordId, courseName, courseCategory = 'スクール' }) {
   I.say(`【コース紐づけ】クラス(${classRecordId}) に「${courseName}」を紐づけ`);
-  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.amOnPage(pageUrl({ module: 'Course', action: 'DW_AN', record: classRecordId }));
   I.waitForElement(S.courseTab.tabLink, TIMEOUTS.SCREEN);
   I.click(S.courseTab.tabLink);
   I.waitForElement(S.courseTab.selectPopupBtn, TIMEOUTS.SCREEN);
@@ -232,7 +232,7 @@ async function linkCourseToClass(I, { classRecordId, courseName, courseCategory 
  * @param {{classRecordId: string, courseName: string}} params
  */
 function verifyCourseLinked(I, { classRecordId, courseName }) {
-  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.amOnPage(pageUrl({ module: 'Course', action: 'DW_AN', record: classRecordId }));
   I.waitForElement(S.courseTab.tabLink, TIMEOUTS.SCREEN);
   I.click(S.courseTab.tabLink);
   I.waitForText(courseName, TIMEOUTS.SCREEN, S.courseTab.content);
@@ -256,7 +256,7 @@ function verifyCourseLinked(I, { classRecordId, courseName }) {
  */
 async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, monthsUntilStart = 0, daysAfterStart = 6 }) {
   I.say(`【スケジュール作成】クラス(${classRecordId}) / 開始: ${monthsUntilStart}ヶ月後 / 終了: ${monthsUntilStart > 0 ? `開始+${daysAfterStart}日` : `${monthsUntilEnd}ヶ月後`}`);
-  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.amOnPage(pageUrl({ module: 'Course', action: 'DW_AN', record: classRecordId }));
   I.waitForElement(S.scheduleTab.tabLink, TIMEOUTS.SCREEN);
   I.click(S.scheduleTab.tabLink);
   I.wait(TIMEOUTS.TAB_SWITCH);
@@ -300,7 +300,7 @@ async function createClassSchedule(I, { classRecordId, monthsUntilEnd = 6, month
  * @returns {Promise<number>} スケジュール件数
  */
 async function verifyClassScheduleCreated(I, { classRecordId }) {
-  I.amOnPage(`${BASE_URL}index.php?module=Course&action=DW_AN&record=${classRecordId}`);
+  I.amOnPage(pageUrl({ module: 'Course', action: 'DW_AN', record: classRecordId }));
   I.waitForElement(S.scheduleTab.tabLink, TIMEOUTS.SCREEN);
   I.click(S.scheduleTab.tabLink);
   I.waitForElement(S.scheduleTab.content, TIMEOUTS.SCREEN);

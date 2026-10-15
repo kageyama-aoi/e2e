@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-14 17:38:30
+Last updated: 2026-10-15 11:45:58
 
 ```text
 e2e/
@@ -562,8 +562,11 @@ e2e/
 │   │   │   │   ├── README.md
 │   │   │   │   └── testgcp.json
 │   │   │   ├── ClassMemberPage.js
+│   │   │   ├── KeiriViewSteps.js
+│   │   │   ├── KouhoseiSteps.js
 │   │   │   ├── MenuPatrolPage.js
-│   │   │   └── sideMenus.js
+│   │   │   ├── sideMenus.js
+│   │   │   └── TaikaiSteps.js
 │   │   ├── auth/ 
 │   │   │   └── LoginPage.js
 │   │   ├── flow/ 
@@ -956,7 +959,8 @@ e2e/
 │   └── unit/ 
 │       ├── decisionTable.test.js
 │       ├── runOutputPaths.test.js
-│       └── salesGroupTransferCheck.test.js
+│       ├── salesGroupTransferCheck.test.js
+│       └── shimamuraPageUrl.test.js
 ├── .gitattributes
 ├── .gitignore
 ├── _temp_refactor_run_gui.md

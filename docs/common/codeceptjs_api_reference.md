@@ -256,7 +256,7 @@ async function ClassOperate(){
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/flow/SyokaiFlowPage.js（createActionExecutor）
+// from: pages/shimamura/_common/KeiriViewSteps.js（createActionExecutor）
 const actions = {
   class_select: async () => {
     I.click(locators.button.class_select);                       // 別タブでクラス選択ポップアップが開く

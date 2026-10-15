@@ -21,7 +21,7 @@
  */
 
 const { I } = inject();
-const { TIMEOUTS, BASE_URL, SELECTORS } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, pageUrl, SELECTORS } = require('../../../support/shimamura/constants');
 const { assertNoShimamuraError, buildTestName } = require('../../../support/shimamura/utils');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 const {
@@ -30,7 +30,8 @@ const {
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
   confirmKeirisyoriScreenE,
-} = require('./SyokaiFlowPage');
+  keiriViewUrl,
+} = require('../_common/KeiriViewSteps');
 
 /** テスト受講生の姓（掃除のときに検索する頭の部分） */
 const TEST_LAST_NAME = '明細入金';
@@ -87,8 +88,7 @@ async function enrollClass(classMemberPageShimamura, contactId, { className, cou
  * @returns {Promise<Array<{transactionId: string, feeName: string, salesno: string, dueDate: string, inAmount: string, tDate: string, actualInAmount: string, paymentLabel: string}>>}
  */
 async function grabTransactionRows(contactId) {
-  I.amOnPage(`${BASE_URL}index.php?module=Student&action=CarteView&return_module=Student&return_action=CarteView`
-    + `&layout_def_key=carte&carte_view=2&record=${encodeURIComponent(contactId)}`);
+  I.amOnPage(keiriViewUrl(contactId));
   I.waitForElement(locate('body').withText('クラス追加/更新する'), TIMEOUTS.SCREEN);
   return I.executeScript((linkClass) => {
     const rows = [];
@@ -190,7 +190,7 @@ async function payFirstRow(salesGroupTransferPageShimamura, { salesno, contactId
  */
 async function changeTransactionPaymentType({ transactionId, paymentType }) {
   I.say(`【明細データ】入出金 ${transactionId} の支払方法を ${paymentType} に変更（入出金の編集画面）`);
-  I.amOnPage(`${BASE_URL}index.php?module=Transaction&action=DW_AN&record=${encodeURIComponent(transactionId)}`);
+  I.amOnPage(pageUrl({ module: 'Transaction', action: 'DW_AN', record: transactionId }));
   I.waitForElement('input[name="edit_button"]', TIMEOUTS.SCREEN);
   await editOpenRecordBySubmit(I, { fields: { payment_type: paymentType }, label: '入出金の編集' });
 }

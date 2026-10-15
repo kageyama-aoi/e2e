@@ -34,7 +34,7 @@
  * （画面側の入力制御を通らないので、検証は UI 経由の Scenario で行う）。
  */
 
-const { TIMEOUTS, BASE_URL, SELECTORS } = require('./constants');
+const { TIMEOUTS, BASE_URL, SELECTORS, pageUrl } = require('./constants');
 const { extractRecordId } = require('./utils');
 
 // 別の項目の onchange（AJAX）で作り直される選択肢を待つ上限
@@ -232,7 +232,7 @@ async function editOpenRecordBySubmit(I, { fields, label, editButton = 'input[na
  */
 async function submitDeleteForm(I, { module, recordId, label }) {
   I.say(`【削除】${label} (${module} record=${recordId})`);
-  I.amOnPage(`${BASE_URL}index.php?module=${module}&action=DetailView&record=${recordId}`);
+  I.amOnPage(pageUrl({ module, action: 'DetailView', record: recordId }));
   I.waitForElement('form[name="DetailView"]', TIMEOUTS.SCREEN);
 
   const result = await I.executeScript(async (id) => {

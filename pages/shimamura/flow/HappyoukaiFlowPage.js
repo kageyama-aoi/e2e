@@ -29,8 +29,8 @@ const path = require('path');
 
 const { logScreenUrl } = require('../../../support/utils');
 const { assertNoShimamuraError, buildTestName } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
-const { navigateToKouhosei } = require('./SyokaiFlowPage');
+const { TIMEOUTS, SELECTORS, BASE_URL, pageUrl } = require('../../../support/shimamura/constants');
+const { navigateToKouhosei } = require('../_common/KouhoseiSteps');
 const { setupLinkedCourseAndClass } = require('./CourseClassSetupFlowPage');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
@@ -186,7 +186,7 @@ async function createRosterFromStudents(I, classMemberPageShimamura, { lastName,
  */
 async function addRosterToClass(I, { prospectListRecordId, className }) {
   I.say(`【名簿→クラス追加】名簿(${prospectListRecordId}) を「${className}」へ`);
-  I.amOnPage(`${BASE_URL}index.php?action=DetailView&module=ProspectLists&record=${prospectListRecordId}`);
+  I.amOnPage(pageUrl({ module: 'ProspectLists', action: 'DetailView', record: prospectListRecordId }));
   I.waitForElement(S.prospectList.classSelectButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '名簿リスト詳細');
 

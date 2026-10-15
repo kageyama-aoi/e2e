@@ -59,7 +59,7 @@ shimamura には「フォームを1枚埋めて保存」という単純なパタ
 **雛形（実ファイルが正。スキルのコードは骨格のみ）**:
 - 標準サイズ: `pages/shimamura/flow/KoushiShareiFlowPage.js` + `tests/shimamura/flow/koushi_sharei_manual_test.js`
   （URL 直遷移 → 別タブポップアップ → フォーム入力 → `saveAndVerify` の一直線。まずこれを真似る）
-- 大規模・実行プラン付き: `pages/shimamura/flow/SyokaiFlowPage.js` + `tests/shimamura/flow/syokai_touroku_test.js`
+- 大規模・実行プラン付き: `pages/shimamura/_common/KeiriViewSteps.js`（経理ビュー B の実行プラン）+ `pages/shimamura/flow/SyokaiFlowPage.js`（順番だけ）+ `tests/shimamura/flow/syokai_touroku_test.js`
 - セットアップ→本体の2段構成（セッションファイル受け渡し）: `pages/shimamura/flow/HappyoukaiFlowPage.js` + `happyoukai_setup_test.js` / `happyoukai_touroku_test.js`
 
 ```
@@ -88,7 +88,8 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 | 目的 | 参照先 |
 |---|---|
 | フロー型 FlowPage の雛形（標準） | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
-| フロー型 FlowPage の雛形（実行プラン付き・大規模） | `pages/shimamura/flow/SyokaiFlowPage.js` |
+| フロー型 FlowPage の雛形（実行プラン付き・大規模） | `pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB`）＋ `pages/shimamura/flow/SyokaiFlowPage.js` |
+| 複数フローで使う受講生まわりの共通ステップ | `pages/shimamura/_common/KouhoseiSteps.js`（候補生→受講生）/ `KeiriViewSteps.js`（経理ビュー）/ `TaikaiSteps.js`（退会） |
 | フロー型テストの書き方 | `tests/shimamura/flow/koushi_sharei_manual_test.js` / `syokai_touroku_test.js` |
 | フォーム型テストの書き方（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` / `contact_register_test.js` |
 | 退会フローの書き方（既存関数の再利用） | `tests/shimamura/flow/taikai_test.js` |
@@ -107,10 +108,10 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 ### Step 1: 対象フローの確認
 
 0. **既存の類似フローが無いか確認する（必須・最優先）**
-   `pages/shimamura/flow/` と `tests/shimamura/flow/` を対象のキーワード（画面名・業務名の
+   `pages/shimamura/flow/`・`pages/shimamura/_common/` と `tests/shimamura/flow/` を対象のキーワード（画面名・業務名の
    日本語/ローマ字両方）で grep する。似た処理が既にあれば重複実装せず、既存関数を呼び出す
    か拡張する（引数を増やす等）。
-   例: 過去に「退会処理」を `taikai_test.js` に独自実装したまま `SyokaiFlowPage.js` の
+   例: 過去に「退会処理」を `taikai_test.js` に独自実装したまま `SyokaiFlowPage.js`（現 `_common/TaikaiSteps.js`）の
    `executeTaikai` と重複していた事例あり（#issue参照）。同じ業務語で複数箇所にロジックが
    分散していないか必ず確認すること。
 1. **フローを構成する画面を列挙する**（例: 受講生検索 → 詳細 → 経理ビュー A → クラス選択ポップアップ → 経理ビュー B）
@@ -201,8 +202,8 @@ module.exports = { run{FlowName}Flow };
 管理タブ経由でしか辿れない画面は `navigateToTargetScreen(I, classMemberPageShimamura)` として
 `classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名')` を使う（`SyokaiFlowPage.runRegistrationFlow` 参照）。
 
-受講生の「候補生検索」「経理ビュー（個人）」へのサイドバー遷移は `SyokaiFlowPage.js` の
-`navigateToStudentGroup(I, page)` / `navigateToKeirisyoriView(I, page)` を import して使う
+受講生の「候補生検索」「経理ビュー（個人）」へのサイドバー遷移は `_common/KouhoseiSteps.js` の
+`navigateToStudentGroup(I, page)`・`_common/KeiriViewSteps.js` の `navigateToKeirisyoriView(I, page)` を import して使う
 （`toggleGroupmenu` + `clickSubMenuLink` の 3 行を FlowPage 内で再実装しない）。
 前提データ作りで受講生の UUID が手元にあるときは `navigateToKeirisyoriView(I, page, { recordId })` として
 経理ビューを URL で開く（`SHIMAMURA_NAV=sidebar` でも URL。#244）。サイドバー経路そのものを確かめるテストでは recordId を渡さない。
@@ -216,7 +217,7 @@ module.exports = { run{FlowName}Flow };
 |---|---|---|
 | 登録画面を URL で開いて新規登録 | `submitEditViewForm(I, { path, fields, label })` | `CourseClassSetupFlowPage.createShimaCourseBySubmit()` |
 | 詳細画面から編集ボタンで開いて保存 | `editOpenRecordBySubmit(I, { fields, label })`（保存後の詳細を開いて返す） | `GessyaIkkatuFlowPage.editStudentPaymentBySubmit()` |
-| 経理ビュー B〜E（クラス適用〜確認完了）で受講生をクラスに登録 | `SyokaiFlowPage.enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })`（クラス UUID は名前から検索。UI 版の約 22s → 約 8s。#280） | `SalesGroupTransferFlowPage.enrollClass()` |
+| 経理ビュー B〜E（クラス適用〜確認完了）で受講生をクラスに登録 | `KeiriViewSteps.enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })`（クラス UUID は名前から検索。UI 版の約 22s → 約 8s。#280） | `SalesGroupTransferFlowPage.enrollClass()` |
 
 - `fields` のキーは画面の **name 属性**。select は value でも表示名でもよい。checkbox は `true`。**画面の上から順に書く**（AJAX 連動の `area_id` → `school_id` など）
 - **その画面自体を検証するテストでは使わない**（画面側の入力制御を通らないため。検証は UI 操作の Scenario で行う）
@@ -465,6 +466,7 @@ npx codeceptjs run ./tests/shimamura/flow/{prefix}_touroku_test.js --profile shi
 **既存ファイルへの追記**（新フローが少量の場合）:
 - 流れが 3 ステップ以内なら FlowPage は不要でテストファイル内に完結させる（パターン B）
 - 既存フロー（syokai）に関連する小さな追記なら `SyokaiFlowPage.js` へ追記することも可
+- **他のフローからも使う部品は FlowPage に置かず `pages/shimamura/_common/` の `*Steps.js` に置く**（FlowPage 同士で import し合わない。#300）
 
 ## Step 6: ドキュメント連動（/doc-sync）
 

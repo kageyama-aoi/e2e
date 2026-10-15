@@ -341,6 +341,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `sidebarLinkXPath(label)` | 同上 | 左サイドバーのリンクを表示テキスト完全一致で探す XPath（`withText` は部分一致で「料金一覧」が「料金一覧(共通)」にも当たる） |
 | `ensureAccountTransferSchedules(I, {claimMonth, …})` | `support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
 | `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
+| `pageUrl({ module, action, ...params })` | `support/shimamura/constants.js` | 画面の URL を組み立てる（値は符号化される）。`` `${BASE_URL}index.php?module=…` `` と手書きしない（#300） |
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
 | `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
 | `attachEvidenceScreenshot(I, fileBase, name)` | `support/utils.js` | スクショを読める名前（例: `①遷移直後`）で Allure に添付。設計書の無い画面で「遷移直後 → 入力後 → ボタン押下後」を残すときに使う |
@@ -351,13 +352,15 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - 一覧画面へは `sideMenus.js` に定義を足し、`IchiranPage._navigateViaMenu(menus.xxx)` 経由で遷移する（`SHIMAMURA_NAV=sidebar` でサイドバー経路、既定は directUrl）。
 - 管理タブ経由の遷移は `classMemberPageShimamura.navigateToAdminTab(I, tab, title)` + `clickSubMenuLink(link, title)`。
 - 受講生まわりのサイドバー遷移（`navigateToAdminTab` 後の `toggleGroupmenu` + `clickSubMenuLink`）は
-  `SyokaiFlowPage.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `navigateToKeirisyoriView(I, page)`（経理ビュー個人へ）に
-  集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。**FlowPage 内で 3 行の遷移を再実装しない。**
+  `pages/shimamura/_common/KouhoseiSteps.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `_common/KeiriViewSteps.js` の
+  `navigateToKeirisyoriView(I, page)`（経理ビュー個人へ）に集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。
+  **FlowPage 内で 3 行の遷移を再実装しない。** 複数フローで使う部品は FlowPage に置かず `_common/*Steps.js` に置く（FlowPage 同士で import し合わない #300）。
   受講生の UUID が分かっているデータ準備では `navigateToKeirisyoriView(I, page, { recordId })`（`openKeirisyoriScreenA` / `executeTaikai` も `recordId` を受け取る）で
   経理ビューを URL 直指定で開く（`SHIMAMURA_NAV=sidebar` でも URL。約8秒/行短縮 #244）。サイドバー経路の確認は recordId を渡さない初回登録テストに残す。
-  データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`SyokaiFlowPage.js` の
+  データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`_common/KeiriViewSteps.js` の
   `enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })` で画面操作なしに同じ通信を出せる（約22秒→約8秒 #280）。
-- URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。
+- URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。URL は手書きせず
+  `support/shimamura/constants.js` の `pageUrl({ module, action, record, ... })` で組み立てる（経理ビュー A は `KeiriViewSteps.keiriViewUrl(recordId)`。#300）。
 
 デシジョンテーブル駆動のテスト（#287）：
 - **定義ファイル1つが正**：条件・動作・判定（`decide`）・初期状態（fixtures）・テストケース・対象外の理由を `data/<product>/<画面>_dt.js` に書く（テスト入力の性質なので `data/`）。

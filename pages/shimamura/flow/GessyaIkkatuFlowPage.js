@@ -7,9 +7,10 @@ const { logScreenUrl } = require('../../../support/utils');
 const {
   assertNoShimamuraError, buildTestName,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL, pageUrl } = require('../../../support/shimamura/constants');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
-const { navigateToKouhosei, navigateToKeirisyoriView } = require('./SyokaiFlowPage');
+const { navigateToKouhosei } = require('../_common/KouhoseiSteps');
+const { navigateToKeirisyoriView } = require('../_common/KeiriViewSteps');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
@@ -102,7 +103,7 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName, expectedDiscount }) {
   const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
   I.say(`【運営管理費確認】record=${recordId} / ${targetYearMonth} / 想定勝者クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
-  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.amOnPage(pageUrl({ module: 'Student', action: 'DWCarteKeiri_AN', record: recordId }));
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   I.waitForElement('#tbl_carte', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '運営管理費確認_経理カルテビュー');
@@ -162,7 +163,7 @@ async function grabKanrihiNetByClassName(I) {
 async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetMonth, expectedWinnerClass, expectedLoserClass, expectedKanrihiBase }) {
   const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
   I.say(`【運営管理費tie-break確認】record=${recordId} / ${targetYearMonth} / 勝者想定=${expectedWinnerClass} / 敗者想定=${expectedLoserClass}`);
-  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.amOnPage(pageUrl({ module: 'Student', action: 'DWCarteKeiri_AN', record: recordId }));
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   I.waitForElement(SELECTORS.ERROR_CONTAINER, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '運営管理費tie-break確認_経理カルテビュー');
@@ -192,7 +193,7 @@ async function runMonthlyFeeCreation(I) {
   });
 
   I.say('【月謝一括作成】画面へ遷移');
-  I.amOnPage(BASE_URL + 'index.php?module=Fee&action=LWMonthlyFeeCreation_AN');
+  I.amOnPage(pageUrl({ module: 'Fee', action: 'LWMonthlyFeeCreation_AN' }));
   I.waitForElement('#create_next_monthly_fee', TIMEOUTS.SCREEN);
   await logScreenUrl(I, '月謝一括作成');
 
@@ -227,7 +228,7 @@ async function verifyMonthlyFees(I, classMemberPageShimamura) {
     I.say(`  対象: ${lastName} ${firstName}（${scenario}）record=${recordId}`);
 
     // 受講生詳細へ record UUID で直接遷移（同名受講生が複数いても混在しない）
-    I.amOnPage(`${BASE_URL}index.php?module=Student&action=DetailView&record=${recordId}`);
+    I.amOnPage(pageUrl({ module: 'Student', action: 'DetailView', record: recordId }));
     I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
 
     // 経理ビューへ遷移
@@ -269,7 +270,7 @@ function loadActiveSessionStudents() {
  * @returns {Promise<{total: number, feeNames: string[]}>}
  */
 async function grabMonthFeeSummary(I, recordId, targetYearMonth) {
-  I.amOnPage(`${BASE_URL}index.php?module=Student&action=DWCarteKeiri_AN&record=${recordId}`);
+  I.amOnPage(pageUrl({ module: 'Student', action: 'DWCarteKeiri_AN', record: recordId }));
   I.waitForElement('#tbl_carte', TIMEOUTS.SCREEN);
   const row = await I.executeScript((ym) => {
     const link = [...document.querySelectorAll('#tbl_carte a')].find((a) => a.innerText.trim() === ym);

@@ -37,16 +37,16 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 |---|--:|--:|--:|--:|---|
 | カレンダー | 28 | 1 | 1 | 27 | E（巡回のみ） |
 | コース | 9 | 5 | 3 | 4 | 対象 |
-| 受講生 | 17 | 11 | 11 | 6 | 対象 |
-| 講師 | 4 | 3 | 3 | 1 | 対象 |
+| 受講生 | 17 | 10 | 10 | 7 | 対象 |
+| 講師 | 4 | 2 | 2 | 2 | 対象 |
 | コンタクト | 8 | 4 | 4 | 4 | 対象 |
 | 部屋･備品 | 12 | 2 | 2 | 10 | 対象 |
 | Ｅメール | 26 | 0 | 0 | 26 | E（巡回のみ） |
-| 経理 | 39 | 16 | 17 | 22 | 対象 |
+| 経理 | 39 | 15 | 15 | 24 | 対象 |
 | レポート | 1 | 0 | 0 | 1 | E（巡回のみ） |
 | ヘルプ | 5 | 0 | 0 | 5 | E（巡回のみ） |
-| **合計（全体）** | **147** | **41** | **40** | **105** | |
-| **合計（E を除く対象）** | **89** | **41** | **40** | **47** | |
+| **合計（全体）** | **147** | **38** | **36** | **109** | |
+| **合計（E を除く対象）** | **89** | **38** | **36** | **51** | |
 
 ## アイコン別 マッピング表
 
@@ -113,7 +113,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 受講生別クラス一覧 | `Student/index?contact_status=0&courses_by_student=true` | `classesByStudent` | ✓ IchiranPage(studentScreens) | ✓ `classes_by_student_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | EDI会員データ取込 | `ImportCreditSummary/LWEDIMemberDataImport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 見込み客連携 | 見込み客連携 | `Student/EWCustomerInterface_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 見込み客連携 | 受講生詳細 | `Student/DetailView` |  | ✓ GessyaIkkatuFlowPage / StudentSaikenkaiFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` / `student_saikenkai_test.js` | △ 巡回 |
+| 見込み客連携 | 受講生詳細 | `Student/DetailView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 候補生 | 候補生検索 | `ContactsKouho/LW_AN` | `kouhoSearch` | ✓ IchiranPage(studentScreens) | ✓ `kouho_ichiran_test.js` | ✗ | △ 巡回 |
 | 問合せ | 問合せ登録 | `Student/EditView?contact_status=5` |  | ✓ ContactRegisterPage | ✗ | ✓ `contact_register_test.js` | △ 巡回 |
 | 問合せ | 問合せ一覧 | `Student/index?contact_status=5` | `contactList` | ✓ IchiranPage(studentScreens) | ✓ `contact_list_ichiran_test.js` | ✗ | △ 巡回 |
@@ -128,7 +128,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 
 | グループ | 画面名 | route | sideMenus キー | Page Object | 一覧テスト | フローテスト | その他テスト |
 |---|---|---|---|---|---|---|---|
-| ショートカット | 講師登録 | `Teacher/EditView` |  | ✓ TeacherKeiriFlowPage | ✗ | ✓ `teacher_keiri_setup_test.js` | △ 巡回 |
+| ショートカット | 講師登録 | `Teacher/EditView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 講師検索 | `Teacher/index?student_list=false` | `teacherList` | ✓ IchiranPage(teacherScreens) | ✓ `teacher_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 講師一覧 | `Teacher/index?student_list=false` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 講師別受講生一覧 | `Teacher/index?student_list=true` | `teacherStudentList` | ✓ IchiranPage(teacherScreens) | ✓ `teacher_student_list_ichiran_test.js` | ✗ | △ 巡回 |
@@ -203,7 +203,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | ショートカット | 講師給与 | `Keiri/index?teacher` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 未収金 | `Transaction/LWMishukin_AN` | `mishukinList` | ✓ IchiranPage(keiriScreens) | ✓ `mishukin_list_ichiran_test.js` | ✗ | △ 巡回 |
 | ショートカット | 売掛金 | `Transaction/LWUrikakekin_AN` | `urikakekin` | ✓ IchiranPage(keiriScreens) | ✓ `urikakekin_ichiran_test.js` | ✗ | △ 巡回 |
-| ショートカット | 月謝一括作成 | `Fee/LWMonthlyFeeCreation_AN` | `monthlyFeeCreation` | ✓ GessyaIkkatuFlowPage | ✗ | ✓ `gessya_ikkatu_test.js` | △ 巡回 |
+| ショートカット | 月謝一括作成 | `Fee/LWMonthlyFeeCreation_AN` | `monthlyFeeCreation` | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 一括入金処理 | `Transaction/MultiUpdateOverdueView` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | 源泉税率マスタ | `MasterKanri/DWGensenZeiritsuMaster_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | ショートカット | AFS会員番号検索 | `Keiri/LW_ACSMemberNumberSearch_AN` | `afsMemberSearch` | ✓ IchiranPage(keiriScreens) | ✓ `afs_member_ichiran_test.js` | ✗ | △ 巡回 |
@@ -224,7 +224,7 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 | 入出金 | 返金一覧 | `Transaction/LWRefundList_AN` | `refundList` | ✓ IchiranPage(keiriScreens) | ✓ `refund_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 入出金 | クレジット請求データ履歴 | `CreditActionsHistory/LW_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 債権買取 | 債権買取請求データ履歴 | `SmbcActionsHistory/LWBillingDataHistory_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
-| 債権買取 | 債権買取状態読込 | `SmbcStateSummary/EWSMBCPurchaseStatusImport_AN` |  | ✗ | ✗ | ✓ `smbc_state_import_test.js` | △ 巡回 |
+| 債権買取 | 債権買取状態読込 | `SmbcStateSummary/EWSMBCPurchaseStatusImport_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 債権買取 | 債権買取状態一覧 | `SmbcContacts/LW_AN` | `smbcContactsList` | ✓ IchiranPage(keiriScreens) | ✓ `smbc_contacts_list_ichiran_test.js` | ✗ | △ 巡回 |
 | 講師謝礼 | 講師謝礼計算 | `ShareiNichibetsu/LWKoushiShareiKeisan_AN` |  | ✗ | ✗ | ✗ | △ 巡回 |
 | 講師謝礼 | 講師謝礼追加 | `ShareiNichibetsu/EW_KoushiShareiTsuika_AN` |  | ✓ KoushiShareiFlowPage | ✗ | ✓ `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | △ 巡回 |

@@ -10,7 +10,7 @@
  * だけ）ため、毎回無条件に登録して問題ない。
  */
 
-const { TIMEOUTS, BASE_URL } = require('./constants');
+const { TIMEOUTS, pageUrl } = require('./constants');
 
 // testgcp環境に実在する収納業者のうち判明しているもの。
 // 001はテストデータの収納業者、143はtestgcp環境に実在する他収納業者（未登録だとバッチ全体が止まる）。
@@ -22,7 +22,7 @@ const KNOWN_STORAGE_VENDORS = [
 async function ensureAccountTransferSchedules(I, { claimMonth, debitDate, depositDate }) {
   for (const vendor of KNOWN_STORAGE_VENDORS) {
     I.say(`【口座振替スケジュール確保】${vendor.label} / ${claimMonth}`);
-    I.amOnPage(`${BASE_URL}index.php?module=ShimaSchedule&action=LWAccountTransferScheduleRegistration_AN`);
+    I.amOnPage(pageUrl({ module: 'ShimaSchedule', action: 'LWAccountTransferScheduleRegistration_AN' }));
     I.waitForElement('#shima_storage_id', TIMEOUTS.SCREEN);
     I.selectOption('#shima_storage_id', vendor.shimaStorageId);
     I.fillField('#claim_month', claimMonth);

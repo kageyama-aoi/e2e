@@ -59,6 +59,9 @@ pages/
 │   │   └── ichiran/            # 一覧画面の定義（アイコン別: student / course / teacher / contacts / keiri）
 │   └── _common/                # 共通ユーティリティ・複数画面で共有する Page Object
 │       ├── ClassMemberPage.js  # クラス受講生関連の操作（管理タブ遷移・検索・退会処理など）
+│       ├── KouhoseiSteps.js    # 候補生 → 受講生への昇格（複数フローで共有）
+│       ├── KeiriViewSteps.js   # 経理ビュー（個人）の遷移・A/B/E 操作・フォーム送信版
+│       ├── TaikaiSteps.js      # 退会処理
 │       ├── MenuPatrolPage.js   # 全メニュー巡回（menuSnapshot を元にサイドバーから開く）
 │       ├── menuSnapshot/       # 実機採取したメニュー構成（testgcp.json）
 │       └── sideMenus.js        # サイドメニュー定義

@@ -30,6 +30,20 @@ const TIMEOUTS = {
  */
 const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
 
+/**
+ * 画面の URL（`<BASE_URL>index.php?module=…&action=…&…`）を組み立てる。
+ * 各ファイルで `${BASE_URL}index.php?module=X&action=Y&record=${id}` と手書きしない（#300）。
+ * sideMenus.js のメニュー定義や画面から読んだ href のように、すでに相対パスとして持っている値は
+ * これまで通り `BASE_URL + path` でつなぐ。
+ * 値は URLSearchParams で符号化し、引数に書いた順に並ぶ。
+ * @param {Object<string, (string|number)>} params module・action は必須。ほかは画面ごとのパラメータ
+ * @returns {string}
+ * @example pageUrl({ module: 'Student', action: 'DetailView', record: id })
+ */
+function pageUrl({ module, action, ...params }) {
+  return `${BASE_URL}index.php?${new URLSearchParams({ module, action, ...params })}`;
+}
+
 const URLS = {
   CONTACT_REGISTER: 'index.php?module=Student&action=EditView'
     + '&contact_status=5&return_module=Student&return_action=DetailView&from_mainmenu=true',
@@ -48,4 +62,4 @@ const SELECTORS = {
   RESULT_LINK: '.listViewTdLinkS1',
 };
 
-module.exports = { TIMEOUTS, BASE_URL, URLS, SELECTORS };
+module.exports = { TIMEOUTS, BASE_URL, URLS, SELECTORS, pageUrl };
