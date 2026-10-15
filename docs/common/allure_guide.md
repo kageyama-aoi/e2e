@@ -195,7 +195,7 @@ npm run allure:latest
 テストを実行するたびに古い結果が溜まっていくため、
 **Claude Code のフック** と **ランチャー起動時の処理** の2か所で、同じ規則
 （10日以上古い実行結果を zip せず削除・各プロファイル最新3件は残す）で自動整理しています。
-判定は `scripts/allure/archive_allure_results.py` の `cleanup_allure_results()` を共用。
+判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用し、`allure-results/` と `output/` の実行フォルダをまとめて片付ける（#321）。
 
 #### フロー
 
@@ -206,9 +206,9 @@ PostToolUse フックが起動 (scripts/hooks/archive_allure.py)
   ↓
 コマンド文字列に "codeceptjs run" が含まれているかチェック
   ↓
-含まれていれば cleanup_allure_results() を直接呼ぶ（npm は経由しない）
+含まれていれば run_dir_cleanup.cleanup_all() を直接呼ぶ（npm は経由しない）
   ↓
-10日以上古い allure-results を削除（各プロファイル最新3件は残す）
+10日以上古い allure-results/ と output/ の実行フォルダを削除（各プロファイル最新3件は残す）
 ```
 
 > 以前は `npm run allure:archive` を subprocess で呼んでいたが、Windows では npm の実体が `npm.cmd` のため
@@ -226,7 +226,7 @@ TEST_PATTERNS = [r'codeceptjs\s+run', r'npx\s+codeceptjs', ...]
 def is_test_command(command):
     return any(re.search(p, command) for p in TEST_PATTERNS)
 
-# → テストコマンドを検知したら cleanup_allure_results(10, 3, archive=False) を呼ぶ
+# → テストコマンドを検知したら run_dir_cleanup.cleanup_all()（10日・最新3件・zip しない）を呼ぶ
 ```
 
 #### アーカイブ本体 (`scripts/allure/archive_allure_results.py`)
@@ -243,9 +243,10 @@ python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロフ�
 
 #### ランチャー起動時の自動削除
 
-`run/run_gui.py` は起動時に、同じ判定（`cleanup_allure_results()`）で **10日以上古い実行結果を zip せずに削除**する。
+`run/run_gui.py` は起動時に、同じ判定（`run_dir_cleanup.cleanup_all()`）で `allure-results/` と `output/` の **10日以上古い実行フォルダを zip せずに削除**する。
 各プロファイルの最新3件は日数に関係なく残すので、Open Allure で開くものが無くなることはない。
-日数・件数は `run_gui.py` の `ALLURE_CLEANUP_DAYS` / `ALLURE_KEEP_LATEST` で変える。
+日数・件数は `run_gui.py` の `RUN_DIR_CLEANUP_DAYS` / `RUN_DIR_KEEP_LATEST`（フックは `run_dir_cleanup.py` の `DEFAULT_DAYS` / `DEFAULT_KEEP_LATEST`）で変える。
+手動で確認・実行するときは `python scripts/cleanup/run_dir_cleanup.py --dry-run`。
 
 ---
 
@@ -311,7 +312,7 @@ Open Allure ボタン（GUI）
 
 Claude Code フック（自動）★カスタム
   └── scripts/hooks/archive_allure.py
-        └── scripts/allure/archive_allure_results.py の cleanup_allure_results()
+        └── scripts/cleanup/run_dir_cleanup.py の cleanup_all()（allure-results/ と output/）
               └── 10日以上古い結果を削除（各プロファイル最新3件は残す）
 ```
 

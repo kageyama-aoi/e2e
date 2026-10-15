@@ -305,7 +305,7 @@ Bash ツール実行
   ↓
 command に "codeceptjs run" / "npm test" 系が含まれるか判定
   ↓
-含まれる → cleanup_allure_results() を直接呼び、10日以上古い結果を削除（各プロファイル最新3件は残す）
+含まれる → run_dir_cleanup.cleanup_all() を直接呼び、allure-results/ と output/ の10日以上古い実行フォルダを削除（各プロファイル最新3件は残す）
 含まれない → 何もしない
 ```
 
