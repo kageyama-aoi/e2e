@@ -6,7 +6,7 @@ const {
   verifyValidationErrors, assertNoShimamuraError, fillTextFieldsBySelector, waitForSaveResult, toggleGroupmenu,
   extractRecordId,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, BASE_URL, pageUrl } = require('../../../support/shimamura/constants');
 
 const NAV = {
   directUrl: 'index.php?module=ShareiNichibetsu&action=EW_KoushiShareiTsuika_AN',
@@ -210,7 +210,7 @@ async function verifyImportMastersExist(I, filePath) {
   I.say(`【前提確認】講師 ${teacherId}（${teacherName}）・店舗 ${schoolId} が実在するか`);
 
   // 詳細画面の見出しは、実在すれば「講師詳細: <氏名>」、無ければ「講師詳細:」になる
-  I.amOnPage(`${BASE_URL}index.php?module=Teacher&action=DetailView&record=${teacherId}`);
+  I.amOnPage(pageUrl({ module: 'Teacher', action: 'DetailView', record: teacherId }));
   const teacherTitle = await grabModuleTitle(I);
   const actualName = teacherTitle.replace(/^講師詳細:\s*/, '');
   if (!actualName) {
@@ -221,7 +221,7 @@ async function verifyImportMastersExist(I, filePath) {
   }
 
   // 店舗は、実在すれば「店舗詳細: <エリア>・<店舗名>」、無ければ「店舗詳細: ・」になる
-  I.amOnPage(`${BASE_URL}index.php?module=School&action=DetailView&record=${schoolId}`);
+  I.amOnPage(pageUrl({ module: 'School', action: 'DetailView', record: schoolId }));
   const schoolTitle = await grabModuleTitle(I);
   if (/^店舗詳細:\s*・?$/.test(schoolTitle)) {
     throw new Error(`【前提確認】取込CSVの店舗が testgcp にありません: 店舗ID ${schoolId}（${filePath}）`);

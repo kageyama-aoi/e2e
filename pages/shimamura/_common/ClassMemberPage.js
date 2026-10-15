@@ -2,7 +2,7 @@ const { I } = inject();
 const { attachScreenshotFromOutput, parseEnvBoolean, logScreenUrl } = require('../../../support/utils');
 const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { toggleGroupmenu } = require('../../../support/shimamura/utils');
-const { resolveUnfinishedKeiriDataIfPresent } = require('../flow/SyokaiFlowPage');
+const { resolveUnfinishedKeiriDataIfPresent } = require('./KeiriViewSteps');
 
 module.exports = {
   /**

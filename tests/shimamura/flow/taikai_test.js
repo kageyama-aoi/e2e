@@ -24,7 +24,7 @@
 const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
-const { fillTaikaiFormAndSubmit } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const { fillTaikaiFormAndSubmit } = require('../../../pages/shimamura/_common/TaikaiSteps');
 
 Feature('退会処理 (@dev)');
 

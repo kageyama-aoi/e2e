@@ -1,7 +1,7 @@
 'use strict';
 
 const { I } = inject();
-const { TIMEOUTS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, pageUrl } = require('../../../support/shimamura/constants');
 
 /**
  * 料金明細 編集画面（入金入力モード）
@@ -67,10 +67,11 @@ module.exports = {
         });
       });
     }
-    I.amOnPage(BASE_URL + 'index.php?module=SalesGroup&action=EditView'
-      + `&record=${encodeURIComponent(salesno)}&return_module=SalesGroup&return_action=DetailView`
-      + `&transfer=1&return_id=${encodeURIComponent(salesno)}`
-      + `&salesno_contactid=${encodeURIComponent(contactId)}&isDuplicate=0&submittype=`);
+    I.amOnPage(pageUrl({
+      module: 'SalesGroup', action: 'EditView',
+      record: salesno, return_module: 'SalesGroup', return_action: 'DetailView',
+      transfer: '1', return_id: salesno, salesno_contactid: contactId, isDuplicate: '0', submittype: '',
+    }));
     I.waitForElement(this.locators.divideTransferButton, TIMEOUTS.ELEMENT);
     if (simulateShimebi) {
       await I.usePlaywrightTo('締日の模擬を解除', async ({ page }) => { await page.unroute(/module=SalesGroup&action=EditView/); });

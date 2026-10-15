@@ -35,7 +35,7 @@ shimamura のポップアップはすべて**別タブ**で開く。選択後は
 CodeceptJS は閉じたタブを参照し続けるため、**`I.switchToNextTab()` で明示的に元タブへ戻る必要がある。**
 戻らないと次のステップで `Target page, context or browser has been closed` エラーが発生する。
 
-実装例: `KoushiShareiFlowPage.selectTeacher`（最初の結果を選ぶ）/ `SyokaiFlowPage.selectClassInPopup`（完全一致行を選ぶ）
+実装例: `KoushiShareiFlowPage.selectTeacher`（最初の結果を選ぶ）/ `KeiriViewSteps.selectClassInPopup`（完全一致行を選ぶ）
 
 ```javascript
 // KoushiShareiFlowPage.js より
@@ -51,7 +51,7 @@ async function selectTeacher(I) {
 }
 ```
 
-タブが開くまでの待ちが必要な画面は `I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();`（`SyokaiFlowPage.fillClassSearchForm`）。
+タブが開くまでの待ちが必要な画面は `I.retry({ retries: 5, minTimeout: 200 }).switchToNextTab();`（`KeiriViewSteps.fillClassSearchForm`）。
 クラス名検索は前方一致で類似クラスが混入するため、`selectClassInPopup` は完全一致の XPath で行を選んでいる。
 
 > **なぜ `switchToNextTab()` で戻れるか**:

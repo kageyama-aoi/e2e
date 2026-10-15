@@ -34,8 +34,8 @@ const {
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
   confirmKeirisyoriScreenE,
-  executeTaikai,
-} = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+} = require('../../../pages/shimamura/_common/KeiriViewSteps');
+const { executeTaikai } = require('../../../pages/shimamura/_common/TaikaiSteps');
 
 function buildClassInput(I, row, suffix = '') {
   return {

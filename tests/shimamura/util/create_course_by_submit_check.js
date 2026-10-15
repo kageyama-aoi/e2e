@@ -17,7 +17,7 @@
  */
 
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { BASE_URL } = require('../../../support/shimamura/constants');
+const { pageUrl } = require('../../../support/shimamura/constants');
 const {
   createShimaCourse,
   createShimaCourseBySubmit,
@@ -54,7 +54,7 @@ Scenario('コースを UI 版とフォーム送信版で1件ずつ作り、所�
     ['UI版', uiRecordId, `E2E_UI版_${stamp}`],
     ['フォーム送信版', submitRecordId, `E2E_送信版_${stamp}`],
   ]) {
-    I.amOnPage(`${BASE_URL}index.php?module=ShimaCourse&action=DetailView&record=${recordId}`);
+    I.amOnPage(pageUrl({ module: 'ShimaCourse', action: 'DetailView', record: recordId }));
     I.see(name);
     // 「1200」や「スクール」を画面のどこかで探すと、コース名の日時（例: 12時00分台）などに
     // 当たって素通りしうるので、見出しの直後の値を読んで比べる。

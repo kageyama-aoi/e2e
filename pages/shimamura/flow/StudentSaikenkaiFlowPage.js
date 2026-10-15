@@ -4,7 +4,7 @@ const { logScreenUrl } = require('../../../support/utils');
 const {
   verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
 
 // 保存完了の動的検知（エラーが出るか edit_button が現れた時点で次へ進む）は
 // support/shimamura/utils.js の waitForSaveResult（既定: edit_button 出現）を使う
@@ -58,9 +58,10 @@ async function searchAndNavigateToDetailView(I, ichiranPageShimamura, idnumber) 
   if (!recordId) throw new Error(`record ID が URL から取得できませんでした: ${url}`);
   I.say(`【受講生詳細】DetailView へ切替 (record=${recordId})`);
   // detailview=1 が必須: これがないと smbc_button が表示されない
-  I.amOnPage(BASE_URL
-    + `index.php?detailview=1&module=Student&action=DetailView`
-    + `&return_module=Student&return_action=DetailView&record=${recordId}`);
+  I.amOnPage(pageUrl({
+    module: 'Student', action: 'DetailView', detailview: '1',
+    return_module: 'Student', return_action: 'DetailView', record: recordId,
+  }));
   I.waitForElement(S.detail.editButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '受講生詳細(DetailView)');
 }

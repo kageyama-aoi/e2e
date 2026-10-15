@@ -1,7 +1,12 @@
 # SyokaiFlowPage.js 学習ガイド
 **対象**: IT新人 / E2Eテスト初学者  
 **目標**: `SyokaiFlowPage.js` を自分で読み書きできるようになる  
-**対応コード**: `pages/shimamura/flow/SyokaiFlowPage.js`（2026-09 時点。関数名が変わったらこのガイドも直す — AGENTS.md ドキュメント連動ルール カテゴリF）
+**対応コード**: `pages/shimamura/flow/SyokaiFlowPage.js` と、そこから使う `pages/shimamura/_common/KouhoseiSteps.js`・`KeiriViewSteps.js`・`TaikaiSteps.js`（2026-10 時点。関数名が変わったらこのガイドも直す — AGENTS.md ドキュメント連動ルール カテゴリF）
+
+> **2026-10 の変更（#300）**: 以前は初回登録の部品をすべて `SyokaiFlowPage.js` 1ファイルに書いていました。
+> 月謝一括作成準備・発表会準備・料金明細準備・退会テストも同じ部品を使うようになったため、
+> 部品は `_common/` の3ファイルに分け、`SyokaiFlowPage.js` には「順番」（`runRegistrationFlow`）だけを残しています。
+> このガイドの関数の説明はそのまま使えます。どのファイルにあるかは「Level 3」の表を見てください。
 
 ---
 
@@ -14,8 +19,10 @@
 
 ```
 syokai_touroku_test.js         ← 「何をテストするか」（司令塔）
-  └─ SyokaiFlowPage.js         ← 「どう操作するか」（現場作業員）
-       ├─ syokai_helpers.js    ← 「どのステップを実行するか」を計算する（計算係）
+  └─ SyokaiFlowPage.js         ← 「どの順番で操作するか」（現場監督）
+       ├─ _common/KouhoseiSteps.js  ← 候補生 → 受講生への昇格（現場作業員）
+       ├─ _common/KeiriViewSteps.js ← 経理ビュー A/B/E の操作（現場作業員）
+       │    └─ syokai_helpers.js    ← 「どのステップを実行するか」を計算する（計算係）
        └─ support/shimamura/utils.js ← 入力・検証の共通道具（道具箱）
 ```
 
@@ -72,16 +79,16 @@ async function goodExample() {
 ### 1-3. `module.exports` — 外に公開する
 
 ```js
+// pages/shimamura/_common/KeiriViewSteps.js の末尾
 module.exports = {
-  navigateToKouhosei,
-  KEIRI_SCREEN_B_LOCATORS,
-  runRegistrationFlow,
+  KEIRI_SUBMENU,
+  keiriViewUrl,
+  navigateToKeirisyoriView,
   openKeirisyoriScreenA,
   fillKeirisyoriScreenB,
   confirmKeirisyoriScreenE,
-  executeTaikai,
-  fillTaikaiFormAndSubmit,
-  resolveUnfinishedKeiriDataIfPresent
+  enrollClassBySubmit,
+  resolveUnfinishedKeiriDataIfPresent,
 };
 ```
 
@@ -95,6 +102,7 @@ module.exports = {
 
 `openKeirisyoriScreenA` などが公開されているのは、月謝一括作成のセットアップ（`gessya_ikkatu_setup_test.js`）が
 「候補生検索は自前で行い、経理ビューの処理だけ借りる」形で再利用しているからです。
+複数のフローから借りられる部品なので、特定のフロー（`SyokaiFlowPage.js`）ではなく `_common/` に置いています。
 
 ---
 
@@ -153,7 +161,14 @@ I.waitForElement(SELECTORS.RESULT_LINK, TIMEOUTS.RESULT);     // 10秒
 
 ## Level 3：SyokaiFlowPage.js の構造を読む
 
-ファイルは上から順に「定数 → 小さな部品 → 画面ごとの関数 → まとめ関数」の順で並んでいます。
+初回登録で使う関数は、次の4ファイルに分かれています。各ファイルの中は上から「定数 → 小さな部品 → 画面ごとの関数」の順です。
+
+| ファイル | 入っている関数（下の図の分類） |
+|---|---|
+| `_common/KouhoseiSteps.js` | `buildDuplicateCheckSQL`・`navigateToStudentGroup`・`navigateToKouhosei` |
+| `_common/KeiriViewSteps.js` | 経理ビューの定数・部品・画面関数・警告解消（`enrollClassBySubmit` もここ） |
+| `_common/TaikaiSteps.js` | `fillTaikaiFormAndSubmit`・`executeTaikai` |
+| `flow/SyokaiFlowPage.js` | `runRegistrationFlow`（まとめ）だけ |
 
 ```
 [定数]      KEIRI_SCREEN_B_LOCATORS      ← 経理ビューBのセレクタ一覧
@@ -174,7 +189,7 @@ I.waitForElement(SELECTORS.RESULT_LINK, TIMEOUTS.RESULT);     // 10秒
 [退会]      fillTaikaiFormAndSubmit      ← 退会処理画面のフォーム入力〜更新
             executeTaikai                ← 受講生詳細 → 個人情報1 → 退会処理 まで含む
 [まとめ]    runRegistrationFlow          ← 候補生検索〜経理ビューBまでを順番に呼ぶ
-[公開]      module.exports               ← 外から使えるものを宣言
+[公開]      module.exports               ← 外から使えるものを宣言（各ファイルの末尾）
 ```
 
 ---
@@ -408,8 +423,11 @@ e2e/
 │   ├── syokai_touroku_test.js    ← 「何をテストするか」
 │   └── taikai_test.js            ← 退会だけを行うテスト（fillTaikaiFormAndSubmit を再利用）
 ├── pages/shimamura/flow/
-│   └── SyokaiFlowPage.js         ← 「どう画面を操作するか」（このガイドの対象）
+│   └── SyokaiFlowPage.js         ← 「どの順番で操作するか」（このガイドの対象）
 ├── pages/shimamura/_common/
+│   ├── KouhoseiSteps.js          ← 候補生 → 受講生への昇格
+│   ├── KeiriViewSteps.js         ← 経理ビュー A/B/E の操作
+│   ├── TaikaiSteps.js            ← 退会処理
 │   └── ClassMemberPage.js        ← 管理タブ・サブメニューの共通ナビ
 ├── support/shimamura/
 │   ├── syokai_helpers.js         ← 「どのステップを実行するか」を計算する

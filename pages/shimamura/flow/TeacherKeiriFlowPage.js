@@ -4,7 +4,7 @@ const { logScreenUrl } = require('../../../support/utils');
 const {
   assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult,
 } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
 
 const S = {
   list:       { search: 'input[name="search"]', firstLink: `a${SELECTORS.RESULT_LINK}` },
@@ -16,7 +16,7 @@ const S = {
 // 講師コードで検索して record ID を返す（存在しない場合は null）
 async function findTeacherRecordId(I, idnumber) {
   I.say(`【講師検索】講師コード ${idnumber} で検索`);
-  I.amOnPage(BASE_URL + 'index.php?module=Teacher&action=LW_AN');
+  I.amOnPage(pageUrl({ module: 'Teacher', action: 'LW_AN' }));
   I.waitForElement(S.list.search, TIMEOUTS.SCREEN);
   fillTextFieldsByName(I, { idnumber });
   I.click(S.list.search);
@@ -38,9 +38,7 @@ async function findTeacherRecordId(I, idnumber) {
 // 講師を新規登録して record ID を返す
 async function createTeacher(I, input) {
   I.say(`【講師新規登録】${input.last_name} ${input.first_name}（講師コード: ${input.idnumber}）`);
-  I.amOnPage(
-    BASE_URL + 'index.php?module=Teacher&action=EditView&return_module=Teacher&return_action=DW_AN'
-  );
+  I.amOnPage(pageUrl({ module: 'Teacher', action: 'EditView', return_module: 'Teacher', return_action: 'DW_AN' }));
   I.waitForElement(S.basic.saveButton, TIMEOUTS.SCREEN);
 
   fillTextFieldsByName(I, {
@@ -68,11 +66,10 @@ async function createTeacher(I, input) {
 // 経理タブ（EW_AccountingTab_AN）を設定して保存する
 async function setAccountingTab(I, recordId, input) {
   I.say('【経理タブ】編集画面へ遷移');
-  I.amOnPage(
-    BASE_URL
-    + `index.php?module=Teacher&action=EW_AccountingTab_AN`
-    + `&record=${recordId}&return_module=Teacher&return_action=DW_AN&return_id=${recordId}`
-  );
+  I.amOnPage(pageUrl({
+    module: 'Teacher', action: 'EW_AccountingTab_AN',
+    record: recordId, return_module: 'Teacher', return_action: 'DW_AN', return_id: recordId,
+  }));
   I.waitForElement(S.accounting.saveButton, TIMEOUTS.SCREEN);
   await logScreenUrl(I, '経理タブ編集');
 

@@ -5,7 +5,7 @@
 > - **生成方法**: `/flow-explain` スキル
 > - **参照した3点セット**:
 >   - テスト本体: `tests/shimamura/flow/gessya_ikkatu_test.js` / `gessya_ikkatu_setup_test.js`
->   - FlowPage: `pages/shimamura/flow/GessyaIkkatuFlowPage.js`（＋ `SyokaiFlowPage.js`）
+>   - FlowPage: `pages/shimamura/flow/GessyaIkkatuFlowPage.js`（＋ `_common/KouhoseiSteps.js`・`KeiriViewSteps.js`・`TaikaiSteps.js`）
 >   - CSV: `data/shimamura/gessya_ikkatu_setup_data.csv`
 
 ---

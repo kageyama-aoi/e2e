@@ -18,7 +18,7 @@
  */
 
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { BASE_URL } = require('../../../support/shimamura/constants');
+const { pageUrl } = require('../../../support/shimamura/constants');
 const {
   createClass,
   createClassBySubmit,
@@ -62,7 +62,7 @@ Scenario('クラスを UI 版とフォーム送信版で1件ずつ作り、所�
   const FIELDS = ['エリア・店舗', 'コースカテゴリー', 'レッスン曜日', '開始時間', '終了時間'];
   const LABELS = FIELDS.concat(['略称', '定員', 'スケジュール延長']); // 値の終わりを見つけるための次の見出し
   const readDetail = async (recordId) => {
-    I.amOnPage(`${BASE_URL}index.php?module=Course&action=DetailView&record=${recordId}`);
+    I.amOnPage(pageUrl({ module: 'Course', action: 'DetailView', record: recordId }));
     const text = (await I.grabTextFrom('body')).replace(/\s+/g, ' ');
     return Object.fromEntries(FIELDS.map((f) => {
       const m = text.match(new RegExp(`${f}\\s*:\\s*(.*?)\\s*(?:${LABELS.join('|')})\\s*:`));

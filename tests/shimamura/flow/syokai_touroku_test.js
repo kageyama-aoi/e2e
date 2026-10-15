@@ -27,7 +27,9 @@ const {
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
-const { runRegistrationFlow, confirmKeirisyoriScreenE, executeTaikai } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const { runRegistrationFlow } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
+const { confirmKeirisyoriScreenE } = require('../../../pages/shimamura/_common/KeiriViewSteps');
+const { executeTaikai } = require('../../../pages/shimamura/_common/TaikaiSteps');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data', 'shimamura'), (row) => {
   return row.className || row.class_name01 || row.lastName || row.last_name || 'データ行';
