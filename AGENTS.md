@@ -318,7 +318,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 種類 | 雛形（テスト） | 雛形（Page Object / FlowPage） |
 |---|---|---|
 | 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/ichiran/keiriScreens.js`（画面定義。`IchiranPage.js` が結合）／メニュー定義は `pages/shimamura/_common/sideMenus.js` |
-| 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | — |
+| 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | `pages/shimamura/screens/SmbcStateImportPage.js`（画面操作は screens/ の PO に置き、テストは手順とデータ準備だけ #302） |
 | 複数画面フロー | `tests/shimamura/flow/koushi_sharei_manual_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
 | セットアップ→本体の2段構成（セッションファイル受け渡し） | `tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `pages/shimamura/flow/HappyoukaiFlowPage.js` |
 
@@ -336,6 +336,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `clickCheckboxByLabelOrName` / `verifyCheckboxCheckedByLabelOrName` | 同上 | 特殊 DOM のチェックボックス操作 |
 | `extractRecordId(url)` | 同上 | URL / href から `record=` の ID を取り出す（保存後の詳細画面 URL や一覧リンクから） |
 | `waitForSaveResult(I, {successSelector, successMode})` | 同上 | 保存後「エラー表示 or 成功状態」まで動的に待つ。`appears`（既定: `edit_button` 出現）/ `disappears`（`save_button` 消失）/ `hasText`（完了メッセージ） |
+| `acceptConfirmDialogs(I)` | 同上 | 画面の確認ダイアログ（`window.confirm`）をこれ以降 OK で返す。`I.acceptPopup()` は出ているダイアログにしか効かないので、押す前に呼ぶ（画面を読み込み直すと元に戻る #302） |
 | `clickAndWaitForReload(I, locator, {timeout})` | 同上 | クリックして画面が読み込み直されるまで待つ。押す前から画面にある要素（body・ファイル選択欄等）を待つと再描画前に即成立し、押す前の画面で判定してしまう（#243） |
 | `buildTestName(prefix, row)` | 同上 | セットアップ系で受講生名を「prefix+MMDD / testNo+scenario」に組み立てる |
 | `sidebarLinkXPath(label)` | 同上 | 左サイドバーのリンクを表示テキスト完全一致で探す XPath（`withText` は部分一致で「料金一覧」が「料金一覧(共通)」にも当たる） |
@@ -351,7 +352,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 ナビゲーション：
 - 一覧画面へは `sideMenus.js` に定義を足し、`IchiranPage._navigateViaMenu(menus.xxx)` 経由で遷移する（`SHIMAMURA_NAV=sidebar` でサイドバー経路、既定は directUrl）。
-- 管理タブ経由の遷移は `classMemberPageShimamura.navigateToAdminTab(I, tab, title)` + `clickSubMenuLink(link, title)`。
+- 管理タブ経由の遷移は `classMemberPageShimamura.navigateToAdminTab(tab, title)` + `clickSubMenuLink(link, title)`。
 - 受講生まわりのサイドバー遷移（`navigateToAdminTab` 後の `toggleGroupmenu` + `clickSubMenuLink`）は
   `pages/shimamura/_common/KouhoseiSteps.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `_common/KeiriViewSteps.js` の
   `navigateToKeirisyoriView(I, page)`（経理ビュー個人へ）に集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。

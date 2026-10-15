@@ -77,9 +77,11 @@ runXxxFlow()（オーケストレーター。例: runKoushiShareiManualFlow）
 ### パターン B: フォーム入力型（簡易）
 
 URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 のような
-**1 画面で完結**するシンプルなフロー。FlowPage を作らずテストファイル内に完結させる。
+**1 画面で完結**するシンプルなフロー。FlowPage は作らない。
+画面操作（遷移・入力・ボタン・結果の読み取り）は `pages/shimamura/screens/<画面>Page.js` の Page Object に置き、
+テストファイルには手順とテストデータの準備だけを書く（2026-10 #302 で変更。以前はテストファイルに直書きしていた）。
 
-雛形: `tests/shimamura/flow/smbc_state_import_test.js`（ファイル取込）/ `tests/shimamura/flow/contact_register_test.js`（フォーム登録）
+雛形: `SmbcStateImportPage.js` + `smbc_state_import_test.js`（ファイル取込）/ `ContactRegisterPage.js` + `contact_register_test.js`（フォーム登録）
 
 ---
 
@@ -91,7 +93,7 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 | フロー型 FlowPage の雛形（実行プラン付き・大規模） | `pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB`）＋ `pages/shimamura/flow/SyokaiFlowPage.js` |
 | 複数フローで使う受講生まわりの共通ステップ | `pages/shimamura/_common/KouhoseiSteps.js`（候補生→受講生）/ `KeiriViewSteps.js`（経理ビュー）/ `TaikaiSteps.js`（退会） |
 | フロー型テストの書き方 | `tests/shimamura/flow/koushi_sharei_manual_test.js` / `syokai_touroku_test.js` |
-| フォーム型テストの書き方（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` / `contact_register_test.js` |
+| フォーム型テストの書き方（FlowPage なし・画面操作は screens/ の PO） | `pages/shimamura/screens/SmbcStateImportPage.js` + `tests/shimamura/flow/smbc_state_import_test.js` / `ContactRegisterPage.js` + `contact_register_test.js` |
 | 退会フローの書き方（既存関数の再利用） | `tests/shimamura/flow/taikai_test.js` |
 | コース・クラスを新規作成して前提を作る | `pages/shimamura/flow/CourseClassSetupFlowPage.js` |
 | ナビゲーションメソッド | `pages/shimamura/_common/ClassMemberPage.js`（管理タブ）/ `pages/shimamura/screens/IchiranPage.js`（一覧画面経由） |
@@ -200,7 +202,7 @@ module.exports = { run{FlowName}Flow };
 ```
 
 管理タブ経由でしか辿れない画面は `navigateToTargetScreen(I, classMemberPageShimamura)` として
-`classMemberPageShimamura.navigateToAdminTab(I, '管理タブ名', 'メニュー項目名')` を使う（`SyokaiFlowPage.runRegistrationFlow` 参照）。
+`classMemberPageShimamura.navigateToAdminTab('管理タブ名', 'メニュー項目名')` を使う（`SyokaiFlowPage.runRegistrationFlow` 参照）。
 
 受講生の「候補生検索」「経理ビュー（個人）」へのサイドバー遷移は `_common/KouhoseiSteps.js` の
 `navigateToStudentGroup(I, page)`・`_common/KeiriViewSteps.js` の `navigateToKeirisyoriView(I, page)` を import して使う
@@ -382,47 +384,65 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 
 ## ワークフロー（パターン B: フォーム入力型）
 
-1 画面で完結する場合は FlowPage を作らず、テストファイル内に完結させる。
+1 画面で完結する場合は FlowPage を作らない。画面操作は `pages/shimamura/screens/` の Page Object に置き、
+`codecept.conf.js` の `include` に `<名前>PageShimamura` で登録して注入する。テストは手順とデータ準備だけにする（#302）。
 
-雛形: `tests/shimamura/flow/smbc_state_import_test.js`（ファイル取込型）/ `tests/shimamura/flow/contact_register_test.js`（フォーム登録型）
+雛形: `SmbcStateImportPage.js` + `smbc_state_import_test.js`（ファイル取込型）/ `ContactRegisterPage.js` + `contact_register_test.js`（フォーム登録型）
+
+**Page Object**（`pages/shimamura/screens/TargetPage.js`）
 
 ```javascript
-// セレクタをファイル先頭にまとめる（ローカル定数）
-// エラーコンテナ等の全画面共通セレクタは SELECTORS（support/shimamura/constants.js）を参照する
-const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors, assertNoShimamuraError, fillTextFieldsByName, clickAndWaitForReload } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+'use strict';
 
-const S = {
-  fields:  { field1: 'field1_name', field2: 'field2_name' },   // name= 属性
-  selects: { school: 'select[name="school_id"]' },
-  buttons: { save: 'input[name="save_button"]' },
-  error:   SELECTORS.ERROR_CONTAINER,
+const { I } = inject();
+const { logScreenUrl } = require('../../../support/utils');
+const { fillTextFieldsByName, clickAndWaitForReload, assertNoShimamuraError } = require('../../../support/shimamura/utils');
+const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
+
+module.exports = {
+
+  // セレクタは locators にまとめる。全画面共通のもの（エラー枠等）は SELECTORS を参照する
+  locators: {
+    school: 'select[name="school_id"]',
+    save:   'input[name="save_button"]',
+    error:  SELECTORS.ERROR_CONTAINER,
+  },
+
+  async open() {
+    I.amOnPage(pageUrl({ module: '{Module}', action: '{Action}' }));   // URL は手書きしない（#300）
+    I.waitForElement(this.locators.save, TIMEOUTS.SCREEN);
+    await logScreenUrl(I, '対象画面');
+  },
+
+  fillForm(input) {
+    fillTextFieldsByName(I, { field1: input.field1, field2: input.field2 });   // キーは name= 属性
+    if (input.school) I.selectOption(this.locators.school, input.school);   // change イベントが必要なため個別に
+  },
+
+  async save() {
+    // 押す前から画面にある要素（body・ファイル選択欄など）を待つと、再描画の前に即成立して
+    // 押す前の画面でエラー確認をしてしまう（#243）。画面が読み込み直されるまで待つ
+    // 確認ダイアログが出るボタンなら、押す前に acceptConfirmDialogs(I) を呼ぶ
+    await clickAndWaitForReload(I, this.locators.save);
+    await assertNoShimamuraError(I, '【〇〇処理】保存');
+    // ↑ エラーが無いだけでは成功の証拠にならない。成功時にだけ現れるもの
+    //   （URL の record=、完了メッセージ、取込履歴の新しい行など）を必ず1つ確かめる
+  },
 };
+```
 
-// 各ステップを async function で定義（テストファイル内）
-async function navigateToTargetScreen(I) {
-  I.amOnPage(BASE_URL + 'index.php?module={Module}&action={Action}');   // BASE_URL は constants.js（末尾 / 付き）
-  I.waitForElement(S.buttons.save, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '対象画面');
-}
+**テスト**（`tests/shimamura/flow/target_test.js`）
 
-async function fillTargetForm(I, input) {
-  fillTextFieldsByName(I, { [S.fields.field1]: input.field1, [S.fields.field2]: input.field2 });
-  if (input.school) I.selectOption(S.selects.school, input.school);   // change イベントが必要なため個別に
-}
+```javascript
+const { beforeShimamura } = require('../../../support/shimamura/hooks');
 
 Before(beforeShimamura);
 
-Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current }) => {
-  await navigateToTargetScreen(I);
-  await fillTargetForm(I, current);
-  // 押す前から画面にある要素（body・ファイル選択欄など）を待つと、再描画の前に即成立して
-  // 押す前の画面でエラー確認をしてしまう（#243）。画面が読み込み直されるまで待つ
-  await clickAndWaitForReload(I, S.buttons.save);
-  await assertNoShimamuraError(I, '【〇〇処理】保存');
-  // ↑ エラーが無いだけでは成功の証拠にならない。成功時にだけ現れるもの
-  //   （URL の record=、完了メッセージ、取込履歴の新しい行など）を必ず1つ確かめる
+Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current, targetPageShimamura }) => {
+  // テストデータの準備（日付の補正・一意な名前など）はテスト側で行う
+  await targetPageShimamura.open();
+  targetPageShimamura.fillForm(current);
+  await targetPageShimamura.save();
   I.saveScreenshotWithTimestamp('TARGET_FORM_result');
 });
 ```
@@ -431,7 +451,7 @@ Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current }) => {
 > 保存に失敗しても、エラー枠を使わない画面（「二重登録の可能性のある受講生一覧」等）に移ると
 > `assertNoShimamuraError` は素通りし、偽合格になる。新規登録の成功は
 > **詳細画面へ遷移して URL に `record=<UUID>` が付くこと**で判定する
-> （`contact_register_test.js` の `waitForSavedRecordId()` 参照）。あわせて:
+> （`ContactRegisterPage.js` の `waitForSavedRecordId()` 参照）。あわせて:
 > - 同姓同名は二重登録の確認画面で止まるので、姓名は実行ごとに一意にする（名＋時刻など）
 > - 実行のたびにレコードが増えるなら、確認後に `submitDeleteForm()`（`support/shimamura/editViewSubmit.js`）でその1件を消す
 > - 金融機関・支店コードは入力で候補ポップアップが出て、候補をクリックしたときだけ名称が埋まる。

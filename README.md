@@ -250,7 +250,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-15 13:01:52
+Last updated: 2026-10-15 13:43:58
 
 ```text
 e2e/
@@ -594,7 +594,8 @@ e2e/
 │   │       │   └── teacherScreens.js
 │   │       ├── ContactRegisterPage.js
 │   │       ├── IchiranPage.js
-│   │       └── SalesGroupTransferPage.js
+│   │       ├── SalesGroupTransferPage.js
+│   │       └── SmbcStateImportPage.js
 │   ├── taskreport/ 
 │   │   └── TaskReportLoginPage.js
 │   └── tframe/ 

@@ -22,7 +22,7 @@
 
 const { I } = inject();
 const { TIMEOUTS, pageUrl, SELECTORS } = require('../../../support/shimamura/constants');
-const { assertNoShimamuraError, buildTestName } = require('../../../support/shimamura/utils');
+const { assertNoShimamuraError, buildTestName, acceptConfirmDialogs } = require('../../../support/shimamura/utils');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
 const {
   enrollClassBySubmit,
@@ -139,6 +139,8 @@ async function deleteFeesExcept(contactId, salesno, keepFeeName) {
   const targets = rows.filter((r) => r.salesno === salesno && r.feeName !== keepFeeName).map((r) => r.feeName);
   for (const feeName of targets) {
     I.say(`【明細データ】料金を削除 ${feeName}（明細番号=${salesno}）`);
+    // 削除リンクは確認ダイアログを出すので、押す前に OK で返すようにしておく
+    await acceptConfirmDialogs(I);
     const clicked = await I.executeScript(({ fee, no }) => {
       const link = [...document.querySelectorAll('a[href*="module=Fee"][href*="submittype=delete"]')]
         .find((a) => {
@@ -146,7 +148,6 @@ async function deleteFeesExcept(contactId, salesno, keepFeeName) {
           return cells.includes(fee) && cells.includes(no);
         });
       if (!link) return false;
-      window.confirm = () => true;
       link.click();
       return true;
     }, { fee: feeName, no: salesno });

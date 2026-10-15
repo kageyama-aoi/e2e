@@ -9,7 +9,7 @@ SKILL.md のワークフロー中に特殊ケースへ遭遇したときに読�
 
 ```javascript
 // 管理タブ → サブメニュー項目
-await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
+await classMemberPageShimamura.navigateToAdminTab('受講生', '受講生登録');
 
 // サイドメニューのアコーディオンを開く
 await toggleGroupmenu(I, { icon_id: 'submenu__detailviews_sub', menuname: '閲覧/登録・経理ビュー' });

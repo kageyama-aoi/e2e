@@ -37,7 +37,7 @@ Scenario('クラス受講生の新規登録ができる @dev', async ({ I, class
   I.say('--- テスト開始: クラス受講生登録 ---');
 
   // メインメニューからコース管理ページへ遷移。
-  await classMemberPageShimamura.navigateToAdminTab(I, 'コース', 'コース一覧');
+  await classMemberPageShimamura.navigateToAdminTab('コース', 'コース一覧');
   I.say(`Course List Page\nURL: ${await I.grabCurrentUrl()}`);
 
   // コースTabの中のクラス一覧画面に遷移

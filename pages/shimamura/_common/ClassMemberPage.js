@@ -104,7 +104,7 @@ module.exports = {
   clickOtherTab(tabName) {
     I.say(`【管理メニュー】「${tabName}」タブをクリック`);
     const tabSelector = this.locators.otherTab(tabName);
-    I.waitForElement(tabSelector, 10);
+    I.waitForElement(tabSelector, TIMEOUTS.ELEMENT);
     I.click(tabSelector);
   },
 
@@ -113,10 +113,10 @@ module.exports = {
    * @param {string} tabName - クリックするタブのテキスト（例: 'コース'）
    * @param {string} expectedTitle - 表示されるべきヘッダーのテキスト（例: 'コース一覧'）
    */
-  async navigateToAdminTab(I,tabName, expectedTitle) {
+  async navigateToAdminTab(tabName, expectedTitle) {
     I.say('=== 管理メニュー遷移 開始 ===');
     I.say(`【メインメニュー】「${tabName}」機能一覧へ`);
-    I.waitForElement(this.locators.kanriLink, 10);
+    I.waitForElement(this.locators.kanriLink, TIMEOUTS.ELEMENT);
     I.click(this.locators.kanriLink);
     this.clickOtherTab(tabName);
     I.say(`【画面確認】「${expectedTitle}」表示`);
@@ -132,7 +132,7 @@ module.exports = {
    */
   async clickSubMenuLink(linkText, expectedTitle) {
     const linkSelector = this.locators.subMenuLink(linkText);
-    I.waitForElement(linkSelector, 10);
+    I.waitForElement(linkSelector, TIMEOUTS.ELEMENT);
     if (this.isNavScreenshotEnabled()) {
       const baseName = this.buildNavScreenshotName(linkText);
       const fileName = await I.saveScreenshotWithTimestamp(`NAV_before_${baseName}.png`);
@@ -223,7 +223,7 @@ module.exports = {
     I.selectOption(l.fields.courseCategory, l.options.courseCategory);
     I.click(l.buttons.search);
     I.say(`Search Result Page\nURL: ${await I.grabCurrentUrl()}`);
-    I.waitForElement(l.results.row, 10);
+    I.waitForElement(l.results.row, TIMEOUTS.RESULT);
     const courseName = await I.grabTextFrom(l.results.link);
     I.say(`リンクラベル: ${courseName}`);
     I.click(locate(l.results.row).at(l.results.linkIndex));
@@ -237,7 +237,7 @@ module.exports = {
    */
   async openStudentTabAndSelectCourse(courseName) {
     const l = this.locators.classDetailTabs;
-    I.waitForElement(l.studentTabLink, 10);
+    I.waitForElement(l.studentTabLink, TIMEOUTS.ELEMENT);
     I.click(l.studentTabLink);
     I.say(`Student Tab Page\nURL: ${await I.grabCurrentUrl()}`);
     I.seeElement(l.studentTabActive);

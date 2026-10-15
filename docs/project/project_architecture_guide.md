@@ -55,6 +55,7 @@ pages/
 │   │   └── TeacherKeiriFlowPage.js
 │   ├── screens/                # 画面操作 Page Object
 │   │   ├── ContactRegisterPage.js
+│   │   ├── SmbcStateImportPage.js  # 債権買取状態読込（inject: smbcStateImportPageShimamura）
 │   │   ├── IchiranPage.js      # 一覧画面の共通処理＋ichiran/ の画面定義を結合（inject: ichiranPageShimamura）
 │   │   └── ichiran/            # 一覧画面の定義（アイコン別: student / course / teacher / contacts / keiri）
 │   └── _common/                # 共通ユーティリティ・複数画面で共有する Page Object

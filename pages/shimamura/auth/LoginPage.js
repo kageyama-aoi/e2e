@@ -3,6 +3,7 @@
  */
 
 const { I } = inject();
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 
 const locators = {
   usernameField: 'input[name="user_name"]',
@@ -25,7 +26,7 @@ module.exports = {
     I.say('=== ログイン 開始 ===');
     I.say('【ログイン】認証情報の入力');
     I.amOnPage('/');
-    I.waitForElement(locators.usernameField, 5);
+    I.waitForElement(locators.usernameField, TIMEOUTS.SCREEN);
     I.executeScript(([user, pass]) => {
       document.querySelector('input[name="user_name"]').value = user;
       document.querySelector('input[name="user_password"]').value = pass;
@@ -72,7 +73,7 @@ module.exports = {
     }
 
     I.say(`【担当者番号入力】[${tantousyaNumber}] を入力してメインメニューへ`);
-    I.waitForText(messages.tantousyaPrompt, 5);
+    I.waitForText(messages.tantousyaPrompt, TIMEOUTS.SCREEN);
     I.fillField(locators.tantousyaNumberField, String(tantousyaNumber));
     I.say('【メインメニュー】遷移');
     I.click('メインメニュー');

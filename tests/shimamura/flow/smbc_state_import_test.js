@@ -20,9 +20,9 @@
  *   - smbc_err_no_header.txt    : ヘッダーレコード未存在
  *   - smbc_err_header_short.txt : ヘッダーレコード桁数不正
  *   - smbc_err_no_end.txt       : エンドレコード未存在
- *   ※ 前日データ欠損時の window.confirm() ポップアップは executeScript で自動承認（I.acceptPopup はポップアップ表示中にしか使えないため不可）
+ *   ※ 前日データ欠損時の確認ダイアログは acceptConfirmDialogs で自動承認（Page Object 側）
  *
- * **パターン**: B（1画面完結・FlowPage なし）
+ * **画面操作**: `pages/shimamura/screens/SmbcStateImportPage.js`（inject: smbcStateImportPageShimamura）
  */
 'use strict';
 
@@ -32,27 +32,12 @@ const {
   loadCsvWithProfile,
   withScenarioLabel,
   parseExpectedErrors,
-  logScreenUrl,
   setBusinessLabels,
   attachBusinessContext,
   attachErrorScreenshot,
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors, clickAndWaitForReload } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
 const { formatDate } = require('../../../support/dateFormat');
-
-// ── セレクタ定数 ─────────────────────────────────────────────
-const S = {
-  fileInput:   'input[name="import_file1"]', // ファイル選択 (type="file")
-  importBtn:   'input[name="save_button"]',  // 買取保留/解除ファイル読込ボタン（#import_btn）
-  error:       SELECTORS.ERROR_CONTAINER,
-  resultTable: '.listView',
-  historyTopRow: '.listView tr:nth-child(2)', // 取込履歴の先頭行（1行目は見出し。取込日時の降順）
-};
-
-// 取込成功時もエラーと同じ表示欄（#top_err_info_msg_div）に出る完了メッセージ（#265 で確認）
-const IMPORT_DONE_MESSAGE = '買取保留・保留解除ファイルの取り込みが完了しました。';
 
 // ── CSV ──────────────────────────────────────────────────────
 const csvData = withScenarioLabel(
@@ -97,74 +82,9 @@ function buildDatedImportFile(templatePath) {
   return outRelPath;
 }
 
-// ── ステップ関数 ─────────────────────────────────────────────
-
-async function navigateToImportScreen(I) {
-  I.say('【画面遷移】債権買取状態読込画面へ');
-  I.amOnPage(pageUrl({ module: 'SmbcStateSummary', action: 'EWSMBCPurchaseStatusImport_AN' }));
-  I.waitForElement(S.fileInput, TIMEOUTS.SCREEN);
-  await logScreenUrl(I, '債権買取状態読込');
-}
-
-/**
- * 取込履歴の先頭行のテキスト（行が無ければ空文字）
- * @param {CodeceptJS.I} I
- * @returns {Promise<string>}
- */
-async function grabHistoryTopRow(I) {
-  return I.executeScript((sel) => {
-    const row = document.querySelector(sel);
-    return row ? row.innerText.replace(/\s+/g, ' ').trim() : '';
-  }, S.historyTopRow);
-}
-
-async function selectAndImportFile(I, filePath, expectedErrors) {
-  if (filePath) {
-    I.say(`【ファイル選択】${filePath}`);
-    I.attachFile(S.fileInput, filePath);
-  } else {
-    I.say('【ファイル選択】ファイルなし（スキップ）');
-  }
-  const topRowBefore = await grabHistoryTopRow(I);
-  const today = formatDate(new Date(), 'YYYY-MM-DD');
-
-  // データ作成年月日が取込済み「以前」だと弾かれ、時刻も見ないため、正常な取込は1日1回しかできない（#265）
-  if (!expectedErrors?.length && topRowBefore.startsWith(today)) {
-    throw new Error('【ファイル読込】本日はすでに取込済みのため、正常系は明日以降に再実行してください（1日1回しか取り込めない #265）'
-      + `\n  取込履歴の先頭: ${topRowBefore}`);
-  }
-
-  I.say('【ファイル読込】ボタンをクリック');
-  // 前日データ欠損時に window.confirm() が出る場合があるため、クリック前にオーバーライドしておく
-  // (I.acceptPopup() はポップアップ表示中にしか使えないため executeScript で対応)
-  await I.executeScript(() => { window.confirm = () => true; });
-  // ファイル選択欄は押す前から画面にあるため、それを待つと再描画前の画面で判定しうる（#243）。
-  // 画面が読み込み直されるまで待つ
-  await clickAndWaitForReload(I, S.importBtn);
-  I.waitForElement(S.fileInput, TIMEOUTS.SCREEN);
-
-  if (expectedErrors?.length > 0) {
-    await verifyValidationErrors(I, expectedErrors, S.error);
-    return;
-  }
-  // 成功時も表示欄に完了メッセージが出るため、「空であること」ではなく「完了メッセージだけであること」を確かめる
-  const message = (await I.grabTextFromAll(S.error)).join(' ').trim();
-  if (message !== IMPORT_DONE_MESSAGE) {
-    throw new Error(`【ファイル読込】完了メッセージが出ていません: ${message || '（表示なし）'}`);
-  }
-
-  // エラーが無いだけでは取り込まれた証拠にならない。取込履歴の先頭に今日の行が増えたことを確かめる
-  const topRowAfter = await grabHistoryTopRow(I);
-  if (topRowAfter === topRowBefore || !topRowAfter.startsWith(today)) {
-    throw new Error(`【ファイル読込】取込履歴に今回の行がありません（取込されていない）\n  前: ${topRowBefore}\n  後: ${topRowAfter}`);
-  }
-  I.say(`【ファイル読込】取込完了（取込履歴: ${topRowAfter}）`);
-  await logScreenUrl(I, '債権買取状態読込_取込後');
-}
-
 // ── シナリオ ─────────────────────────────────────────────────
 
-Data(csvData).Scenario('債権買取状態読込 正常系 @dev @normal', async ({ I, current }) => {
+Data(csvData).Scenario('債権買取状態読込 正常系 @dev @normal', async ({ I, current, smbcStateImportPageShimamura }) => {
   setBusinessLabels({ epic: '経理', feature: '債権買取状態読込', story: '正常フロー' });
 
   const input = {
@@ -178,14 +98,14 @@ Data(csvData).Scenario('債権買取状態読込 正常系 @dev @normal', async 
   }
   attachBusinessContext({ label: '正常フロー', input });
 
-  await navigateToImportScreen(I);
-  await selectAndImportFile(I, input.import_file_path, input.expectedErrors);
+  await smbcStateImportPageShimamura.open();
+  await smbcStateImportPageShimamura.importFile(input.import_file_path, input.expectedErrors);
 
   I.saveScreenshotWithTimestamp('SMBC_STATE_IMPORT_success', true);
   I.say('=== 債権買取状態読込 正常系 完了 ===');
 });
 
-Data(validationErrorData).Scenario('債権買取状態読込 異常系 @dev @error', async ({ I, current }) => {
+Data(validationErrorData).Scenario('債権買取状態読込 異常系 @dev @error', async ({ I, current, smbcStateImportPageShimamura }) => {
   const storyLabel = current.scenario;
   setBusinessLabels({ epic: '経理', feature: '債権買取状態読込', story: storyLabel });
 
@@ -196,7 +116,7 @@ Data(validationErrorData).Scenario('債権買取状態読込 異常系 @dev @err
 
   attachBusinessContext({ label: storyLabel, input, expectedErrors: input.expectedErrors });
 
-  await navigateToImportScreen(I);
-  await selectAndImportFile(I, input.import_file_path, input.expectedErrors);
+  await smbcStateImportPageShimamura.open();
+  await smbcStateImportPageShimamura.importFile(input.import_file_path, input.expectedErrors);
   await attachErrorScreenshot(I, 'SMBC_STATE_IMPORT_error');
 });
