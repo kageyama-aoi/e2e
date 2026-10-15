@@ -1,14 +1,39 @@
 'use strict';
 
 const { I } = inject();
-const { URLS, TIMEOUTS, BASE_URL } = require('../../../support/shimamura/constants');
+const { URLS, TIMEOUTS, BASE_URL, SELECTORS } = require('../../../support/shimamura/constants');
+const { extractRecordId, fillTextFieldsByName } = require('../../../support/shimamura/utils');
 const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
+
+/**
+ * 金融機関・支店コードを入れ、出てくる候補ポップアップからコードが一致する先頭の候補を選ぶ。
+ * 名称欄は読み取り専用で、候補をクリックしたときだけ埋まる（put_into_targets）。名称が空のまま
+ * 保存すると「銀行情報を入力してください」で保存されない（#232）。候補はキー入力（keyup）で
+ * 出るので fillField ではなく type で入れる。同じ支店コードの候補が複数出ることがある（001 等）。
+ */
+function pickBankCandidate(codeSelector, code, nameSelector) {
+  I.clearField(codeSelector);
+  I.click(codeSelector);
+  I.type(code);
+  const candidate = `#overDiv div[onclick^="put_into_targets('${code}'"]`;
+  I.waitForElement(candidate, TIMEOUTS.SCREEN);
+  I.click(candidate);
+  I.waitForFunction((sel) => document.querySelector(sel).value.trim() !== '', [nameSelector], TIMEOUTS.SCREEN);
+}
 
 module.exports = {
 
   locators: {
     saveButton: 'input[name="save_button"]',
     editForm: 'EditView',
+    error: SELECTORS.ERROR_CONTAINER,
+    gender:          'select[name="gender"]',
+    bankPaymentType: 'select[name="bank_payment_type"]',
+    shimaStorageId:  'select[name="shima_storage_id"]',
+    bankCode:        '#bank_code',
+    bankName:        '#bank_name',
+    bankBranchCode:  '#bank_branch_code',
+    bankBranchName:  '#bank_branch_name',
   },
 
   /**
@@ -18,6 +43,45 @@ module.exports = {
     I.say('【問合せ登録】URL 直遷移');
     I.amOnPage(BASE_URL + URLS.CONTACT_REGISTER);
     I.waitForElement(this.locators.saveButton, TIMEOUTS.SCREEN);
+  },
+
+  /**
+   * 問合せ登録フォームに入力します（#302 でテストから移動）。空の項目は入力しません。
+   * @param {Object<string, string>} data 入力値（キーは画面の name 属性。例: last_name / bank_code）
+   */
+  fillForm(data) {
+    const L = this.locators;
+    I.say('【問合せ登録】フォーム入力');
+    // テキストフィールド一括入力（金融機関・支店コードは名称の自動入力があるので下で別に入れる）
+    fillTextFieldsByName(I, {
+      last_name:               data.last_name,
+      first_name:              data.first_name,
+      last_name_furigana:      data.last_name_furigana,
+      first_name_furigana:     data.first_name_furigana,
+      phone_mobile:            data.phone_mobile,
+      application_date:        data.application_date,
+      hikiotoshi_startdate:    data.hikiotoshi_startdate,
+      bank_account_no:         data.bank_account_no,
+      bank_account_name:       data.bank_account_name,
+      acsno:                   data.acsno,
+      acsno_check:             data.acsno_check,
+      expis_date:              data.expis_date,
+      hikiotoshi_startdate_cr: data.hikiotoshi_startdate_cr,
+    });
+    if (data.gender)            I.selectOption(L.gender,          data.gender);
+    if (data.bank_payment_type) I.selectOption(L.bankPaymentType, data.bank_payment_type);
+    if (data.shima_storage_id)  I.selectOption(L.shimaStorageId,  data.shima_storage_id);
+    // 支店の候補は金融機関コードで絞られるので必ずこの順
+    if (data.bank_code)        pickBankCandidate(L.bankCode,       data.bank_code,        L.bankName);
+    if (data.bank_branch_code) pickBankCandidate(L.bankBranchCode, data.bank_branch_code, L.bankBranchName);
+  },
+
+  /**
+   * 保存ボタンを押します。成功の確認は {@link waitForSavedRecordId}、エラーの確認は呼び出し側で行います。
+   */
+  clickSave() {
+    I.say('【問合せ登録】保存');
+    I.click(this.locators.saveButton);
   },
 
   /**
@@ -46,6 +110,28 @@ module.exports = {
    */
   async createContactBySubmit(fields) {
     return submitEditViewForm(I, { path: URLS.CONTACT_REGISTER, fields, label: '問合せ登録' });
+  },
+
+  /**
+   * 保存ボタンを押した後、受講生詳細へ遷移して URL に record= が付くまで待ち、UUID を返す（#302 でテストから移動）。
+   * 付かなければ保存されていない。エラー枠（無ければ本文の先頭）を添えて失敗させる。
+   * 二重登録の確認画面のようにエラー枠を使わない画面もあるので、「エラーが出ていない」では判定しない。
+   * @returns {Promise<string>} 作成された受講生の record UUID
+   * @throws {Error} TIMEOUTS.SCREEN 秒たっても URL に record= が付かない場合
+   */
+  async waitForSavedRecordId() {
+    let url = '';
+    for (let waited = 0; waited < TIMEOUTS.SCREEN; waited += 1) {
+      url = await I.grabCurrentUrl();
+      if (extractRecordId(url)) return extractRecordId(url);
+      I.wait(1);
+    }
+    const shown = await I.executeScript((selector) => {
+      const el = document.querySelector(selector);
+      const text = el ? el.innerText.trim() : '';
+      return text || document.body.innerText.replace(/\s+/g, ' ').trim().slice(0, 300);
+    }, SELECTORS.ERROR_CONTAINER);
+    throw new Error(`【問合せ登録】保存されませんでした（url=${url}）\n画面の表示: ${shown}`);
   },
 
 };

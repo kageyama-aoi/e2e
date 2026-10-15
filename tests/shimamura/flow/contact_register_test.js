@@ -17,7 +17,7 @@
  * - `data/shimamura/contact_register_data.csv`（正常系）
  * - `data/shimamura/contact_register_validation_errors.csv`（異常系）
  *
- * **パターン**: B（フォーム入力型・FlowPage なし）
+ * **パターン**: B（フォーム入力型・FlowPage なし）。画面操作は `pages/shimamura/screens/ContactRegisterPage.js`
  * **URL**: index.php?module=Student&action=EditView&contact_status=5&...
  */
 const {
@@ -29,36 +29,10 @@ const {
   attachErrorScreenshot
 } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
-const { verifyValidationErrors, fillTextFieldsByName, extractRecordId } = require('../../../support/shimamura/utils');
-const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
+const { verifyValidationErrors } = require('../../../support/shimamura/utils');
+const { TIMEOUTS } = require('../../../support/shimamura/constants');
 const { submitDeleteForm } = require('../../../support/shimamura/editViewSubmit');
 const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
-
-const S = {
-  screen:  { name: '問合せ' },
-  fields: {
-    lastName:          'last_name',
-    firstName:         'first_name',
-    lastNameFurigana:  'last_name_furigana',
-    firstNameFurigana: 'first_name_furigana',
-    gender:            'select[name="gender"]',
-    phoneMobile:        'phone_mobile',
-    applicationDate:    'application_date',
-    bankPaymentType:    'select[name="bank_payment_type"]',
-    bankCode:           '#bank_code',
-    bankName:           '#bank_name',
-    bankBranchCode:     '#bank_branch_code',
-    bankBranchName:     '#bank_branch_name',
-    shimaStorageId:     'select[name="shima_storage_id"]',
-    bankAccountNo:      'bank_account_no',
-    bankAccountName:    'bank_account_name',
-    acsno:              'acsno',
-    acsnoCheck:         'acsno_check',
-    expisDate:          'expis_date',
-  },
-  button: { save: 'input[name="save_button"]' },
-  error:  { container: SELECTORS.ERROR_CONTAINER },
-};
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('contact_register_data', 'shimamura'),
@@ -73,48 +47,6 @@ const validationErrorData = withScenarioLabel(
 Feature('問合せ登録（受講生の直接登録）');
 
 Before(beforeShimamura);
-
-async function fillContactForm(I, data) {
-  I.say('【問合せ登録】フォーム入力');
-  // テキストフィールド一括入力（金融機関・支店コードは名称の自動入力があるので下で別に入れる）
-  fillTextFieldsByName(I, {
-    last_name:               data.last_name,
-    first_name:              data.first_name,
-    last_name_furigana:      data.last_name_furigana,
-    first_name_furigana:     data.first_name_furigana,
-    phone_mobile:            data.phone_mobile,
-    application_date:        data.application_date,
-    hikiotoshi_startdate:    data.hikiotoshi_startdate,
-    bank_account_no:         data.bank_account_no,
-    bank_account_name:       data.bank_account_name,
-    acsno:                   data.acsno,
-    acsno_check:             data.acsno_check,
-    expis_date:              data.expis_date,
-    hikiotoshi_startdate_cr: data.hikiotoshi_startdate_cr,
-  });
-  if (data.gender)            I.selectOption(S.fields.gender,          data.gender);
-  if (data.bank_payment_type) I.selectOption(S.fields.bankPaymentType, data.bank_payment_type);
-  if (data.shima_storage_id)  I.selectOption(S.fields.shimaStorageId,  data.shima_storage_id);
-  // 支店の候補は金融機関コードで絞られるので必ずこの順
-  if (data.bank_code)        pickBankCandidate(I, S.fields.bankCode,       data.bank_code,        S.fields.bankName);
-  if (data.bank_branch_code) pickBankCandidate(I, S.fields.bankBranchCode, data.bank_branch_code, S.fields.bankBranchName);
-}
-
-/**
- * 金融機関・支店コードを入れ、出てくる候補ポップアップからコードが一致する先頭の候補を選ぶ。
- * 名称欄は読み取り専用で、候補をクリックしたときだけ埋まる（put_into_targets）。名称が空のまま
- * 保存すると「銀行情報を入力してください」で保存されない（#232）。候補はキー入力（keyup）で
- * 出るので fillField ではなく type で入れる。同じ支店コードの候補が複数出ることがある（001 等）。
- */
-function pickBankCandidate(I, codeSelector, code, nameSelector) {
-  I.clearField(codeSelector);
-  I.click(codeSelector);
-  I.type(code);
-  const candidate = `#overDiv div[onclick^="put_into_targets('${code}'"]`;
-  I.waitForElement(candidate, TIMEOUTS.SCREEN);
-  I.click(candidate);
-  I.waitForFunction((sel) => document.querySelector(sel).value.trim() !== '', [nameSelector], TIMEOUTS.SCREEN);
-}
 
 /**
  * 姓名を実行ごとに一意にする（同姓同名だと二重登録の確認画面に移り保存されないため）。
@@ -137,26 +69,6 @@ function toYearMonth(value) {
   return formatDate(firstOfMonth(1), 'YYYYMM');
 }
 
-/**
- * 保存ボタンを押した後、受講生詳細へ遷移して URL に record= が付くまで待ち、UUID を返す。
- * 付かなければ保存されていない。エラー枠（無ければ本文の先頭）を添えて失敗させる。
- * 二重登録の確認画面のようにエラー枠を使わない画面もあるので、「エラーが出ていない」では判定しない。
- */
-async function waitForSavedRecordId(I) {
-  let url = '';
-  for (let waited = 0; waited < TIMEOUTS.SCREEN; waited += 1) {
-    url = await I.grabCurrentUrl();
-    if (extractRecordId(url)) return extractRecordId(url);
-    I.wait(1);
-  }
-  const shown = await I.executeScript((selector) => {
-    const el = document.querySelector(selector);
-    const text = el ? el.innerText.trim() : '';
-    return text || document.body.innerText.replace(/\s+/g, ' ').trim().slice(0, 300);
-  }, S.error.container);
-  throw new Error(`【問合せ登録】保存されませんでした（url=${url}）\n画面の表示: ${shown}`);
-}
-
 Data(csvData).Scenario('受講生を直接登録できる @dev @normal', async ({ I, current, contactRegisterPageShimamura }) => {
   setBusinessLabels({ epic: '受講生管理', feature: '問合せ登録', story: '正常フロー' });
 
@@ -169,13 +81,12 @@ Data(csvData).Scenario('受講生を直接登録できる @dev @normal', async (
   attachBusinessContext({ label: '正常フロー', input });
 
   contactRegisterPageShimamura.navigateToContactRegister();
-  await fillContactForm(I, input);
+  contactRegisterPageShimamura.fillForm(input);
 
-  I.say('【問合せ登録】保存');
-  I.click(S.button.save);
+  contactRegisterPageShimamura.clickSave();
 
   I.say('【問合せ登録】成功確認（受講生詳細へ遷移し record が付くこと）');
-  const recordId = await waitForSavedRecordId(I);
+  const recordId = await contactRegisterPageShimamura.waitForSavedRecordId();
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
   I.see(input.last_name);
   I.see(input.first_name);
@@ -198,11 +109,10 @@ Data(validationErrorData).Scenario('必須項目未入力でエラーが出る @
   attachBusinessContext({ label: storyLabel, input, expectedErrors });
 
   contactRegisterPageShimamura.navigateToContactRegister();
-  await fillContactForm(I, input);
+  contactRegisterPageShimamura.fillForm(input);
 
-  I.say('【問合せ登録】保存（エラー確認）');
-  I.click(S.button.save);
+  contactRegisterPageShimamura.clickSave();
 
-  await verifyValidationErrors(I, expectedErrors, S.error.container);
+  await verifyValidationErrors(I, expectedErrors, contactRegisterPageShimamura.locators.error);
   await attachErrorScreenshot(I, 'CONTACT_REGISTER_validation_error');
 });

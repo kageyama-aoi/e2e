@@ -376,6 +376,16 @@ async function clickAndWaitForReload(I, locator, { timeout = TIMEOUTS.RESULT } =
 }
 
 /**
+ * 画面の確認ダイアログ（`window.confirm`）を、これ以降すべて OK で返すようにする（#302）。
+ * `I.acceptPopup()` は出ているダイアログにしか効かないため、押す前に画面側の関数を差し替える。
+ * 画面を読み込み直すと元に戻るので、ダイアログを出すボタンを押す直前に呼ぶ。
+ * @param {CodeceptJS.I} I
+ */
+async function acceptConfirmDialogs(I) {
+  await I.executeScript(() => { window.confirm = () => true; });
+}
+
+/**
  * セットアップ系テストで受講生の名前を「実行日時＋シナリオ名」に書き換えるための名前を組み立てる。
  * 同じ姓（prefix+MMDD）でまとめて検索できるようにし、名にはシナリオを埋め込んで区別する。
  * @param {string} prefix - 姓のプレフィックス（例: '月謝テスト', '発表会テスト'）
@@ -428,6 +438,7 @@ module.exports = {
   extractRecordId,
   waitForSaveResult,
   clickAndWaitForReload,
+  acceptConfirmDialogs,
   buildTestName,
   sidebarLinkXPath,
 };

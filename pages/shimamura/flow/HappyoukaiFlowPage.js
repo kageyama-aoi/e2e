@@ -159,7 +159,7 @@ async function promoteAndRenameStudent(I, classMemberPageShimamura, row) {
  */
 async function createRosterFromStudents(I, classMemberPageShimamura, { lastName, listName }) {
   I.say(`【受講生検索】姓 "${lastName}" で検索 → 名簿リスト化`);
-  await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生一覧');
+  await classMemberPageShimamura.navigateToAdminTab('受講生', '受講生一覧');
   I.fillField(S.studentSearch.lastName, lastName);
   I.click(S.studentSearch.searchButton);
   I.waitForElement(RESULT_LINK, TIMEOUTS.RESULT);
@@ -237,7 +237,7 @@ async function ensureHappyoukaiAccountTransferSchedule(I, { monthsFromNow }) {
  */
 async function navigateToParticipantList(I, classMemberPageShimamura, { className, courseName }) {
   I.say(`【参加者一覧へ】クラス「${className}」→ コース「${courseName}」`);
-  await classMemberPageShimamura.navigateToAdminTab(I, 'コース', 'コース一覧');
+  await classMemberPageShimamura.navigateToAdminTab('コース', 'コース一覧');
   classMemberPageShimamura.clickSubMenuLink('クラス一覧', 'クラス一覧');
 
   I.fillField(S.classList.name, className);

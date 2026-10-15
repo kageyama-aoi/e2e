@@ -44,7 +44,7 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, taikaiYear
   I.say(`--- テスト開始: 対象受講生 ${idnumber} ---`);
 
   // 管理タブ -> 受講生検索へ
-  await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生検索');
+  await classMemberPageShimamura.navigateToAdminTab('受講生', '受講生検索');
 
   // 受講生検索 → 詳細 → 退会画面へ
   // （経理処理未完了データの警告解消は navigateToTaikaiScreen 内で行う）

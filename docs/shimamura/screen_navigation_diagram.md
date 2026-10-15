@@ -148,7 +148,7 @@ flowchart TD
 | 講師謝礼追加 | `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
 | クラス受講生登録 | `shimamura_class_member_registration_test.js` | なし（テスト内に直書き） |
 | 問合せ登録 | `contact_register_test.js` | なし（Pattern B・1画面完結） |
-| 債権買取状態読込 | `smbc_state_import_test.js` | なし（Pattern B・1画面完結） |
+| 債権買取状態読込 | `smbc_state_import_test.js` | `pages/shimamura/screens/SmbcStateImportPage.js`（Pattern B・1画面完結） |
 | 経理返金処理 | `keiri_hennkin_syori_test.js` | なし（ひな形・未実装） |
 | 画面カタログ（アイコン/サイドバー定義） | — | `pages/shimamura/_common/sideMenus.js` |
 

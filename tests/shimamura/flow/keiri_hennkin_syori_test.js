@@ -114,7 +114,7 @@ Data(csvData).Scenario('経理：返金処理 正常系 @dev @normal', async ({ 
   });
 
   I.say('【管理メニュー】経理 → 経理メニュー');
-  await classMemberPageShimamura.navigateToAdminTab(I, '経理', '月謝一括作成');
+  await classMemberPageShimamura.navigateToAdminTab('経理', '月謝一括作成');
   await logScreenUrl(I, '経理メニュー');
   await classMemberPageShimamura.openRefundListFromKeiriMenu();
 
@@ -166,7 +166,7 @@ Data(validationErrorData).Scenario('経理：返金処理 異常系 @dev @error'
   });
 
   I.say('【管理メニュー】経理 → 経理メニュー');
-  await classMemberPageShimamura.navigateToAdminTab(I, '経理', '月謝一括作成');
+  await classMemberPageShimamura.navigateToAdminTab('経理', '月謝一括作成');
   await logScreenUrl(I, '経理メニュー');
   await classMemberPageShimamura.openRefundListFromKeiriMenu();
 

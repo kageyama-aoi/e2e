@@ -119,6 +119,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
     classMemberPageShimamura: './pages/shimamura/_common/ClassMemberPage.js',
     ichiranPageShimamura: './pages/shimamura/screens/IchiranPage.js',
     contactRegisterPageShimamura: './pages/shimamura/screens/ContactRegisterPage.js',
+    smbcStateImportPageShimamura: './pages/shimamura/screens/SmbcStateImportPage.js',
     salesGroupTransferPageShimamura: './pages/shimamura/screens/SalesGroupTransferPage.js',
     menuPatrolPageShimamura: './pages/shimamura/_common/MenuPatrolPage.js',
 

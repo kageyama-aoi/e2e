@@ -42,7 +42,7 @@ ORDER BY k.idnumber;`;
 // 新規登録・月謝一括作成準備・発表会準備の候補生昇格はすべてこれを使う（#269 で簡易版を廃止）。
 async function navigateToKouhosei(I, classMemberPageShimamura, lastName) {
   I.say('【候補生一覧】サイドバー → 候補生グループ → 候補生検索');
-  await classMemberPageShimamura.navigateToAdminTab(I, '受講生', '受講生登録');
+  await classMemberPageShimamura.navigateToAdminTab('受講生', '受講生登録');
   await navigateToStudentGroup(I, classMemberPageShimamura);
 
   I.say(`【候補生一覧】姓 "${lastName}" で検索`);
