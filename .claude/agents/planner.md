@@ -14,7 +14,7 @@ description: 設計士。新しいテストやスクレイピング対象を追�
 ## プロジェクト概要
 - フレームワーク: CodeceptJS + Playwright
 - プロダクト: shimamura / tframe / taskreport
-- 構成: tests/ pages/ support/ data/ env/ の責務分離
+- 構成: codecept/tests/ codecept/pages/ codecept/support/ codecept/data/ env/ の責務分離
 - 命名規則: 関数は verbNoun、テストファイルは *_test.js
 
 ## スキルの活用

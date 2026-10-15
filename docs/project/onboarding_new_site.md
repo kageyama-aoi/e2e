@@ -13,9 +13,9 @@
 
 ### 1-1. `env/.env.<site>.template`
 
-- `support/envLoader.js` はサイト名をハードコードしていない。`PROFILE` 環境変数または `--profile <name>` 引数から
+- `codecept/support/envLoader.js` はサイト名をハードコードしていない。`PROFILE` 環境変数または `--profile <name>` 引数から
   プロファイル名を受け取り、`env/.env.<profile>` が存在すれば読み込むだけの汎用実装になっている
-  （`support/envLoader.js` の `getProfileFromArgs` / `loadEnv` を参照）。
+  （`codecept/support/envLoader.js` の `getProfileFromArgs` / `loadEnv` を参照）。
 - そのため **コード変更なしで新サイトの `.env` が自動的に認識される**。プロファイル名は `<site>` 単独でも
   `<site>.<環境名>`（例: `shimamura.testgcp`）でもよい。
 - `.template` サフィックスのファイルは実行時に読み込まれない（`envLoader.js` は `.env.<profile>` を直接探すため、
@@ -25,33 +25,33 @@
 - テンプレートには最低限 `BASE_URL` と、サイト固有のログイン情報（ユーザー名・パスワード等）を記載する。
   `env/.env.shimamura.template` / `env/.env.tframe.template` を雛形にすること。
 
-### 1-2. `pages/<site>/`
+### 1-2. `codecept/pages/<site>/`
 
 既存2サイトはどちらも以下の4分類のサブディレクトリを使っている（全部が必須ではなく、使うものだけ作る）。
 
 | サブディレクトリ | 役割 | 参考実装 |
 |---|---|---|
-| `auth/` | ログイン画面の Page Object | `pages/shimamura/auth/LoginPage.js`, `pages/tframe/auth/LoginKannrisyaPage.js` |
-| `screens/` | 画面単体の Page Object（1画面完結） | `pages/shimamura/screens/IchiranPage.js`, `pages/tframe/screens/KoshiPage.js` |
-| `flow/` | 複数画面をまたぐ処理フローの Page Object | `pages/shimamura/flow/SyokaiFlowPage.js` |
-| `_common/` | 複数の Page Object から共有される定義・ユーティリティ（メニュー定義・複数画面で使うクラス等） | `pages/shimamura/_common/sideMenus.js`, `pages/shimamura/_common/ClassMemberPage.js` |
+| `auth/` | ログイン画面の Page Object | `codecept/pages/shimamura/auth/LoginPage.js`, `codecept/pages/tframe/auth/LoginKannrisyaPage.js` |
+| `screens/` | 画面単体の Page Object（1画面完結） | `codecept/pages/shimamura/screens/IchiranPage.js`, `codecept/pages/tframe/screens/KoshiPage.js` |
+| `flow/` | 複数画面をまたぐ処理フローの Page Object | `codecept/pages/shimamura/flow/SyokaiFlowPage.js` |
+| `_common/` | 複数の Page Object から共有される定義・ユーティリティ（メニュー定義・複数画面で使うクラス等） | `codecept/pages/shimamura/_common/sideMenus.js`, `codecept/pages/shimamura/_common/ClassMemberPage.js` |
 
 Page Object は `const { I } = inject();` で `I` を取得し、メソッドは `I` を引数に取らない
 （AGENTS.md「コーディング規約・命名」参照）。
 
-### 1-3. `tests/<site>/`
+### 1-3. `codecept/tests/<site>/`
 
-- `tests/` 配下はテストシナリオ（`*_test.js`）専用。Page Object・データを直書きしない。
+- `codecept/tests/` 配下はテストシナリオ（`*_test.js`）専用。Page Object・データを直書きしない。
 - サブフォルダの切り方はサイトの性質に合わせて決める（後述の「4. 参考実装の選び方」参照）。
-- `codecept.conf.js` の `tests` グロブ（`./tests/**/*_test.js`）が全サイトを拾うので、テスト置き場の登録は不要。
+- `codecept.conf.js` の `tests` グロブ（`./codecept/tests/**/*_test.js`）が全サイトを拾うので、テスト置き場の登録は不要。
   サイト単位で回したいときは `package.json` に npm script を足す（後述 2-3）。
 
-### 1-4. `data/<site>/`
+### 1-4. `codecept/data/<site>/`
 
 - テスト入力データ（CSV / パラメータJS）を置く。
 - CSV 命名は `{baseName}.csv`（共通）または `{baseName}_{profile}.csv`（プロファイル別上書き。
   `loadCsvWithProfile` がプロファイル別ファイルの存在を優先する）。
-- 対応表ドキュメントが必要な場合（tframe のように画面数が多い場合）は `data/<site>/README.md` を作り、
+- 対応表ドキュメントが必要な場合（tframe のように画面数が多い場合）は `codecept/data/<site>/README.md` を作り、
   ドキュメント連動ルール（AGENTS.md）に追記する。
 
 ---
@@ -62,7 +62,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 ### 2-1. `codecept.conf.js`
 
-- テスト置き場の登録は不要（`tests: './tests/**/*_test.js'` が全サイトを拾う）。
+- テスト置き場の登録は不要（`tests: './codecept/tests/**/*_test.js'` が全サイトを拾う）。
   以前あった `suites` キーは CodeceptJS 3.3.7 が読まず実行範囲に効いていなかったため削除した（#227）。
 - **`include`**（L152〜）に新サイトの Page Object を追加する。命名は `{役割}Page{サイト名}` または
   `{役割}Page`（tframe は既存 Page が多いためサフィックスなし、shimamura は `〜Shimamura` サフィックス。
@@ -70,7 +70,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
   ```js
   include: {
     // ...既存...
-    loginPageNewsite: './pages/newsite/auth/LoginPage.js',
+    loginPageNewsite: './codecept/pages/newsite/auth/LoginPage.js',
   },
   ```
 - `autoLogin` プラグイン（L204〜）は**現状 shimamura 専用**（`users.shimamuraUser` に固定配線されている）。
@@ -79,7 +79,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 ### 2-2. `run/test_descriptions.json`
 
-- 新サイトのキー（`tests/<site>/` のトップレベル名と一致させる）を追加し、各テストファイルの日本語説明を書く：
+- 新サイトのキー（`codecept/tests/<site>/` のトップレベル名と一致させる）を追加し、各テストファイルの日本語説明を書く：
   ```json
   "newsite": {
     "page/foo_test.js": { "feature_no": "",          "description": "〇〇画面の表示・操作を確認" }
@@ -93,9 +93,9 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 - `test_s`（shimamura）/ `test_t`（tframe）/ `test_taskreport` のように、サイト単位で一発実行できる
   npm script は自動生成されない。必要であれば追加する：
   ```json
-  "test_newsite": "npx codeceptjs run ./tests/newsite/**/*_test.js --profile newsite.<環境名>"
+  "test_newsite": "npx codeceptjs run ./codecept/tests/newsite/**/*_test.js --profile newsite.<環境名>"
   ```
-- `pretest_s`（`scripts/check_pause.js` で `tests/shimamura/` 配下の残存 `pause()` を検出）のような
+- `pretest_s`（`scripts/check_pause.js` で `codecept/tests/shimamura/` 配下の残存 `pause()` を検出）のような
   pre-test ガードスクリプトも、必要なら同様の仕組みを追加する（必須ではない）。
 
 ### 2-4. `AGENTS.md`
@@ -112,15 +112,15 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 | 機構 | 場所 | 役割 |
 |---|---|---|
-| `loadCsvWithProfile(baseName, dataDir)` | `support/utils.js` | プロファイル別CSVの自動切替読み込み |
-| `withScenarioLabel(data, labelResolver)` | `support/utils.js` | データ駆動テストのシナリオ表示名付与 |
-| `repoRoot` | `support/repoRoot.js` | リポジトリルート絶対パス（`__dirname` 手動カウント禁止の代替） |
-| `support/envLoader.js` | 同上 | プロファイル自動解決・`.env` 読み込み（サイト名ハードコードなし） |
-| `run/run_gui.py` | 同上 | `tests/` と `env/` を動的スキャンするため、新サイト追加時も無修正でGUIに表示される |
-| `parseEnvBoolean(envKey)` | `support/utils.js` | 環境変数のbooleanパース |
+| `loadCsvWithProfile(baseName, dataDir)` | `codecept/support/utils.js` | プロファイル別CSVの自動切替読み込み |
+| `withScenarioLabel(data, labelResolver)` | `codecept/support/utils.js` | データ駆動テストのシナリオ表示名付与 |
+| `repoRoot` | `codecept/support/repoRoot.js` | リポジトリルート絶対パス（`__dirname` 手動カウント禁止の代替） |
+| `codecept/support/envLoader.js` | 同上 | プロファイル自動解決・`.env` 読み込み（サイト名ハードコードなし） |
+| `run/run_gui.py` | 同上 | `codecept/tests/` と `env/` を動的スキャンするため、新サイト追加時も無修正でGUIに表示される |
+| `parseEnvBoolean(envKey)` | `codecept/support/utils.js` | 環境変数のbooleanパース |
 
-サイト固有の定数（待機時間・URL・セレクタ）は `support/<site>/constants.js` に定数化する
-（`support/shimamura/constants.js` / `support/tframe/constants.js` を参照。マジックナンバー直書き禁止）。
+サイト固有の定数（待機時間・URL・セレクタ）は `codecept/support/<site>/constants.js` に定数化する
+（`codecept/support/shimamura/constants.js` / `codecept/support/tframe/constants.js` を参照。マジックナンバー直書き禁止）。
 
 ---
 
@@ -130,8 +130,8 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 | サイトの特徴 | 手本 | 理由 |
 |---|---|---|
-| 業務フロー（複数画面をまたいだ登録・処理）が中心 | **shimamura**（`pages/shimamura/flow/`） | `FlowPage` パターンが確立しており、複数画面の操作をひとつのオブジェクトに集約する設計が参考になる |
-| 画面単体の登録・一覧確認が中心（CRUD的な画面が多数） | **tframe**（`pages/tframe/screens/`） | 画面ごとに独立した Page Object を作り、`createIchiranMixin` 等のファクトリで一覧検索の共通処理を横展開するパターンが参考になる |
+| 業務フロー（複数画面をまたいだ登録・処理）が中心 | **shimamura**（`codecept/pages/shimamura/flow/`） | `FlowPage` パターンが確立しており、複数画面の操作をひとつのオブジェクトに集約する設計が参考になる |
+| 画面単体の登録・一覧確認が中心（CRUD的な画面が多数） | **tframe**（`codecept/pages/tframe/screens/`） | 画面ごとに独立した Page Object を作り、`createIchiranMixin` 等のファクトリで一覧検索の共通処理を横展開するパターンが参考になる |
 | ダウンロードボタンでファイルを取得・検証するテストが多い | **shimamura**（`/shimamura-download-verify` スキル） | CSV・固定長ファイル双方のダウンロード検証パターンが確立済み |
 
 判断に迷う場合は、対象画面の一覧を洗い出し「1画面完結の登録・検索」が多いか「複数画面をまたぐフロー」が
@@ -141,7 +141,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
 
 ## 5. 手順書作成後の確認
 
-新サイトの `pages/` にファイルを追加したら、必ず以下を実行してディレクトリツリーを最新化する。
+新サイトの `codecept/pages/` にファイルを追加したら、必ず以下を実行してディレクトリツリーを最新化する。
 
 ```bash
 npm run docs:update-readme-map

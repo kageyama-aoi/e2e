@@ -1,7 +1,7 @@
 """
 テストカタログ生成ツール (Test Catalog Generator)
 
-`tests/` 配下の `*_test.js` を走査し、`run/test_descriptions.json` の 1 行説明と
+`codecept/tests/` 配下の `*_test.js` を走査し、`run/test_descriptions.json` の 1 行説明と
 突き合わせて、人間が読める一覧 `docs/project/test_catalog.md` を生成します。
 
 久々にプロジェクトへ戻ったとき「どんなテストがあるか」を 1 ファイルで把握するための
@@ -47,7 +47,7 @@ if hasattr(sys.stdout, "reconfigure"):
         pass
 
 ROOT = Path(__file__).resolve().parents[2]
-TESTS_DIR = ROOT / "tests"
+TESTS_DIR = ROOT / "codecept" / "tests"  # #337 で codecept/ の下へ
 DESC_FILE = ROOT / "run" / "test_descriptions.json"
 OUT_FILE = ROOT / "docs" / "project" / "test_catalog.md"
 
@@ -96,7 +96,7 @@ def list_untracked() -> set[Path]:
     """git の未追跡ファイル（.gitignore 対象は除く）の絶対パス集合を返す。git が使えなければ空集合。"""
     try:
         out = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", "tests"],
+            ["git", "ls-files", "--others", "--exclude-standard", "-z", "--", "codecept/tests"],
             cwd=ROOT, capture_output=True, check=True,
         ).stdout.decode("utf-8")
     except (OSError, subprocess.CalledProcessError):

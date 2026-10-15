@@ -40,7 +40,7 @@ const [download] = await Promise.all([
 ]);
 ```
 
-このパターンは `support/steps_file.js` の `downloadAndReadCsv()` カスタムステップに実装済み。
+このパターンは `codecept/support/steps_file.js` の `downloadAndReadCsv()` カスタムステップに実装済み。
 テストや Page Object から直接 `Promise.all` を書く必要はなく、このステップを呼べばよい。
 
 ### ファイル種別による検証方法の違い
@@ -62,11 +62,11 @@ const [download] = await Promise.all([
 
 | 目的 | 参照先 |
 |---|---|
-| ダウンロードカスタムステップ | `support/steps_file.js`（`downloadAndReadCsv`） |
-| sideMenus.js の定義パターン | `pages/shimamura/_common/sideMenus.js` |
-| ナビゲーション実装 | `pages/shimamura/screens/IchiranPage.js`（`_navigateViaMenu`） |
+| ダウンロードカスタムステップ | `codecept/support/steps_file.js`（`downloadAndReadCsv`） |
+| sideMenus.js の定義パターン | `codecept/pages/shimamura/_common/sideMenus.js` |
+| ナビゲーション実装 | `codecept/pages/shimamura/screens/IchiranPage.js`（`_navigateViaMenu`） |
 | サイドバー HTML | `scripts/html/shimamura/nav__leftcol.html` |
-| 既存のダウンロードテスト雛形 | `tests/shimamura/page/validity_data_output_test.js` |
+| 既存のダウンロードテスト雛形 | `codecept/tests/shimamura/page/validity_data_output_test.js` |
 | GUIダウンロードパネル（ファイル種別判定） | `run/run_gui.py`（`_analyze_download_file`） |
 
 ---
@@ -109,7 +109,7 @@ const [download] = await Promise.all([
 
 ### Step 1: sideMenus.js に追記する
 
-`pages/shimamura/_common/sideMenus.js` にメニュー定義を追加する。
+`codecept/pages/shimamura/_common/sideMenus.js` にメニュー定義を追加する。
 
 #### 4 フィールドの使い分け
 
@@ -174,7 +174,7 @@ screenName: {
 
 ### Step 2: 画面定義ファイルにメソッドを追記する
 
-画面が属するアイコンの `pages/shimamura/screens/ichiran/<icon>Screens.js` の `specialScreens` に追記する
+画面が属するアイコンの `codecept/pages/shimamura/screens/ichiran/<icon>Screens.js` の `specialScreens` に追記する
 （例: 有効性データ出力は `studentScreens.js`）。`IchiranPage.js` が結合するので inject 名は `ichiranPageShimamura` のまま。
 
 ```javascript
@@ -204,7 +204,7 @@ async download{ScreenName}File(savePath) {
 
 ### Step 3: テストファイルを作成する
 
-`tests/shimamura/page/{prefix}_test.js` を作成する。
+`codecept/tests/shimamura/page/{prefix}_test.js` を作成する。
 
 #### パターン A: 通常 CSV（カンマ区切り・改行あり）
 
@@ -315,7 +315,7 @@ Data(csvData).Scenario('{画面名}をファイル出力できる @dev', async (
 
 ### Step 4: テストデータ CSV を作成する
 
-`data/shimamura/{prefix}_data.csv`
+`codecept/data/shimamura/{prefix}_data.csv`
 
 ```csv
 scenario
@@ -340,7 +340,7 @@ scenario
 ### Step 6: テスト実行と確認
 
 ```bash
-npx codeceptjs run ./tests/shimamura/page/{prefix}_test.js --profile shimamura.testgcp
+npx codeceptjs run ./codecept/tests/shimamura/page/{prefix}_test.js --profile shimamura.testgcp
 ```
 
 実行後に `output/downloads/` にファイルが保存されること、

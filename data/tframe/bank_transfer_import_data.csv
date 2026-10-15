@@ -1,3 +1,0 @@
-scenario,filePath,transactionId,expectedKey
-ファイル・トランザクションID未入力はエラー,,,noInput
-不正フォーマットのファイルはエラー,data/tframe/import_samples/invalid_header_sample.csv,ZZZ_FAKE_TRANSACTION_ID_9999,invalidFormat

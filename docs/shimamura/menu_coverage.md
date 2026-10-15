@@ -3,8 +3,8 @@
 最終更新: 2026-09-28（#251 初版）
 
 - **サマリとアイコン別表は自動生成**（`npm run docs:menu-coverage:shimamura` / commit 時にも自動再生成）。
-  入力 = `pages/shimamura/_common/menuSnapshot/testgcp.json`（実機採取・採取日は JSON の `capturedAt`）
-  × `pages/shimamura/**` の画面参照 × `tests/shimamura/**_test.js`。
+  入力 = `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json`（実機採取・採取日は JSON の `capturedAt`）
+  × `codecept/pages/shimamura/**` の画面参照 × `codecept/tests/shimamura/**_test.js`。
 - メニューが改定されたら `node scripts/html/fetch_shimamura_menus.js shimamura.testgcp` で採取し直す（データは変更しない・読むだけ）。
 - 計画・バケット分類は [`screen_expansion_plan_2026-09.md`](screen_expansion_plan_2026-09.md)。
 
@@ -14,19 +14,19 @@
 |---|---|---|
 | **本ファイル** | **左サイドメニュー起点**。メニューに実在する画面ごとに PO 有無・テスト有無を突き合わせる | 「この画面、操作できる？テストある？」「未着手はどれ？」 |
 | `screen_navigation_diagram.md` | テストが辿る画面遷移（テスト起点） | ユーザー操作の経路 |
-| `pages/shimamura/_common/sideMenus.js` | テストのメニューナビ定義 | テストが辿る導線 |
+| `codecept/pages/shimamura/_common/sideMenus.js` | テストのメニューナビ定義 | テストが辿る導線 |
 
 ## 突き合わせの仕組み（読み方の注意）
 
 - 画面の同一性は **route**（`module/action` ＋ 画面を区別するパラメータ）で判定。正規化規則は `scripts/html/shimamura_route.js`。
 - PO 列は「その route の URL を直書き / その画面の `sideMenus` キーを参照 / その URL 定数を参照」している関数を持つファイル。
 - テスト列は、テストが呼ぶ PO メソッド・import した FlowPage 関数を**同一ファイル内の呼び出しまで推移的に**たどって判定。
-  ヘルパー（`support/shimamura/**`）経由の遷移は拾わないため、実際より ✗ が多めに出ることがある。
+  ヘルパー（`codecept/support/shimamura/**`）経由の遷移は拾わないため、実際より ✗ が多めに出ることがある。
 - **バケットE**（カレンダー・Ｅメール・レポート・ヘルプ・管理）は業務でほぼ使わないため、メニュー巡回で開けることの確認のみとする（計画書の決定事項）。
 
 <!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_shimamura_menu_coverage.js。手で編集しない -->
 
-> 入力: `pages/shimamura/_common/menuSnapshot/testgcp.json`（採取日 2026-09-28）× `pages/shimamura/**` × `tests/shimamura/**_test.js`。
+> 入力: `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json`（採取日 2026-09-28）× `codecept/pages/shimamura/**` × `codecept/tests/shimamura/**_test.js`。
 > **手で編集しない** — メニューが変わったら `node scripts/html/fetch_shimamura_menus.js` で採取し直して `npm run docs:menu-coverage:shimamura`。
 
 ## サマリ
@@ -50,9 +50,9 @@ route の重複（複数アイコンに同じ画面がある等）は1画面と�
 
 ## アイコン別 マッピング表
 
-- **sideMenus キー** … `pages/shimamura/_common/sideMenus.js` に定義があればそのキー
-- **Page Object** … その画面へ遷移・操作する `pages/shimamura/**.js`（URL 直書き / sideMenus 参照 / URL 定数参照）
-- **一覧 / フロー / その他テスト** … `tests/shimamura/{page,flow,それ以外}/*_test.js` のうち、その画面に触れるもの
+- **sideMenus キー** … `codecept/pages/shimamura/_common/sideMenus.js` に定義があればそのキー
+- **Page Object** … その画面へ遷移・操作する `codecept/pages/shimamura/**.js`（URL 直書き / sideMenus 参照 / URL 定数参照）
+- **一覧 / フロー / その他テスト** … `codecept/tests/shimamura/{page,flow,それ以外}/*_test.js` のうち、その画面に触れるもの
 - **△ 巡回** … `menu_patrol_test.js` がサイドバーから開いてエラーが無いことだけ確認している（サマリの「テストあり」には数えない）
 
 ### カレンダー（icon: `Calendar`） — バケットE

@@ -8,7 +8,7 @@
 
 | 見るもの | わかること |
 |---|---|
-| [プロジェクト設計・アーキテクチャガイド](./project_architecture_guide.md) | ディレクトリの責務、`tests/` `pages/` `support/` の役割分担 |
+| [プロジェクト設計・アーキテクチャガイド](./project_architecture_guide.md) | ディレクトリの責務、`codecept/tests/` `codecept/pages/` `codecept/support/` の役割分担 |
 | [AGENTS.md](../../AGENTS.md) | 開発ルール、コーディング規約、フォルダ配置ルール、利用可能なスキル一覧 |
 | [README.md](../../README.md) | セットアップ、実行方法、プロファイル一覧、ディレクトリツリー |
 
@@ -44,6 +44,6 @@
 ## ドキュメントの鮮度について
 
 - **テストカタログ** (`docs/project/test_catalog.md`) と **README のディレクトリツリー** は
-  `.githooks/pre-commit` で `tests/` 変更時に自動再生成される（`npm install` の postinstall で有効化）。
+  `.githooks/pre-commit` で `codecept/tests/` 変更時に自動再生成される（`npm install` の postinstall で有効化）。
 - 手動で更新するなら `npm run docs:all`。
 - カタログ末尾の「メンテナンス状況」に、説明未登録のテストや実体のない説明エントリが警告表示される。

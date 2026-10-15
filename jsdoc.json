@@ -1,9 +1,9 @@
 {
   "source": {
     "include": [
-      "tests",
-      "pages",
-      "support"
+      "codecept/tests",
+      "codecept/pages",
+      "codecept/support"
     ],
     "includePattern": ".+\\.js$"
   },

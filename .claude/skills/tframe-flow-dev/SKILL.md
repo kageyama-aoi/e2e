@@ -4,10 +4,10 @@ description: |
   tframe の業務フロー（複数画面をまたぐE2Eシナリオ）を新規作成・修正するスキル。
   以下のような依頼があったら使用すること：
   - tframe で複数画面にまたがるシナリオ（例: 受講生登録→コース紐付け）のテストを作りたい
-  - 既存の `pages/tframe/flow/*FlowPage.js` を修正・拡張したい
-  - shimamura の flow パターン（`pages/shimamura/flow/*FlowPage.js`）に相当するものを tframe 側にも作りたい
+  - 既存の `codecept/pages/tframe/flow/*FlowPage.js` を修正・拡張したい
+  - shimamura の flow パターン（`codecept/pages/shimamura/flow/*FlowPage.js`）に相当するものを tframe 側にも作りたい
 
-  ワークフロー: 対象UI確認（/tframe-html-fetch or 実機操作）→ pages/tframe/flow/ にFlowPage作成 or 追記 →
+  ワークフロー: 対象UI確認（/tframe-html-fetch or 実機操作）→ codecept/pages/tframe/flow/ にFlowPage作成 or 追記 →
              CSV → テストファイル → 実行確認
 
   ※ 1画面完結の登録・一覧テストは /tframe-registration-dev または /tframe-ichiran-dev を使うこと
@@ -18,8 +18,8 @@ description: |
 tframe の「複数画面をまたぐ業務フロー」（例: 受講生登録 → コース紐付け）に対する
 E2E テスト（FlowPage / CSV / テストファイル）を新規作成・修正する際の標準手順。
 
-shimamura 側の `pages/shimamura/flow/*FlowPage.js` と同じ役割を tframe に持ち込むためのスキル。
-ただし shimamura 固有のユーティリティ（`support/shimamura/utils.js` 等）は使わず、
+shimamura 側の `codecept/pages/shimamura/flow/*FlowPage.js` と同じ役割を tframe に持ち込むためのスキル。
+ただし shimamura 固有のユーティリティ（`codecept/support/shimamura/utils.js` 等）は使わず、
 tframe の既存規約（`TIMEOUTS` 定数・`submitTframeFormAndVerify`・`selectAreaThenBranch` 等）に合わせる。
 
 ---
@@ -30,11 +30,11 @@ tframe の既存規約（`TIMEOUTS` 定数・`submitTframeFormAndVerify`・`sele
 
 | 目的 | 参照先 |
 |---|---|
-| flow系Page Objectの雛形（1本目・最も新しい） | `pages/tframe/flow/JukuseiCourseFlowPage.js` |
-| 対応するテストファイルの雛形 | `tests/tframe/flow/jukusei_course_link_flow_test.js` |
-| shimamura側の同種パターン（構造の参考。丸写し禁止） | `pages/shimamura/flow/SyokaiFlowPage.js` |
-| 1画面完結の登録Page Object | `pages/tframe/screens/JukuseiPage.js` / `CoursePage.js` |
-| 共通ユーティリティ | `support/utils.js`、`support/tframe/utils.js`、`support/tframe/constants.js` |
+| flow系Page Objectの雛形（1本目・最も新しい） | `codecept/pages/tframe/flow/JukuseiCourseFlowPage.js` |
+| 対応するテストファイルの雛形 | `codecept/tests/tframe/flow/jukusei_course_link_flow_test.js` |
+| shimamura側の同種パターン（構造の参考。丸写し禁止） | `codecept/pages/shimamura/flow/SyokaiFlowPage.js` |
+| 1画面完結の登録Page Object | `codecept/pages/tframe/screens/JukuseiPage.js` / `CoursePage.js` |
+| 共通ユーティリティ | `codecept/support/utils.js`、`codecept/support/tframe/utils.js`、`codecept/support/tframe/constants.js` |
 | フォルダ配置ルール | `AGENTS.md` の「tframe テストのフォルダ分類」（`flow/` = 複数画面をまたぐ遷移・シナリオ） |
 
 ---
@@ -59,7 +59,7 @@ flow系シナリオは「登録フォームの延長にある、まだPage Objec
 
 ### Step 2: FlowPage の作成/更新
 
-`pages/tframe/flow/` に `{機能名}FlowPage.js` を作成する（雛形: `JukuseiCourseFlowPage.js`）。
+`codecept/pages/tframe/flow/` に `{機能名}FlowPage.js` を作成する（雛形: `JukuseiCourseFlowPage.js`）。
 
 #### 標準構成（shimamura の SyokaiFlowPage と同じ構造だが tframe 規約に合わせる）
 
@@ -90,11 +90,11 @@ module.exports = { XXX_LOCATORS, registerXxx, openYyyPopup, verifyZzz, runXxxYyy
   `submitAndVerifyRegistration` 等）を再利用し、車輪の再発明をしない。
 - tframe のカスタムラジオボタン（ポップアップ選択式）は `input` が非表示のため
   `locate('.tf-radio.tf-radio-primary').first()` をクリックする（既存の popup picker と同じ作法）。
-- 待機は `TIMEOUTS`（`support/tframe/constants.js`）を使う。マジックナンバー禁止。
+- 待機は `TIMEOUTS`（`codecept/support/tframe/constants.js`）を使う。マジックナンバー禁止。
 
 ### Step 3: CSV の作成/更新
 
-`data/tframe/{機能名}_flow_data.csv` を作成する。
+`codecept/data/tframe/{機能名}_flow_data.csv` を作成する。
 
 - 複数の画面／エンティティ（例: コースと受講生）を1行にまとめる場合、列名の衝突に注意する。
   例えば `school_area_id` はコース・受講生の両方が持ちうるフィールドなので、
@@ -107,7 +107,7 @@ module.exports = { XXX_LOCATORS, registerXxx, openYyyPopup, verifyZzz, runXxxYyy
 
 ### Step 4: テストファイルの作成/更新
 
-**`tests/tframe/flow/jukusei_course_link_flow_test.js` を雛形にすること。**
+**`codecept/tests/tframe/flow/jukusei_course_link_flow_test.js` を雛形にすること。**
 
 ```javascript
 const { loadCsvWithProfile, withScenarioLabel, updateCsvIdnumber } = require('../../../support/utils');
@@ -130,12 +130,12 @@ Data(csvData).Scenario('{シナリオ説明} @admin', async ({ I, xxxPage, yyyPa
 });
 ```
 
-配置先は `tests/tframe/flow/`（AGENTS.md の tframe フォルダ分類：複数画面をまたぐ遷移・シナリオ）。
+配置先は `codecept/tests/tframe/flow/`（AGENTS.md の tframe フォルダ分類：複数画面をまたぐ遷移・シナリオ）。
 
 ### Step 5: 実行確認
 
 ```bash
-npx codeceptjs run ./tests/tframe/flow/{機能名}_flow_test.js --profile tframe.culture_beta
+npx codeceptjs run ./codecept/tests/tframe/flow/{機能名}_flow_test.js --profile tframe.culture_beta
 ```
 
 **最低1件は実際に最後まで通ることを確認すること。**
@@ -165,7 +165,7 @@ culture_beta 環境は既存の `screens/` Page Object と実際のフォーム�
 ユーザーが「〇〇と△△をまたぐフローのテストを作りたい」と言ったとき：
 
 1. 対象UIが本当に存在するか（Step 1）を最優先で確認する。存在しないなら架空実装せず報告する。
-2. `pages/tframe/flow/` に既存FlowPageがあれば流用・拡張、なければ `JukuseiCourseFlowPage.js` を
+2. `codecept/pages/tframe/flow/` に既存FlowPageがあれば流用・拡張、なければ `JukuseiCourseFlowPage.js` を
    雛形にコピーして書き換える。
 3. CSV・テストファイルを作成し、`--profile tframe.culture_beta`（または `tframe.juku_test`）で
    実行確認する。

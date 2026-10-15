@@ -64,10 +64,11 @@ DOC_EXCLUDE_PARTS = ("learning",)
 IGNORE_FILE = ROOT / "scripts" / "docs" / "check_doc_refs.ignore"
 
 # 関数定義を収集する JS ソース
-SOURCE_GLOBS = ["pages/**/*.js", "support/**/*.js", "tests/**/*.js", "scripts/**/*.js"]
+SOURCE_GLOBS = ["codecept/pages/**/*.js", "codecept/support/**/*.js", "codecept/tests/**/*.js", "scripts/**/*.js"]
 
 # パス参照として扱うトップレベルディレクトリ
-PATH_ROOTS = ("pages", "tests", "support", "scripts", "data", "run", "docs")
+# #337 で pages・tests・support・data は codecept/ の下へ移した。docs に古い書き方（pages/…）が残っていれば実在しない参照として検出される
+PATH_ROOTS = ("codecept", "pages", "tests", "support", "scripts", "data", "run", "docs")
 
 # `obj.method(` の obj がこれらならチェックしない（CodeceptJS / Playwright / 組み込み）
 SKIP_OBJECTS = {

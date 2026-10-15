@@ -1,14 +1,14 @@
 /**
  * pause() 検知チェッカー
  * npm run pretest_s から自動で呼ばれる。
- * tests/shimamura/ 配下のテストファイルに pause() が残っていれば
+ * codecept/tests/shimamura/ 配下のテストファイルに pause() が残っていれば
  * 場所を表示して exit 1 で止める。
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_DIR = path.join(__dirname, '..', 'tests', 'shimamura');
+const TARGET_DIR = path.join(__dirname, '..', 'codecept', 'tests', 'shimamura');
 const PAUSE_PATTERN = /\bpause\s*\(\s*\)/;
 
 const found = [];

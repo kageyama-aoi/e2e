@@ -4,9 +4,9 @@
  * `docs/tframe/menu_coverage.md` の「## アイコン別 マッピング表」セクション（AUTOGEN マーカーで囲まれた部分）を、
  * 以下を結合して自動生成する:
  *
- * - メニュー構成 / culture・juku 差分 … `pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`
- * - Page Object                     … `pages/tframe/screens/*.js` 内の `index.php?r=<mod>%2F(ew|sw|gw)%2F<action>`
- * - テスト（登録 / 一覧 / その他）    … `tests/tframe/page/*_test.js` が呼ぶ PO メソッド → PO 内の route 参照
+ * - メニュー構成 / culture・juku 差分 … `codecept/pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`
+ * - Page Object                     … `codecept/pages/tframe/screens/*.js` 内の `index.php?r=<mod>%2F(ew|sw|gw)%2F<action>`
+ * - テスト（登録 / 一覧 / その他）    … `codecept/tests/tframe/page/*_test.js` が呼ぶ PO メソッド → PO 内の route 参照
  *
  * 散文セクション（差分サマリ / sideMenus.js とのズレ / バケット分類 / フェーズ2 / 付録）は手動のまま。
  *
@@ -25,9 +25,9 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const SNAP_DIR = path.join(ROOT, 'pages', 'tframe', '_common', 'menuSnapshot');
-const SCREENS_DIR = path.join(ROOT, 'pages', 'tframe', 'screens');
-const TESTS_DIR = path.join(ROOT, 'tests', 'tframe', 'page');
+const SNAP_DIR = path.join(ROOT, 'codecept', 'pages', 'tframe', '_common', 'menuSnapshot');
+const SCREENS_DIR = path.join(ROOT, 'codecept', 'pages', 'tframe', 'screens');
+const TESTS_DIR = path.join(ROOT, 'codecept', 'tests', 'tframe', 'page');
 const CONF_FILE = path.join(ROOT, 'codecept.conf.js');
 const DOC_FILE = path.join(ROOT, 'docs', 'tframe', 'menu_coverage.md');
 
@@ -38,7 +38,7 @@ const DOC_FILE = path.join(ROOT, 'docs', 'tframe', 'menu_coverage.md');
  */
 function listUntracked() {
   try {
-    const out = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'pages', 'tests'], { cwd: ROOT });
+    const out = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'codecept/pages', 'codecept/tests'], { cwd: ROOT });
     return new Set(out.toString('utf8').split('\0').filter(Boolean).map((e) => path.resolve(ROOT, e)));
   } catch (e) {
     console.warn('[gen_tframe_menu_coverage] git ls-files に失敗したため未追跡ファイルの除外をスキップします');
@@ -138,7 +138,7 @@ function buildIcons() {
 const ROUTE_RE = /r=([A-Za-z]+)%2F(ew|sw|gw)%2F([A-Za-z_]+)/g;
 
 /**
- * pages/tframe/screens/*.js をスキャンし、route 参照と PO メソッドの対応を集計する
+ * codecept/pages/tframe/screens/*.js をスキャンし、route 参照と PO メソッドの対応を集計する
  * @returns {Object} 集計結果。
  *   routeToPO: {Map<string, Set<string>>} routeKey -> その route を参照する PO basename の集合。
  *   poMethods: {Map<string, Array<Object>>} PO basename -> [{method: (string|null), routeKey: string}]
@@ -205,7 +205,7 @@ const MENU_NAV_PO_BY_ICON = {
 function loadInjectMap() {
   const src = fs.readFileSync(CONF_FILE, 'utf8');
   const map = new Map();
-  const re = /(\w+Page):\s*'\.\/pages\/tframe\/screens\/(\w+)\.js'/g;
+  const re = /(\w+Page):\s*'\.\/codecept\/pages\/tframe\/screens\/(\w+)\.js'/g;  // #337 で codecept/ の下へ
   let m;
   while ((m = re.exec(src))) map.set(m[1], m[2]);
   return map;
@@ -217,7 +217,7 @@ function loadInjectMap() {
 // ---------------------------------------------------------------------------
 
 /**
- * tests/tframe/page/*_test.js をスキャンし、route とテストファイルの対応を集計する
+ * codecept/tests/tframe/page/*_test.js をスキャンし、route とテストファイルの対応を集計する
  * @param {Map<string, string>} injectMap - codecept.conf.js の inject 変数名 -> PO basename
  * @param {Map<string, Array<Object>>} poMethods - scanPageObjects() が返す PO basename -> メソッド一覧
  * @returns {Object} 集計結果。
@@ -351,12 +351,12 @@ function renderTable(icons, routeToPO, routeToTests, poBaseToTestFiles) {
   out.push('');
   out.push(START);
   out.push('');
-  out.push('> この表は `pages/tframe/_common/menuSnapshot/*.json`（実機採取・採取日は各 JSON の `capturedAt`）×');
-  out.push('> `pages/tframe/screens/*.js` の route 参照 × `tests/tframe/page/*_test.js` から自動生成。');
+  out.push('> この表は `codecept/pages/tframe/_common/menuSnapshot/*.json`（実機採取・採取日は各 JSON の `capturedAt`）×');
+  out.push('> `codecept/pages/tframe/screens/*.js` の route 参照 × `codecept/tests/tframe/page/*_test.js` から自動生成。');
   out.push('> **手で編集しない** — メニューが変わったらスナップショットを更新して `npm run docs:menu-coverage`。');
   out.push('');
   out.push('- **C / J** … その画面が culture_beta / juku_beta の左メニューに項目として存在するか（`●` 有 / `-` 無）');
-  out.push('- **Page Object** … その route へ遷移するメソッドを持つ `pages/tframe/screens/*.js`');
+  out.push('- **Page Object** … その route へ遷移するメソッドを持つ `codecept/pages/tframe/screens/*.js`');
   out.push('- **登録 / 一覧テスト** … その画面を対象にした `*_touroku_test.js` / `*_ichiran_test.js`');
   out.push('');
 

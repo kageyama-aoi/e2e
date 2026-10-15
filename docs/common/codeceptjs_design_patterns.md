@@ -259,7 +259,7 @@ I.retry({ retries: 2, minTimeout: 500 })
 ## 11. DIコンテナと `inject()` の仕組み
 
 ### 概念
-`pages/`のPage Objectがテストに渡ってくる仕組み（DI: 依存性注入）。CodeceptJSは
+`codecept/pages/`のPage Objectがテストに渡ってくる仕組み（DI: 依存性注入）。CodeceptJSは
 `codecept.conf.js`の`include`に書かれた全エントリを起動時にrequireし、**1個の
 「全部乗せオブジェクト」**にまとめてコンテナに保持する。`inject()`は、このオブジェクトを
 呼ぶたびに返しているだけの関数。
@@ -267,26 +267,26 @@ I.retry({ retries: 2, minTimeout: 500 })
 ```js
 // CodeceptJSが内部で持っているイメージ（実際のコードではない）
 const supportObjects = {
-  I: require('./support/steps_file.js')(),           // actor()でラップ済み
-  koshiPage: require('./pages/tframe/screens/KoshiPage.js'),
-  loginKannrisyaPage: require('./pages/tframe/auth/LoginKannrisyaPage.js'),
+  I: require('./codecept/support/steps_file.js')(),           // actor()でラップ済み
+  koshiPage: require('./codecept/pages/tframe/screens/KoshiPage.js'),
+  loginKannrisyaPage: require('./codecept/pages/tframe/auth/LoginKannrisyaPage.js'),
   // ... include に書いた分だけ
 };
 ```
 
-Page Object側の`const { I } = inject();`（`pages/tframe/screens/KoshiPage.js`）も、
+Page Object側の`const { I } = inject();`（`codecept/pages/tframe/screens/KoshiPage.js`）も、
 このオブジェクトから`I`というキーを取り出しているだけのJS分割代入で、特別な魔法はない。
 
 ### 3層構造
 ```
 Helper (Playwright)                 ← ブラウザ操作の実体（click, fillField...）
   ↑ actor() でラップ
-I actor (support/steps_file.js)     ← 全Helperメソッド + 独自メソッド(saveScreenshotWithTimestamp等)
+I actor (codecept/support/steps_file.js)     ← 全Helperメソッド + 独自メソッド(saveScreenshotWithTimestamp等)
   ↑ Page Objectがこれを呼ぶ
-Page Object (pages/tframe/screens/KoshiPage.js)  ← 業務単位の操作(navigateToRegisterPage等)
+Page Object (codecept/pages/tframe/screens/KoshiPage.js)  ← 業務単位の操作(navigateToRegisterPage等)
 ```
 
-`I`も`include`に`I: './support/steps_file.js'`として登録されている、他の
+`I`も`include`に`I: './codecept/support/steps_file.js'`として登録されている、他の
 Page Objectと**まったく同じ扱いの1エントリ**にすぎない。
 
 ### 「リフレクションではない」証拠
@@ -294,7 +294,7 @@ Page Objectと**まったく同じ扱いの1エントリ**にすぎない。
 分割代入をやめて丸ごと受け取っても同じように動く。
 
 ```js
-// tests/tframe/page/koshi_touroku_test.js の実際の書き方
+// codecept/tests/tframe/page/koshi_touroku_test.js の実際の書き方
 Data(csvData).Scenario('...', async ({ I, loginKannrisyaPage, koshiPage, current }) => {
   koshiPage.navigateToRegisterPage();
 });

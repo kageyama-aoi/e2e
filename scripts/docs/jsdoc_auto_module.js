@@ -17,8 +17,9 @@ const repoRoot = path.resolve(__dirname, '..', '..');
 exports.handlers = {
   beforeParse(e) {
     if (/@module\b/.test(e.source) || !e.source.includes('/**')) return;
+    // codecept/ は付けない（#337 で移す前と同じ pages/… の名前のままにして、docs からのリンクを壊さない）
     const moduleName = path
-      .relative(repoRoot, e.filename)
+      .relative(path.join(repoRoot, 'codecept'), e.filename)
       .replace(/\\/g, '/')
       .replace(/\.js$/, '');
     e.source = `/** @module ${moduleName} */\n\n${e.source}`;

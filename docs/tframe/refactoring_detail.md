@@ -29,15 +29,15 @@ Node.js（このプロジェクトで使っている JavaScript 実行環境）�
 **イメージ: 道具箱とその使い方**
 
 ```
-support/utils.js           ← 道具箱（ここに道具をまとめて入れる）
+codecept/support/utils.js           ← 道具箱（ここに道具をまとめて入れる）
    ↓ module.exports に入れる
-pages/tframe/screens/*.js  ← 各ファイルが require で取り出して使う
+codecept/pages/tframe/screens/*.js  ← 各ファイルが require で取り出して使う
 ```
 
-**実際のコード（support/utils.js の末尾）**
+**実際のコード（codecept/support/utils.js の末尾）**
 
 ```js
-// support/utils.js の末尾
+// codecept/support/utils.js の末尾
 module.exports = {
   fillTextFields,        // 道具1
   submitTframeFormAndVerify,  // 道具2
@@ -52,10 +52,10 @@ module.exports = {
 
 ### ステップ 2: `isEnglish` はどこに定義されているか
 
-`support/utils.js` に以下のように書かれている：
+`codecept/support/utils.js` に以下のように書かれている：
 
 ```js
-// support/utils.js
+// codecept/support/utils.js
 function isEnglish() {
   return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
 }
@@ -209,7 +209,7 @@ module.exports = {
 
 **何が問題か:**
 
-1. `support/utils.js` の `isEnglish` と**完全に同じコード**が 8か所に分散している
+1. `codecept/support/utils.js` の `isEnglish` と**完全に同じコード**が 8か所に分散している
 2. 将来「英語判定のロジックを変えたい」となったとき、`utils.js` だけ直しても**8ファイルは古いまま**になる（変更漏れ）
 3. そのバグはすぐには気づかない（動作上は同じ結果なので）
 
@@ -217,7 +217,7 @@ module.exports = {
 
 ### ステップ 6: CalendarPage を例に修正の手順を追う
 
-**修正対象ファイル:** `pages/tframe/screens/CalendarPage.js`
+**修正対象ファイル:** `codecept/pages/tframe/screens/CalendarPage.js`
 
 **現在の状態（修正前）:**
 
@@ -800,10 +800,10 @@ fillTeByStudentSearchConditions → 残す
 
 ```powershell
 # lang_check テスト（メニューナビゲーションを使うテスト）
-npx codeceptjs run tests/tframe/check/lang_check_test.js --steps
+npx codeceptjs run codecept/tests/tframe/check/lang_check_test.js --steps
 
 # または
-npx codeceptjs run tests/tframe/check/dropdown_check_test.js --steps
+npx codeceptjs run codecept/tests/tframe/check/dropdown_check_test.js --steps
 ```
 
 テストが通れば修正完了。

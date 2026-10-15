@@ -1,2 +1,0 @@
-scenario,import_file_path,expectedErrors
-正常取込,data/shimamura/smbc_import/smbc_state_import_sample.txt,

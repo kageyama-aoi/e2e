@@ -22,10 +22,10 @@ description: |
 | 変更カテゴリ | 更新が必要なドキュメント |
 |---|---|
 | **A** ディレクトリ構成の変更（追加・削除・移動） | `README.md` / `docs/project/project_architecture_guide.md` |
-| **B** `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
+| **B** `codecept/data/tframe/` のファイル追加・削除・移動 | `codecept/data/tframe/README.md` の対応表 |
 | **C** 配置ルールの変更・新カテゴリの追加 | `AGENTS.md` のディレクトリ配置ルール表 |
 | **D** 新スキルの追加 | `AGENTS.md` のスキル一覧 |
-| **E** `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json` |
+| **E** `codecept/tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json` |
 | **F** Page Object / utils の**共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`、`docs/<product>/` の学習ガイド、`AGENTS.md` の共通ユーティリティ一覧 |
 
 > **カテゴリ F を見落とすと何が起きるか**：コードだけ整理してスキルを放置すると、次に「〇〇テストを作って」と
@@ -48,8 +48,8 @@ git status
 作業内容から変更カテゴリ（A〜F）を特定する。複数該当することもある。
 
 カテゴリ F の判定は `git diff` に以下が含まれるかで行う：
-- `pages/` `support/` で **export されている関数名の変更・削除・追加**
-- `support/<product>/utils.js` / `constants.js` への関数・定数の追加
+- `codecept/pages/` `codecept/support/` で **export されている関数名の変更・削除・追加**
+- `codecept/support/<product>/utils.js` / `constants.js` への関数・定数の追加
 - `_common/` への Mixin / ファクトリの追加
 - AGENTS.md の「雛形」として名指しされているファイルの構造変更
 
@@ -61,7 +61,7 @@ git status
 
 例：「一覧検索テストを新規追加した」場合
 - カテゴリ **E** → `run/test_descriptions.json` の更新が必要
-- カテゴリ **B** → `data/tframe/README.md` に CSV 対応表の行を追加が必要
+- カテゴリ **B** → `codecept/data/tframe/README.md` に CSV 対応表の行を追加が必要
 
 ---
 
@@ -81,16 +81,16 @@ npm run docs:update-readme-map
 
 - ファイルを読み込み、変更に合わせて該当箇所を修正する
 - 更新すべき可能性がある箇所：
-  - `pages/tframe/` の構成例（ファイル追加・削除・移動の場合）
-  - `tests/` の構成ツリー（新サブフォルダを作った場合）
+  - `codecept/pages/tframe/` の構成例（ファイル追加・削除・移動の場合）
+  - `codecept/tests/` の構成ツリー（新サブフォルダを作った場合）
   - ディレクトリ役割の表（新ディレクトリを追加した場合）
 - ファイル先頭の `最終更新:` 日付も更新する
 
 ---
 
-#### カテゴリ B: data/tframe/ のファイル変更
+#### カテゴリ B: codecept/data/tframe/ のファイル変更
 
-**data/tframe/README.md（手動更新）**
+**codecept/data/tframe/README.md（手動更新）**
 
 ファイルを読み込み、変更内容に応じて以下のいずれかを更新する：
 
@@ -104,10 +104,10 @@ npm run docs:update-readme-map
 各行のフォーマット：
 ```markdown
 <!-- 登録テスト -->
-| `tests/tframe/page/{module}_touroku_test.js` | `{module}_touroku_data.csv` | — | 実装済み |
+| `codecept/tests/tframe/page/{module}_touroku_test.js` | `{module}_touroku_data.csv` | — | 実装済み |
 
 <!-- 一覧検索テスト -->
-| `tests/tframe/page/{module}_ichiran_test.js` | `{module}_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: {検索条件}で絞り込み→特定レコード確認 |
+| `codecept/tests/tframe/page/{module}_ichiran_test.js` | `{module}_ichiran_search_data.csv` | B: 空検索→結果あり確認 / C: {検索条件}で絞り込み→特定レコード確認 |
 ```
 
 ---
@@ -134,7 +134,7 @@ npm run docs:update-readme-map
 
 ---
 
-#### カテゴリ E: tests/ 配下への新テスト追加（全プロダクト対象）
+#### カテゴリ E: codecept/tests/ 配下への新テスト追加（全プロダクト対象）
 
 **run/test_descriptions.json（手動更新）**
 
@@ -221,8 +221,8 @@ npm run docs:check-refs
 | `/shimamura-download-verify` でテスト追加 | E |
 | `/local-safe-move` でファイル移動 | A（変更量による） |
 | 新しいスキルを作成した | D |
-| `pages/` や `tests/` に新ディレクトリを追加した | A, C |
-| `data/tframe/` のファイルを整理した | B |
-| `support/<product>/utils.js` に共通関数を追加し、各ファイルのインラインを置き換えた | F |
+| `codecept/pages/` や `codecept/tests/` に新ディレクトリを追加した | A, C |
+| `codecept/data/tframe/` のファイルを整理した | B |
+| `codecept/support/<product>/utils.js` に共通関数を追加し、各ファイルのインラインを置き換えた | F |
 | Page Object を Mixin / ファクトリ化した、関数名を一括リネームした | F |
 | 未完成テストに `@wip` を付けた・外した | E（説明の `[WIP] ` 付け外し） |

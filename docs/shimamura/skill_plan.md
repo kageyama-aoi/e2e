@@ -2,8 +2,8 @@
 
 状態: 完了（2026-07）— Phase 1〜4 はすべて実装済み。歴史資料として残す。
 - Phase 1/2 → `scripts/html/fetch_shimamura_screens.js` + `/shimamura-html-fetch`
-- Phase 3 → `/shimamura-ichiran-dev`（`pages/shimamura/screens/IchiranPage.js` + `_common/sideMenus.js`）
-- Phase 4 → `/shimamura-registration-dev`（`pages/shimamura/flow/*FlowPage.js`）、追加で `/shimamura-download-verify`
+- Phase 3 → `/shimamura-ichiran-dev`（`codecept/pages/shimamura/screens/IchiranPage.js` + `_common/sideMenus.js`）
+- Phase 4 → `/shimamura-registration-dev`（`codecept/pages/shimamura/flow/*FlowPage.js`）、追加で `/shimamura-download-verify`
 - 本文中の「現状」「ギャップ」は 2026-05 時点の記述。現行の構成は `AGENTS.md`「shimamura テストの共通パターン」を参照。
 
 作成日: 2026-05-11  
@@ -16,7 +16,7 @@
 ### 1-1. ファイル構成
 
 ```
-pages/shimamura/
+codecept/pages/shimamura/
   auth/
     LoginPage.js              ... ログイン・担当者番号入力の Page Object
   screens/
@@ -29,7 +29,7 @@ pages/shimamura/
   _common/
     sideMenus.js              ... サイドメニュー定数
 
-tests/shimamura/
+codecept/tests/shimamura/
   auth/
     shimamura_login_test.js               ... ログイン動作確認
   check/
@@ -58,7 +58,7 @@ tests/shimamura/
     transaction_ichiran_test.js           ... 取引一覧
     mishukin_list_ichiran_test.js         ... 未集金一覧
 
-data/shimamura/
+codecept/data/shimamura/
   syokai_touroku_data.csv               ... 受講生登録（正常系）
   syokai_touroku_data_shimamura.testgcp.csv
   syokai_touroku_data_shimamura.testgcp2.csv
@@ -68,7 +68,7 @@ data/shimamura/
   keiri_hennkin_syori_validation_errors.csv
   taikai_testdata.csv
 
-support/shimamura/
+codecept/support/shimamura/
   constants.js          ... TIMEOUTS 定数（SCREEN/ELEMENT/RESULT/ENABLED/TAB_SWITCH）
   utils.js              ... shimamura 固有ユーティリティ（toggleGroupmenu / verifyNavigationByUrlChange /
                             clickCheckboxByLabelOrName / verifyCheckboxCheckedByLabelOrName /
@@ -123,7 +123,7 @@ support/shimamura/
 3. **共通保存ボタン**: `#ewSaveButton` が全画面に共通
 4. **エラー表示**: `#tf-message-summary` が共通
 5. **フォーム構造**: `<form id="editForm">` / `<form id="searchForm">` が共通
-6. **support/utils.js の共通関数**: `fillTextFields` / `loadCsvWithProfile`（tframe 固有の `submitTframeFormAndVerify` / `isEnglish` は `support/tframe/utils.js` に分離済み）
+6. **codecept/support/utils.js の共通関数**: `fillTextFields` / `loadCsvWithProfile`（tframe 固有の `submitTframeFormAndVerify` / `isEnglish` は `codecept/support/tframe/utils.js` に分離済み）
 7. **HTMLフェッチスクリプト**: `scripts/html/fetch_tframe_forms.js` + `scripts/html/tframe_extract_form_fields.js` がログイン済み HTML を自動取得
 
 ---
@@ -134,7 +134,7 @@ support/shimamura/
 
 | 項目 | tframe | shimamura |
 |---|---|---|
-| Page Object の置き場 | `pages/tframe/screens/` (画面単位) | `pages/shimamura/{auth,screens,flow}/` (役割別) |
+| Page Object の置き場 | `codecept/pages/tframe/screens/` (画面単位) | `codecept/pages/shimamura/{auth,screens,flow}/` (役割別) |
 | サブディレクトリ | `screens/` `auth/` `api/` `_common/` の 4 分類 | `auth/` `screens/` `flow/` `_common/` の 4 分類 |
 | ログイン PO | `auth/LoginKannrisyaPage.js` | `auth/LoginPage.js` |
 | 画面 PO | `screens/KoshiPage.js` など | `_common/ClassMemberPage.js`（共通ナビ） / `screens/IchiranPage.js`（一覧ベース） |
@@ -148,7 +148,7 @@ shimamura の `SyokaiFlowPage.js` は tframe の Page Object と異なり、画�
 |---|---|---|
 | `fillTextFields(I, fieldMap)` | 全 Page Object で使用（FORM_FILL_FAST 対応） | 未使用（未導入） |
 | `submitTframeFormAndVerify(I, text)` | 全登録 Page Object で使用 | 未使用（tframe 専用） |
-| `loadCsvWithProfile(baseName, dataDir)` | `data/tframe/` を参照（第 2 引数で明示） | `data/shimamura/` を参照（全呼び出しで `'shimamura'` を第 2 引数に明示） |
+| `loadCsvWithProfile(baseName, dataDir)` | `codecept/data/tframe/` を参照（第 2 引数で明示） | `codecept/data/shimamura/` を参照（全呼び出しで `'shimamura'` を第 2 引数に明示） |
 | `withScenarioLabel(data, fn)` | テストファイルで使用 | syokai_touroku_test.js / keiri で使用 |
 | `parseExpectedErrors(str)` | テストファイルで使用 | syokai_touroku_test.js で使用 |
 | `isEnglish()` | juku プロファイルで USE | 未使用（shimamura は日本語のみ） |
@@ -214,7 +214,7 @@ shimamura は tframe の `#swSearchButton` に相当する共通検索 ID がな
 | URL 直遷移の未確立 | URL ベースの直接遷移が機能するかどうか調査できていない（shimamura はセッション状態に依存する可能性） |
 | フローの複雑さ | 受講生登録は「候補生検索 → 詳細 → 経理ビュー A → 別タブでクラス選択 → 経理ビュー B → 確認完了 → 退会処理」と 7 ステップ以上のフロー |
 | HTML 取得スクリプトの不在 | `fetch_tframe_forms.js` に相当する shimamura 版が存在しない。HTML を手動で貼り付けるか、新規スクリプトを作成する必要がある |
-| `loadCsvWithProfile` の dataDir 指定 | 全テストで `'shimamura'` を第 2 引数に明示済み。`support/utils.js` のデフォルト値も削除済みのため誤動作リスクは解消 |
+| `loadCsvWithProfile` の dataDir 指定 | 全テストで `'shimamura'` を第 2 引数に明示済み。`codecept/support/utils.js` のデフォルト値も削除済みのため誤動作リスクは解消 |
 
 ### 4-3. スキル別ギャップ分析
 
@@ -267,7 +267,7 @@ shimamura は tframe の `#swSearchButton` に相当する共通検索 ID がな
    - 移行する場合: 既存 PO を画面単位にリファクタリングしてからスキル化
 
 3. **`loadCsvWithProfile` の dataDir 引数の明示**  
-   既存テストで `loadCsvWithProfile('syokai_touroku_data')` が `data/shimamura/` を正しく参照できているか確認し、必要に応じて `loadCsvWithProfile('syokai_touroku_data', 'shimamura')` に統一する。
+   既存テストで `loadCsvWithProfile('syokai_touroku_data')` が `codecept/data/shimamura/` を正しく参照できているか確認し、必要に応じて `loadCsvWithProfile('syokai_touroku_data', 'shimamura')` に統一する。
 
 ### Phase 1: HTML フェッチ基盤（優先度: 高）
 
@@ -319,7 +319,7 @@ shimamura 画面の HTML を取得するスクリプトを作成する。
 主な設計決定事項:
 - `fillTextFields` を shimamura でも使えるよう拡張するか、別の入力ユーティリティを作るか
 - shimamura 版の「保存確認」共通関数（`submitTframeFormAndVerify` 相当）を作るか
-- チェックボックスは `clickCheckboxByLabelOrName` を共通化して再利用する（既に `support/shimamura/utils.js` にあり）
+- チェックボックスは `clickCheckboxByLabelOrName` を共通化して再利用する（既に `codecept/support/shimamura/utils.js` にあり）
 
 ### フェーズのまとめ
 
@@ -370,7 +370,7 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 **結論: 対応済み。デフォルト値削除＋全呼び出しに明示引数を追加**
 
-- `support/utils.js` の `dataDir = 'shimamura'` デフォルト値を削除済み。
+- `codecept/support/utils.js` の `dataDir = 'shimamura'` デフォルト値を削除済み。
 - shimamura テスト全呼び出しに `loadCsvWithProfile(baseName, 'shimamura')` を明示済み。
 - tframe テストも同様に `'tframe'` を明示済み。
 - **今後の運用**: 新規テスト追加時は必ず第 2 引数（`'shimamura'` / `'tframe'` 等）を明示すること（デフォルト値がないためコンパイルエラーにはならないが、省略すると `undefined` フォルダを参照して実行時エラーになる）。
@@ -389,4 +389,4 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 - `scripts/html/shimamura/` は存在しなかった。shimamura 用の HTML サンプルはどこにも保存されていない（tframe は `scripts/html/input/` に多数の HTML が存在）。
 - `scripts/html/input/input.html` は tframe 専用の一時貼り付け先として使われており、shimamura には流用できない。
-- `SyokaiFlowPage.js` は `pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `pages/shimamura/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。
+- `SyokaiFlowPage.js` は `codecept/pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `codecept/support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `codecept/pages/shimamura/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。

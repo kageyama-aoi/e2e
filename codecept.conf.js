@@ -1,13 +1,13 @@
 // ------------------------------------------------------
 //  環境変数の読み込み (.env, .env.<profile>)
-//  ロジックは support/envLoader.js に分離
+//  ロジックは codecept/support/envLoader.js に分離
 // ------------------------------------------------------
-require('./support/envLoader.js');
+require('./codecept/support/envLoader.js');
 
 const fs = require('fs');
 const path = require('path');
 const { setCommonPlugins } = require('@codeceptjs/configure');
-const { resolveRunOutputPaths, ensureRunOutputDirs } = require('./support/runOutputPaths.js');
+const { resolveRunOutputPaths, ensureRunOutputDirs } = require('./codecept/support/runOutputPaths.js');
 
 // ------------------------------------------------------
 //  共通プラグインのON/OFFを環境変数で切り替え
@@ -19,7 +19,7 @@ if (process.env.USE_COMMON_PLUGINS === 'true') {
 
 // ------------------------------------------------------
 //  実行ごとの出力フォルダ（output/<profile>/<日時>_<テスト名>）
-//  計算とフォルダ作成は support/runOutputPaths.js に分離（#230）
+//  計算とフォルダ作成は codecept/support/runOutputPaths.js に分離（#230）
 // ------------------------------------------------------
 const runOutputPaths = resolveRunOutputPaths();
 ensureRunOutputDirs(runOutputPaths, __dirname);
@@ -69,7 +69,7 @@ AllureResultsDir=${runtimeAllureResultsDir}
   //  CodeceptJS 3.3.7 はパス未指定時に `tests` キーだけを読む（`suites` は読まない）。
   //  通常はコマンド側でパスを渡す（npm run test_s / test_t / GUI）ので、ここは `npm test` 用の既定値。
   // ----------------------------------------------------
-  tests: './tests/**/*_test.js',
+  tests: './codecept/tests/**/*_test.js',
 
   // ----------------------------------------------------
   //  ヘルパー（Playwright）
@@ -105,49 +105,49 @@ AllureResultsDir=${runtimeAllureResultsDir}
   //  ページオブジェクト / steps の定義
   // ----------------------------------------------------
   include: {
-    I: './support/steps_file.js',
+    I: './codecept/support/steps_file.js',
 
-    loginKannrisyaPage:   './pages/tframe/auth/LoginKannrisyaPage.js',
-    loginMyPageTeacher:   './pages/tframe/auth/LoginMyPageTeacherPage.js',
-    loginMyPageStudent:   './pages/tframe/auth/LoginMyPageStudentPage.js',
+    loginKannrisyaPage:   './codecept/pages/tframe/auth/LoginKannrisyaPage.js',
+    loginMyPageTeacher:   './codecept/pages/tframe/auth/LoginMyPageTeacherPage.js',
+    loginMyPageStudent:   './codecept/pages/tframe/auth/LoginMyPageStudentPage.js',
 
-    apiCommonLoginPage:   './pages/tframe/api/ApiCommonLoginPage.js',
-    apiTeacherInfoGetPage:'./pages/tframe/api/ApiTeacherInfoGetPage.js',
-    jsonInputPage:        './pages/tframe/api/JsonInputPage.js',
+    apiCommonLoginPage:   './codecept/pages/tframe/api/ApiCommonLoginPage.js',
+    apiTeacherInfoGetPage:'./codecept/pages/tframe/api/ApiTeacherInfoGetPage.js',
+    jsonInputPage:        './codecept/pages/tframe/api/JsonInputPage.js',
 
-    loginPageShimamura: './pages/shimamura/auth/LoginPage.js',
-    classMemberPageShimamura: './pages/shimamura/_common/ClassMemberPage.js',
-    ichiranPageShimamura: './pages/shimamura/screens/IchiranPage.js',
-    contactRegisterPageShimamura: './pages/shimamura/screens/ContactRegisterPage.js',
-    smbcStateImportPageShimamura: './pages/shimamura/screens/SmbcStateImportPage.js',
-    salesGroupTransferPageShimamura: './pages/shimamura/screens/SalesGroupTransferPage.js',
-    menuPatrolPageShimamura: './pages/shimamura/_common/MenuPatrolPage.js',
+    loginPageShimamura: './codecept/pages/shimamura/auth/LoginPage.js',
+    classMemberPageShimamura: './codecept/pages/shimamura/_common/ClassMemberPage.js',
+    ichiranPageShimamura: './codecept/pages/shimamura/screens/IchiranPage.js',
+    contactRegisterPageShimamura: './codecept/pages/shimamura/screens/ContactRegisterPage.js',
+    smbcStateImportPageShimamura: './codecept/pages/shimamura/screens/SmbcStateImportPage.js',
+    salesGroupTransferPageShimamura: './codecept/pages/shimamura/screens/SalesGroupTransferPage.js',
+    menuPatrolPageShimamura: './codecept/pages/shimamura/_common/MenuPatrolPage.js',
 
-    taskReportLoginPage: './pages/taskreport/TaskReportLoginPage.js',
+    taskReportLoginPage: './codecept/pages/taskreport/TaskReportLoginPage.js',
 
-    keiryoMasterPage:  './pages/tframe/screens/KeiryoMasterPage.js',
-    jukuseiPage:       './pages/tframe/screens/JukuseiPage.js',
-    coursePage:        './pages/tframe/screens/CoursePage.js',
-    koshiPage:         './pages/tframe/screens/KoshiPage.js',
-    masterMenuPage:    './pages/tframe/screens/MasterMenuPage.js',
-    calendarPage:      './pages/tframe/screens/CalendarPage.js',
-    emailPage:         './pages/tframe/screens/EmailPage.js',
-    reportPage:        './pages/tframe/screens/ReportPage.js',
-    homePage:          './pages/tframe/screens/HomePage.js',
-    helpPage:          './pages/tframe/screens/HelpPage.js',
-    accountPage:       './pages/tframe/screens/AccountPage.js',
-    staffPage:         './pages/tframe/screens/StaffPage.js',
-    shohinPage:        './pages/tframe/screens/ShohinPage.js',
-    chosekinPage:      './pages/tframe/screens/ChosekinPage.js',
-    classroomPage:     './pages/tframe/screens/ClassroomPage.js',
-    ryokinMasterPage:  './pages/tframe/screens/RyokinMasterPage.js',
-    branchPage:        './pages/tframe/screens/BranchPage.js',
-    ryokinPackagePage: './pages/tframe/screens/RyokinPackagePage.js',
-    infoHistoryPage:   './pages/tframe/screens/InfoHistoryPage.js',
-    keiriIchiranPage:  './pages/tframe/screens/KeiriIchiranPage.js',
-    emailIchiranPage:  './pages/tframe/screens/EmailIchiranPage.js',
-    emailTourokuPage:  './pages/tframe/screens/EmailTourokuPage.js',
-    reportIchiranPage: './pages/tframe/screens/ReportIchiranPage.js'
+    keiryoMasterPage:  './codecept/pages/tframe/screens/KeiryoMasterPage.js',
+    jukuseiPage:       './codecept/pages/tframe/screens/JukuseiPage.js',
+    coursePage:        './codecept/pages/tframe/screens/CoursePage.js',
+    koshiPage:         './codecept/pages/tframe/screens/KoshiPage.js',
+    masterMenuPage:    './codecept/pages/tframe/screens/MasterMenuPage.js',
+    calendarPage:      './codecept/pages/tframe/screens/CalendarPage.js',
+    emailPage:         './codecept/pages/tframe/screens/EmailPage.js',
+    reportPage:        './codecept/pages/tframe/screens/ReportPage.js',
+    homePage:          './codecept/pages/tframe/screens/HomePage.js',
+    helpPage:          './codecept/pages/tframe/screens/HelpPage.js',
+    accountPage:       './codecept/pages/tframe/screens/AccountPage.js',
+    staffPage:         './codecept/pages/tframe/screens/StaffPage.js',
+    shohinPage:        './codecept/pages/tframe/screens/ShohinPage.js',
+    chosekinPage:      './codecept/pages/tframe/screens/ChosekinPage.js',
+    classroomPage:     './codecept/pages/tframe/screens/ClassroomPage.js',
+    ryokinMasterPage:  './codecept/pages/tframe/screens/RyokinMasterPage.js',
+    branchPage:        './codecept/pages/tframe/screens/BranchPage.js',
+    ryokinPackagePage: './codecept/pages/tframe/screens/RyokinPackagePage.js',
+    infoHistoryPage:   './codecept/pages/tframe/screens/InfoHistoryPage.js',
+    keiriIchiranPage:  './codecept/pages/tframe/screens/KeiriIchiranPage.js',
+    emailIchiranPage:  './codecept/pages/tframe/screens/EmailIchiranPage.js',
+    emailTourokuPage:  './codecept/pages/tframe/screens/EmailTourokuPage.js',
+    reportIchiranPage: './codecept/pages/tframe/screens/ReportIchiranPage.js'
   },
   // ----------------------------------------------------
   //  プラグイン設定
@@ -176,12 +176,12 @@ AllureResultsDir=${runtimeAllureResultsDir}
           // ログイン処理
           login: () => {
             // ページオブジェクト側で inject() を使っている前提なので require の位置は現状維持
-            const loginPageShimamura = require('./pages/shimamura/auth/LoginPage.js');
+            const loginPageShimamura = require('./codecept/pages/shimamura/auth/LoginPage.js');
             loginPageShimamura.login();
           },
           // ログイン済みか確認
           check: () => {
-            const loginPageShimamura = require('./pages/shimamura/auth/LoginPage.js');
+            const loginPageShimamura = require('./codecept/pages/shimamura/auth/LoginPage.js');
             loginPageShimamura.seeLoggedIn();
           },
           // 保存した Cookie を戻す。既定の I.setCookie(cookies) は Cookie の中身が丸ごとステップ名になり

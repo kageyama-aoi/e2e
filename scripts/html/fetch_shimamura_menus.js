@@ -3,7 +3,7 @@
  * shimamura の上部アイコン × 左サイドバーを実機で全件採取し、menuSnapshot JSON に書き出す。
  *
  * 使い方: node scripts/html/fetch_shimamura_menus.js [profile]   （既定: shimamura.testgcp）
- * 出力  : pages/shimamura/_common/menuSnapshot/<env>.json  （例: testgcp.json）
+ * 出力  : codecept/pages/shimamura/_common/menuSnapshot/<env>.json  （例: testgcp.json）
  *
  * - 上部アイコンは `td.moduleBarIcon a.otherTab` 等（テキスト付きリンク）から取得
  * - サイドバーは `#leftCol` を走査。折りたたみグループ（tr.leftColumnModuleHead ＋ tr#submenu__xxx_sub）は
@@ -32,7 +32,7 @@ const USER      = process.env.SHIMAMURA_USER;
 const PASSWORD  = process.env.SHIMAMURA_PASSWORD;
 const TANTOUSYA = process.env.SHIMAMURA_TANTOUSYA;
 
-const OUTPUT_FILE = path.join(REPO_ROOT, 'pages', 'shimamura', '_common', 'menuSnapshot', `${envName}.json`);
+const OUTPUT_FILE = path.join(REPO_ROOT, 'codecept', 'pages', 'shimamura', '_common', 'menuSnapshot', `${envName}.json`);
 
 /** @param {string} href */
 function toRoute(href) {

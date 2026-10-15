@@ -4,7 +4,7 @@
 1行ずつ動かしながら確認する方法をまとめる。`.vscode/launch.json` にすでに設定を用意済みなので、
 基本は「ブレークポイントを置く → デバッグ設定を選ぶ → F5」だけで動く。
 
-対象読者：`support/`・`pages/` 配下の関数が「実際どう動くのか」を、資料を読むだけでなく手元で
+対象読者：`codecept/support/`・`codecept/pages/` 配下の関数が「実際どう動くのか」を、資料を読むだけでなく手元で
 動かして確認したい人。
 
 ## 2つのやり方を使い分ける
@@ -20,19 +20,19 @@
 
 ## 方法1: 関数を単体デバッグ（ブラウザ不要・一番手軽）
 
-`support/shimamura/syokai_helpers.js` の `prepareInput` / `buildExecutionPlan` のように、
+`codecept/support/shimamura/syokai_helpers.js` の `prepareInput` / `buildExecutionPlan` のように、
 CSVもブラウザも使わない**純粋な関数**は、requireして直接呼び出すだけで確認できる。
 
 ### 用意されているファイル
 
 - `output/debug_syokai.js` — `syokai_helpers.js` を直接requireして、実データ
-  （`data/shimamura/syokai_touroku_validation_errors.csv` の2行目・3行目相当）で呼び出す
+  （`codecept/data/shimamura/syokai_touroku_validation_errors.csv` の2行目・3行目相当）で呼び出す
   使い捨てスクリプト。`output/` は`.gitignore`済みなのでコミットされない。
 - `.vscode/launch.json` — 下記の手順で使うVS Codeのデバッグ設定。
 
 ### 手順
 
-1. `support/shimamura/syokai_helpers.js` を開き、`buildExecutionPlan` の中
+1. `codecept/support/shimamura/syokai_helpers.js` を開き、`buildExecutionPlan` の中
    （例: `return { plan: steps.filter(...) };` の行）の**行番号の左**をクリックする。
    赤丸（ブレークポイント）が付く。
 2. 左サイドバーの「実行とデバッグ」アイコン（虫に▷が乗ったアイコン）を開く。
@@ -75,7 +75,7 @@ $ node output/debug_syokai.js
 ## 方法2: 実際のE2Eフロー全体をブラウザ込みでデバッグ実行
 
 `.vscode/launch.json` には、実際にPlaywrightでブラウザを起動して
-`tests/shimamura/flow/syokai_touroku_test.js` を実行する設定も用意している。
+`codecept/tests/shimamura/flow/syokai_touroku_test.js` を実行する設定も用意している。
 
 | 設定名 | 内容 |
 |---|---|
@@ -84,8 +84,8 @@ $ node output/debug_syokai.js
 
 ### 手順
 
-1. `pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB` や `actions` の中）や
-   `support/shimamura/syokai_helpers.js` に、方法1と同じようにブレークポイントを置く。
+1. `codecept/pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB` や `actions` の中）や
+   `codecept/support/shimamura/syokai_helpers.js` に、方法1と同じようにブレークポイントを置く。
 2. 「実行とデバッグ」パネルのドロップダウンで上記いずれかの設定を選び、`F5`。
 3. `codecept.conf.js` の Playwright設定で `show: process.env.HEADLESS !== 'true'` となっているため、
    `HEADLESS` を設定していなければブラウザが実際に開いた状態でコードもステップ実行できる。
@@ -100,7 +100,7 @@ $ node output/debug_syokai.js
 同じテストはコマンドラインだけでも実行できる（デバッグはできないが、動作確認だけなら十分）。
 
 ```bash
-npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp --grep "経理日付バリデーションエラー"
+npx codeceptjs run ./codecept/tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp --grep "経理日付バリデーションエラー"
 ```
 
 ---
@@ -127,7 +127,7 @@ npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shima
       "program": "${workspaceFolder}/node_modules/codeceptjs/bin/codecept.js",
       "args": [
         "run",
-        "./tests/shimamura/flow/syokai_touroku_test.js",
+        "./codecept/tests/shimamura/flow/syokai_touroku_test.js",
         "--profile", "shimamura.testgcp",
         "--grep", "経理日付バリデーションエラー"
       ],
@@ -142,7 +142,7 @@ npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shima
       "program": "${workspaceFolder}/node_modules/codeceptjs/bin/codecept.js",
       "args": [
         "run",
-        "./tests/shimamura/flow/syokai_touroku_test.js",
+        "./codecept/tests/shimamura/flow/syokai_touroku_test.js",
         "--profile", "shimamura.testgcp",
         "--grep", "@normal"
       ],

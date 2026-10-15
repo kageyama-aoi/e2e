@@ -1,7 +1,7 @@
 ---
 name: flow-explain
 description: |
-  flow系E2Eテスト（tests/shimamura/flow/ ・ tests/tframe/flow/ ）のロジックを
+  flow系E2Eテスト（codecept/tests/shimamura/flow/ ・ codecept/tests/tframe/flow/ ）のロジックを
   散文で解説し、加えて Mermaid（flowchart TD）でフローチャート化するスキル。
   以下のような依頼があったら必ず使用すること：
   - 「〇〇テストってどんなロジック？」「このフローテストの流れを説明して」
@@ -51,12 +51,12 @@ flow系テストは規約上、以下の3ファイルに処理が分かれてい
 
 | 種別 | 場所 | そこから読み取るもの |
 |---|---|---|
-| テスト本体 | `tests/<product>/flow/*_test.js` | Scenario 構成、Arrange→Act→Assert の骨格、どの FlowPage 関数を呼ぶか、条件分岐（`if (row.xxx)`） |
-| FlowPage（Page Object） | `pages/<product>/flow/*FlowPage.js` | 各処理ステップの中身（`I.click`/`I.amOnPage`/`I.selectOption`）、データ加工ロジック、ファイル受け渡し |
-| CSV（テストデータ） | `data/<product>/*_data.csv` | 列＝入力パラメータの意味、シナリオ（行）のバリエーション、条件列（空欄なら該当処理をスキップ） |
+| テスト本体 | `codecept/tests/<product>/flow/*_test.js` | Scenario 構成、Arrange→Act→Assert の骨格、どの FlowPage 関数を呼ぶか、条件分岐（`if (row.xxx)`） |
+| FlowPage（Page Object） | `codecept/pages/<product>/flow/*FlowPage.js` | 各処理ステップの中身（`I.click`/`I.amOnPage`/`I.selectOption`）、データ加工ロジック、ファイル受け渡し |
+| CSV（テストデータ） | `codecept/data/<product>/*_data.csv` | 列＝入力パラメータの意味、シナリオ（行）のバリエーション、条件列（空欄なら該当処理をスキップ） |
 
 `<product>` は `shimamura` / `tframe` / `taskreport`。tframe は Page Object が
-`pages/tframe/flow/` ではなく `pages/tframe/screens/` にある場合もあるので、テスト本体の
+`codecept/pages/tframe/flow/` ではなく `codecept/pages/tframe/screens/` にある場合もあるので、テスト本体の
 `require(...)` を辿って実体を特定すること。
 
 ---
@@ -65,7 +65,7 @@ flow系テストは規約上、以下の3ファイルに処理が分かれてい
 
 ### Step 1: 対象テストを特定する
 
-- 依頼文からテストを特定する（例：「月謝一括作成」→ `tests/shimamura/flow/gessya_ikkatu_test.js`）。
+- 依頼文からテストを特定する（例：「月謝一括作成」→ `codecept/tests/shimamura/flow/gessya_ikkatu_test.js`）。
   Feature 名や日本語画面名で `grep` すると見つかる（例: `Feature('月謝一括作成')`）。
 - **setup テストとの対（つい）を必ず確認する。** `*_setup_test.js` が併存する場合、
   それは本体テストの前提データを作る前工程なので、両方を1つのフローとして扱う。
@@ -202,6 +202,6 @@ flowchart TD
 |---|---|---|
 | Mermaid がパースエラー | ノードラベルの `（）` `/` `:` `"` をクォートし忘れ | ラベルは `["..."]` で囲む。ラベル内改行は `<br/>` を使う |
 | 流れが setup 側だけで完結してしまう | 本体テストとの対を見落としている | Step 1 に戻り `*_setup_test.js` と本体の対を確認する |
-| FlowPage が見つからない | tframe は `pages/tframe/screens/` に置かれる場合がある | テスト本体の `require(...)` を辿って実体を特定する |
+| FlowPage が見つからない | tframe は `codecept/pages/tframe/screens/` に置かれる場合がある | テスト本体の `require(...)` を辿って実体を特定する |
 | 説明が冗長で要点が埋もれる | 逐条訳になっている | Step 3 の「驚きポイント優先」に立ち返り、非自明ロジックを先頭に出す |
 | 条件分岐を描き漏らす | CSV の空欄列の意味を見落とした | CSV とテスト本体の `if (row.xxx)` を突き合わせ、条件列を洗い出す |

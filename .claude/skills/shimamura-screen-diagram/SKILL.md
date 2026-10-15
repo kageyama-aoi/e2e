@@ -16,7 +16,7 @@ description: |
 
 shimamura の E2E テストコードを解析して、**一般ユーザーが実際に操作する画面遷移**を
 Mermaid 図として可視化するスキル。ゼロから手作業で画面を洗い出すのではなく、
-既存のテスト資産（`sideMenus.js` / `pages/shimamura/flow/*.js` / `tests/shimamura/flow/*.js`）
+既存のテスト資産（`sideMenus.js` / `codecept/pages/shimamura/flow/*.js` / `codecept/tests/shimamura/flow/*.js`）
 から遷移情報を抽出して組み立てる。
 
 ---
@@ -47,10 +47,10 @@ Mermaid 図として可視化するスキル。ゼロから手作業で画面を
 
 | 目的 | 参照先 |
 |---|---|
-| 画面カタログ（アイコン/折りたたみ/ショートカットの定義） | `pages/shimamura/_common/sideMenus.js` |
-| 業務フローの遷移順序 | `pages/shimamura/flow/*.js`（各 FlowPage） |
-| FlowPage を使わない単発画面フロー（Pattern B） | `tests/shimamura/flow/*.js` の中で `pages/shimamura/flow` を require していないもの |
-| どのテストがどの FlowPage を使っているか | `tests/shimamura/flow/*.js` の `require('../../../pages/shimamura/flow/...')` |
+| 画面カタログ（アイコン/折りたたみ/ショートカットの定義） | `codecept/pages/shimamura/_common/sideMenus.js` |
+| 業務フローの遷移順序 | `codecept/pages/shimamura/flow/*.js`（各 FlowPage） |
+| FlowPage を使わない単発画面フロー（Pattern B） | `codecept/tests/shimamura/flow/*.js` の中で `codecept/pages/shimamura/flow` を require していないもの |
+| どのテストがどの FlowPage を使っているか | `codecept/tests/shimamura/flow/*.js` の `require('../../../pages/shimamura/flow/...')` |
 | 既存の画面遷移図（更新時の土台） | `docs/shimamura/screen_navigation_diagram.md` |
 
 ---
@@ -65,7 +65,7 @@ Mermaid 図として可視化するスキル。ゼロから手作業で画面を
 
 ### Step 2: 画面カタログを読む
 
-`pages/shimamura/_common/sideMenus.js` を読み、各エントリから以下を抽出する：
+`codecept/pages/shimamura/_common/sideMenus.js` を読み、各エントリから以下を抽出する：
 
 ```js
 {
@@ -82,8 +82,8 @@ Mermaid 図として可視化するスキル。ゼロから手作業で画面を
 
 ### Step 3: 対象フローのコードを読む
 
-`tests/shimamura/flow/*.js` を一覧し、各テストが `require` している
-`pages/shimamura/flow/*FlowPage.js` を特定する。
+`codecept/tests/shimamura/flow/*.js` を一覧し、各テストが `require` している
+`codecept/pages/shimamura/flow/*FlowPage.js` を特定する。
 
 - FlowPage がある場合：エクスポートされている関数を上から順に読み、
   `I.click` / `I.amOnPage` / `logScreenUrl` の呼び出し順で画面遷移を追う。
@@ -164,4 +164,4 @@ flowchart TD
 | Mermaid がパースエラーになる | ノードラベルの `（）` `/` `"` をクォートし忘れ | ラベルは必ず `["..."]` で囲む |
 | 図がノードだらけで読みにくい | フロー単位で subgraph を作ってしまい、同じ画面が重複している | Step 4 に戻り、アイコン単位の subgraph に組み替える |
 | 点線だらけになる | `sideMenus.js` に載っていない画面が多い（新しいモジュール） | ユーザーに実際の画面操作を確認してから実線にする。憶測で実線にしない |
-| どのテストがどの画面を使っているか分からない | FlowPage を経由しない直書きテストがある | `tests/shimamura/flow/*.js` を grep して `pages/shimamura/flow` を require していないファイルを個別に読む |
+| どのテストがどの画面を使っているか分からない | FlowPage を経由しない直書きテストがある | `codecept/tests/shimamura/flow/*.js` を grep して `codecept/pages/shimamura/flow` を require していないファイルを個別に読む |

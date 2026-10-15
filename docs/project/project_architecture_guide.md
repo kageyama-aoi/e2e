@@ -11,10 +11,10 @@
 
 | ディレクトリ | 責務 | 主な中身 |
 |---|---|---|
-| `tests/` | テストシナリオ層 | プロダクト・機能別のシナリオファイル（`*_test.js`） |
-| `pages/` | ページオブジェクト層 | 画面操作の具象実装 |
-| `support/` | 共通基盤層 | ユーティリティ・カスタムSteps・ENV読み込み |
-| `data/` | テストデータ層 | CSV・JSによるデータ定義 |
+| `codecept/tests/` | テストシナリオ層 | プロダクト・機能別のシナリオファイル（`*_test.js`） |
+| `codecept/pages/` | ページオブジェクト層 | 画面操作の具象実装 |
+| `codecept/support/` | 共通基盤層 | ユーティリティ・カスタムSteps・ENV読み込み |
+| `codecept/data/` | テストデータ層 | CSV・JSによるデータ定義 |
 | `env/` | 環境定義層 | プロファイル別 `.env.*` ファイル |
 | `run/` | 実行ランチャー層 | 主役は `run_gui.py`（GUI）、特殊フローは `.bat` / `.ps1` |
 | `scripts/` | 開発補助ツール層 | テストを起動しない支援ツール群 |
@@ -22,12 +22,12 @@
 | `output/` | 生成物（テスト結果） | スクリーンショット・ログ |
 | `output/allure-results/` | 生成物（Allureデータ） | Allureレポートの元データ（#334 で直下から `output/` の下へ） |
 
-### tests/ の構成
+### codecept/tests/ の構成
 
 プロダクトごとにサブディレクトリを分割し、tframe はさらに性質別に分類しています。
 
 ```
-tests/
+codecept/tests/
 ├── shimamura/        # しまむら系テスト
 ├── tframe/
 │   ├── auth/         # ログイン・認証系
@@ -39,10 +39,10 @@ tests/
 └── smoke/
 ```
 
-### pages/ の構成
+### codecept/pages/ の構成
 
 ```
-pages/
+codecept/pages/
 ├── shimamura/        # しまむら固有の Page Object
 │   ├── auth/                   # ログイン系
 │   │   └── LoginPage.js
@@ -87,10 +87,10 @@ pages/
 └── taskreport/
 ```
 
-### data/ の構成
+### codecept/data/ の構成
 
 ```
-data/
+codecept/data/
 ├── shimamura/
 │   ├── syokai_touroku_data.csv                       # 紹介登録データ（共通）
 │   ├── syokai_touroku_data_{profile}.csv             # プロファイル別上書き
@@ -104,7 +104,7 @@ data/
     └── ...
 ```
 
-> **`_urlPath.js` について**: `pages/tframe/_common/_urlPath.js` に配置。メニュー定義は `href` に URL パスを持つが、`/test/` や `/beta/` はプロファイルによって異なる。`_urlPath.js` が `BASE_URL` からパスプレフィックスを実行時に導出するため、ハードコードが不要。新規メニュー定義を追加する際は必ず `require('./_urlPath')` を使うこと（`sideMenus.js` 内では `require('./_urlPath')`、外部ファイルからは `require('../_common/_urlPath')`）。
+> **`_urlPath.js` について**: `codecept/pages/tframe/_common/_urlPath.js` に配置。メニュー定義は `href` に URL パスを持つが、`/test/` や `/beta/` はプロファイルによって異なる。`_urlPath.js` が `BASE_URL` からパスプレフィックスを実行時に導出するため、ハードコードが不要。新規メニュー定義を追加する際は必ず `require('./_urlPath')` を使うこと（`sideMenus.js` 内では `require('./_urlPath')`、外部ファイルからは `require('../_common/_urlPath')`）。
 
 ---
 
@@ -112,9 +112,9 @@ data/
 
 ### ロジックの配置原則
 
-- **`tests/`**: 条件分岐・複雑なループを書かない。「手順」のみ記述し、ロジックは `pages/` や `support/` に委譲する。
-- **`pages/`**: 画面単位の操作をメソッドとして定義。セレクタを直書きせずページ内に集約。
-- **`support/`**: 複数のページ・テストで共有される横断的な処理を集約。
+- **`codecept/tests/`**: 条件分岐・複雑なループを書かない。「手順」のみ記述し、ロジックは `codecept/pages/` や `codecept/support/` に委譲する。
+- **`codecept/pages/`**: 画面単位の操作をメソッドとして定義。セレクタを直書きせずページ内に集約。
+- **`codecept/support/`**: 複数のページ・テストで共有される横断的な処理を集約。
 
 ### 命名規則
 
@@ -142,7 +142,7 @@ data/
 
 本プロジェクトは以下の4要素が独立しています。
 
-1. **処理ロジック**: `pages/`, `tests/`
+1. **処理ロジック**: `codecept/pages/`, `codecept/tests/`
 2. **設定**: `env/`, `codecept.conf.js`
 3. **補助機能**: `scripts/`, `run/`
 4. **成果物**: `output/`, `output/allure-results/`, `docs/generated/`
@@ -162,9 +162,9 @@ CSVを使ったデータ駆動テストが基本パターンです。
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 
 // プロファイル対応CSV読み込み
-// data/tframe/koshi_touroku_data.csv を基本に
-// data/tframe/koshi_touroku_data_{profile}.csv があれば上書き
-const csvData = loadCsvWithProfile('koshi_touroku_data', 'data/tframe');
+// codecept/data/tframe/koshi_touroku_data.csv を基本に
+// codecept/data/tframe/koshi_touroku_data_{profile}.csv があれば上書き
+const csvData = loadCsvWithProfile('koshi_touroku_data', 'codecept/data/tframe');
 
 Feature('講師登録');
 
@@ -260,13 +260,13 @@ await submitTframeFormAndVerify(I, expectedName);
 | CodeceptJS v3.3.7 | E2Eテストフレームワーク | `codecept.conf.js` |
 | Playwright | ブラウザ操作ヘルパー | `codecept.conf.js` |
 | Allure Report | レポート生成 | `codecept.conf.js` |
-| dotenv | ENV変数ロード | `support/envLoader.js` |
+| dotenv | ENV変数ロード | `codecept/support/envLoader.js` |
 | JSDoc + docdash | ドキュメント生成 | `jsdoc.json` |
 | Python | 補助スクリプト | `scripts/` |
 
-### 共通モジュール（`support/`）
+### 共通モジュール（`codecept/support/`）
 
-#### `support/utils.js` — テスト共通ユーティリティ
+#### `codecept/support/utils.js` — テスト共通ユーティリティ
 
 | 関数 | 説明 |
 |---|---|
@@ -279,7 +279,7 @@ await submitTframeFormAndVerify(I, expectedName);
 | `attachErrorScreenshot(I, baseName)` | エラー時スクリーンショット添付 |
 | `logScreenUrl(I, screenName)` | 現在URLをログ出力 |
 
-#### `support/steps_file.js` — カスタムSteps
+#### `codecept/support/steps_file.js` — カスタムSteps
 
 | メソッド | 説明 |
 |---|---|
@@ -291,16 +291,16 @@ await submitTframeFormAndVerify(I, expectedName);
 | `waitAndFill(selector, value, timeoutSec)` | 要素出現待ち後に入力 |
 | `scrollIntoView(selector)` | 要素をビューポート中央にスクロール |
 
-#### `support/repoRoot.js`
+#### `codecept/support/repoRoot.js`
 
-リポジトリルートの絶対パスを返す定数モジュール。`tests/` 配下の深いサブフォルダから `fs` でファイルを扱う際に使う。`__dirname` + 手動の `..` カウントは移動時に壊れるため、このモジュールで代替する。
+リポジトリルートの絶対パスを返す定数モジュール。`codecept/tests/` 配下の深いサブフォルダから `fs` でファイルを扱う際に使う。`__dirname` + 手動の `..` カウントは移動時に壊れるため、このモジュールで代替する。
 
 ```js
 const repoRoot = require('../../../support/repoRoot');
 const dir = path.join(repoRoot, config.output); // .. を数えなくてよい
 ```
 
-#### `support/envLoader.js`
+#### `codecept/support/envLoader.js`
 
 ルート `.env` を読み込み後、`--profile` 引数に対応する `env/.env.<profile>` で上書きします。
 

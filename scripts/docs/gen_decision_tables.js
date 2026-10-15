@@ -13,20 +13,20 @@
  *   <!-- AUTOGEN:DT-01 START --> … <!-- AUTOGEN:DT-01 END -->         表ごと（完全版・縮約版・管理行・テスト行・注記）
  *   <!-- AUTOGEN:TC-LIST START --> … <!-- AUTOGEN:TC-LIST END -->     テストケース一覧（定義に model がある場合）
  *
- * 表の作り方は社内「デシジョンテーブル記法ガイド」に従う（support/decisionTable.js）。
- * 定義ファイルの形は data/shimamura/sales_group_transfer_dt.js を参照。
+ * 表の作り方は社内「デシジョンテーブル記法ガイド」に従う（codecept/support/decisionTable.js）。
+ * 定義ファイルの形は codecept/data/shimamura/sales_group_transfer_dt.js を参照。
  */
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
-const { expandTable } = require('../../support/decisionTable');
+const { expandTable } = require('../../codecept/support/decisionTable');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 /** 定義ファイルと仕様書の組（リポジトリルートからのパス） */
 const REGISTRY = [
-  { def: 'data/shimamura/sales_group_transfer_dt.js', doc: 'docs/shimamura/concepts/料金明細入金チェックの仕様.md' },
+  { def: 'codecept/data/shimamura/sales_group_transfer_dt.js', doc: 'docs/shimamura/concepts/料金明細入金チェックの仕様.md' },
 ];
 
 const yn = (v) => (v === null ? 'DC' : v ? 'Y' : 'N');
