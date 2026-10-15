@@ -7,3 +7,4 @@ scripts/html/fetch_tframe_menus.js       # docs/tframe/menu_coverage.md フェ�
 scripts/docs/gen_tframe_menu_coverage.js # docs/tframe/menu_coverage.md フェーズ2の新設予定スクリプト（未着手）
 fillAddressWithZip # docs/tframe/refactoring_priority.md の実装前提案（support/utils.jsへの新設案・未着手）
 fillMemoField       # docs/tframe/refactoring_priority.md の実装前提案（support/utils.jsへの新設案・未着手）
+pages/shimamura/flow/SyokaiFlowPage # docs/project/jsdoc_home.md の JSDoc モジュール名の例（ファイルパスから .js を除いた名前）
