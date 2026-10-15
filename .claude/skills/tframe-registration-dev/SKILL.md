@@ -25,12 +25,12 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 
 | 目的 | 参照先 |
 |---|---|
-| Page Object の実装パターン | `pages/tframe/screens/KoshiPage.js`（最も完成度が高い） |
-| シンプルな Page Object（MenuNav なし） | `pages/tframe/screens/AccountPage.js` または `StaffPage.js` |
-| ポップアップピッカーの実装例 | `pages/tframe/screens/ChosekinPage.js`（personId popup 対応済み） |
-| 共通ユーティリティの API | `support/utils.js` の exports |
-| テストファイルの書き方 | `tests/tframe/page/koshi_touroku_test.js` |
-| CSV の形式 | `data/tframe/koshi_touroku_data.csv` |
+| Page Object の実装パターン | `codecept/pages/tframe/screens/KoshiPage.js`（最も完成度が高い） |
+| シンプルな Page Object（MenuNav なし） | `codecept/pages/tframe/screens/AccountPage.js` または `StaffPage.js` |
+| ポップアップピッカーの実装例 | `codecept/pages/tframe/screens/ChosekinPage.js`（personId popup 対応済み） |
+| 共通ユーティリティの API | `codecept/support/utils.js` の exports |
+| テストファイルの書き方 | `codecept/tests/tframe/page/koshi_touroku_test.js` |
+| CSV の形式 | `codecept/data/tframe/koshi_touroku_data.csv` |
 | ENV 変数の一覧・意味 | `env/.env.tframe.template` |
 | フォルダ配置ルール | `AGENTS.md` の「tframe テストのフォルダ分類」 |
 
@@ -88,7 +88,7 @@ index.php?r={module}%2Fsw%2F_default  → 一覧画面（sw = SearchView）
 
 ### Step 3: Page Object の作成/更新
 
-**必ず `pages/tframe/screens/AccountPage.js` か `StaffPage.js` を雛形にコピーして改変すること。**（ゼロから書かない）
+**必ず `codecept/pages/tframe/screens/AccountPage.js` か `StaffPage.js` を雛形にコピーして改変すること。**（ゼロから書かない）
 
 #### 標準構成
 
@@ -114,7 +114,7 @@ fillTextFields(I, { fieldId: data.fieldId, ... });
 // ── ドロップダウン（value 属性の値を使う。表示テキストではない）
 if (data.someSelect) I.selectOption('#someSelect', data.someSelect);
 
-// ── AJAX連動ドロップダウン（エリア→校舎）: support/tframe/utils.js の selectAreaThenBranch を使う
+// ── AJAX連動ドロップダウン（エリア→校舎）: codecept/support/tframe/utils.js の selectAreaThenBranch を使う
 // ID体系は #school_area_id/#school_branch_id（デフォルト）と #branchId_area_id/#branchId_branch_id の2種
 selectAreaThenBranch(I, { area: data.school_area_id, branch: data.school_branch_id });
 // branchId_ 系の場合は areaSelector/branchSelector を明示指定
@@ -169,14 +169,14 @@ if (process.env.USE_MENU_NAV === 'true') {
 ### Step 4: codecept.conf.js への登録
 
 ```javascript
-{moduleName}Page: './pages/tframe/screens/{PageName}.js',
+{moduleName}Page: './codecept/pages/tframe/screens/{PageName}.js',
 ```
 
 ---
 
 ### Step 5: CSV の作成/更新
 
-`data/tframe/{module}_touroku_data.csv` を作成する。
+`codecept/data/tframe/{module}_touroku_data.csv` を作成する。
 
 **重要: `loadCsvWithProfile` はヘッダ列数とデータ列数が一致しない行を無音でスキップする。**
 列数が合わないと「0 passed」になる。ヘッダの列数とデータ行の列数を必ず一致させること。
@@ -200,7 +200,7 @@ name,field1,field2,...   ← N 列
 
 ### Step 6: テストファイルの作成/更新
 
-**`tests/tframe/page/koshi_touroku_test.js` を雛形にすること。**
+**`codecept/tests/tframe/page/koshi_touroku_test.js` を雛形にすること。**
 
 ```javascript
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
@@ -230,7 +230,7 @@ Data(csvData).Scenario('管理者ログイン後に{画面名}を新規登録で
 ### Step 7: テスト実行と確認
 
 ```bash
-npx codeceptjs run ./tests/tframe/page/{module}_touroku_test.js --profile tframe.culture_beta
+npx codeceptjs run ./codecept/tests/tframe/page/{module}_touroku_test.js --profile tframe.culture_beta
 ```
 
 **最低1件は実際に保存まで通ることを確認すること。**

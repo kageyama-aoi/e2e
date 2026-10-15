@@ -1,11 +1,11 @@
 # shimamura 画面遷移図
 
 > 生成日: 2026-07-02
-> 生成方法: E2Eテストコード（`pages/shimamura/`, `tests/shimamura/flow/`）を解析して作成
+> 生成方法: E2Eテストコード（`codecept/pages/shimamura/`, `codecept/tests/shimamura/flow/`）を解析して作成
 > **範囲の注意**: この図は **一般ユーザーが実際に操作する画面遷移** のみを表しています。
 > テストコード内では `SHIMAMURA_NAV` 環境変数に応じて「サイドバー経由」と「URL直遷移」を切り替えられますが、
 > この図は常に **トップ画面 → アイコン → （必要なら折りたたみ展開）→ 左サイドバーのショートカット → 画面** という、
-> 実際にユーザーがクリックして辿る経路（`pages/shimamura/_common/sideMenus.js` の `moduleUrl` / `collapseToggle` / `shortcut` に対応）で描いています。
+> 実際にユーザーがクリックして辿る経路（`codecept/pages/shimamura/_common/sideMenus.js` の `moduleUrl` / `collapseToggle` / `shortcut` に対応）で描いています。
 > URL直遷移（`directUrl`）はテストの都合上の近道であり、この図には含めていません。
 
 ---
@@ -140,17 +140,17 @@ flowchart TD
 
 | フロー | テストファイル | Page Object |
 |---|---|---|
-| 受講生登録（新規契約） | `tests/shimamura/flow/syokai_touroku_test.js` | `pages/shimamura/flow/SyokaiFlowPage.js` ＋ `pages/shimamura/_common/KouhoseiSteps.js` / `KeiriViewSteps.js` |
-| 退会処理 | `tests/shimamura/flow/taikai_test.js` | `pages/shimamura/_common/TaikaiSteps.js`（`fillTaikaiFormAndSubmit`）＋ `pages/shimamura/_common/ClassMemberPage.js`（`navigateToTaikaiScreen`） |
-| 月謝一括作成 | `gessya_ikkatu_setup_test.js` / `gessya_ikkatu_test.js` | `pages/shimamura/flow/GessyaIkkatuFlowPage.js` |
-| 債権買取顧客情報登録 | `student_saikenkai_test.js` | `pages/shimamura/flow/StudentSaikenkaiFlowPage.js` |
-| 講師経理設定 | `teacher_keiri_setup_test.js` | `pages/shimamura/flow/TeacherKeiriFlowPage.js` |
-| 講師謝礼追加 | `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
+| 受講生登録（新規契約） | `codecept/tests/shimamura/flow/syokai_touroku_test.js` | `codecept/pages/shimamura/flow/SyokaiFlowPage.js` ＋ `codecept/pages/shimamura/_common/KouhoseiSteps.js` / `KeiriViewSteps.js` |
+| 退会処理 | `codecept/tests/shimamura/flow/taikai_test.js` | `codecept/pages/shimamura/_common/TaikaiSteps.js`（`fillTaikaiFormAndSubmit`）＋ `codecept/pages/shimamura/_common/ClassMemberPage.js`（`navigateToTaikaiScreen`） |
+| 月謝一括作成 | `gessya_ikkatu_setup_test.js` / `gessya_ikkatu_test.js` | `codecept/pages/shimamura/flow/GessyaIkkatuFlowPage.js` |
+| 債権買取顧客情報登録 | `student_saikenkai_test.js` | `codecept/pages/shimamura/flow/StudentSaikenkaiFlowPage.js` |
+| 講師経理設定 | `teacher_keiri_setup_test.js` | `codecept/pages/shimamura/flow/TeacherKeiriFlowPage.js` |
+| 講師謝礼追加 | `koushi_sharei_manual_test.js` / `koushi_sharei_tsuika_test.js` | `codecept/pages/shimamura/flow/KoushiShareiFlowPage.js` |
 | クラス受講生登録 | `shimamura_class_member_registration_test.js` | なし（テスト内に直書き） |
 | 問合せ登録 | `contact_register_test.js` | なし（Pattern B・1画面完結） |
-| 債権買取状態読込 | `smbc_state_import_test.js` | `pages/shimamura/screens/SmbcStateImportPage.js`（Pattern B・1画面完結） |
+| 債権買取状態読込 | `smbc_state_import_test.js` | `codecept/pages/shimamura/screens/SmbcStateImportPage.js`（Pattern B・1画面完結） |
 | 経理返金処理 | `keiri_hennkin_syori_test.js` | なし（ひな形・未実装） |
-| 画面カタログ（アイコン/サイドバー定義） | — | `pages/shimamura/_common/sideMenus.js` |
+| 画面カタログ（アイコン/サイドバー定義） | — | `codecept/pages/shimamura/_common/sideMenus.js` |
 
 ## 制約・今後の拡張
 

@@ -23,7 +23,7 @@ Set-Location $repoRoot
 foreach ($test in $Tests) {
     Write-Host ""
     Write-Host "[RUN] $test"
-    & npx codeceptjs run "./tests/$Product/$test" --profile $Profile --steps
+    & npx codeceptjs run "./codecept/tests/$Product/$test" --profile $Profile --steps
     if ($LASTEXITCODE -ne 0) {
         $failed++
         $failedList += $test

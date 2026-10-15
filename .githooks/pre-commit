@@ -1,9 +1,9 @@
 #!/bin/sh
 # ドキュメントのドリフト防止フック。
 #
-# 1) docs/ .claude/skills/ pages/ support/ AGENTS.md に変更があるコミットで、
+# 1) docs/ .claude/skills/ codecept/pages/ codecept/support/ AGENTS.md に変更があるコミットで、
 #    ドキュメントが名指ししているパス・関数名が実在するかを確認する（警告のみ・commit は止めない）。
-# 2) tests/ または run/test_descriptions.json に変更があるコミットで、
+# 2) codecept/tests/ または run/test_descriptions.json に変更があるコミットで、
 #    ディレクトリツリー(README) とテストカタログ(docs/project/test_catalog.md) を自動再生成して stage する。
 #    再生成は --exclude-untracked 付き（未追跡の作業中ファイルを無関係なコミットに混入させない・#247）。
 #
@@ -18,18 +18,18 @@ if ! command -v python >/dev/null 2>&1; then
 fi
 
 # --- 1) 参照ドリフト検出（警告モード） ---------------------------------------
-if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|pages/|support/|AGENTS\.md$|\.github/workflows/)'; then
+if echo "$changed" | grep -qE '^(docs/|\.claude/skills/|codecept/pages/|codecept/support/|AGENTS\.md$|\.github/workflows/)'; then
   echo "[pre-commit] docs/skills/CI設定 の参照パス・関数名チェック..."
   # 警告のみ。fail にする場合は --check を付ける（npm run docs:check-refs と同じ）
   python scripts/docs/check_doc_refs.py --quiet || echo "[pre-commit] check_doc_refs.py 実行失敗（無視して続行）"
 fi
 
 # --- 1.5) JSDoc構文チェック（警告モード） -------------------------------------
-# pages/support/tests の JSDoc コメントが CI の `npx jsdoc` でパースできる構文かを確認する。
+# codecept/ の pages/support/tests の JSDoc コメントが CI の `npx jsdoc` でパースできる構文かを確認する。
 # TypeScript風の省略記法（fieldName?: Type）やタプル型 Array<[a,b]> は Closure/JSDoc の
 # 型パーサーが解釈できずエラー扱いになり、生成自体は続くが exit code 1 で CI ジョブが失敗する
 # （2026-09-11 に実際発生。ローカルでは npm run docs:jsdoc を手動実行しない限り気付けなかった）。
-if echo "$changed" | grep -qE '^(pages/|support/|tests/).*\.js$'; then
+if echo "$changed" | grep -qE '^(codecept/pages/|codecept/support/|codecept/tests/).*\.js$'; then
   if command -v npx >/dev/null 2>&1; then
     echo "[pre-commit] JSDoc構文チェック..."
     jsdoc_out=$(npm run --silent docs:jsdoc 2>&1)
@@ -44,7 +44,7 @@ if echo "$changed" | grep -qE '^(pages/|support/|tests/).*\.js$'; then
 fi
 
 # --- 2) tframe アイコン別マッピング表 再生成 ---------------------------------
-if echo "$changed" | grep -qE '^(pages/tframe/screens/|pages/tframe/_common/menuSnapshot/|tests/tframe/page/|codecept\.conf\.js$)'; then
+if echo "$changed" | grep -qE '^(codecept/pages/tframe/screens/|codecept/pages/tframe/_common/menuSnapshot/|codecept/tests/tframe/page/|codecept\.conf\.js$)'; then
   if command -v node >/dev/null 2>&1; then
     echo "[pre-commit] docs/tframe/menu_coverage.md のアイコン別表を再生成..."
     node scripts/docs/gen_tframe_menu_coverage.js --exclude-untracked && git add docs/tframe/menu_coverage.md \
@@ -53,7 +53,7 @@ if echo "$changed" | grep -qE '^(pages/tframe/screens/|pages/tframe/_common/menu
 fi
 
 # --- 2.5) shimamura アイコン別マッピング表 再生成（#251） ----------------------
-if echo "$changed" | grep -qE '^(pages/shimamura/|support/shimamura/|tests/shimamura/|codecept\.conf\.js$|scripts/html/shimamura_route\.js$)'; then
+if echo "$changed" | grep -qE '^(codecept/pages/shimamura/|codecept/support/shimamura/|codecept/tests/shimamura/|codecept\.conf\.js$|scripts/html/shimamura_route\.js$)'; then
   if command -v node >/dev/null 2>&1; then
     echo "[pre-commit] docs/shimamura/menu_coverage.md のアイコン別表を再生成..."
     node scripts/docs/gen_shimamura_menu_coverage.js --exclude-untracked && git add docs/shimamura/menu_coverage.md       || echo "[pre-commit] gen_shimamura_menu_coverage.js 実行失敗（無視して続行）"
@@ -62,7 +62,7 @@ fi
 
 # --- 2.6) デシジョンテーブルから仕様書の表を再生成（#287） ---------------------
 # 定義ファイル（data/**/*_dt.js）・エンジン・モデル・仕様書のどれかが変わったら、仕様書の AUTOGEN 区間を作り直す。
-if echo "$changed" | grep -qE '^(data/.*_dt\.js$|support/decisionTable\.js$|support/shimamura/salesGroupTransferModel\.js$|scripts/docs/gen_decision_tables\.js$|docs/shimamura/concepts/)'; then
+if echo "$changed" | grep -qE '^(codecept/data/.*_dt\.js$|codecept/support/decisionTable\.js$|codecept/support/shimamura/salesGroupTransferModel\.js$|scripts/docs/gen_decision_tables\.js$|docs/shimamura/concepts/)'; then
   if command -v node >/dev/null 2>&1; then
     echo "[pre-commit] デシジョンテーブルから仕様書の表を再生成..."
     # 生成先（REGISTRY の仕様書）だけをステージする（同じフォルダの編集中ファイルを巻き込まない）
@@ -74,7 +74,7 @@ if echo "$changed" | grep -qE '^(data/.*_dt\.js$|support/decisionTable\.js$|supp
 fi
 
 # --- 3) tree + test catalog 再生成 ---------------------------------------------
-echo "$changed" | grep -qE '^(tests/|run/test_descriptions\.json$)' || exit 0
+echo "$changed" | grep -qE '^(codecept/tests/|run/test_descriptions\.json$)' || exit 0
 
 echo "[pre-commit] docs 再生成（tree + test catalog）..."
 python scripts/docs/tree_generator.py -u --exclude-untracked || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }

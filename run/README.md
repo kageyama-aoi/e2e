@@ -41,7 +41,7 @@ run/run_gui.bat をダブルクリック
 ┌────────────────────────────────────────────────────────────┐
 │  [左ペイン]                    │  [右ペイン]               │
 │  ┌─ テスト選択 ────────────┐  │  Command（参照用）        │
-│  │ Product ← tests/ サブフォルダ│                           │
+│  │ Product ← codecept/tests/ サブフォルダ│                           │
 │  │ Test File ← *_test.js 一覧 │  Log（色付きリアルタイム）│
 │  └──────────────────────────┘  │                           │
 │  ┌─ 実行条件 ──────────────┐  │                           │
@@ -61,7 +61,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 
 | 要素 | 説明 |
 |---|---|
-| **Product** | `tests/` 直下のサブフォルダを自動スキャン。選択するとテスト・プロファイルリストが絞り込まれる |
+| **Product** | `codecept/tests/` 直下のサブフォルダを自動スキャン。選択するとテスト・プロファイルリストが絞り込まれる |
 | **Test File** | 選択 Product の `*_test.js` 一覧（`check/` `page/` などサブフォルダ付き、等幅整形） |
 | **説明テキスト** | テストファイル選択時に `test_descriptions.json` の日本語説明を表示。未登録なら「（説明なし）」。右の **Copy Key** で JSON のキー（例: `page/calendar_test.js`）をコピー |
 | **Profile** | `env/.env.<profile>` を自動スキャン。Product 名と一致するプロファイルのみに絞り込む |
@@ -75,7 +75,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 | **Run Test** | 選択テストをサブスレッドで実行。ログをリアルタイム表示 |
 | **Stop** | 実行中プロセスを `terminate()` で停止。停止後にログを自動保存 |
 | **Open Allure** | `output/allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
-| **Open CSV** | テストファイルに対応する `data/<product>/*_data*.csv` をデフォルトアプリで開く |
+| **Open CSV** | テストファイルに対応する `codecept/data/<product>/*_data*.csv` をデフォルトアプリで開く |
 | **Settings (.env)** | 選択中プロファイルの `.env` ファイルをGUIで編集する（`EnvSettingsWindow`）。設定項目は HEADLESS / SCREENSHOT_ON_NAVIGATION / CHECKBOX_DEBUG / FORM_FILL_FAST / SHIMAMURA_NAV の5項目。Save で即時書き込み |
 | **Open JSDoc** | `npm run docs:jsdoc` で JSDoc を作り直し（約10秒・生成中はボタン無効）、`docs/generated/html/index.html` を既定ブラウザで開く。生成に失敗したらログに ERROR を出して開かない |
 | **Login & Hold (shimamura)** | shimamura プロファイル専用。新しいコンソールウィンドウでブラウザを起動し、ログイン後に手動操作できる状態で待機させる。ターミナルに `resume` を入力するか Ctrl+C × 2 で終了 |
@@ -211,7 +211,7 @@ CustomTkinter への全面移行は以下の理由で見送った：
 
 ランチャーで対象テストを選び **Copy Key** を押すとキーがコピーされるので、エディタで JSON を開いて Ctrl+F に貼れば該当行に飛べる。説明欄が「（説明なし）」のテストは未登録（書き足す対象）。
 
-`tests/tframe/` に新テストを追加した場合はこのファイルも必ず更新すること（AGENTS.md のドキュメント連動ルール）。
+`codecept/tests/tframe/` に新テストを追加した場合はこのファイルも必ず更新すること（AGENTS.md のドキュメント連動ルール）。
 
 ### ログクリーンアップの日数を変更する
 
@@ -248,7 +248,7 @@ _LOG_TAGS = {
 
 ### 新プロダクトを追加する
 
-`tests/<product>/` フォルダを作成し、`env/.env.<product>.*` を用意するだけで GUI に自動スキャンされる。  
+`codecept/tests/<product>/` フォルダを作成し、`env/.env.<product>.*` を用意するだけで GUI に自動スキャンされる。  
 GUI 側のコード変更は不要。
 
 ただし以下は手動で追加すること：
@@ -296,12 +296,12 @@ run/
 
 | 関数 / クラス | 役割 |
 |---|---|
-| `find_products(tests_dir)` | `tests/` サブフォルダ名をスキャン |
+| `find_products(tests_dir)` | `codecept/tests/` サブフォルダ名をスキャン |
 | `find_all_tests(tests_dir)` | `*_test.js` を再帰収集 |
 | `find_all_profiles(env_dir)` | `.env.<profile>` をスキャン |
 | `filter_profiles_for_product()` | Product 名でプロファイルを絞り込み |
 | `extract_tags_from_test()` | テストファイルから `@タグ` を抽出 |
-| `find_csvs_for_test()` | `data/<product>/<stem>_data*.csv` を検索 |
+| `find_csvs_for_test()` | `codecept/data/<product>/<stem>_data*.csv` を検索 |
 | `build_command()` | `npx codeceptjs run` コマンドを組み立て |
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
 | `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |

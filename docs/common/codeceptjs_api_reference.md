@@ -41,7 +41,7 @@
 
 **コード例:**
 ```javascript
-// from: tests/Taskreport/taskreport_sample_test.js
+// from: codecept/tests/Taskreport/taskreport_sample_test.js
 Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskReportLoginPage }) => {
   // .env.taskreport ファイルに定義したURLへ遷移します
   I.amOnPage(process.env.BASE_URL);
@@ -62,7 +62,7 @@ Scenario('サンプルテスト: ログイン画面を開く', async ({ I, taskR
 
 **コード例 1: IDと文字列で指定**
 ```javascript
-// from: pages/shimamura/flow/HappyoukaiFlowPage.js
+// from: codecept/pages/shimamura/flow/HappyoukaiFlowPage.js
 async function createRosterFromStudents(I, classMemberPageShimamura, { lastName, listName }) {
   // ...
   I.fillField(S.studentSearch.lastName, lastName);
@@ -75,11 +75,11 @@ async function createRosterFromStudents(I, classMemberPageShimamura, { lastName,
 ```
 **解説:**
 受講生一覧で姓を入力して検索し、結果を名簿リストとして保存する処理です。`S.studentSearch.lastName`は`#last_name`のようなCSSセレクタ（ID）を保持する変数で、ファイル先頭の `S` オブジェクトにまとめています。
-複数のテキスト欄をまとめて入力する場合は `fillTextFieldsByName(I, {...})`（`support/shimamura/utils.js`）を使うのが shimamura の標準です。
+複数のテキスト欄をまとめて入力する場合は `fillTextFieldsByName(I, {...})`（`codecept/support/shimamura/utils.js`）を使うのが shimamura の標準です。
 
 **コード例 2: Page Objectとsecret()の利用**
 ```javascript
-// from: pages/tframe/auth/LoginMyPageStudentPage.js
+// from: codecept/pages/tframe/auth/LoginMyPageStudentPage.js
 // ...
   login(username, password) {
     I.amOnPage(process.env.LOGIN_MYPAGE_URL);
@@ -101,7 +101,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 1: テキストでボタンを指定**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     I.selectOption('course_category','発表会');
     I.click('検索');
@@ -113,7 +113,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 2: 複雑なセレクタで要素を指定**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     const course_name = await I.grabTextFrom('a.listViewTdLinkS1');
     I.say(`リンクラベル: ${course_name}`);
@@ -132,7 +132,7 @@ Page Objectパターンの中で、ログイン処理を実装しています。
 
 **コード例 1: 特定の領域にテキストが表示されているか確認**
 ```javascript
-// from: pages/shimamura/flow/HappyoukaiFlowPage.js（verifyParticipation）
+// from: codecept/pages/shimamura/flow/HappyoukaiFlowPage.js（verifyParticipation）
   const rowXPath = `//table[contains(@class,"listView")]//tr[td[contains(., "${idnumber}")]]`;
   I.waitForElement(rowXPath, TIMEOUTS.SCREEN);
   if (expectedParticipating) {
@@ -146,7 +146,7 @@ APIのレスポンスを表示する特定の領域（`jsonInputPage.locators.re
 
 **コード例 2: 要素の状態を確認**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 // ...
     I.waitForElement('#tab_link_student_tab', 10);
     I.click('#tab_link_student_tab');
@@ -164,7 +164,7 @@ APIのレスポンスを表示する特定の領域（`jsonInputPage.locators.re
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   I.fillField('name', '鈴木');
   I.selectOption('display_hyouji','すべて');
@@ -188,7 +188,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   // ...
   I.waitForElement('.listViewTdLinkS1',10);
@@ -211,7 +211,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassViewOperate() {
   // ...
   I.click('検索');
@@ -233,7 +233,7 @@ async function ClassViewOperate() {
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
+// from: codecept/pages/shimamura/_common/ClassMemberPage.js（selectClassFromList / openStudentTabAndSelectCourse）
 async function ClassOperate(){
   I.waitForElement('#tab_link_student_tab', 10);
   I.click('#tab_link_student_tab');
@@ -256,7 +256,7 @@ async function ClassOperate(){
 
 **コード例:**
 ```javascript
-// from: pages/shimamura/_common/KeiriViewSteps.js（createActionExecutor）
+// from: codecept/pages/shimamura/_common/KeiriViewSteps.js（createActionExecutor）
 const actions = {
   class_select: async () => {
     I.click(locators.button.class_select);                       // 別タブでクラス選択ポップアップが開く

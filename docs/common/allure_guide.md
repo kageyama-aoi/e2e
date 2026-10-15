@@ -35,7 +35,7 @@ allure serve <dir> でブラウザレポートを生成・表示
 | `xxxxxxxx-attachment.png` | `saveScreenshot` / `saveScreenshotWithTimestamp` が呼ばれた瞬間 | スクリーンショット |
 
 ```
-npx codeceptjs run ./tests/... --profile tframe.culture_beta
+npx codeceptjs run ./codecept/tests/... --profile tframe.culture_beta
   ↓ テスト開始
   ↓ bootstrap() が走る → environment.properties を書き出す
   ↓ 各テストステップが進むたびに JSON が追記される

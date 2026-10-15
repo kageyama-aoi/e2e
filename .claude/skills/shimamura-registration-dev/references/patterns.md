@@ -96,7 +96,7 @@ fillTextFieldsBySelector(I, [
 > |---|---|---|
 > | `selectOption` | change イベントが必要 | 個別に `I.selectOption()` |
 > | 郵便番号（AJAX 連動） | API 補完を wait で待つ必要がある | `I.fillField()` + `I.wait(TIMEOUTS.AJAX_DEBOUNCE_SHORT)`（`StudentSaikenkaiFlowPage.fillAndSaveStudentBasicInfo` 参照） |
-> | 金融機関・支店コード（名称欄が読み取り専用） | 入力で出る候補ポップアップをクリックしたときだけ名称が埋まる。待つだけ・keyup を発火させるだけでは名称が空のままで、保存が「口座情報に不備があります。」等で止まる（#232・#306） | `pickBankCandidate(I, '#bank_code', code, '#bank_name')` → 支店も同様（`support/shimamura/utils.js`。`TeacherKeiriFlowPage.setAccountingTab`・`ContactRegisterPage.fillForm` 参照） |
+> | 金融機関・支店コード（名称欄が読み取り専用） | 入力で出る候補ポップアップをクリックしたときだけ名称が埋まる。待つだけ・keyup を発火させるだけでは名称が空のままで、保存が「口座情報に不備があります。」等で止まる（#232・#306） | `pickBankCandidate(I, '#bank_code', code, '#bank_name')` → 支店も同様（`codecept/support/shimamura/utils.js`。`TeacherKeiriFlowPage.setAccountingTab`・`ContactRegisterPage.fillForm` 参照） |
 > | `readonly` 属性の textarea | removeAttribute が必要 | executeScript 内で `el.removeAttribute('readonly'); el.value = value;` |
 
 ---
@@ -169,7 +169,7 @@ const { verifyNavigationByUrlChange } = require('../../../support/shimamura/util
 await verifyNavigationByUrlChange(I, 5, 'DWConfirmCarteKeiri_AN', '確認完了（経理ビューへ）');
 ```
 
-## TIMEOUTS（`support/shimamura/constants.js` の実値）
+## TIMEOUTS（`codecept/support/shimamura/constants.js` の実値）
 
 ```javascript
 const { TIMEOUTS } = require('../../../support/shimamura/constants');

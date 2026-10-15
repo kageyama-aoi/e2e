@@ -39,10 +39,10 @@ shimamura 系の E2E コードで、コードとそれを教えるスキル・�
 - 対象: `docs/**/*.md`, `.claude/skills/**/*.md`, `AGENTS.md`
 - チェック①: バッククォート内のパス（`pages/…`, `tests/…`, `support/…`, `scripts/…`, `data/…`, `run/…`, `docs/…`）が実在するか。
   行番号付き（`file.js:123`）はファイル部分のみ確認
-- チェック②: `xxxPage.funcName(` / `funcName(I,` 形式の識別子が `pages/` `support/` のソースに存在するか
+- チェック②: `xxxPage.funcName(` / `funcName(I,` 形式の識別子が `codecept/pages/` `codecept/support/` のソースに存在するか
 - 除外: `{...}` を含むプレースホルダ、`〇〇` `○○` を含むもの、コードフェンス内の `// 例:` 行
 - 出力: `path:line: 参照 'X' が見つかりません`。`--check` で終了コード 1、既定は警告のみ（終了コード 0）
-- pre-commit: `docs/`, `.claude/skills/`, `pages/`, `support/`, `AGENTS.md` のいずれかが staged なら警告モードで実行
+- pre-commit: `docs/`, `.claude/skills/`, `codecept/pages/`, `codecept/support/`, `AGENTS.md` のいずれかが staged なら警告モードで実行
 - npm script: `docs:check-refs` = `python scripts/docs/check_doc_refs.py --check`
 - **決定: 開始時は警告のみ。安定後に `--check` へ昇格**
 
@@ -78,8 +78,8 @@ shimamura 系の E2E コードで、コードとそれを教えるスキル・�
 
 ## 制約
 
-- tframe 系ファイル（`pages/tframe`, `tests/tframe`, `data/tframe`, `support/tframe`, `.claude/skills/tframe-*`）は触らない
-- `support/utils.js`（共通）も原則触らない。必要なら `support/shimamura/` 側で完結させる
+- tframe 系ファイル（`codecept/pages/tframe`, `codecept/tests/tframe`, `codecept/data/tframe`, `codecept/support/tframe`, `.claude/skills/tframe-*`）は触らない
+- `codecept/support/utils.js`（共通）も原則触らない。必要なら `codecept/support/shimamura/` 側で完結させる
 - 各 Issue の仕上げで `/doc-sync`（カテゴリ F 含む）を実施
 - コミットは Conventional Commits、1 Issue = 1〜数コミット
 

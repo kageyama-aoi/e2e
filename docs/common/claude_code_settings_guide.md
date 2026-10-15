@@ -290,7 +290,7 @@ Write ツール実行
 stdin から file_path を取得
   ↓
 AGENTS.md のルールと照合
-  - tests/ → _test.js 以外なら警告
+  - codecept/tests/ → _test.js 以外なら警告
   - run/   → .js ファイルなら警告
   - 想定外のトップディレクトリ → 警告
   ↓
@@ -346,7 +346,7 @@ echo '{"tool_input": {"file_path": "/path/to/e2e/tests/bad_file.txt"}}' \
   | python scripts/hooks/check_placement.py
 
 # archive_allure.py のテスト（テストコマンドを渡す）
-echo '{"tool_input": {"command": "npx codeceptjs run tests/smoke/smoke_test.js"}}' \
+echo '{"tool_input": {"command": "npx codeceptjs run codecept/tests/smoke/smoke_test.js"}}' \
   | python scripts/hooks/archive_allure.py
 
 # log_bash.py のテスト

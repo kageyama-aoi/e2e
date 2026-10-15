@@ -41,7 +41,7 @@
 
 ### 1.2 Page Object 全23件と注入名の利用状況
 
-参照数 = `tests/ pages/ support/` 配下 `*.js` での注入名の出現回数 / 利用ファイル数（2026-09-15 集計）。
+参照数 = `codecept/tests/ codecept/pages/ codecept/support/` 配下 `*.js` での注入名の出現回数 / 利用ファイル数（2026-09-15 集計）。
 
 | 現ファイル名 | 注入名 | 役割 | 対象ルート（モジュール） | 参照数 / ファイル数 |
 |---|---|---|---|---|
@@ -69,7 +69,7 @@
 | `RyokinMasterPage.js` | `ryokinMasterPage` | 料金マスタ作成・一覧（juku） | `smsFeeMaster` | 10 / 2 |
 | `RyokinPackagePage.js` | `ryokinPackagePage` | 料金パッケージ作成・一覧（juku） | `smsFeeMasterPackage` | 10 / 2 |
 
-`pages/tframe/flow/JukuseiCourseFlowPage.js`（15 参照）は flow 層。`auth/` `api/` の PO はアイコンに紐づかないため**本計画の対象外**。
+`codecept/pages/tframe/flow/JukuseiCourseFlowPage.js`（15 参照）は flow 層。`auth/` `api/` の PO はアイコンに紐づかないため**本計画の対象外**。
 
 ### 1.3 現状の命名方針の混在（問題の正体）
 
@@ -86,7 +86,7 @@
 
 ## 2. 命名規則（案A・提案）
 
-### 2.1 Page Object 層（`pages/tframe/screens/`, `pages/tframe/flow/`）
+### 2.1 Page Object 層（`codecept/pages/tframe/screens/`, `codecept/pages/tframe/flow/`）
 
 > **原則: Page Object の名前はアプリ自身の語彙に揃える。**（開発者が画面を見てそのままファイルを引ける状態にする）
 
@@ -106,7 +106,7 @@
 - 種別 B と種別 A の違いは「その PO がアイコン配下の画面操作も持つか」。将来 `HelpPage`/`HomePage` に画面操作を足すことは無いので、
   種別 A 相当だが衝突するファイルが無い `HelpPage`/`HomePage`/`CalendarPage` は据え置く（決定事項 2）。
 
-### 2.2 テスト・CSV 層（`tests/tframe/`, `data/tframe/`）
+### 2.2 テスト・CSV 層（`codecept/tests/tframe/`, `codecept/data/tframe/`）
 
 > **原則: テストの名前はチームがその業務シナリオを呼ぶときの言葉（ローマ字の業務用語）で付ける。Page Object の改名に追随させない。**
 
@@ -124,7 +124,7 @@
 
 これは**テスト・CSV・業務識別子**には引き続き妥当だが、Page Object にはそのまま当てはめない。以下を追記する:
 
-- 「tframe の Page Object（`pages/tframe/screens/` `pages/tframe/flow/`）のファイル名・注入名・アイコン操作メソッド名は、
+- 「tframe の Page Object（`codecept/pages/tframe/screens/` `codecept/pages/tframe/flow/`）のファイル名・注入名・アイコン操作メソッド名は、
   アプリ自身の語彙（`xxxIconEn` の英語ラベル / URL ルートのモジュール名）に揃える。テスト・CSV の命名（ローマ字の業務用語）とは独立した規則とする。」
 - 2.1 の表を AGENTS.md に転記（または本計画へのリンク）。
 - 「画面名 ↔ ファイル名 対照表」の Page Object 列を新名に更新（Phase 完了ごとに）。
@@ -156,7 +156,7 @@
 
 ### 3.3 テスト側の変更（1 件のみ）
 
-- `tests/tframe/page/keiryo_master_test.js` → `keiri_menu_test.js`（＋ `run/test_descriptions.json` のキーと説明文）。
+- `codecept/tests/tframe/page/keiryo_master_test.js` → `keiri_menu_test.js`（＋ `run/test_descriptions.json` のキーと説明文）。
 
 ---
 
@@ -167,15 +167,15 @@
 | 場所 | 内容 |
 |---|---|
 | `codecept.conf.js` | `include:` の注入名とパス |
-| `tests/tframe/**/*_test.js` | `Scenario(async ({ …, jukuseiPage }) =>` の分割代入と呼び出し。`lang_check_test.js` / `dropdown_check_test.js` は全アイコン PO を列挙しているため全フェーズで触る |
-| `pages/tframe/flow/*.js` | `@param {object} jukuseiPage` 等の JSDoc とメソッド呼び出し |
-| `pages/tframe/screens/*.js` の JSDoc・コメント | 「`EmailPage.js` はメニューナビ専用のため…」等の相互参照（`EmailIchiranPage` `EmailTourokuPage` `ReportIchiranPage` に有り） |
+| `codecept/tests/tframe/**/*_test.js` | `Scenario(async ({ …, jukuseiPage }) =>` の分割代入と呼び出し。`lang_check_test.js` / `dropdown_check_test.js` は全アイコン PO を列挙しているため全フェーズで触る |
+| `codecept/pages/tframe/flow/*.js` | `@param {object} jukuseiPage` 等の JSDoc とメソッド呼び出し |
+| `codecept/pages/tframe/screens/*.js` の JSDoc・コメント | 「`EmailPage.js` はメニューナビ専用のため…」等の相互参照（`EmailIchiranPage` `EmailTourokuPage` `ReportIchiranPage` に有り） |
 | `scripts/docs/gen_tframe_menu_coverage.js` | `MENU_NAV_PO_BY_ICON`（`email: 'EmailPage'`, `smsFee: 'KeiryoMasterPage'`, `report: 'ReportPage'`） |
 | `.claude/skills/tframe-*/SKILL.md` | 雛形の指名: `KoshiPage.js`（registration-dev / ichiran-dev の主雛形）, `JukuseiPage.js` `CoursePage.js`（flow-dev）, `ChosekinPage.js`（ピッカー例）, `KeiriIchiranPage.js` `EmailIchiranPage.js`（セッション記憶対策の雛形）, `AccountPage.js` `StaffPage.js`（据え置き） |
 | `AGENTS.md` | 「画面名 ↔ ファイル名 対照表」の Page Object 列、「tframe 登録テストの共通パターン」の雛形指名（`KoshiPage.js`）、命名規約（2.3） |
 | `docs/tframe/menu_coverage.md` | 凡例の menu-nav PO 列挙、差分サマリ表、バケット表の実装済み注記（自動生成区間は `npm run docs:menu-coverage` で追随） |
 | `docs/project/project_architecture_guide.md` / `docs/common/codeceptjs_design_patterns.md` / `docs/project/onboarding_new_site.md` | `KoshiPage.js` を例示に使っている箇所 |
-| `data/tframe/README.md` | `sideMenus.js` キー→参照テスト表（`keiryo_master_test.js`）、各 CSV 説明文中の PO 名 |
+| `codecept/data/tframe/README.md` | `sideMenus.js` キー→参照テスト表（`keiryo_master_test.js`）、各 CSV 説明文中の PO 名 |
 | `run/test_descriptions.json` | `keiryo_master_test.js` のキー |
 | `README.md` / `docs/project/test_catalog.md` | 自動生成（pre-commit で追随）。手で触らない |
 | メモリ（`project_tframe_progress.md`） | 旧名での記述が多数。フェーズ完了時に「旧名→新名」の対応を1行追記して読み替え可能にする |

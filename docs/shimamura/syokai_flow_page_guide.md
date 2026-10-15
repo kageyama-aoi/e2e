@@ -1,7 +1,7 @@
 # SyokaiFlowPage.js 学習ガイド
 **対象**: IT新人 / E2Eテスト初学者  
 **目標**: `SyokaiFlowPage.js` を自分で読み書きできるようになる  
-**対応コード**: `pages/shimamura/flow/SyokaiFlowPage.js` と、そこから使う `pages/shimamura/_common/KouhoseiSteps.js`・`KeiriViewSteps.js`・`TaikaiSteps.js`（2026-10 時点。関数名が変わったらこのガイドも直す — AGENTS.md ドキュメント連動ルール カテゴリF）
+**対応コード**: `codecept/pages/shimamura/flow/SyokaiFlowPage.js` と、そこから使う `codecept/pages/shimamura/_common/KouhoseiSteps.js`・`KeiriViewSteps.js`・`TaikaiSteps.js`（2026-10 時点。関数名が変わったらこのガイドも直す — AGENTS.md ドキュメント連動ルール カテゴリF）
 
 > **2026-10 の変更（#300）**: 以前は初回登録の部品をすべて `SyokaiFlowPage.js` 1ファイルに書いていました。
 > 月謝一括作成準備・発表会準備・料金明細準備・退会テストも同じ部品を使うようになったため、
@@ -23,7 +23,7 @@ syokai_touroku_test.js         ← 「何をテストするか」（司令塔）
        ├─ _common/KouhoseiSteps.js  ← 候補生 → 受講生への昇格（現場作業員）
        ├─ _common/KeiriViewSteps.js ← 経理ビュー A/B/E の操作（現場作業員）
        │    └─ syokai_helpers.js    ← 「どのステップを実行するか」を計算する（計算係）
-       └─ support/shimamura/utils.js ← 入力・検証の共通道具（道具箱）
+       └─ codecept/support/shimamura/utils.js ← 入力・検証の共通道具（道具箱）
 ```
 
 ---
@@ -41,14 +41,14 @@ const { logScreenUrl } = require('../../../support/utils');
 | 書き方 | 意味 |
 |---|---|
 | `require('./foo')` | 同じフォルダの foo.js から借りる |
-| `require('../../../support/utils')` | 3つ上のフォルダの support/utils.js から借りる |
+| `require('../../../support/utils')` | 3つ上のフォルダの codecept/support/utils.js から借りる |
 | `const { A, B } = require(...)` | A と B だけ取り出す（分割代入） |
 
 **練習**: 以下の `require` はどこのファイルから何を借りていますか？
 ```js
 const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 ```
-→ 3つ上の `support/shimamura/constants.js` から `TIMEOUTS` と `SELECTORS` を借りている
+→ 3つ上の `codecept/support/shimamura/constants.js` から `TIMEOUTS` と `SELECTORS` を借りている
 
 ---
 
@@ -79,7 +79,7 @@ async function goodExample() {
 ### 1-3. `module.exports` — 外に公開する
 
 ```js
-// pages/shimamura/_common/KeiriViewSteps.js の末尾
+// codecept/pages/shimamura/_common/KeiriViewSteps.js の末尾
 module.exports = {
   KEIRI_SUBMENU,
   keiriViewUrl,
@@ -278,7 +278,7 @@ async function fillKeirisyoriScreenB(I, { class_name01, ..., breakTarget, breakV
 }
 ```
 
-「どのステップを実行するか」の判断は `support/shimamura/syokai_helpers.js`（`prepareInput` / `buildExecutionPlan`）に
+「どのステップを実行するか」の判断は `codecept/support/shimamura/syokai_helpers.js`（`prepareInput` / `buildExecutionPlan`）に
 切り出されていて、画面操作（`createActionExecutor` の中身）とは分かれています。
 「条件分岐の計算」と「ブラウザ操作」を分けておくと、計算部分は単体でテストできるからです。
 
@@ -419,21 +419,21 @@ fillKeirisyoriScreenB(I, input)
 
 ```
 e2e/
-├── tests/shimamura/flow/
+├── codecept/tests/shimamura/flow/
 │   ├── syokai_touroku_test.js    ← 「何をテストするか」
 │   └── taikai_test.js            ← 退会だけを行うテスト（fillTaikaiFormAndSubmit を再利用）
-├── pages/shimamura/flow/
+├── codecept/pages/shimamura/flow/
 │   └── SyokaiFlowPage.js         ← 「どの順番で操作するか」（このガイドの対象）
-├── pages/shimamura/_common/
+├── codecept/pages/shimamura/_common/
 │   ├── KouhoseiSteps.js          ← 候補生 → 受講生への昇格
 │   ├── KeiriViewSteps.js         ← 経理ビュー A/B/E の操作
 │   ├── TaikaiSteps.js            ← 退会処理
 │   └── ClassMemberPage.js        ← 管理タブ・サブメニューの共通ナビ
-├── support/shimamura/
+├── codecept/support/shimamura/
 │   ├── syokai_helpers.js         ← 「どのステップを実行するか」を計算する
 │   ├── utils.js                  ← fillTextFieldsByName / assertNoShimamuraError など
 │   ├── hooks.js                  ← beforeShimamura（ログイン＋担当者番号）
 │   └── constants.js              ← TIMEOUTS / SELECTORS
-└── data/shimamura/
+└── codecept/data/shimamura/
     └── syokai_touroku_data*.csv  ← テストデータ
 ```

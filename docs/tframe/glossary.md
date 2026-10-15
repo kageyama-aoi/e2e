@@ -133,7 +133,7 @@ Page Object の中で `I` を受け取る仕組みです。
 テストのまとまりです。
 
 理解の助け:
-`tests/tframe/*_test.js` をまとめて実行する単位です。
+`codecept/tests/tframe/*_test.js` をまとめて実行する単位です。
 
 ### Helper
 補助的な共通機能です。
@@ -197,19 +197,19 @@ T-Frame のログイン画面 URL です。
 
 ## ファイル構成で出る用語
 
-### `tests/tframe`
+### `codecept/tests/tframe`
 テストシナリオを置く場所です。
 
 理解の助け:
 「何を確認するか」を書く場所です。
 
-### `pages/tframe`
+### `codecept/pages/tframe`
 Page Object を置く場所です。
 
 理解の助け:
 「どう操作するか」を書く場所です。
 
-### `data/tframe`
+### `codecept/data/tframe`
 テストで使うデータを置く場所です。
 
 理解の助け:
@@ -221,7 +221,7 @@ Page Object を置く場所です。
 理解の助け:
 「どのテストを動かすか」「どの画面サイズにするか」「どの Page Object を使えるか」を決めます。
 
-### `support/envLoader.js`
+### `codecept/support/envLoader.js`
 環境変数を読む共通処理です。
 
 理解の助け:

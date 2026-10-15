@@ -39,7 +39,7 @@ classDiagram
 ### 案1: スイート別に分割（縦長に収める）
 ```mermaid
 flowchart TD
-  subgraph TFRAME[tests/tframe]
+  subgraph TFRAME[codecept/tests/tframe]
     T1[navigation_after_login_test.js]
     T2[navigation_after_login_student_test.js]
     T3[token_usage_test.js]
@@ -48,18 +48,18 @@ flowchart TD
     T6[mypage_login_test.js]
   end
 
-  subgraph SHIMAMURA[tests/shimamura]
+  subgraph SHIMAMURA[codecept/tests/shimamura]
     S1[shimamura_login_test.js]
     S2[shimamura_class_member_registration_test.js]
     S3[syokai_touroku_test.js]
     S4[taikai_test.js]
   end
 
-  subgraph TASKREPORT[tests/Taskreport]
+  subgraph TASKREPORT[codecept/tests/Taskreport]
     R1[taskreport_sample_test.js]
   end
 
-  subgraph PAGES[pages/*]
+  subgraph PAGES[codecept/pages/*]
     P1[LoginKannrisyaPage.js]
     P2[ApiCommonLoginPage.js]
     P3[ApiTeacherInfoGetPage.js]
@@ -70,7 +70,7 @@ flowchart TD
     P8[TaskReportLoginPage.js]
   end
 
-  subgraph DATA[data/*]
+  subgraph DATA[codecept/data/*]
     D1[teacherPaymentReportParams.js]
     D2[syokai_touroku_data.csv]
     D3[syokai_touroku_data_<profile>.csv]
@@ -110,25 +110,25 @@ flowchart TD
 ### 案2: 中継ノードで集約（線を大幅削減）
 ```mermaid
 flowchart TD
-  subgraph TFRAME[tests/tframe]
-    TFRAME_TESTS[TFRAME tests/*]
+  subgraph TFRAME[codecept/tests/tframe]
+    TFRAME_TESTS[TFRAME codecept/tests/*]
   end
 
-  subgraph SHIMAMURA[tests/shimamura]
-    SHIMAMURA_TESTS[SHIMAMURA tests/*]
+  subgraph SHIMAMURA[codecept/tests/shimamura]
+    SHIMAMURA_TESTS[SHIMAMURA codecept/tests/*]
   end
 
-  subgraph TASKREPORT[tests/Taskreport]
-    TASKREPORT_TESTS[TASKREPORT tests/*]
+  subgraph TASKREPORT[codecept/tests/Taskreport]
+    TASKREPORT_TESTS[TASKREPORT codecept/tests/*]
   end
 
-  subgraph PAGES[pages/*]
+  subgraph PAGES[codecept/pages/*]
     P_TFRAME[TFRAME pages]
     P_SHIMAMURA[SHIMAMURA pages]
     P_TASKREPORT[TaskReport pages]
   end
 
-  subgraph DATA[data/*]
+  subgraph DATA[codecept/data/*]
     D_TFRAME[teacherPaymentReportParams.js]
     D_SHIMAMURA[syokai/taikai CSV]
   end
@@ -150,7 +150,7 @@ flowchart TD
 ### 案3: 左→右配置（高さを使って横幅を抑える）
 ```mermaid
 flowchart LR
-  subgraph TESTS[tests/*]
+  subgraph TESTS[codecept/tests/*]
     T1[navigation_after_login_test.js]
     T2[navigation_after_login_student_test.js]
     T3[token_usage_test.js]
@@ -164,7 +164,7 @@ flowchart LR
     R1[taskreport_sample_test.js]
   end
 
-  subgraph PAGES[pages/*]
+  subgraph PAGES[codecept/pages/*]
     P1[LoginKannrisyaPage.js]
     P2[ApiCommonLoginPage.js]
     P3[ApiTeacherInfoGetPage.js]
@@ -175,7 +175,7 @@ flowchart LR
     P8[TaskReportLoginPage.js]
   end
 
-  subgraph DATA[data/*]
+  subgraph DATA[codecept/data/*]
     D1[teacherPaymentReportParams.js]
     D2[syokai_touroku_data.csv]
     D3[syokai_touroku_data_<profile>.csv]
@@ -228,7 +228,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   Config[codecept.conf.js include] --> I[actor/steps_file.js]
-  Config --> PageObjects[pages/*]
-  Tests[tests/*] -->|DI| PageObjects
+  Config --> PageObjects[codecept/pages/*]
+  Tests[codecept/tests/*] -->|DI| PageObjects
   Tests -->|DI| I
 ```

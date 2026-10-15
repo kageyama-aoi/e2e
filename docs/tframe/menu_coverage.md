@@ -3,8 +3,8 @@
 最終更新: 2026-09-15（#196 初版 / #197 パターン分類 / #198 経理一覧5 / #199 Eメール系一覧6 / #208 アイコン別表を自動生成化 / #219 バケットD全5画面 / #220 バケットE全3画面）
 
 - **アイコン別 マッピング表は自動生成**（`node scripts/docs/gen_tframe_menu_coverage.js` / commit 時にも自動再生成）。
-  入力 = `pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`（実機採取・採取日は各 JSON の `capturedAt`）
-  × `pages/tframe/screens/*.js` の route 参照 × `tests/tframe/page/*_test.js`。
+  入力 = `codecept/pages/tframe/_common/menuSnapshot/{culture_beta,juku_beta}.json`（実機採取・採取日は各 JSON の `capturedAt`）
+  × `codecept/pages/tframe/screens/*.js` の route 参照 × `codecept/tests/tframe/page/*_test.js`。
 - 散文セクション（差分サマリ / `sideMenus.js` とのズレ / PO無し画面のバケット分類 / フェーズ2 / 付録）は手動メンテ。
 - メニューが改定されたら `menuSnapshot/*.json` を実機採取し直す（将来 `scripts/html/fetch_tframe_menus.js` で自動化予定）。
 
@@ -16,7 +16,7 @@
 |---|---|---|
 | **本ファイル `menu_coverage.md`** | **左サイドメニュー起点**。「メニューに実在する画面」を culture / juku で洗い出し、Page Object 有無とテスト有無を**別列**で突き合わせる | 「この製品のこのメニュー項目、操作できる？テストある？」 |
 | `screen_coverage.md` | テストシナリオ起点のカバレッジ分析（系統別の優先度メモ） | 「次に何をテストすべきか」の優先度判断 |
-| `pages/tframe/_common/sideMenus.js` | テストの**メニューナビ検証**用のメニュー定義（環境非依存の単一定義） | メニューナビテストが辿る導線 |
+| `codecept/pages/tframe/_common/sideMenus.js` | テストの**メニューナビ検証**用のメニュー定義（環境非依存の単一定義） | メニューナビテストが辿る導線 |
 
 `sideMenus.js` は環境非依存の単一定義で「culture にしかない / juku にしかない」を表現できていない。
 本ファイルがその差分の一次情報。将来 `sideMenus.js` を環境タグ付きに再構成する際の入力にもなる（→ 末尾「フェーズ2」）。
@@ -83,12 +83,12 @@
 
 <!-- AUTOGEN:menu-table START — 生成: node scripts/docs/gen_tframe_menu_coverage.js。手で編集しない -->
 
-> この表は `pages/tframe/_common/menuSnapshot/*.json`（実機採取・採取日は各 JSON の `capturedAt`）×
-> `pages/tframe/screens/*.js` の route 参照 × `tests/tframe/page/*_test.js` から自動生成。
+> この表は `codecept/pages/tframe/_common/menuSnapshot/*.json`（実機採取・採取日は各 JSON の `capturedAt`）×
+> `codecept/pages/tframe/screens/*.js` の route 参照 × `codecept/tests/tframe/page/*_test.js` から自動生成。
 > **手で編集しない** — メニューが変わったらスナップショットを更新して `npm run docs:menu-coverage`。
 
 - **C / J** … その画面が culture_beta / juku_beta の左メニューに項目として存在するか（`●` 有 / `-` 無）
-- **Page Object** … その route へ遷移するメソッドを持つ `pages/tframe/screens/*.js`
+- **Page Object** … その route へ遷移するメソッドを持つ `codecept/pages/tframe/screens/*.js`
 - **登録 / 一覧テスト** … その画面を対象にした `*_touroku_test.js` / `*_ichiran_test.js`
 
 ### 受講生（icon: `student`）
@@ -217,7 +217,7 @@
 
 ## `sideMenus.js` との差分（コード修正の入口）
 
-`pages/tframe/_common/sideMenus.js` は実機採取と比べて以下のズレがある。
+`codecept/pages/tframe/_common/sideMenus.js` は実機採取と比べて以下のズレがある。
 
 | 箇所 | `sideMenus.js` の現状 | 実機（採取結果） | 対応方針 |
 |---|---|---|---|
@@ -275,7 +275,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 > **経理一覧系5画面（#198・`KeiriIchiranPage.js`）と Eメールアイコン配下の一覧6画面（#199・`EmailIchiranPage.js`）は実装済み。**
 > これらは日付レンジ既定が「当月」＋エリア/対象区分/ステイタスがサーバー側にセッション記憶されるため、
-> 検索前にレンジ拡大＋主要セレクトのリセットが必要（共通ヘルパー `pages/tframe/_common/IchiranSearchMixin.js`）。
+> 検索前にレンジ拡大＋主要セレクトのリセットが必要（共通ヘルパー `codecept/pages/tframe/_common/IchiranSearchMixin.js`）。
 
 | 画面 | route | 環境 | 備考 |
 |---|---|---|---|
@@ -332,11 +332,11 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 ### D. 一括処理・計算系 — 副作用あり・個別設計（5画面）
 
 単一の実行ボタンでDB更新やファイル生成。**実行条件・冪等性・テスト環境の状態依存**の設計が必要。
-`tests/shimamura/flow/gessya_ikkatu_test.js`（月謝一括作成）の設計が参考になる。
+`codecept/tests/shimamura/flow/gessya_ikkatu_test.js`（月謝一括作成）の設計が参考になる。
 
 | 画面 | route | 環境 | アクション |
 |---|---|---|---|
-| ~~翌月月謝一括作成~~ | `smsFee/ew/tuitionFeeBulkCreate` | 両 | ✓ 実装済み `tuition_fee_bulk_create_test.js`（#219・`KeiriIchiranPage.js`）。**冪等**（既に翌月分があれば二重作成しない）。成功時「〜作成しました」、対象なし時「処理対象の月謝情報がありません。」（juku_beta英語UIでは"There is no ... to process."）を両方許容する `verifyBulkActionResult`（support/tframe/utils.js）で判定 |
+| ~~翌月月謝一括作成~~ | `smsFee/ew/tuitionFeeBulkCreate` | 両 | ✓ 実装済み `tuition_fee_bulk_create_test.js`（#219・`KeiriIchiranPage.js`）。**冪等**（既に翌月分があれば二重作成しない）。成功時「〜作成しました」、対象なし時「処理対象の月謝情報がありません。」（juku_beta英語UIでは"There is no ... to process."）を両方許容する `verifyBulkActionResult`（codecept/support/tframe/utils.js）で判定 |
 | ~~一括入金処理~~ | `smsPayment/sw/batchPayment` | 両 | ✓ 実装済み `batch_payment_test.js`（#219）。実データの入金確定を伴うため、存在しないID番号で検索し結果0件にして実行ボタンのガード文言（「一覧より選択してください」）のみ確認する安全な経路限定 |
 | ~~口座振替請求データ作成~~ | `bankTransfer/ew/bankTransferExport` | 両 | ✓ 実装済み `bank_transfer_export_test.js`（#219）。校舎セレクトは disabled でログイン中の管理者に固定・請求月も表示のみで選択不可。2回連続実行しても同一件数を返す再集計処理と判明したため通常の成功確認で実装 |
 | ~~講師謝礼計算~~ | `shareiDetail/sw/teRewardCalc` | culture | ✓ 実装済み `te_reward_calc_test.js`（#219・`ChosekinPage.js`）。既存データを上書きするだけで重複エラーにならず毎回成功する |
@@ -344,7 +344,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 
 ### E. インポート系 — ファイルアップロード（3画面）
 
-`input[type=file]` ＋「データ取込」ボタン。テスト用の取込CSVを `data/tframe/` に用意し、`file_upload` で流し込む。
+`input[type=file]` ＋「データ取込」ボタン。テスト用の取込CSVを `codecept/data/tframe/` に用意し、`file_upload` で流し込む。
 `/shimamura-download-verify` の逆（アップロード版）に相当。
 
 | 画面 | route | 環境 | 備考 |
@@ -370,7 +370,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
   ファイル中身は未検証）を解明。残り5画面は picker/データ調査が必要なため **#218** へ切り出し。
 - ~~**#216（入退記録編集）**~~ … ✓ 完了。受講生ポップアップは新規タブではなく**ページ内モーダル**で開き、
   結果行に `<a>` は無く1列目のラジオボタン（CSSで視覚上は非表示）で選択する。`executeScript` で直接
-  `radio.click()` する方式を `support/tframe/utils.js` の `selectFirstFromPopupPicker()` として汎用化した。
+  `radio.click()` する方式を `codecept/support/tframe/utils.js` の `selectFirstFromPopupPicker()` として汎用化した。
   **これでバケットB（登録フォーム系）は実質完了**（アンケート編集のみ意図的保留）。
 - **#218 続報（保留中・原因不明）**: `selectFirstFromPopupPicker` は出席表一括出力の coursePicker にもそのまま
   使えることを実機確認（モーダルの構造は同一）。coursePicker モーダル内には検索フォーム
@@ -386,7 +386,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
   未検証（#218 コメント参照）。
 - ~~**バケットD 第1弾（翌月月謝一括作成・講師謝礼計算・講師謝礼合計計算）**~~ … ✓ 完了（Issue #219・
   `KeiriIchiranPage.js` / `ChosekinPage.js` に追記 ＋ 共通ヘルパー `verifyBulkActionResult`
-  （support/tframe/utils.js）新設）。3画面とも「成功」または「対象データなし（冪等・実質正常系）」の
+  （codecept/support/tframe/utils.js）新設）。3画面とも「成功」または「対象データなし（冪等・実質正常系）」の
   どちらでも合格とする判定方式を確立。
 - ~~**バケットD 第2弾・最終（一括入金処理・口座振替請求データ作成）**~~ … ✓ 完了（Issue #219・
   `KeiriIchiranPage.js` に追記）。口座振替請求データ作成は実機で2回連続実行しても同一件数
@@ -398,7 +398,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 - ~~**バケットE（インポート系3画面）**~~ … ✓ 完了（Issue #220・`KeiriIchiranPage.js` / `JukuseiPage.js` に追記）。
   3画面とも正しいファイル仕様（CSVヘッダー・トランザクションID・銀行フォーマット等）が未調査のため、
   実データを変更しない**ガードメッセージ確認のみ**の方針で統一。共有ダミーファイル
-  `data/tframe/import_samples/invalid_header_sample.csv`（`dummy,data`ヘッダーのみ）を3画面の
+  `codecept/data/tframe/import_samples/invalid_header_sample.csv`（`dummy,data`ヘッダーのみ）を3画面の
   「不正フォーマット」検証に使い回せることを実機確認。問合せデータ取込はヘッダー付きCSV投入で
   列マッピング確認画面（未確定）まで進むことも確認し、「ファイル選択画面に戻る」で安全に離脱する。
   **これで menu_coverage.md のPO無し画面バケットA〜Eが全件完了。**

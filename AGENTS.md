@@ -4,10 +4,11 @@
 > 全体像・テスト一覧・前回の続きを順に把握できる。
 
 ## プロジェクト構成・モジュール整理
-- `tests/` にプロダクト別のシナリオ（`shimamura/`, `tframe/`, `taskreport/`, `smoke/`）を配置。
-- `pages/` は Page Object（画面操作・セレクタ）を集約。
-- `support/` は共通ヘルパーと環境読み込み（`support/shimamura/` はしまむら固有のユーティリティ・定数）。
-- `data/` はプロダクト別のテストデータ（CSV/JS）。
+- `codecept/` は CodeceptJS のテスト一式（tests・pages・support・data）。#337 で直下から移した。`codecept.conf.js` は直下に残す（npm scripts・run_gui・CI が直下で呼ぶ）。テストの実行パスは `./codecept/tests/...`
+- `codecept/tests/` にプロダクト別のシナリオ（`shimamura/`, `tframe/`, `taskreport/`, `smoke/`）を配置。
+- `codecept/pages/` は Page Object（画面操作・セレクタ）を集約。
+- `codecept/support/` は共通ヘルパーと環境読み込み（`codecept/support/shimamura/` はしまむら固有のユーティリティ・定数）。
+- `codecept/data/` はプロダクト別のテストデータ（CSV/JS）。
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
 - `output/` は生成物（Allure の結果 `output/allure-results/`・レポート `output/allure-report/`・ランチャーのログ `output/logs/` もこの下。#334 で直下から移動）。
@@ -22,8 +23,8 @@
 - `npm run test_s` しまむらテスト（実行前に `pretest_s` フックが `pause()` 残存をチェック）。
 - `npm run test_t` T-Frame テスト一式（`tframe.culture_beta`。別環境は GUI か `--profile` を手で指定）。
 - `npm run test_taskreport` Taskreport テスト。
-- `npm run test:unit` 支援コードの単体テスト（`node --test`、`tests/unit/*.test.js`。ブラウザ不要。codecept は `*_test.js` だけを拾うので混ざらない）。
-- `npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
+- `npm run test:unit` 支援コードの単体テスト（`node --test`、`codecept/tests/unit/*.test.js`。ブラウザ不要。codecept は `*_test.js` だけを拾うので混ざらない）。
+- `npx codeceptjs run ./codecept/tests/shimamura/flow/syokai_touroku_test.js --profile shimamura.testgcp` 単体実行例。
 
 ### Allure レポート
 - `run/run_gui.py` → `Open Allure` ボタン（推奨）。選択中プロファイルの最新結果を自動検出してブラウザ表示。
@@ -41,9 +42,9 @@
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage` tframe アイコン別マッピング表（`docs/tframe/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。
 - `npm run docs:menu-coverage:shimamura` shimamura アイコン別マッピング表（`docs/shimamura/menu_coverage.md` の AUTOGEN 区間）を再生成。`--check` でドリフト検出。メニュー採取は `node scripts/html/fetch_shimamura_menus.js shimamura.testgcp`（読むだけ・データ変更なし）。
-- `npm run docs:decision-tables` デシジョンテーブルの定義（`data/**/*_dt.js`）から仕様書の AUTOGEN 区間（条件・動作の一覧、DT 表、テストケース一覧）を再生成。`--check` でドリフト検出。対象は `scripts/docs/gen_decision_tables.js` の `REGISTRY`（新しい表を足したら1行追加）。
+- `npm run docs:decision-tables` デシジョンテーブルの定義（`codecept/data/**/*_dt.js`）から仕様書の AUTOGEN 区間（条件・動作の一覧、DT 表、テストケース一覧）を再生成。`--check` でドリフト検出。対象は `scripts/docs/gen_decision_tables.js` の `REGISTRY`（新しい表を足したら1行追加）。
 - `npm run docs:all` ツリー＋カタログ＋メニュー表（tframe / shimamura）＋デシジョンテーブルをまとめて更新。
-- ツリー・カタログ（`tests/` 変更時）と tframe メニュー表（`pages/tframe/screens/` `pages/tframe/_common/menuSnapshot/` `tests/tframe/page/` `codecept.conf.js` 変更時）・shimamura メニュー表（`pages/shimamura/` `support/shimamura/` `tests/shimamura/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。フックからは `--exclude-untracked` 付きで呼ぶため、git 未追跡の作業中ファイルは載らない（手動の `npm run docs:*` は作業ツリー全体を数える）。
+- ツリー・カタログ（`codecept/tests/` 変更時）と tframe メニュー表（`codecept/pages/tframe/screens/` `codecept/pages/tframe/_common/menuSnapshot/` `codecept/tests/tframe/page/` `codecept.conf.js` 変更時）・shimamura メニュー表（`codecept/pages/shimamura/` `codecept/support/shimamura/` `codecept/tests/shimamura/` `codecept.conf.js` 変更時）は `.githooks/pre-commit` で自動再生成される（`npm install` の postinstall で有効化）。フックからは `--exclude-untracked` 付きで呼ぶため、git 未追跡の作業中ファイルは載らない（手動の `npm run docs:*` は作業ツリー全体を数える）。
 
 ## ディレクトリ配置ルール
 
@@ -51,10 +52,10 @@
 
 | ディレクトリ | 置いてよいもの | 置いてはいけないもの |
 |---|---|---|
-| `tests/` | テストシナリオ（`*_test.js`）。`<product>/util/` にのみ GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾）を許可 | Page Object、汎用ユーティリティ、データ |
-| `pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`）、実機採取メニュースナップショット（`<product>/_common/menuSnapshot/*.json`。tframe / shimamura） | テスト入力データ、汎用ユーティリティ |
-| `support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
-| `data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
+| `codecept/tests/` | テストシナリオ（`*_test.js`）。`<product>/util/` にのみ GUIランチャー専用の手動起動スクリプト（`*_test.js` 非末尾）を許可 | Page Object、汎用ユーティリティ、データ |
+| `codecept/pages/` | Page Object、メニュー定義（`sideMenus.js`）、URL解決ヘルパー（`_urlPath.js`）、実機採取メニュースナップショット（`<product>/_common/menuSnapshot/*.json`。tframe / shimamura） | テスト入力データ、汎用ユーティリティ |
+| `codecept/support/` | テスト実行中に `require()` されるJS（ユーティリティ・カスタムSteps・ENV読み込み） | 単体で起動する補助スクリプト |
+| `codecept/data/` | テスト入力データ（CSV、パラメータJS） | アプリ構造の定義、メニュー定義、Page Object |
 | `scripts/` | 単体で起動する補助ツール（Python・Node） | テスト実行中に `require()` されるJS |
 | `run/` | ユーザーが直接起動するランチャー（`.bat` / `.py`） | テストロジック、Page Object |
 
@@ -63,7 +64,7 @@
 新しいファイルを作る前に、以下を**必ず宣言してから**作成すること：
 
 1. **性質の分類**：テスト入力データ / アプリ構造定義 / ランタイムユーティリティ / 補助ツール / ランチャー
-2. **配置先とその理由**：「〇〇は△△の性質を持つため `pages/` に置く」
+2. **配置先とその理由**：「〇〇は△△の性質を持つため `codecept/pages/` に置く」
 3. **既存カテゴリに当てはまらない場合**：勝手に判断せず、ユーザーに確認してから配置先を決める
 
 ### 新概念が生まれたときのフロー
@@ -104,17 +105,17 @@
 | 変更内容 | 更新が必要なドキュメント |
 |---|---|
 | ディレクトリ構成の変更（追加・削除・移動） | `README.md`（`npm run docs:update-readme-map` で自動更新）、`docs/project/project_architecture_guide.md` |
-| `data/tframe/` のファイル追加・削除・移動 | `data/tframe/README.md` の対応表 |
+| `codecept/data/tframe/` のファイル追加・削除・移動 | `codecept/data/tframe/README.md` の対応表 |
 | 配置ルールの変更・新カテゴリの追加 | 本ファイル（`AGENTS.md`）のディレクトリ配置ルール表 |
 | 新スキルの追加 | 本ファイル（`AGENTS.md`）のスキル一覧（下記） |
-| `tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
-| tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
-| shimamura の PO / テストの追加、shimamura メニューの改定 | `docs/shimamura/menu_coverage.md` のサマリ・アイコン別表は commit 時に自動再生成（`gen_shimamura_menu_coverage.js`）。メニュー改定時は `scripts/html/fetch_shimamura_menus.js` で `pages/shimamura/_common/menuSnapshot/testgcp.json` を採取し直す。**未着手画面・逆引きはこの自動生成表を見る** |
+| `codecept/tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json`（GUI の TestFile 欄に日本語説明を表示するために必須）。`docs/project/test_catalog.md` は commit 時に自動再生成 |
+| tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `codecept/pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
+| shimamura の PO / テストの追加、shimamura メニューの改定 | `docs/shimamura/menu_coverage.md` のサマリ・アイコン別表は commit 時に自動再生成（`gen_shimamura_menu_coverage.js`）。メニュー改定時は `scripts/html/fetch_shimamura_menus.js` で `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json` を採取し直す。**未着手画面・逆引きはこの自動生成表を見る** |
 | **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
 | `scripts/` 配下のスクリプトを移動・リネーム | `package.json` の該当 npm script、`.github/workflows/*.yaml`（CI がこれらを直接パス指定で呼んでいないか）。**CI 設定は push して実行されるまでローカルで気付けない**ため、移動時は必ず `grep -rn "旧パス" .github/ package.json` まで確認する（`/local-safe-move` Step 1 の対象拡張済み） |
 
 > 参照パス・関数名のドリフトは `npm run docs:check-refs`（`scripts/docs/check_doc_refs.py`）で機械的に検出できる。
-> `docs/` `.claude/skills/` `pages/` `support/` `.github/workflows/` を含むコミットでは pre-commit が警告モードで自動実行する
+> `docs/` `.claude/skills/` `codecept/pages/` `codecept/support/` `.github/workflows/` を含むコミットでは pre-commit が警告モードで自動実行する
 > （`.github/workflows/*.yaml` も走査対象。CI だけが持つパス参照はここでしか拾えない）。
 > **CI ワークフロー自体は生パスを書かず、`package.json` の npm script を呼ぶ**（`npm run docs:update-readme-map` 等）ことで
 > 「スクリプト移動時に直す場所」を1箇所に集約する（documentation_update.yaml 参照）。
@@ -172,7 +173,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
     画面固有の追加カテゴリ（`accordion` 等）が必要な場合はそのまま追加してよいが、
     既存カテゴリと同じ意味のものを別名で作らない（例: `fields` と `textbox` を両方使わない）。
 - 待機は `I.waitForElement` / `I.waitForVisible` を優先し、`I.wait(秒)` は最小限。
-  - AJAX補完待ちなど繰り返し使う待機時間は `TIMEOUTS`（`support/<product>/constants.js`）に
+  - AJAX補完待ちなど繰り返し使う待機時間は `TIMEOUTS`（`codecept/support/<product>/constants.js`）に
     定数化する。マジックナンバーを直書きしない。
 - 新規ファイル・識別子のローマ字表記はヘボン式を基本とする（例: 一括=`ikkatsu`、対策=`taisaku`）。
   - 既存ファイルで訓令式（例: `Ikkatu`）や画面名由来の慣用表記が既に定着している場合は、
@@ -182,12 +183,12 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   タプル型 `Array<[A, B]>` を使わない（Closure/JSDoc の型パーサーが解釈できずビルド時エラーになる）。
   - 省略可能なプロパティは `{name: (string|undefined)}` のように `(Type|undefined)` で書く。
   - タプルは `Array<Array<string>>` のように書くか、型を諦めて説明文だけにする。
-  - コミット前に `npm run docs:jsdoc` が ERROR 無しで通るか確認する（`pages/` `support/` `tests/` の
+  - コミット前に `npm run docs:jsdoc` が ERROR 無しで通るか確認する（`codecept/pages/` `codecept/support/` `codecept/tests/` の
     `.js` を含むコミットでは pre-commit が警告モードで自動チェックする）。
 
 ## テスト運用ガイド
 - フレームワーク: CodeceptJS + Playwright、レポートは Allure。
-- テストファイル名は `*_test.js`、配置は `tests/<product>/`。
+- テストファイル名は `*_test.js`、配置は `codecept/tests/<product>/`。
 - 1 Scenario = 1 フロー、Arrange → Act → Assert の順を意識。
 - **未完成テストは `@wip` タグで隔離する。** ひな形・「（仮）」・`pause()` 待ちなど動作が確定していないテストは
   Scenario 名に `@wip` を付け、`run/test_descriptions.json` の説明を `[WIP] ` で始める。
@@ -197,7 +198,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 - Allure 結果の構造: `output/allure-results/<profile>/<YYYYMMDD_HHMMSS_testname>/`。
 
 ### tframe テストのフォルダ分類
-`tests/tframe/` 配下は性質別サブフォルダで管理する。新規テスト追加時は以下の基準で配置先を決めること。
+`codecept/tests/tframe/` 配下は性質別サブフォルダで管理する。新規テスト追加時は以下の基準で配置先を決めること。
 
 | フォルダ | 対象 | 例 |
 |---|---|---|
@@ -209,7 +210,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `util/` | 手動起動の開発補助スクリプト（`*_test.js` 非末尾・テストスイートに含まれない） | sort_spec_probe.js（一覧ソート定義の調査） |
 
 ### shimamura テストのフォルダ分類
-`tests/shimamura/` 配下も性質別サブフォルダで管理する（#100 で分類済み）。
+`codecept/tests/shimamura/` 配下も性質別サブフォルダで管理する（#100 で分類済み）。
 
 | フォルダ | 対象 | 例 |
 |---|---|---|
@@ -268,15 +269,15 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | 入退記録編集 | `entrance_log_touroku_` | `CalendarPage.js` | `entranceLog` | `ew/_default`・受講生ポップアップから選択（`selectFirstFromPopupPicker`）・juku_beta のみ・#216 |
 
 **ファイルの探し方（3点セット）**
-1. テストファイル: `tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
-2. Page Object: `pages/tframe/screens/{PageObject}`（ログイン系は `auth/`、API系は `api/`、共通は `_common/`）— テストファイルの inject 変数名からも辿れる
-3. CSV: `data/tframe/{prefix}touroku_data.csv` / `{prefix}ichiran_search_data.csv`
+1. テストファイル: `codecept/tests/tframe/page/{prefix}touroku_test.js` / `{prefix}ichiran_test.js`
+2. Page Object: `codecept/pages/tframe/screens/{PageObject}`（ログイン系は `auth/`、API系は `api/`、共通は `_common/`）— テストファイルの inject 変数名からも辿れる
+3. CSV: `codecept/data/tframe/{prefix}touroku_data.csv` / `{prefix}ichiran_search_data.csv`
 
 ### tframe 登録テストの共通パターン
-新規登録テストを作るときは `pages/tframe/screens/KoshiPage.js`（Page Object）と `tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
-シンプルな Page Object（MenuNav なし）は `pages/tframe/screens/AccountPage.js` / `pages/tframe/screens/StaffPage.js` を参照。
+新規登録テストを作るときは `codecept/pages/tframe/screens/KoshiPage.js`（Page Object）と `codecept/tests/tframe/page/koshi_touroku_test.js`（テスト）を雛形にすること。
+シンプルな Page Object（MenuNav なし）は `codecept/pages/tframe/screens/AccountPage.js` / `codecept/pages/tframe/screens/StaffPage.js` を参照。
 
-共通ユーティリティ（`support/utils.js`）：
+共通ユーティリティ（`codecept/support/utils.js`）：
 - `fillTextFields(I, fieldMap)` — `FORM_FILL_FAST` ENV で高速/安全を自動切替するフィールド一括入力
 - `submitTframeFormAndVerify(I, expectedName)` — 保存後に `#tf-message-summary` でバリデーションエラーを検出
 - `isEnglish()` — `TFRAME_LANGUAGE=en` 判定（juku プロファイルのみ英語あり、culture は常に ja）
@@ -286,29 +287,29 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 特殊フィールドの操作：
 - 郵便番号 → `I.click('#zipCodeBtn')` + `I.wait(1)` で都道府県・市区町村を自動入力（番地・カナは手動）
 - 銀行コード → `I.fillField('#bankCode', val)` + `I.wait(1)` で銀行名を AJAX 自動補完（bankName 列は CSV 不要）
-- AJAX 連動ドロップダウン（エリア→校舎）→ `support/tframe/utils.js` の `selectAreaThenBranch(I, { area, branch })` を使う（ID体系が `#school_area_id`/`#school_branch_id` と `#branchId_area_id`/`#branchId_branch_id` の2種あるため、後者は `areaSelector`/`branchSelector` を明示指定する）
-- 受講生・講師・コース等を選ぶ「ポップアップピッカー」（`#xxxPicker_start` ボタン）→ `support/tframe/utils.js` の
+- AJAX 連動ドロップダウン（エリア→校舎）→ `codecept/support/tframe/utils.js` の `selectAreaThenBranch(I, { area, branch })` を使う（ID体系が `#school_area_id`/`#school_branch_id` と `#branchId_area_id`/`#branchId_branch_id` の2種あるため、後者は `areaSelector`/`branchSelector` を明示指定する）
+- 受講生・講師・コース等を選ぶ「ポップアップピッカー」（`#xxxPicker_start` ボタン）→ `codecept/support/tframe/utils.js` の
   `selectFirstFromPopupPicker(I, { startSelector, displaySelector })` を使う。**新規タブではなくページ内モーダル**で開き、
   結果行に `<a>` は無く1列目のラジオボタンで選択する（CSSで見た目上非表示のため `executeScript` で直接 click する。#216）。
   先頭の検索結果を選ぶだけなので、対象データが出力条件（日付レンジ等）と噛み合うかは別途確認が要る（#218）。
-- 一括処理・計算系ボタン（翌月月謝一括作成・講師謝礼計算等）の実行結果確認 → `support/tframe/utils.js` の
+- 一括処理・計算系ボタン（翌月月謝一括作成・講師謝礼計算等）の実行結果確認 → `codecept/support/tframe/utils.js` の
   `verifyBulkActionResult(I, buttonSelector)` を使う。冪等な画面が返す「成功」と「対象データなし」
   （`tf-message-error` クラスだが実質は正常系）の両方を日英で許容する（#219）。
-- インポート系画面の未選択・不正フォーマット等のガードメッセージ確認 → `support/tframe/utils.js` の
+- インポート系画面の未選択・不正フォーマット等のガードメッセージ確認 → `codecept/support/tframe/utils.js` の
   `verifyGuardMessage(I, expectedMessage)` を使う（#220）。
 - 一覧（一覧画面・詳細画面のタブ内一覧）の列ヘッダソート検証 → PO に `createSortableTable({label, container, columns, secondary})`
-  （`pages/tframe/_common/SortableTable.js`）を定義し、テストは `support/tframe/sortTestRunner.js` の
+  （`codecept/pages/tframe/_common/SortableTable.js`）を定義し、テストは `codecept/support/tframe/sortTestRunner.js` の
   `runSortCases(I, {table, cases, openCase})` に渡す（一覧画面の openCase は `openListCase(po)`）。検索条件の全クリアは `IchiranSearchMixin` の `resetSearchForm()`。
-  定義案は調査ツール `tests/tframe/util/sort_spec_probe.js` で出す。列の型（`string` / `stringCi` / `number` / `datetime` / `grouped`）と第2キー（無い画面は `null`）の決め方は `/tframe-ichiran-dev` 末尾（#223 #225）。
+  定義案は調査ツール `codecept/tests/tframe/util/sort_spec_probe.js` で出す。列の型（`string` / `stringCi` / `number` / `datetime` / `grouped`）と第2キー（無い画面は `null`）の決め方は `/tframe-ichiran-dev` 末尾（#223 #225）。
 
 詳細な手順は `/tframe-registration-dev` スキルを参照。
 
 ### tframe 業務フロー（複数画面をまたぐシナリオ）のFlowPageパターン
 
 1画面完結ではなく「受講生登録→コース紐付け」のように複数画面・ポップアップをまたぐシナリオは
-`pages/tframe/flow/{機能名}FlowPage.js` に集約する（shimamura の `pages/shimamura/flow/*FlowPage.js`
-と同じ役割。ただし tframe 規約に合わせて書き直す）。雛形は `pages/tframe/flow/JukuseiCourseFlowPage.js`
-と対応するテスト `tests/tframe/flow/jukusei_course_link_flow_test.js`。詳細な手順は
+`codecept/pages/tframe/flow/{機能名}FlowPage.js` に集約する（shimamura の `codecept/pages/shimamura/flow/*FlowPage.js`
+と同じ役割。ただし tframe 規約に合わせて書き直す）。雛形は `codecept/pages/tframe/flow/JukuseiCourseFlowPage.js`
+と対応するテスト `codecept/tests/tframe/flow/jukusei_course_link_flow_test.js`。詳細な手順は
 `/tframe-flow-dev` スキルを参照。
 
 ### shimamura テストの共通パターン
@@ -317,17 +318,17 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 | 種類 | 雛形（テスト） | 雛形（Page Object / FlowPage） |
 |---|---|---|
-| 一覧検索 | `tests/shimamura/page/transaction_ichiran_test.js` | `pages/shimamura/screens/ichiran/keiriScreens.js`（画面定義。`IchiranPage.js` が結合）／メニュー定義は `pages/shimamura/_common/sideMenus.js` |
-| 1画面完結の登録・取込（FlowPage なし） | `tests/shimamura/flow/smbc_state_import_test.js` | `pages/shimamura/screens/SmbcStateImportPage.js`（画面操作は screens/ の PO に置き、テストは手順とデータ準備だけ #302） |
-| 複数画面フロー | `tests/shimamura/flow/koushi_sharei_manual_test.js` | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
-| セットアップ→本体の2段構成（セッションファイル受け渡し） | `tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `pages/shimamura/flow/HappyoukaiFlowPage.js` |
+| 一覧検索 | `codecept/tests/shimamura/page/transaction_ichiran_test.js` | `codecept/pages/shimamura/screens/ichiran/keiriScreens.js`（画面定義。`IchiranPage.js` が結合）／メニュー定義は `codecept/pages/shimamura/_common/sideMenus.js` |
+| 1画面完結の登録・取込（FlowPage なし） | `codecept/tests/shimamura/flow/smbc_state_import_test.js` | `codecept/pages/shimamura/screens/SmbcStateImportPage.js`（画面操作は screens/ の PO に置き、テストは手順とデータ準備だけ #302） |
+| 複数画面フロー | `codecept/tests/shimamura/flow/koushi_sharei_manual_test.js` | `codecept/pages/shimamura/flow/KoushiShareiFlowPage.js` |
+| セットアップ→本体の2段構成（セッションファイル受け渡し） | `codecept/tests/shimamura/flow/happyoukai_setup_test.js` / `happyoukai_touroku_test.js` | `codecept/pages/shimamura/flow/HappyoukaiFlowPage.js` |
 
 共通ユーティリティ（**あるものを使う。FlowPage 内で再実装しない**）：
 
 | 関数 / 定数 | 置き場 | 用途 |
 |---|---|---|
-| `beforeShimamura` | `support/shimamura/hooks.js` | `Before(beforeShimamura)` でログイン＋担当者番号入力 |
-| `fillTextFieldsByName(I, fieldMap)` | `support/shimamura/utils.js` | `name=` 属性のテキスト一括入力（`FORM_FILL_FAST` で高速/安全切替） |
+| `beforeShimamura` | `codecept/support/shimamura/hooks.js` | `Before(beforeShimamura)` でログイン＋担当者番号入力 |
+| `fillTextFieldsByName(I, fieldMap)` | `codecept/support/shimamura/utils.js` | `name=` 属性のテキスト一括入力（`FORM_FILL_FAST` で高速/安全切替） |
 | `fillTextFieldsBySelector(I, pairs)` | 同上 | `#id` 等の CSS セレクタ指定版 |
 | `assertNoShimamuraError(I, context)` | 同上 | 保存後に `#top_err_info_msg_div` が空であることを確認 |
 | `verifyValidationErrors(I, errors, container)` | 同上 | 期待エラー文言の検証 |
@@ -341,21 +342,21 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `clickAndWaitForReload(I, locator, {timeout})` | 同上 | クリックして画面が読み込み直されるまで待つ。押す前から画面にある要素（body・ファイル選択欄等）を待つと再描画前に即成立し、押す前の画面で判定してしまう（#243） |
 | `buildTestName(prefix, row)` | 同上 | セットアップ系で受講生名を「prefix+MMDD / testNo+scenario」に組み立てる |
 | `sidebarLinkXPath(label)` | 同上 | 左サイドバーのリンクを表示テキスト完全一致で探す XPath（`withText` は部分一致で「料金一覧」が「料金一覧(共通)」にも当たる） |
-| `ensureAccountTransferSchedules(I, {claimMonth, …})` | `support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
-| `BASE_URL` | `support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
-| `pageUrl({ module, action, ...params })` | `support/shimamura/constants.js` | 画面の URL を組み立てる（値は符号化される）。`` `${BASE_URL}index.php?module=…` `` と手書きしない（#300） |
-| `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
-| `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
-| `attachEvidenceScreenshot(I, fileBase, name)` | `support/utils.js` | スクショを読める名前（例: `①遷移直後`）で Allure に添付。設計書の無い画面で「遷移直後 → 入力後 → ボタン押下後」を残すときに使う |
-| `formatDate(date, 'YYYY-MM-DD')` / `pad2(n)` / `firstOfMonth(offset)` | `support/dateFormat.js` | 日付の整形（記号 YYYY MM DD hh mm ss）・2桁ゼロ埋め・来月/先月の1日。`padStart(2, '0')` や `new Date(y, m + 1, 1)` を手書きしない。月をずらすときは日付を1日にそろえる（月末ずれ防止 #301）。プロダクト共通 |
-| `expandTable` / `findCollapsedRule` | `support/decisionTable.js` | デシジョンテーブルの展開・N/A・縮約（社内「デシジョンテーブル記法ガイド」準拠）。プロダクト共通 |
-| `evaluateCase` / `formatTrace` | `support/shimamura/salesGroupTransferModel.js` | 料金明細 入金の仕様モデル。テストケースを DT-04→01→03→02 で評価し期待結果を決める（#287） |
+| `ensureAccountTransferSchedules(I, {claimMonth, …})` | `codecept/support/shimamura/accountTransferSchedule.js` | 口座振替スケジュールの事前確保（月謝一括作成・発表会参加費の前提） |
+| `BASE_URL` | `codecept/support/shimamura/constants.js` | 末尾 `/` 付きに正規化したベース URL。`BASE_URL + 'index.php?...'` で連結する（`process.env.BASE_URL` を直接連結しない） |
+| `pageUrl({ module, action, ...params })` | `codecept/support/shimamura/constants.js` | 画面の URL を組み立てる（値は符号化される）。`` `${BASE_URL}index.php?module=…` `` と手書きしない（#300） |
+| `TIMEOUTS` / `SELECTORS` / `URLS` | `codecept/support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
+| `prepareInput` / `buildExecutionPlan` | `codecept/support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
+| `attachEvidenceScreenshot(I, fileBase, name)` | `codecept/support/utils.js` | スクショを読める名前（例: `①遷移直後`）で Allure に添付。設計書の無い画面で「遷移直後 → 入力後 → ボタン押下後」を残すときに使う |
+| `formatDate(date, 'YYYY-MM-DD')` / `pad2(n)` / `firstOfMonth(offset)` | `codecept/support/dateFormat.js` | 日付の整形（記号 YYYY MM DD hh mm ss）・2桁ゼロ埋め・来月/先月の1日。`padStart(2, '0')` や `new Date(y, m + 1, 1)` を手書きしない。月をずらすときは日付を1日にそろえる（月末ずれ防止 #301）。プロダクト共通 |
+| `expandTable` / `findCollapsedRule` | `codecept/support/decisionTable.js` | デシジョンテーブルの展開・N/A・縮約（社内「デシジョンテーブル記法ガイド」準拠）。プロダクト共通 |
+| `evaluateCase` / `formatTrace` | `codecept/support/shimamura/salesGroupTransferModel.js` | 料金明細 入金の仕様モデル。テストケースを DT-04→01→03→02 で評価し期待結果を決める（#287） |
 
 ナビゲーション：
 - 一覧画面へは `sideMenus.js` に定義を足し、`IchiranPage._navigateViaMenu(menus.xxx)` 経由で遷移する（`SHIMAMURA_NAV=sidebar` でサイドバー経路、既定は directUrl）。
 - 管理タブ経由の遷移は `classMemberPageShimamura.navigateToAdminTab(tab, title)` + `clickSubMenuLink(link, title)`。
 - 受講生まわりのサイドバー遷移（`navigateToAdminTab` 後の `toggleGroupmenu` + `clickSubMenuLink`）は
-  `pages/shimamura/_common/KouhoseiSteps.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `_common/KeiriViewSteps.js` の
+  `codecept/pages/shimamura/_common/KouhoseiSteps.js` の `navigateToStudentGroup(I, page)`（候補生検索へ）/ `_common/KeiriViewSteps.js` の
   `navigateToKeirisyoriView(I, page)`（経理ビュー個人へ）に集約済み。他の FlowPage（`GessyaIkkatuFlowPage.js` 等）はこれを import して使う。
   **FlowPage 内で 3 行の遷移を再実装しない。** 複数フローで使う部品は FlowPage に置かず `_common/*Steps.js` に置く（FlowPage 同士で import し合わない #300）。
   受講生の UUID が分かっているデータ準備では `navigateToKeirisyoriView(I, page, { recordId })`（`openKeirisyoriScreenA` / `executeTaikai` も `recordId` を受け取る）で
@@ -363,13 +364,13 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`_common/KeiriViewSteps.js` の
   `enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })` で画面操作なしに同じ通信を出せる（約22秒→約8秒 #280）。
 - URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。URL は手書きせず
-  `support/shimamura/constants.js` の `pageUrl({ module, action, record, ... })` で組み立てる（経理ビュー A は `KeiriViewSteps.keiriViewUrl(recordId)`。#300）。
+  `codecept/support/shimamura/constants.js` の `pageUrl({ module, action, record, ... })` で組み立てる（経理ビュー A は `KeiriViewSteps.keiriViewUrl(recordId)`。#300）。
 
 デシジョンテーブル駆動のテスト（#287）：
-- **定義ファイル1つが正**：条件・動作・判定（`decide`）・初期状態（fixtures）・テストケース・対象外の理由を `data/<product>/<画面>_dt.js` に書く（テスト入力の性質なので `data/`）。
-  仕様書の表は `npm run docs:decision-tables` で生成（手で直さない）、テストは同じ定義を読み、期待結果は仕様モデル（`support/<product>/*Model.js`）が表から決める。
-- 汎用エンジンは `support/decisionTable.js`（テスト実行中に require されるので `support/`）、生成スクリプトは `scripts/docs/gen_decision_tables.js`（単体で起動するので `scripts/`）。
-- 今の不具合を期待値にしたケースは `@known-bug` を付ける（直ったら落ちるのが正しい）。例: `tests/shimamura/flow/sales_group_transfer_check_test.js`
+- **定義ファイル1つが正**：条件・動作・判定（`decide`）・初期状態（fixtures）・テストケース・対象外の理由を `codecept/data/<product>/<画面>_dt.js` に書く（テスト入力の性質なので `codecept/data/`）。
+  仕様書の表は `npm run docs:decision-tables` で生成（手で直さない）、テストは同じ定義を読み、期待結果は仕様モデル（`codecept/support/<product>/*Model.js`）が表から決める。
+- 汎用エンジンは `codecept/support/decisionTable.js`（テスト実行中に require されるので `codecept/support/`）、生成スクリプトは `scripts/docs/gen_decision_tables.js`（単体で起動するので `scripts/`）。
+- 今の不具合を期待値にしたケースは `@known-bug` を付ける（直ったら落ちるのが正しい）。例: `codecept/tests/shimamura/flow/sales_group_transfer_check_test.js`
 
 詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。
 
@@ -433,10 +434,10 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 - 汎用ツール（特定プロダクトに依存しないもの）は product prefix なし。
 
 ### scripts/（テスト支援ツール）
-> **⚠️ `support/` との混同注意**
-> `support/` はテスト実行中に CodeceptJS が `require()` する JS ファイル（runtime）。
+> **⚠️ `codecept/support/` との混同注意**
+> `codecept/support/` はテスト実行中に CodeceptJS が `require()` する JS ファイル（runtime）。
 > `scripts/` はテストとは独立して単体で起動する補助ツール（Python・Node スクリプト）。
-> 「JS でテスト中に使うものは `support/`、単体で動かすツールは `scripts/`」と覚えること。
+> 「JS でテスト中に使うものは `codecept/support/`、単体で動かすツールは `scripts/`」と覚えること。
 
 - テストを直接実行しない補助スクリプトを置く。
 - サブフォルダはカテゴリで分ける:
@@ -450,13 +451,13 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。
 
 ## パス解決のルール（JS テストファイル）
-- `tests/` 配下のファイルでリポジトリルート基準のパスを扱う場合は `support/repoRoot.js` を使うこと。
+- `codecept/tests/` 配下のファイルでリポジトリルート基準のパスを扱う場合は `codecept/support/repoRoot.js` を使うこと。
   ```js
   const repoRoot = require('../../../support/repoRoot'); // ..の数はファイルの深さに応じて調整
   const dir = path.join(repoRoot, config.output);
   ```
 - `__dirname` + 手動の `'..'` カウントはファイル移動時に壊れるため禁止。
-- `support/` 直下のファイルは `path.resolve(__dirname, '..')` が repo root と等しいので直接使ってよい。
+- `codecept/support/` 直下のファイルは `path.resolve(__dirname, '..')` が repo root と等しいので直接使ってよい。
 
 ## 環境・設定の注意点
 - `--profile <name>` でプロファイル指定。`env/.env.<profile>` を用意。

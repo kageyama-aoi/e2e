@@ -5,7 +5,7 @@ description: |
   以下のような依頼があったら使用すること：
   - tframe の特定画面（一覧・検索）のテストを新規作成したい
   - 既存の一覧検索 Page Object メソッド / CSV / テストファイルを修正・追加したい
-    （対象: tests/tframe/ 配下の *_ichiran_test.js、data/tframe/ の *_ichiran_search_data.csv。
+    （対象: codecept/tests/tframe/ 配下の *_ichiran_test.js、codecept/data/tframe/ の *_ichiran_search_data.csv。
      koshi_ / jukusei_ / course_ 等のプレフィックスは tframe の画面）
   - 「〇〇一覧のテストを作って」という依頼
   - 一覧（一覧画面・詳細画面のタブ内一覧）の列ヘッダソート検証を追加したい（末尾「ソート検証の追加」）
@@ -28,15 +28,15 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 
 | 目的 | 参照先 |
 |---|---|
-| 一覧検索メソッドの実装パターン | `pages/tframe/screens/KoshiPage.js`（`navigateToListPage` 以降） |
-| シンプルな Page Object（アイコンなし） | `pages/tframe/screens/StaffPage.js` |
-| テストファイルの雛形 | `tests/tframe/page/koshi_ichiran_test.js` |
-| CSV の形式 | `data/tframe/koshi_ichiran_search_data.csv` |
+| 一覧検索メソッドの実装パターン | `codecept/pages/tframe/screens/KoshiPage.js`（`navigateToListPage` 以降） |
+| シンプルな Page Object（アイコンなし） | `codecept/pages/tframe/screens/StaffPage.js` |
+| テストファイルの雛形 | `codecept/tests/tframe/page/koshi_ichiran_test.js` |
+| CSV の形式 | `codecept/data/tframe/koshi_ichiran_search_data.csv` |
 | ENV 変数一覧 | `env/.env.tframe.template` |
 | フォルダ配置ルール | `AGENTS.md` の「tframe テストのフォルダ分類」 |
 | GUI 用説明の登録先 | `run/test_descriptions.json` |
-| ソート検証の雛形（一覧画面） | `pages/tframe/screens/StaffPage.js` の `listSortTable` + `tests/tframe/page/staff_ichiran_sort_test.js` |
-| ソート検証の雛形（タブ内一覧） | `pages/tframe/screens/CoursePage.js` の `studentSubpanelSortTable` + `tests/tframe/page/course_detail_student_sort_test.js` |
+| ソート検証の雛形（一覧画面） | `codecept/pages/tframe/screens/StaffPage.js` の `listSortTable` + `codecept/tests/tframe/page/staff_ichiran_sort_test.js` |
+| ソート検証の雛形（タブ内一覧） | `codecept/pages/tframe/screens/CoursePage.js` の `studentSubpanelSortTable` + `codecept/tests/tframe/page/course_detail_student_sort_test.js` |
 
 ---
 
@@ -47,7 +47,7 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
 まず以下を確認する：
 
 1. **既存 Page Object があるか**  
-   `pages/tframe/screens/` を確認し、対象の Page Object が存在するか確認する。
+   `codecept/pages/tframe/screens/` を確認し、対象の Page Object が存在するか確認する。
    - 存在する → そのファイルにメソッドを追記する
    - 存在しない → `/tframe-registration-dev` スキルでまず Page Object を作ること
 
@@ -172,7 +172,7 @@ async verifyResultRowsExist() { await verifyResultRowsExist('画面名'); },
 
 ### Step 3: CSV の作成
 
-`data/tframe/{module}_ichiran_search_data.csv` を作成する。
+`codecept/data/tframe/{module}_ichiran_search_data.csv` を作成する。
 
 ```
 scenario,{検索フィールド名},expectedName
@@ -198,8 +198,8 @@ scenario,lastName,expectedName
 
 ### Step 4: テストファイルの作成
 
-`tests/tframe/page/{module}_ichiran_test.js` を作成する。  
-**`tests/tframe/page/koshi_ichiran_test.js` を雛形にコピーして改変すること。**
+`codecept/tests/tframe/page/{module}_ichiran_test.js` を作成する。  
+**`codecept/tests/tframe/page/koshi_ichiran_test.js` を雛形にコピーして改変すること。**
 
 ```javascript
 /**
@@ -210,7 +210,7 @@ scenario,lastName,expectedName
  * - C パターン: {検索条件}で絞り込み → 特定レコードが結果に表示される
  *
  * **データソース**
- * - `data/tframe/{module}_ichiran_search_data.csv`
+ * - `codecept/data/tframe/{module}_ichiran_search_data.csv`
  *
  * **CSV カラム一覧**
  * - scenario: シナリオラベル（必須）
@@ -275,7 +275,7 @@ const hasCondition = current.name || current.idnumber || current.personStatus;
 ### Step 6: テスト実行と確認
 
 ```bash
-npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe.culture_beta
+npx codeceptjs run ./codecept/tests/tframe/page/{module}_ichiran_test.js --profile tframe.culture_beta
 ```
 
 **最低1件（空検索）は実際に結果が返ることを確認すること。**
@@ -316,22 +316,22 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
 |---|---|---|
 | ソート定義 | Page Object に `xxxSortTable: createSortableTable({...})` | 表の枠・ソート可能列の型・第2キー |
 | 一覧を開く手順 | テストの `openCase` | 一覧画面は `openListCase(po)` で済む（遷移 → `resetSearchForm()` → 絞り込み → 検索）。1つの PO に一覧が複数あるときは `openListCase(po, { navigate: 'navigateToXxxListPage', fill: 'fillXxxSearchConditions' })`（例: `proByCourse_ichiran_sort_test.js`）。タブ内一覧・日付必須画面は個別に書く |
-| ケース | `data/tframe/{prefix}_sort_data.csv` | `scenario,sortKey,sortDir` ＋ 画面固有の絞り込み列 |
+| ケース | `codecept/data/tframe/{prefix}_sort_data.csv` | `scenario,sortKey,sortDir` ＋ 画面固有の絞り込み列 |
 
 共通部品（あるものを使う・再実装しない）:
 
 | 部品 | 置き場 | 役割 |
 |---|---|---|
-| `createSortableTable` / `LIST_CONTAINER` / `subpanelContainer(name)` / `openListCase(po)` | `pages/tframe/_common/SortableTable.js` | ソート操作・行抽出・ソート可能列取得（枠で絞り込む）、一覧画面の標準 openCase |
-| `resetSearchForm()` | `pages/tframe/_common/IchiranSearchMixin.js` | 検索条件を全クリア（プルダウンは「すべて」、エリア→校舎の AJAX 連動込み） |
-| `runSortCases(I, {table, cases, openCase})` | `support/tframe/sortTestRunner.js` | 1ログインで全ケースを回し違反を集約して報告 |
-| `findSortViolations` | `support/tframe/sortVerify.js` | 並び判定（純粋関数） |
+| `createSortableTable` / `LIST_CONTAINER` / `subpanelContainer(name)` / `openListCase(po)` | `codecept/pages/tframe/_common/SortableTable.js` | ソート操作・行抽出・ソート可能列取得（枠で絞り込む）、一覧画面の標準 openCase |
+| `resetSearchForm()` | `codecept/pages/tframe/_common/IchiranSearchMixin.js` | 検索条件を全クリア（プルダウンは「すべて」、エリア→校舎の AJAX 連動込み） |
+| `runSortCases(I, {table, cases, openCase})` | `codecept/support/tframe/sortTestRunner.js` | 1ログインで全ケースを回し違反を集約して報告 |
+| `findSortViolations` | `codecept/support/tframe/sortVerify.js` | 並び判定（純粋関数） |
 
 ### 手順
 
 1. **実機で列と並びを確認する**（推測で sortSpec を書かない）
    - まず調査ツールで案を出す（全列を昇降順に並べ替えて1ページ目を採取し、列の型と第2キー候補を推定）:
-     `SORT_PROBE_ROUTE=staff/sw/_default npx codeceptjs run tests/tframe/util/sort_spec_probe.js --profile tframe.culture_beta`
+     `SORT_PROBE_ROUTE=staff/sw/_default npx codeceptjs run codecept/tests/tframe/util/sort_spec_probe.js --profile tframe.culture_beta`
      （タブ内一覧は `SORT_PROBE_RECORD` / `SORT_PROBE_TAB` / `SORT_PROBE_PANEL` を追加。採取行は `output/sort_probe/*.json`）
      （日付必須の画面は `SORT_PROBE_FIELDS=rangeFromDate=2015-01-01,rangeToDate=2035-12-31` のように検索前の値を渡す。ソート可能列が0件と出た画面は並べ替え非対応なので対象外）
    - 推定は1ページ分の標本に基づく。英大文字を含まない標本では `stringCi` が `string` と出る等があるので、JSON の行を目視して確定する
@@ -353,7 +353,7 @@ npx codeceptjs run ./tests/tframe/page/{module}_ichiran_test.js --profile tframe
    - 実例: コース一覧＝`_recordId` 昇順（第1キーの方向によらず固定）、講師一覧＝`updated_at` 降順、校舎一覧・コース詳細受講生タブ＝なし
    - 第1キーを全行同値にする絞り込み（例: 年度で絞って年度ソート）を CSV に入れると、第2キーを15件すべてで検証できる
 4. **テストを書く**（雛形 `staff_ichiran_sort_test.js` をコピーして PO 名・CSV 名を差し替える。本体は `runSortCases` 1行）
-5. `run/test_descriptions.json` と `data/tframe/README.md` に追記し、実行して全ケース OK を確認
+5. `run/test_descriptions.json` と `codecept/data/tframe/README.md` に追記し、実行して全ケース OK を確認
 
 ### 注意
 

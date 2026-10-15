@@ -37,7 +37,10 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 _DOWNLOADS_DIR   = os.path.join('output', 'downloads')
 _ALLURE_SCRIPT   = os.path.join('scripts', 'allure', 'serve_latest.js')
 _JSDOC_INDEX     = os.path.join('docs', 'generated', 'html', 'index.html')
-_LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
+# テスト一式の置き場所（#337 で tests/・data/ を codecept/ の下へ移した）
+_TESTS_REL       = 'codecept/tests'
+_DATA_REL        = os.path.join('codecept', 'data')
+_LOGIN_HOLD_TEST = f'./{_TESTS_REL}/shimamura/util/login_and_hold.js'
 
 _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
 _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
@@ -127,7 +130,7 @@ def _analyze_download_file(path):
 
 
 def find_products(tests_dir):
-    """tests/ 直下のサブディレクトリ名をプロダクト一覧として返す。"""
+    """codecept/tests/ 直下のサブディレクトリ名をプロダクト一覧として返す。"""
     if not os.path.isdir(tests_dir):
         return []
     return sorted(
@@ -137,7 +140,7 @@ def find_products(tests_dir):
 
 
 def find_all_tests(tests_dir):
-    """tests/ 配下の *_test.js を再帰収集し、./tests/... 形式で返す。"""
+    """codecept/tests/ 配下の *_test.js を再帰収集し、./codecept/tests/... 形式で返す。"""
     results = []
     for dirpath, _dirs, filenames in os.walk(tests_dir):
         for fname in sorted(filenames):
@@ -165,10 +168,13 @@ def find_all_profiles(env_dir):
 
 
 def _get_product_from_test(test_path):
-    """./tests/<product>/... からプロダクト名を抽出する。"""
-    parts = test_path.replace('\\', '/').lstrip('./').split('/')
-    if len(parts) >= 2 and parts[0] == 'tests':
-        return parts[1]
+    """./codecept/tests/<product>/... からプロダクト名を抽出する。"""
+    path = test_path.replace('\\', '/').lstrip('./')
+    if not path.startswith(_TESTS_REL + '/'):
+        return None
+    parts = path[len(_TESTS_REL) + 1:].split('/')
+    if len(parts) >= 2:
+        return parts[0]
     return None
 
 
@@ -235,7 +241,7 @@ def group_tframe_tests_by_icon(paths, product, icon_order, file_to_group):
     if product != 'tframe' or not icon_order:
         return list(paths), [None] * len(paths)
 
-    prefix = f'./tests/{product}/'
+    prefix = f'./{_TESTS_REL}/{product}/'
     buckets = {label: [] for label in icon_order}
     other = []
     for p in paths:
@@ -264,9 +270,9 @@ def get_feature_no(entry):
 
 
 def get_display_name(test_path, product, descriptions=None):
-    """./tests/<product>/page/foo_test.js → page/foo_test.js
+    """./codecept/tests/<product>/page/foo_test.js → page/foo_test.js
     feature_no がある場合は page/[1002_4_3] foo_test.js 形式にする。"""
-    prefix = f'./tests/{product}/'
+    prefix = f'./{_TESTS_REL}/{product}/'
     if not test_path.startswith(prefix):
         return test_path
     rel = test_path[len(prefix):]  # e.g. page/student_search_ichiran_test.js
@@ -342,14 +348,14 @@ def extract_tags_from_test(test_path):
 def find_csvs_for_test(repo_root, test_path, product):
     """テストファイルに対応する CSV ファイルのパス一覧を返す。
 
-    命名規則: tests/{product}/**/{stem}_test.js → data/{product}/{stem}_data*.csv
-              または data/{product}/{stem}_*_data*.csv（一覧検索系など）
+    命名規則: codecept/tests/{product}/**/{stem}_test.js → codecept/data/{product}/{stem}_data*.csv
+              または codecept/data/{product}/{stem}_*_data*.csv（一覧検索系など）
     """
     basename = os.path.basename(test_path)
     if not basename.endswith('_test.js'):
         return []
     stem = basename[:-len('_test.js')]
-    data_dir = os.path.join(repo_root, 'data', product)
+    data_dir = os.path.join(repo_root, _DATA_REL, product)
     if not os.path.isdir(data_dir):
         return []
     prefix = stem + '_'
@@ -1010,7 +1016,7 @@ class RunnerApp(tk.Tk):
 
         self.repo_root = repo_root
         self.env_dir = os.path.join(repo_root, 'env')
-        self.tests_dir = os.path.join(repo_root, 'tests')
+        self.tests_dir = os.path.join(repo_root, _TESTS_REL)
         self.logs_dir = os.path.join(repo_root, 'output', 'logs')  # #334 で直下の logs/ から移動
 
         self.log_queue = queue.Queue()
@@ -1295,7 +1301,7 @@ class RunnerApp(tk.Tk):
     def _load_products(self):
         products = find_products(self.tests_dir)
         if not products:
-            messagebox.showwarning('No Products', 'tests/ 配下にサブフォルダが見つかりません。')
+            messagebox.showwarning('No Products', 'codecept/tests/ 配下にサブフォルダが見つかりません。')
             return
         self.product_combo['values'] = products
         self.product_combo.current(0)
@@ -1315,7 +1321,7 @@ class RunnerApp(tk.Tk):
         sort_by_feature = self.sort_by_feature_var.get()
 
         if query:
-            prefix = f'./tests/{product}/'
+            prefix = f'./{_TESTS_REL}/{product}/'
             def _matches(path):
                 rel = path[len(prefix):] if path.startswith(prefix) else path
                 fno = get_feature_no(self._descriptions.get(product, {}).get(rel))
@@ -1325,7 +1331,7 @@ class RunnerApp(tk.Tk):
             paths = list(self._filtered_test_paths)
 
         if sort_by_feature:
-            prefix = f'./tests/{product}/'
+            prefix = f'./{_TESTS_REL}/{product}/'
             def _sort_key(path):
                 rel = path[len(prefix):] if path.startswith(prefix) else path
                 fno = get_feature_no(self._descriptions.get(product, {}).get(rel))
@@ -1335,7 +1341,7 @@ class RunnerApp(tk.Tk):
         grouped_paths, header_before = group_tframe_tests_by_icon(
             paths, product, self._tframe_icon_order, self._tframe_file_to_group
         )
-        prefix = f'./tests/{product}/'
+        prefix = f'./{_TESTS_REL}/{product}/'
         display_names = [get_display_name(t, product, self._descriptions) for t in grouped_paths]
         desc_texts = [
             get_desc_text(self._descriptions.get(product, {}).get(
@@ -1423,7 +1429,7 @@ class RunnerApp(tk.Tk):
 
     def _update_desc_label(self):
         product = self.product_var.get()
-        prefix = f'./tests/{product}/'
+        prefix = f'./{_TESTS_REL}/{product}/'
         test = self.test_var.get()
         key = test[len(prefix):] if test.startswith(prefix) else test
         self._desc_key = key

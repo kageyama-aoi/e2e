@@ -19,8 +19,8 @@
  *   input/sample_teacher_registration.html（講師登録画面の代表的なフィールド構成）
  *
  * 【出力の構成】
- *   ① テストデータテンプレート → data/tframe/xxxRegisterData.js に貼り付け
- *   ② Page Object fillメソッド → pages/tframe/XxxPage.js に貼り付け
+ *   ① テストデータテンプレート → codecept/data/tframe/xxxRegisterData.js に貼り付け
+ *   ② Page Object fillメソッド → codecept/pages/tframe/XxxPage.js に貼り付け
  *      fillSectionN は適切な名前（fillPersonalInfo1 など）に変更すること
  *
  * 【対応フィールド種別】
@@ -238,8 +238,8 @@ function toMethodName(title, i) {
  * 全セクション情報からテストコードのテンプレート文字列を生成する。
  *
  * 出力は 2 ブロック構成:
- *   ① generateTestXxx() 関数 → data/tframe/xxxRegisterData.js に貼り付け
- *   ② fillSectionN() / fillRegistrationForm() → pages/tframe/XxxPage.js に貼り付け
+ *   ① generateTestXxx() 関数 → codecept/data/tframe/xxxRegisterData.js に貼り付け
+ *   ② fillSectionN() / fillRegistrationForm() → codecept/pages/tframe/XxxPage.js に貼り付け
  *
  * フィールド名の長さを揃えてコードを整形するため、
  * セクションごとに最長 ID 長を計算してパディングしている。
@@ -306,7 +306,7 @@ function generateOutput(sections) {
     SEP,
     '',
     '【テストデータテンプレート】',
-    '// data/tframe/xxxRegisterData.js に貼り付け',
+    '// codecept/data/tframe/xxxRegisterData.js に貼り付け',
     'function generateTestXxx() {',
     '  return {',
     ...dataLines.map(l => '  ' + l),
@@ -317,7 +317,7 @@ function generateOutput(sections) {
     SEP,
     '',
     '【Page Object fillメソッド】',
-    '// pages/tframe/XxxPage.js に貼り付け',
+    '// codecept/pages/tframe/XxxPage.js に貼り付け',
     ...methodLines,
     '',
     SEP,

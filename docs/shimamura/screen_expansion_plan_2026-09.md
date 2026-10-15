@@ -19,10 +19,10 @@ tframe は「全メニューの実機採取 → カバレッジ表の自動生�
 
 | 観点 | tframe（参考） | shimamura |
 |---|---|---|
-| 画面カタログ | `pages/tframe/_common/menuSnapshot/*.json` に全メニュー実機採取 | **無い**。採取済みは受講生アイコンのサイドバー17項目＋トップアイコン9個のみ（2026-05 のローカル採取物・git 管理外）→ Phase 0 で `pages/shimamura/_common/menuSnapshot/testgcp.json` に置き換え済み |
+| 画面カタログ | `codecept/pages/tframe/_common/menuSnapshot/*.json` に全メニュー実機採取 | **無い**。採取済みは受講生アイコンのサイドバー17項目＋トップアイコン9個のみ（2026-05 のローカル採取物・git 管理外）→ Phase 0 で `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json` に置き換え済み |
 | 未開発画面の可視化 | `docs/tframe/menu_coverage.md`（PO有無×テスト有無を自動生成） | 無い。`screen_navigation_diagram.md` はテスト起点なので未開発画面が映らない |
-| Page Object 構造 | 画面別 PO ＋ `IchiranMixin` / `SortableTable` / `MenuNavigationMixin` | `pages/shimamura/screens/IchiranPage.js` 1本に10画面分が同居。各画面 navigate/fill/click/verify の4点セットをコピペ |
-| メニュー定義 | 全アイコン分 | `pages/shimamura/_common/sideMenus.js` に13件 |
+| Page Object 構造 | 画面別 PO ＋ `IchiranMixin` / `SortableTable` / `MenuNavigationMixin` | `codecept/pages/shimamura/screens/IchiranPage.js` 1本に10画面分が同居。各画面 navigate/fill/click/verify の4点セットをコピペ |
+| メニュー定義 | 全アイコン分 | `codecept/pages/shimamura/_common/sideMenus.js` に13件 |
 | テスト本数 | 一覧 95本 | 一覧 11本 / フロー 16本 / check 2本 |
 
 ### 判明済みの未着手画面（Phase 0 で正確な一覧に置き換える）
@@ -55,16 +55,16 @@ tframe は「全メニューの実機採取 → カバレッジ表の自動生�
 
 1. ✅ `scripts/html/fetch_shimamura_menus.js` 新設 — ログイン後、トップの全アイコンを巡回し左サイドバー
    （折りたたみグループ含む）を採取
-2. ✅ 出力 `pages/shimamura/_common/menuSnapshot/testgcp.json`（tframe の menuSnapshot と同構造：
+2. ✅ 出力 `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json`（tframe の menuSnapshot と同構造：
    `capturedAt` / `topMenu` / `sideMenu.<icon>.groups[].items[]`、route は `module` + `action` ＋分岐パラメータ）
-3. ✅ `scripts/docs/gen_shimamura_menu_coverage.js` 新設 — snapshot × `sideMenus.js` × `pages/shimamura/**` × `tests/shimamura/**` を突き合わせ、
+3. ✅ `scripts/docs/gen_shimamura_menu_coverage.js` 新設 — snapshot × `sideMenus.js` × `codecept/pages/shimamura/**` × `codecept/tests/shimamura/**` を突き合わせ、
    `docs/shimamura/menu_coverage.md` の AUTOGEN 区間を生成（`--check` でドリフト検出）
 4. ✅ `package.json`（`docs:menu-coverage` 系）と `.githooks/pre-commit` に接続
 5. ✅ 生成結果を見て未開発画面の件数を確定し、本計画の Phase 2 バケット表を実数で更新
 
 ## Phase 1: 骨格を作る
 
-1. ✅ **メニュー巡回テスト**（`tests/shimamura/page/menu_patrol_test.js` ＋ `pages/shimamura/_common/MenuPatrolPage.js`）
+1. ✅ **メニュー巡回テスト**（`codecept/tests/shimamura/page/menu_patrol_test.js` ＋ `codecept/pages/shimamura/_common/MenuPatrolPage.js`）
    — スナップショットの全項目をサイドバーから開き、画面エラー・PHP エラーが無いことを確認。
    2026-09-28 testgcp で **全10アイコン・150項目すべて開けた**（約10分。`--grep @patrol_<module>` でアイコン単位実行可）。
    各画面が標準一覧形式（`input[name="search"]` あり）かを `output/shimamura_menu_patrol/<module>.json` に記録
@@ -73,7 +73,7 @@ tframe は「全メニューの実機採取 → カバレッジ表の自動生�
      → `screens/ichiran/<icon>Screens.js` の `standardScreens` に1エントリ足す形で量産できる見込み（結果リンク `a.listViewTdLinkS1` の有無は着手時に確認）
    - 非標準 **16**: シラバス一覧・アップファイル一覧・ホームワーク一覧・メモテンプレート一覧・会議室一覧・部屋・備品一覧・テキスト一覧・テキストカテゴリー・テキスト仕入・販売一覧・講師給与・口座振替データ履歴・コンビニ収納結果履歴・クレジット請求データ履歴・債権買取請求データ履歴・料金明細一覧・料金明細一覧詳細
      → 検索ボタンの形が違う。画面を見て、共通形を1つ増やすか個別メソッドにするか決める
-3. ✅ `IchiranPage.js` をアイコン別に分割（2026-09-28 決定・実施）— 画面定義を `pages/shimamura/screens/ichiran/<icon>Screens.js`
+3. ✅ `IchiranPage.js` をアイコン別に分割（2026-09-28 決定・実施）— 画面定義を `codecept/pages/shimamura/screens/ichiran/<icon>Screens.js`
    （student / course / teacher / contacts / keiri）に移し、`IchiranPage.js` は共通ヘルパー＋ファクトリ＋結合のみ（292行 → 136行）。
    inject 名・メソッド名（61個）は不変。メソッド名重複は起動時にエラーで検出
 4. ✅ `/shimamura-ichiran-dev` `/shimamura-download-verify` のスキル雛形を分割後の形に更新（`feedback_skill_drift` 対策）
@@ -92,7 +92,7 @@ Phase 0 の実数（2026-09-28 採取、`docs/shimamura/menu_coverage.md`）: �
 | X 一括処理・計算 | 3 | 一括入金処理・講師謝礼計算・口座振替スケジュール登録 | 共有環境の実データに影響するため、開ける確認まで（実行はしない）。必要になったら個別に検討 |
 | E 対象外 | — | カレンダー・Ｅメール・レポート・ヘルプ・管理（58 画面） | メニュー巡回（Phase 1-2）で開けることのみ確認。個別テストは作らない |
 
-- 表の「✗」は判定上の限界を含む: `support/shimamura/**` 経由の遷移（例: 口座振替スケジュール登録は `accountTransferSchedule.js` が使用）や、
+- 表の「✗」は判定上の限界を含む: `codecept/support/shimamura/**` 経由の遷移（例: 口座振替スケジュール登録は `accountTransferSchedule.js` が使用）や、
   サイドバーのリンク文字列クリック（例: 候補生検索は `SyokaiFlowPage` が使用）は PO/テストとして数えていない。
 
 ### バケットA 標準一覧（21画面）の進捗

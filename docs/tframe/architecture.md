@@ -17,19 +17,19 @@
 基本の流れは次の通りです。
 
 1. `codecept.conf.js` が読み込まれる
-2. `support/envLoader.js` が `.env` と `env/.env.<profile>` を読み込む
-3. `tests/tframe/**/*_test.js` がスイートとして実行される
-4. テストから `pages/tframe/*Page.js` の Page Object を呼ぶ
-5. Page Object が `data/tframe/*SideMenu.js` の定義を使って画面遷移や検証を行う
+2. `codecept/support/envLoader.js` が `.env` と `env/.env.<profile>` を読み込む
+3. `codecept/tests/tframe/**/*_test.js` がスイートとして実行される
+4. テストから `codecept/pages/tframe/*Page.js` の Page Object を呼ぶ
+5. Page Object が `codecept/data/tframe/*SideMenu.js` の定義を使って画面遷移や検証を行う
 
 ```mermaid
 flowchart TD
   A[実行コマンド\nnpm run test_t\nまたは codeceptjs run] --> B[codecept.conf.js]
-  B --> C[support/envLoader.js]
-  B --> D[tests/tframe/*_test.js]
-  B --> E[pages/tframe/*Page.js]
+  B --> C[codecept/support/envLoader.js]
+  B --> D[codecept/tests/tframe/*_test.js]
+  B --> E[codecept/pages/tframe/*Page.js]
   D --> E
-  D --> F[data/tframe/*SideMenu.js]
+  D --> F[codecept/data/tframe/*SideMenu.js]
   E --> F
   E --> G[画面操作 / 検証 / スクリーンショット]
 ```
@@ -41,20 +41,20 @@ flowchart TD
 ### 代表的な実行コマンド
 
 - `npm run test_t`
-- `npx codeceptjs run ./tests/tframe/**/*_test.js`
-- 個別実行例: `npx codeceptjs run ./tests/tframe/page/email_test.js --profile tframe`
+- `npx codeceptjs run ./codecept/tests/tframe/**/*_test.js`
+- 個別実行例: `npx codeceptjs run ./codecept/tests/tframe/page/email_test.js --profile tframe`
 
 ### スイート定義
 
-tframe の実行範囲はコマンドで渡すパスで決まります（`npm run test_t` は `./tests/tframe/**/*_test.js`）。`codecept.conf.js` の `tests` はパス未指定時の既定値です。
+tframe の実行範囲はコマンドで渡すパスで決まります（`npm run test_t` は `./codecept/tests/tframe/**/*_test.js`）。`codecept.conf.js` の `tests` はパス未指定時の既定値です。
 
-つまり、`tests/tframe` 配下のサブフォルダを含む全 `*_test.js` が T-Frame の実行対象です。
+つまり、`codecept/tests/tframe` 配下のサブフォルダを含む全 `*_test.js` が T-Frame の実行対象です。
 
 ---
 
 ## 設定と初期化
 
-### `support/envLoader.js`
+### `codecept/support/envLoader.js`
 
 役割:
 
@@ -86,7 +86,7 @@ T-Frame では、ここで読み込まれた環境変数がそのまま使われ
 T-Frame で重要なのは次の 2 点です。
 
 1. `include` により `loginKannrisyaPage` などがテストで使える
-2. `npm run test_t`（または GUI）が渡すパスにより `tests/tframe/**/*_test.js` が実行対象になる
+2. `npm run test_t`（または GUI）が渡すパスにより `codecept/tests/tframe/**/*_test.js` が実行対象になる
 
 `include` されている代表的な tframe 用 Page Object は次の通りです。
 
@@ -111,7 +111,7 @@ T-Frame で重要なのは次の 2 点です。
 
 ## テストフォルダの構成
 
-`tests/tframe/` 配下は性質別サブフォルダで管理しています。
+`codecept/tests/tframe/` 配下は性質別サブフォルダで管理しています。
 
 | フォルダ | 役割 | 主なファイル |
 |---|---|---|
@@ -127,26 +127,26 @@ T-Frame で重要なのは次の 2 点です。
 
 ## テストの基本構造
 
-`tests/tframe/**/*_test.js` は、だいたい次の形です。
+`codecept/tests/tframe/**/*_test.js` は、だいたい次の形です。
 
 1. `Feature(...)` で機能単位のまとまりを作る
 2. `Scenario(...)` で 1 フローを定義する
 3. 先に `loginKannrisyaPage.login(...)` でログインする
 4. ログイン成功を `loginKannrisyaPage.seeLogout()` で確認する
 5. メニューの Page Object を呼ぶ
-6. `data/tframe/*SideMenu.js` の定義に沿って遷移確認する
+6. `codecept/data/tframe/*SideMenu.js` の定義に沿って遷移確認する
 
 例:
 
-- `tests/tframe/page/email_test.js`
-- `tests/tframe/page/course_test.js`
-- `tests/tframe/page/calendar_test.js`
-- `tests/tframe/page/help_test.js`
-- `tests/tframe/page/jukusei_test.js`
-- `tests/tframe/page/keiryo_master_test.js`
-- `tests/tframe/page/koshi_test.js`
-- `tests/tframe/page/master_menu_test.js`
-- `tests/tframe/page/report_test.js`
+- `codecept/tests/tframe/page/email_test.js`
+- `codecept/tests/tframe/page/course_test.js`
+- `codecept/tests/tframe/page/calendar_test.js`
+- `codecept/tests/tframe/page/help_test.js`
+- `codecept/tests/tframe/page/jukusei_test.js`
+- `codecept/tests/tframe/page/keiryo_master_test.js`
+- `codecept/tests/tframe/page/koshi_test.js`
+- `codecept/tests/tframe/page/master_menu_test.js`
+- `codecept/tests/tframe/page/report_test.js`
 
 各テストは、メニューごとに対応する Page Object と data ファイルを組み合わせています。
 
@@ -154,7 +154,7 @@ T-Frame で重要なのは次の 2 点です。
 
 ## Page Object の役割
 
-`pages/tframe/*Page.js` は、画面操作をまとめた層です。
+`codecept/pages/tframe/*Page.js` は、画面操作をまとめた層です。
 
 共通している考え方は次の通りです。
 
@@ -199,8 +199,8 @@ Page Object ごとに少しずつ違います。
 
 ## データファイルの役割
 
-`pages/tframe/_common/sideMenus.js` は、全アイコンのメニュー構造を1ファイルに
-まとめたデータファイルです（旧 `data/tframe/*SideMenu.js` の個別ファイル群は
+`codecept/pages/tframe/_common/sideMenus.js` は、全アイコンのメニュー構造を1ファイルに
+まとめたデータファイルです（旧 `codecept/data/tframe/*SideMenu.js` の個別ファイル群は
 このファイルへ統合済み）。
 
 Page Object はここに書かれた定義を見ながら、画面上の項目を順に確認します。
@@ -236,32 +236,32 @@ module.exports = {
 
 ### 代表的な対応関係
 
-- `tests/tframe/page/email_test.js`
-  - `pages/tframe/screens/EmailPage.js`
+- `codecept/tests/tframe/page/email_test.js`
+  - `codecept/pages/tframe/screens/EmailPage.js`
   - `sideMenus.email`
-- `tests/tframe/page/course_test.js`
-  - `pages/tframe/screens/CoursePage.js`
+- `codecept/tests/tframe/page/course_test.js`
+  - `codecept/pages/tframe/screens/CoursePage.js`
   - `sideMenus.course`
-- `tests/tframe/page/calendar_test.js`
-  - `pages/tframe/screens/CalendarPage.js`
+- `codecept/tests/tframe/page/calendar_test.js`
+  - `codecept/pages/tframe/screens/CalendarPage.js`
   - `sideMenus.calendar`
-- `tests/tframe/page/help_test.js`
-  - `pages/tframe/screens/HelpPage.js`
+- `codecept/tests/tframe/page/help_test.js`
+  - `codecept/pages/tframe/screens/HelpPage.js`
   - `sideMenus.help`
-- `tests/tframe/page/jukusei_test.js`
-  - `pages/tframe/screens/JukuseiPage.js`
+- `codecept/tests/tframe/page/jukusei_test.js`
+  - `codecept/pages/tframe/screens/JukuseiPage.js`
   - `sideMenus.student`
-- `tests/tframe/page/keiryo_master_test.js`
-  - `pages/tframe/screens/KeiryoMasterPage.js`
+- `codecept/tests/tframe/page/keiryo_master_test.js`
+  - `codecept/pages/tframe/screens/KeiryoMasterPage.js`
   - `sideMenus.accounting`
-- `tests/tframe/page/koshi_test.js`
-  - `pages/tframe/screens/KoshiPage.js`
+- `codecept/tests/tframe/page/koshi_test.js`
+  - `codecept/pages/tframe/screens/KoshiPage.js`
   - `sideMenus.teacher`
-- `tests/tframe/page/master_menu_test.js`
-  - `pages/tframe/screens/MasterMenuPage.js`
+- `codecept/tests/tframe/page/master_menu_test.js`
+  - `codecept/pages/tframe/screens/MasterMenuPage.js`
   - `sideMenus.master`
-- `tests/tframe/page/report_test.js`
-  - `pages/tframe/screens/ReportPage.js`
+- `codecept/tests/tframe/page/report_test.js`
+  - `codecept/pages/tframe/screens/ReportPage.js`
   - `sideMenus.report`
 
 ---
@@ -270,7 +270,7 @@ module.exports = {
 
 ### 管理者ログイン
 
-最初の共通入口は `pages/tframe/auth/LoginKannrisyaPage.js` です。
+最初の共通入口は `codecept/pages/tframe/auth/LoginKannrisyaPage.js` です。
 
 この Page Object は次を担当します。
 
@@ -284,17 +284,17 @@ module.exports = {
 
 ### マイページログイン
 
-`pages/tframe/auth/LoginMyPageTeacherPage.js` と `pages/tframe/auth/LoginMyPageStudentPage.js` は、管理者画面とは別のログイン導線です。
+`codecept/pages/tframe/auth/LoginMyPageTeacherPage.js` と `codecept/pages/tframe/auth/LoginMyPageStudentPage.js` は、管理者画面とは別のログイン導線です。
 
-`tests/tframe/auth/mypage_login_test.js` で使われ、講師・受講生それぞれのマイページログインとメニュー確認を行います。
+`codecept/tests/tframe/auth/mypage_login_test.js` で使われ、講師・受講生それぞれのマイページログインとメニュー確認を行います。
 
 ### API 補助フロー
 
 T-Frame には、画面遷移だけでなく API 補助の Page Object もあります。
 
-- `pages/tframe/api/ApiCommonLoginPage.js`
-- `pages/tframe/api/ApiTeacherInfoGetPage.js`
-- `pages/tframe/api/JsonInputPage.js`
+- `codecept/pages/tframe/api/ApiCommonLoginPage.js`
+- `codecept/pages/tframe/api/ApiTeacherInfoGetPage.js`
+- `codecept/pages/tframe/api/JsonInputPage.js`
 
 これらは、ログイン後に API 実行ページへ進み、レスポンスから `tcnToken` を抜き出す用途で使われます。
 
@@ -304,7 +304,7 @@ T-Frame には、画面遷移だけでなく API 補助の Page Object もあり
 
 ### 例 1: メニュー遷移テスト
 
-`tests/tframe/page/email_test.js` の流れ:
+`codecept/tests/tframe/page/email_test.js` の流れ:
 
 1. `loginKannrisyaPage.login(...)`
 2. `loginKannrisyaPage.seeLogout()`
@@ -317,7 +317,7 @@ T-Frame には、画面遷移だけでなく API 補助の Page Object もあり
 Page Object 内では次のような処理が行われます。
 
 1. メインメニューのアイコンを押す
-2. `data/tframe/*.js` からグループと項目を読む
+2. `codecept/data/tframe/*.js` からグループと項目を読む
 3. 項目ごとにリンクを画面内へスクロールする
 4. リンクをクリックする
 5. URL が期待値を含むか確認する
@@ -330,13 +330,13 @@ Page Object 内では次のような処理が行われます。
 
 ```mermaid
 flowchart LR
-  TESTS[tests/tframe/*_test.js] --> LOGIN[loginKannrisyaPage]
-  TESTS --> MENUPAGE[pages/tframe/*Page.js]
-  TESTS --> DATA[data/tframe/*SideMenu.js]
+  TESTS[codecept/tests/tframe/*_test.js] --> LOGIN[loginKannrisyaPage]
+  TESTS --> MENUPAGE[codecept/pages/tframe/*Page.js]
+  TESTS --> DATA[codecept/data/tframe/*SideMenu.js]
 
   LOGIN --> CONFIG[codecept.conf.js]
   MENUPAGE --> CONFIG
-  CONFIG --> ENV[support/envLoader.js]
+  CONFIG --> ENV[codecept/support/envLoader.js]
 
   MENUPAGE --> ACTIONS[クリック / URL確認 / スクショ]
   DATA --> MENUPAGE
@@ -349,10 +349,10 @@ flowchart LR
 他人に説明するときは、次の順番で話すと伝わりやすいです。
 
 1. `codecept.conf.js` が tframe の入口を決める
-2. `support/envLoader.js` が環境変数を読み込む
-3. `tests/tframe/*_test.js` がシナリオを定義する
-4. `pages/tframe/*Page.js` が画面操作を持つ
-5. `data/tframe/*SideMenu.js` がメニューの中身を持つ
+2. `codecept/support/envLoader.js` が環境変数を読み込む
+3. `codecept/tests/tframe/*_test.js` がシナリオを定義する
+4. `codecept/pages/tframe/*Page.js` が画面操作を持つ
+5. `codecept/data/tframe/*SideMenu.js` がメニューの中身を持つ
 6. テストは Page Object と data を組み合わせて、ログイン後の遷移を確認する
 
 この構造を押さえると、個別テストを見ても「どこが入口で、どこが画面操作で、どこがデータか」が追いやすくなります。

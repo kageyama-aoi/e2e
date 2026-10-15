@@ -151,7 +151,7 @@ grep -oE 'id="[^"]+"' scripts/html/shimamura/{name}.html \
 
 **AJAX 連動の見分け方:**
 HTML 内に `onchange` + Ajax 呼び出しがあれば連動している。
-→ Page Object では選択後に `I.wait(TIMEOUTS.AJAX_DEBOUNCE)`（`support/shimamura/constants.js`）を追加する。
+→ Page Object では選択後に `I.wait(TIMEOUTS.AJAX_DEBOUNCE)`（`codecept/support/shimamura/constants.js`）を追加する。
 マジックナンバーを直書きしない。
 
 ---

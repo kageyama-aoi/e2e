@@ -36,7 +36,7 @@
 - [x] #a AGENTS.md / doc-sync にカテゴリF・共通ユーティリティ節・@wip・planステータス規約 — #201 / f707691
 - [x] #b check_doc_refs.py + pre-commit + npm run docs:check-refs — #202 / a4efac5
 - [x] #c docs/shimamura 4本 + スキル3ファイル + codeceptjs_api_reference.md を現行に追従 — #204 / f74786b（スクリプトのディレクトリ対応 1fddf35）
-- [x] #d extractRecordId / BASE_URL / waitForSaveResult / buildTestName を support/shimamura に集約 — #205 / 8540c21
+- [x] #d extractRecordId / BASE_URL / waitForSaveResult / buildTestName を codecept/support/shimamura に集約 — #205 / 8540c21
 - [x] #e IchiranPage.js を STANDARD_SCREENS ファクトリ化（438→292行、8標準画面）+ shimamura-ichiran-dev スキル追従 — 実機 18/19 pass（1件は #209 の既存データ不整合）
 - [x] #f デッドコード削除・命名整理（ClassMemberPage の searchClass/selectClassFromSearchResult + 推測セレクタ6件削除、LoginPage の locators_2/messages_2/promt をリネーム統合、shimamura_login_test を async/await 化、verifyNavigationByUrlChange の引数名修正）— 実機 login + class_existence_check pass
 - [x] #g ひな形テスト @wip 化（keiri_hennkin_syori / class_member_registration を Feature @wip、test_descriptions を [WIP]）+ npm scripts と run_gui に @wip 既定除外（test_wip で実行可）+ class_existence_check を IchiranPage 経由に置換（112→47行）— 実機 @wip 除外/class_existence 各 pass

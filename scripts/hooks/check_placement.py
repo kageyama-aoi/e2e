@@ -9,7 +9,7 @@ import re
 
 
 KNOWN_DIRS = {
-    'tests', 'pages', 'support', 'data', 'scripts', 'run',
+    'codecept', 'scripts', 'run',  # tests・pages・support・data は #337 で codecept/ の下へ
     '.claude', '.agent', 'docs', 'env', 'output',
     'node_modules', '.git', '.spec',
     # allure-results / allure-report / logs は #334 で output/ の下へ移した（直下に作られたら警告する）
@@ -63,9 +63,9 @@ def main():
         warn(rel, f'想定外のディレクトリ "{top}/" にファイルが作成されました。')
         return
 
-    # tests/ 配下サブルール: _test.js のみ許可
-    if top == 'tests' and not rel.endswith('_test.js'):
-        warn(rel, 'tests/ には *_test.js のみ配置可。Page Object は pages/、データは data/ へ。')
+    # codecept/tests/ 配下サブルール: _test.js のみ許可
+    if rel.startswith('codecept/tests/') and not rel.endswith('_test.js'):
+        warn(rel, 'codecept/tests/ には *_test.js のみ配置可。Page Object は codecept/pages/、データは codecept/data/ へ。')
         return
 
     # run/ 配下サブルール: .bat / .py のみ許可

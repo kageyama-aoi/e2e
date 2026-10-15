@@ -76,10 +76,10 @@ verifyRecordInResults(expectedName) {
 
 `MenuNavigationMixin.js` が既に同じパターンで作られているので、それを参考にする。
 
-**作成先**: `pages/tframe/_common/IchiranMixin.js`
+**作成先**: `codecept/pages/tframe/_common/IchiranMixin.js`
 
 ```js
-// pages/tframe/_common/IchiranMixin.js（新規作成）
+// codecept/pages/tframe/_common/IchiranMixin.js（新規作成）
 const { I } = inject();
 
 function createIchiranMixin(screenLabel) {
@@ -122,10 +122,10 @@ module.exports = {
 
 ### 実装チェックリスト
 
-- [ ] `pages/tframe/_common/IchiranMixin.js` を新規作成
+- [ ] `codecept/pages/tframe/_common/IchiranMixin.js` を新規作成
 - [ ] 12ファイルの3メソッドを削除し、`...createIchiranMixin('...')` に置き換え
 - [ ] 各ファイルに `require('../_common/IchiranMixin')` を追加
-- [ ] `data/tframe/README.md` の SideMenu 対応表を更新（スキップ可）
+- [ ] `codecept/data/tframe/README.md` の SideMenu 対応表を更新（スキップ可）
 
 ---
 
@@ -187,10 +187,10 @@ fillMemoInfo(data) {
 
 ### どう直すか
 
-`support/utils.js` に共通関数として追加する（`fillTextFields` と同じ方式）。
+`codecept/support/utils.js` に共通関数として追加する（`fillTextFields` と同じ方式）。
 
 ```js
-// support/utils.js に追加
+// codecept/support/utils.js に追加
 
 /**
  * 住所フォームを入力する（郵便番号自動補完付き）
@@ -262,7 +262,7 @@ fillMemoInfo(data) {
 
 ### 実装チェックリスト
 
-- [ ] `support/utils.js` に `fillAddressWithZip` / `fillMemoField` を追加
+- [ ] `codecept/support/utils.js` に `fillAddressWithZip` / `fillMemoField` を追加
 - [ ] `module.exports` に両関数を追加する
 - [ ] 対象 Page Object（5〜10ファイル）の `fillAddressInfo` / `fillMemoInfo` を置き換え
 - [ ] `require` の分割代入に新関数名を追加
@@ -273,10 +273,10 @@ fillMemoInfo(data) {
 
 ### 何が起きているか
 
-`support/utils.js` にはすでに `isEnglish()` がエクスポート済み：
+`codecept/support/utils.js` にはすでに `isEnglish()` がエクスポート済み：
 
 ```js
-// support/utils.js（L177〜179）
+// codecept/support/utils.js（L177〜179）
 function isEnglish() {
   return String(process.env.TFRAME_LANGUAGE || '').trim().toLowerCase() === 'en';
 }

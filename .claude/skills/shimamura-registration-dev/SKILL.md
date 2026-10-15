@@ -35,7 +35,7 @@ E2E テスト（Flow Page Object / CSV / テストファイル）を新規作成
 | 項目 | tframe | shimamura |
 |---|---|---|
 | テストの単位 | 画面単位（登録フォーム 1 枚） | **業務フロー単位**（複数画面をまたぐ） |
-| Page Object | `pages/tframe/screens/{名前}Page.js` | `pages/shimamura/flow/{名前}FlowPage.js` |
+| Page Object | `codecept/pages/tframe/screens/{名前}Page.js` | `codecept/pages/shimamura/flow/{名前}FlowPage.js` |
 | フォーム入力 | `fillTextFields(I, fieldMap)`（`#id` 属性） | `fillTextFieldsByName(I, fieldMap)`（`name=` 属性）/ `fillTextFieldsBySelector(I, pairs)`（`#id`）+ `I.selectOption` 個別 |
 | 保存ボタン | `#ewSaveButton`（全画面共通） | 画面ごとに `input[name="save_button"]`「更新」「確定」「売上計上する」など異なる |
 | エラー確認 | `submitTframeFormAndVerify()` | 成功系 `assertNoShimamuraError(I, context)` / 異常系 `verifyValidationErrors(I, errors, SELECTORS.ERROR_CONTAINER)` |
@@ -57,10 +57,10 @@ shimamura には「フォームを1枚埋めて保存」という単純なパタ
 **複数の画面遷移**と**別タブ操作**を含む複雑なフロー。
 
 **雛形（実ファイルが正。スキルのコードは骨格のみ）**:
-- 標準サイズ: `pages/shimamura/flow/KoushiShareiFlowPage.js` + `tests/shimamura/flow/koushi_sharei_manual_test.js`
+- 標準サイズ: `codecept/pages/shimamura/flow/KoushiShareiFlowPage.js` + `codecept/tests/shimamura/flow/koushi_sharei_manual_test.js`
   （URL 直遷移 → 別タブポップアップ → フォーム入力 → `saveAndVerify` の一直線。まずこれを真似る）
-- 大規模・実行プラン付き: `pages/shimamura/_common/KeiriViewSteps.js`（経理ビュー B の実行プラン）+ `pages/shimamura/flow/SyokaiFlowPage.js`（順番だけ）+ `tests/shimamura/flow/syokai_touroku_test.js`
-- セットアップ→本体の2段構成（セッションファイル受け渡し）: `pages/shimamura/flow/HappyoukaiFlowPage.js` + `happyoukai_setup_test.js` / `happyoukai_touroku_test.js`
+- 大規模・実行プラン付き: `codecept/pages/shimamura/_common/KeiriViewSteps.js`（経理ビュー B の実行プラン）+ `codecept/pages/shimamura/flow/SyokaiFlowPage.js`（順番だけ）+ `codecept/tests/shimamura/flow/syokai_touroku_test.js`
+- セットアップ→本体の2段構成（セッションファイル受け渡し）: `codecept/pages/shimamura/flow/HappyoukaiFlowPage.js` + `happyoukai_setup_test.js` / `happyoukai_touroku_test.js`
 
 ```
 verbNoun() 関数（各ステップ。例: navigateToTsuikaScreen / selectTeacher / fillMainForm / saveAndVerify）
@@ -78,7 +78,7 @@ runXxxFlow()（オーケストレーター。例: runKoushiShareiManualFlow）
 
 URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 のような
 **1 画面で完結**するシンプルなフロー。FlowPage は作らない。
-画面操作（遷移・入力・ボタン・結果の読み取り）は `pages/shimamura/screens/<画面>Page.js` の Page Object に置き、
+画面操作（遷移・入力・ボタン・結果の読み取り）は `codecept/pages/shimamura/screens/<画面>Page.js` の Page Object に置き、
 テストファイルには手順とテストデータの準備だけを書く（2026-10 #302 で変更。以前はテストファイルに直書きしていた）。
 
 雛形: `SmbcStateImportPage.js` + `smbc_state_import_test.js`（ファイル取込）/ `ContactRegisterPage.js` + `contact_register_test.js`（フォーム登録）
@@ -89,19 +89,19 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 
 | 目的 | 参照先 |
 |---|---|
-| フロー型 FlowPage の雛形（標準） | `pages/shimamura/flow/KoushiShareiFlowPage.js` |
-| フロー型 FlowPage の雛形（実行プラン付き・大規模） | `pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB`）＋ `pages/shimamura/flow/SyokaiFlowPage.js` |
-| 複数フローで使う受講生まわりの共通ステップ | `pages/shimamura/_common/KouhoseiSteps.js`（候補生→受講生）/ `KeiriViewSteps.js`（経理ビュー）/ `TaikaiSteps.js`（退会） |
-| フロー型テストの書き方 | `tests/shimamura/flow/koushi_sharei_manual_test.js` / `syokai_touroku_test.js` |
-| フォーム型テストの書き方（FlowPage なし・画面操作は screens/ の PO） | `pages/shimamura/screens/SmbcStateImportPage.js` + `tests/shimamura/flow/smbc_state_import_test.js` / `ContactRegisterPage.js` + `contact_register_test.js` |
-| 退会フローの書き方（既存関数の再利用） | `tests/shimamura/flow/taikai_test.js` |
-| コース・クラスを新規作成して前提を作る | `pages/shimamura/flow/CourseClassSetupFlowPage.js` |
-| ナビゲーションメソッド | `pages/shimamura/_common/ClassMemberPage.js`（管理タブ）/ `pages/shimamura/screens/IchiranPage.js`（一覧画面経由） |
-| ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
-| shimamura 固有ユーティリティ | `support/shimamura/utils.js`（一覧は `AGENTS.md`「shimamura テストの共通パターン」） |
-| TIMEOUTS / SELECTORS 定数 | `support/shimamura/constants.js` |
-| 口座振替スケジュールの事前確保 | `support/shimamura/accountTransferSchedule.js` |
-| CSV の形式 | `data/shimamura/koushi_sharei_manual_data.csv` / `syokai_touroku_data.csv` |
+| フロー型 FlowPage の雛形（標準） | `codecept/pages/shimamura/flow/KoushiShareiFlowPage.js` |
+| フロー型 FlowPage の雛形（実行プラン付き・大規模） | `codecept/pages/shimamura/_common/KeiriViewSteps.js`（`fillKeirisyoriScreenB`）＋ `codecept/pages/shimamura/flow/SyokaiFlowPage.js` |
+| 複数フローで使う受講生まわりの共通ステップ | `codecept/pages/shimamura/_common/KouhoseiSteps.js`（候補生→受講生）/ `KeiriViewSteps.js`（経理ビュー）/ `TaikaiSteps.js`（退会） |
+| フロー型テストの書き方 | `codecept/tests/shimamura/flow/koushi_sharei_manual_test.js` / `syokai_touroku_test.js` |
+| フォーム型テストの書き方（FlowPage なし・画面操作は screens/ の PO） | `codecept/pages/shimamura/screens/SmbcStateImportPage.js` + `codecept/tests/shimamura/flow/smbc_state_import_test.js` / `ContactRegisterPage.js` + `contact_register_test.js` |
+| 退会フローの書き方（既存関数の再利用） | `codecept/tests/shimamura/flow/taikai_test.js` |
+| コース・クラスを新規作成して前提を作る | `codecept/pages/shimamura/flow/CourseClassSetupFlowPage.js` |
+| ナビゲーションメソッド | `codecept/pages/shimamura/_common/ClassMemberPage.js`（管理タブ）/ `codecept/pages/shimamura/screens/IchiranPage.js`（一覧画面経由） |
+| ログイン処理 | `codecept/support/shimamura/hooks.js`（`beforeShimamura`） |
+| shimamura 固有ユーティリティ | `codecept/support/shimamura/utils.js`（一覧は `AGENTS.md`「shimamura テストの共通パターン」） |
+| TIMEOUTS / SELECTORS 定数 | `codecept/support/shimamura/constants.js` |
+| 口座振替スケジュールの事前確保 | `codecept/support/shimamura/accountTransferSchedule.js` |
+| CSV の形式 | `codecept/data/shimamura/koushi_sharei_manual_data.csv` / `syokai_touroku_data.csv` |
 
 ---
 
@@ -110,7 +110,7 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 ### Step 1: 対象フローの確認
 
 0. **既存の類似フローが無いか確認する（必須・最優先）**
-   `pages/shimamura/flow/`・`pages/shimamura/_common/` と `tests/shimamura/flow/` を対象のキーワード（画面名・業務名の
+   `codecept/pages/shimamura/flow/`・`codecept/pages/shimamura/_common/` と `codecept/tests/shimamura/flow/` を対象のキーワード（画面名・業務名の
    日本語/ローマ字両方）で grep する。似た処理が既にあれば重複実装せず、既存関数を呼び出す
    か拡張する（引数を増やす等）。
    例: 過去に「退会処理」を `taikai_test.js` に独自実装したまま `SyokaiFlowPage.js`（現 `_common/TaikaiSteps.js`）の
@@ -125,8 +125,8 @@ URL 直遷移 → フォーム入力 → ボタンクリック → 結果確認 
 
 ### Step 2: Flow Page Object の作成
 
-`pages/shimamura/flow/{prefix}FlowPage.js` を作成する。
-**`pages/shimamura/flow/KoushiShareiFlowPage.js` をコピーして改変する**（以下は骨格のみ）。
+`codecept/pages/shimamura/flow/{prefix}FlowPage.js` を作成する。
+**`codecept/pages/shimamura/flow/KoushiShareiFlowPage.js` をコピーして改変する**（以下は骨格のみ）。
 
 ```javascript
 'use strict';
@@ -213,7 +213,7 @@ module.exports = { run{FlowName}Flow };
 #### 前提データ作りはフォーム送信版を使う（#234 / #236 / #239）
 
 テストの**前提として**レコードを作る・書き換えるだけの箇所は、画面操作の代わりに
-`support/shimamura/editViewSubmit.js` の共通部品で保存と同じフォーム送信を出す（1件あたり数秒〜10秒短縮）。
+`codecept/support/shimamura/editViewSubmit.js` の共通部品で保存と同じフォーム送信を出す（1件あたり数秒〜10秒短縮）。
 
 | 場面 | 使う部品 | 例 |
 |---|---|---|
@@ -225,7 +225,7 @@ module.exports = { run{FlowName}Flow };
 - **その画面自体を検証するテストでは使わない**（画面側の入力制御を通らないため。検証は UI 操作の Scenario で行う）
 - 名前に「API」は使わない（shimamura に API は無い）。関数名は `…BySubmit`、UI 版と引数・戻り値をそろえて差し替えられるようにする
 - 詳細画面の見出し待ちと `assertNoShimamuraError` は画面ごとに違うので呼び出し側で行う
-- 動作確認で作ったデータは `tests/shimamura/util/list_submit_test_records.js`（読み取りのみ）で探し、
+- 動作確認で作ったデータは `codecept/tests/shimamura/util/list_submit_test_records.js`（読み取りのみ）で探し、
   受講生は `delete_listed_test_records.js` に UUID を書いて消す（コース・クラスは削除ボタンが無く消せない）
 
 > **特殊ケースの実装パターンは `references/patterns.md` を参照:**
@@ -240,8 +240,8 @@ module.exports = { run{FlowName}Flow };
 
 ### Step 3: CSV の作成
 
-`data/shimamura/{prefix}_touroku_data.csv`（正常系）と
-`data/shimamura/{prefix}_validation_errors.csv`（異常系）を作成する。
+`codecept/data/shimamura/{prefix}_touroku_data.csv`（正常系）と
+`codecept/data/shimamura/{prefix}_validation_errors.csv`（異常系）を作成する。
 
 ```
 scenario,field1,field2,area,expectedErrors
@@ -256,8 +256,8 @@ scenario,field1,field2,area,expectedErrors
 - フィールド名は HTML の `name=` 属性または `id` 属性の値をそのまま列名にする（camelCase推奨。既存の
   同一概念の列がある場合はそれに合わせる。例: 退会年月は `taikaiYear`/`taikaiMonth` で統一）
 - **契約日・開始日・退会年月など日付/年月を含む列は、固定日付を書くとテストが月をまたいで壊れる**。
-  テストファイル側で `resolveDynamicDateIfPast()`（`support/shimamura/utils.js`）を通して読み込むこと
-  （実装例は `tests/shimamura/flow/syokai_touroku_test.js` を参照）。
+  テストファイル側で `resolveDynamicDateIfPast()`（`codecept/support/shimamura/utils.js`）を通して読み込むこと
+  （実装例は `codecept/tests/shimamura/flow/syokai_touroku_test.js` を参照）。
 
 #### expectedErrors 列に書くテキストの決め方
 
@@ -277,7 +277,7 @@ scenario,last_name,expectedErrors
 **手順 B — `--debug` で実行して DOM を直接確認する**
 
 ```bash
-npx codeceptjs run ./tests/shimamura/{prefix}_touroku_test.js --profile shimamura.testgcp --debug
+npx codeceptjs run ./codecept/tests/shimamura/{prefix}_touroku_test.js --profile shimamura.testgcp --debug
 ```
 
 ブラウザが閉じずに残るので `#top_err_info_msg_div` の中身を DevTools で確認できる
@@ -308,15 +308,15 @@ scenario,last_name,expectedErrors
 
 ### Step 4: テストファイルの作成
 
-`tests/shimamura/flow/{prefix}_touroku_test.js` を作成する。
+`codecept/tests/shimamura/flow/{prefix}_touroku_test.js` を作成する。
 
 ```javascript
 /**
  * @fileoverview shimamura {画面名} 登録・処理フロー E2E テスト
  *
  * **データソース**
- * - `data/shimamura/{prefix}_touroku_data.csv`
- * - `data/shimamura/{prefix}_validation_errors.csv`（異常系）
+ * - `codecept/data/shimamura/{prefix}_touroku_data.csv`
+ * - `codecept/data/shimamura/{prefix}_validation_errors.csv`（異常系）
  */
 const {
   loadCsvWithProfile,
@@ -384,12 +384,12 @@ Data(validationErrorData).Scenario('{画面名}のバリデーションエラー
 
 ## ワークフロー（パターン B: フォーム入力型）
 
-1 画面で完結する場合は FlowPage を作らない。画面操作は `pages/shimamura/screens/` の Page Object に置き、
+1 画面で完結する場合は FlowPage を作らない。画面操作は `codecept/pages/shimamura/screens/` の Page Object に置き、
 `codecept.conf.js` の `include` に `<名前>PageShimamura` で登録して注入する。テストは手順とデータ準備だけにする（#302）。
 
 雛形: `SmbcStateImportPage.js` + `smbc_state_import_test.js`（ファイル取込型）/ `ContactRegisterPage.js` + `contact_register_test.js`（フォーム登録型）
 
-**Page Object**（`pages/shimamura/screens/TargetPage.js`）
+**Page Object**（`codecept/pages/shimamura/screens/TargetPage.js`）
 
 ```javascript
 'use strict';
@@ -431,7 +431,7 @@ module.exports = {
 };
 ```
 
-**テスト**（`tests/shimamura/flow/target_test.js`）
+**テスト**（`codecept/tests/shimamura/flow/target_test.js`）
 
 ```javascript
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
@@ -453,16 +453,16 @@ Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current, targetPageShima
 > **詳細画面へ遷移して URL に `record=<UUID>` が付くこと**で判定する
 > （`ContactRegisterPage.js` の `waitForSavedRecordId()` 参照）。あわせて:
 > - 同姓同名は二重登録の確認画面で止まるので、姓名は実行ごとに一意にする（名＋時刻など）
-> - 実行のたびにレコードが増えるなら、確認後に `submitDeleteForm()`（`support/shimamura/editViewSubmit.js`）でその1件を消す
+> - 実行のたびにレコードが増えるなら、確認後に `submitDeleteForm()`（`codecept/support/shimamura/editViewSubmit.js`）でその1件を消す
 > - 金融機関・支店コードは入力で候補ポップアップが出て、候補をクリックしたときだけ名称が埋まる。
->   `support/shimamura/utils.js` の `pickBankCandidate(I, codeSelector, code, nameSelector)` を使う（受講生・講師どちらの画面も同じ仕組み #306）
+>   `codecept/support/shimamura/utils.js` の `pickBankCandidate(I, codeSelector, code, nameSelector)` を使う（受講生・講師どちらの画面も同じ仕組み #306）
 
 ---
 
 ## Step 5: テスト実行と確認
 
 ```bash
-npx codeceptjs run ./tests/shimamura/flow/{prefix}_touroku_test.js --profile shimamura.testgcp
+npx codeceptjs run ./codecept/tests/shimamura/flow/{prefix}_touroku_test.js --profile shimamura.testgcp
 ```
 
 確認ポイント:
@@ -478,15 +478,15 @@ npx codeceptjs run ./tests/shimamura/flow/{prefix}_touroku_test.js --profile shi
 
 | ファイル | 配置先 | 理由 |
 |---|---|---|
-| Flow Page Object | `pages/shimamura/flow/{prefix}FlowPage.js` | 業務フロー関数の集合（Page Object）|
-| テストファイル | `tests/shimamura/flow/{prefix}_touroku_test.js` | テストシナリオのみ |
-| CSV（正常系） | `data/shimamura/{prefix}_touroku_data.csv` | テスト入力データ |
-| CSV（異常系） | `data/shimamura/{prefix}_validation_errors.csv` | バリデーション用データ |
+| Flow Page Object | `codecept/pages/shimamura/flow/{prefix}FlowPage.js` | 業務フロー関数の集合（Page Object）|
+| テストファイル | `codecept/tests/shimamura/flow/{prefix}_touroku_test.js` | テストシナリオのみ |
+| CSV（正常系） | `codecept/data/shimamura/{prefix}_touroku_data.csv` | テスト入力データ |
+| CSV（異常系） | `codecept/data/shimamura/{prefix}_validation_errors.csv` | バリデーション用データ |
 
 **既存ファイルへの追記**（新フローが少量の場合）:
 - 流れが 3 ステップ以内なら FlowPage は不要でテストファイル内に完結させる（パターン B）
 - 既存フロー（syokai）に関連する小さな追記なら `SyokaiFlowPage.js` へ追記することも可
-- **他のフローからも使う部品は FlowPage に置かず `pages/shimamura/_common/` の `*Steps.js` に置く**（FlowPage 同士で import し合わない。#300）
+- **他のフローからも使う部品は FlowPage に置かず `codecept/pages/shimamura/_common/` の `*Steps.js` に置く**（FlowPage 同士で import し合わない。#300）
 
 ## Step 6: ドキュメント連動（/doc-sync）
 

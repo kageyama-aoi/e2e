@@ -14,7 +14,7 @@ description: 調査員。コードベースを横断して調査・分析する�
 ## プロジェクト概要
 - フレームワーク: CodeceptJS + Playwright
 - プロダクト: shimamura / tframe / taskreport
-- 構成: tests/ pages/ support/ data/ env/
+- 構成: codecept/tests/ codecept/pages/ codecept/support/ codecept/data/ env/
 - 補助スクリプト: scripts/（Python）
 
 ## スキルの活用

@@ -3,11 +3,11 @@
  *
  * `docs/shimamura/menu_coverage.md` の AUTOGEN 区間（サマリ＋アイコン別表）を、以下を結合して自動生成する:
  *
- * - メニュー構成 … `pages/shimamura/_common/menuSnapshot/testgcp.json`（fetch_shimamura_menus.js で実機採取）
- * - sideMenus キー … `pages/shimamura/_common/sideMenus.js` の directUrl（無ければ shortcut ラベル）で突き合わせ
- * - Page Object  … `pages/shimamura/**.js` の関数/メソッド単位で、URL 直書き・`menus.<key>` 参照・
- *                  URL 定数（support/shimamura/constants.js 等の `KEY: 'index.php?...'`）参照を拾う
- * - テスト       … `tests/shimamura/**_test.js` が呼ぶ PO メソッド / import した FlowPage 関数（同一ファイル内の
+ * - メニュー構成 … `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json`（fetch_shimamura_menus.js で実機採取）
+ * - sideMenus キー … `codecept/pages/shimamura/_common/sideMenus.js` の directUrl（無ければ shortcut ラベル）で突き合わせ
+ * - Page Object  … `codecept/pages/shimamura/**.js` の関数/メソッド単位で、URL 直書き・`menus.<key>` 参照・
+ *                  URL 定数（codecept/support/shimamura/constants.js 等の `KEY: 'index.php?...'`）参照を拾う
+ * - テスト       … `codecept/tests/shimamura/**_test.js` が呼ぶ PO メソッド / import した FlowPage 関数（同一ファイル内の
  *                  呼び出しを推移的にたどる）＋テスト内の URL 直書き。page/ = 一覧、flow/ = フロー、その他 = その他
  *
  * route の正規化規則は `scripts/html/shimamura_route.js`（採取と共通）。
@@ -29,11 +29,11 @@ const { execFileSync } = require('child_process');
 const { toRoute } = require('../html/shimamura_route');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const SNAP_FILE = path.join(ROOT, 'pages', 'shimamura', '_common', 'menuSnapshot', 'testgcp.json');
-const SIDE_MENUS_FILE = path.join(ROOT, 'pages', 'shimamura', '_common', 'sideMenus.js');
-const PAGES_DIR = path.join(ROOT, 'pages', 'shimamura');
-const SUPPORT_DIR = path.join(ROOT, 'support', 'shimamura');
-const TESTS_DIR = path.join(ROOT, 'tests', 'shimamura');
+const SNAP_FILE = path.join(ROOT, 'codecept', 'pages', 'shimamura', '_common', 'menuSnapshot', 'testgcp.json');
+const SIDE_MENUS_FILE = path.join(ROOT, 'codecept', 'pages', 'shimamura', '_common', 'sideMenus.js');
+const PAGES_DIR = path.join(ROOT, 'codecept', 'pages', 'shimamura');
+const SUPPORT_DIR = path.join(ROOT, 'codecept', 'support', 'shimamura');
+const TESTS_DIR = path.join(ROOT, 'codecept', 'tests', 'shimamura');
 const CONF_FILE = path.join(ROOT, 'codecept.conf.js');
 const DOC_FILE = path.join(ROOT, 'docs', 'shimamura', 'menu_coverage.md');
 /** 全メニューを JSON から巡回するテスト（ソース解析では画面を特定できないため、存在すれば全画面に △ 巡回 を付ける） */
@@ -51,7 +51,7 @@ const BUCKET_E_ICONS = new Set(['Calendar', 'Emails', 'SMSReports', 'SMSHelp', '
  */
 function listUntracked() {
   try {
-    const out = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'pages', 'tests', 'support'], { cwd: ROOT });
+    const out = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'codecept/pages', 'codecept/tests', 'codecept/support'], { cwd: ROOT });
     return new Set(out.toString('utf8').split('\0').filter(Boolean).map((e) => path.resolve(ROOT, e)));
   } catch (e) {
     console.warn('[gen_shimamura_menu_coverage] git ls-files に失敗したため未追跡ファイルの除外をスキップします');
@@ -316,7 +316,7 @@ function main() {
   }
 
   /**
-   * PO が require している pages/shimamura 配下のファイルのチャンクも合わせた解析結果
+   * PO が require している codecept/pages/shimamura 配下のファイルのチャンクも合わせた解析結果
    * （IchiranPage は画面定義を ichiran/*Screens.js から結合しているため、メソッドの実体はそちらにある）
    * @param {string} abs
    * @returns {Map<string, Set<string>>}
@@ -338,7 +338,7 @@ function main() {
   // codecept.conf.js の inject 名 -> PO 絶対パス
   const injectMap = new Map();
   const confSrc = fs.readFileSync(CONF_FILE, 'utf8');
-  const injRe = /(\w+):\s*'\.\/(pages\/shimamura\/[\w/]+\.js)'/g;
+  const injRe = /(\w+):\s*'\.\/(codecept\/pages\/shimamura\/[\w/]+\.js)'/g;  // #337 で codecept/ の下へ
   let im;
   while ((im = injRe.exec(confSrc))) injectMap.set(im[1], path.join(ROOT, im[2]));
 
@@ -347,7 +347,7 @@ function main() {
   for (const f of walkJs(TESTS_DIR)) {
     if (!f.endsWith('_test.js')) continue;
     const src = fs.readFileSync(f, 'utf8');
-    const sub = rel(f).split('/')[2];
+    const sub = path.relative(TESTS_DIR, f).split(path.sep)[0]; // page / flow / check など（深さに依存しない）
     const kind = sub === 'page' ? '一覧' : sub === 'flow' ? 'フロー' : 'その他';
     const ids = new Set(resolveRefs(routesInSource(src), sideMenus));
 
@@ -420,7 +420,7 @@ function render(snap, idToPO, idToTests, idToMenuKey, hasPatrol) {
   const out = [];
   out.push(START);
   out.push('');
-  out.push(`> 入力: \`pages/shimamura/_common/menuSnapshot/testgcp.json\`（採取日 ${snap.capturedAt}）× \`pages/shimamura/**\` × \`tests/shimamura/**_test.js\`。`);
+  out.push(`> 入力: \`codecept/pages/shimamura/_common/menuSnapshot/testgcp.json\`（採取日 ${snap.capturedAt}）× \`codecept/pages/shimamura/**\` × \`codecept/tests/shimamura/**_test.js\`。`);
   out.push('> **手で編集しない** — メニューが変わったら `node scripts/html/fetch_shimamura_menus.js` で採取し直して `npm run docs:menu-coverage:shimamura`。');
   out.push('');
 
@@ -458,9 +458,9 @@ function render(snap, idToPO, idToTests, idToMenuKey, hasPatrol) {
 
   out.push('## アイコン別 マッピング表');
   out.push('');
-  out.push('- **sideMenus キー** … `pages/shimamura/_common/sideMenus.js` に定義があればそのキー');
-  out.push('- **Page Object** … その画面へ遷移・操作する `pages/shimamura/**.js`（URL 直書き / sideMenus 参照 / URL 定数参照）');
-  out.push('- **一覧 / フロー / その他テスト** … `tests/shimamura/{page,flow,それ以外}/*_test.js` のうち、その画面に触れるもの');
+  out.push('- **sideMenus キー** … `codecept/pages/shimamura/_common/sideMenus.js` に定義があればそのキー');
+  out.push('- **Page Object** … その画面へ遷移・操作する `codecept/pages/shimamura/**.js`（URL 直書き / sideMenus 参照 / URL 定数参照）');
+  out.push('- **一覧 / フロー / その他テスト** … `codecept/tests/shimamura/{page,flow,それ以外}/*_test.js` のうち、その画面に触れるもの');
   out.push('- **△ 巡回** … `menu_patrol_test.js` がサイドバーから開いてエラーが無いことだけ確認している（サマリの「テストあり」には数えない）');
   out.push('');
   for (const iconKey of iconOrder) {

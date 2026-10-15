@@ -10,12 +10,12 @@
 
 1. **このファイルは何をするものか？** （1〜2行で）
 2. **誰が使うか？**
-   - テスト実行中に CodeceptJS が `require()` する → `support/` または `pages/`
-   - テストシナリオそのもの → `tests/`
-   - テストへの入力データ（CSV・パラメータ） → `data/`
+   - テスト実行中に CodeceptJS が `require()` する → `codecept/support/` または `codecept/pages/`
+   - テストシナリオそのもの → `codecept/tests/`
+   - テストへの入力データ（CSV・パラメータ） → `codecept/data/`
    - ユーザーが手動で起動するツール → `run/` または `scripts/`
 3. **アプリの構造・画面に関する知識を持つか？**
-   - Yes（メニュー定義、URL解決、Page Object） → `pages/`
+   - Yes（メニュー定義、URL解決、Page Object） → `codecept/pages/`
    - No → 上記の分類を継続
 
 ## ステップ3：配置先を判定する

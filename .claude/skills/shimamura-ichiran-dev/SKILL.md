@@ -30,8 +30,8 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | 検索ボタン | `#swSearchButton` | `input[name="search"]`（一部画面は `input[name="button"][value="表示"]` 等） |
 | 検索結果 | `.tf-group-body-search-result tr` | `a.listViewTdLinkS1`（`SELECTORS.RESULT_LINK`）。未収金・出席表は `.listViewPaginationTdS1` |
 | 画面遷移 | URL 直遷移 | `sideMenus.js` の定義 → `IchiranPage._navigateViaMenu()`（既定は directUrl、`SHIMAMURA_NAV=sidebar` でサイドバー経路） |
-| Page Object 置き場 | `pages/tframe/screens/{画面}Page.js`（画面ごと） | 画面定義は `pages/shimamura/screens/ichiran/<icon>Screens.js`（アイコン別）、`IchiranPage.js` がそれを結合して1つの PO（inject 名 `ichiranPageShimamura`）にする |
-| 認証 | `loginKannrisyaPage.login()` | `Before(beforeShimamura)`（`support/shimamura/hooks.js`） |
+| Page Object 置き場 | `codecept/pages/tframe/screens/{画面}Page.js`（画面ごと） | 画面定義は `codecept/pages/shimamura/screens/ichiran/<icon>Screens.js`（アイコン別）、`IchiranPage.js` がそれを結合して1つの PO（inject 名 `ichiranPageShimamura`）にする |
+| 認証 | `loginKannrisyaPage.login()` | `Before(beforeShimamura)`（`codecept/support/shimamura/hooks.js`） |
 | CSV dataDir | `'tframe'` を明示 | `'shimamura'` を明示（デフォルト値なし） |
 | エラー表示 | `#tf-message-summary` | `#top_err_info_msg_div`（`SELECTORS.ERROR_CONTAINER`） |
 
@@ -41,15 +41,15 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 | 目的 | 参照先 |
 |---|---|
-| **テストファイルの雛形** | `tests/shimamura/page/transaction_ichiran_test.js` |
-| **Page Object の雛形**（標準一覧画面の1エントリ） | `pages/shimamura/screens/ichiran/keiriScreens.js` の `standardScreens`（入出金一覧のエントリ） |
-| メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `pages/shimamura/_common/sideMenus.js` |
+| **テストファイルの雛形** | `codecept/tests/shimamura/page/transaction_ichiran_test.js` |
+| **Page Object の雛形**（標準一覧画面の1エントリ） | `codecept/pages/shimamura/screens/ichiran/keiriScreens.js` の `standardScreens`（入出金一覧のエントリ） |
+| メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `codecept/pages/shimamura/_common/sideMenus.js` |
 | 結果セレクタが特殊な画面の例 | `ichiran/*Screens.js` の `specialScreens`（未収金一覧・受注売上＝keiri、出席表検索＝course、有効性データ出力＝student） |
 | 標準一覧かどうかの事前判定 | `menu_patrol_test.js` 実行後の `output/shimamura_menu_patrol/<module>.json` の `standardList`（`input[name="search"]` の有無） |
-| ログイン処理 | `support/shimamura/hooks.js`（`beforeShimamura`） |
-| 共通ユーティリティ・定数 | `support/shimamura/utils.js`（`fillTextFieldsByName`）、`support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
-| CSV の形式 | `data/shimamura/transaction_ichiran_search_data.csv` |
-| 画面 URL 一覧・未着手画面の確認 | `docs/shimamura/menu_coverage.md`（全メニュー × PO/テスト有無の自動生成表。route と折りたたみグループ名・`toggleId` もここで引ける）。元データは `pages/shimamura/_common/menuSnapshot/testgcp.json` |
+| ログイン処理 | `codecept/support/shimamura/hooks.js`（`beforeShimamura`） |
+| 共通ユーティリティ・定数 | `codecept/support/shimamura/utils.js`（`fillTextFieldsByName`）、`codecept/support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
+| CSV の形式 | `codecept/data/shimamura/transaction_ichiran_search_data.csv` |
+| 画面 URL 一覧・未着手画面の確認 | `docs/shimamura/menu_coverage.md`（全メニュー × PO/テスト有無の自動生成表。route と折りたたみグループ名・`toggleId` もここで引ける）。元データは `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json` |
 | フォルダ配置ルール | `AGENTS.md` |
 
 ---
@@ -64,12 +64,12 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
    - 拾うもの: テキスト入力の `name=`、セレクトの `name=`、検索ボタンのセレクタ、結果テーブルのリンククラス、日付範囲フィールドの有無
 
 2. **URL（module / action）とサイドバー経路を特定する**
-   - `docs/shimamura/menu_coverage.md`（全メニューの route・グループ名）と `pages/shimamura/_common/menuSnapshot/testgcp.json`（`toggleId` = `collapseToggle.icon_id`）を参照
+   - `docs/shimamura/menu_coverage.md`（全メニューの route・グループ名）と `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json`（`toggleId` = `collapseToggle.icon_id`）を参照
    - URL は `index.php?module=X&action=Y&...` 形式。`sideMenus.js` の先頭 `/` は有無どちらでもよい（`_navigateToModule` が `constants.js` の `BASE_URL`（末尾 `/` 付き）と結合する際に重複を除く）
    - サイドバー経路（`moduleUrl` + `shortcut`、折りたたみがあれば `collapseToggle`）も分かれば書く。分からなければ `directUrl` だけでよい
 
 3. **既存の類似画面が無いか確認する**
-   - `pages/shimamura/screens/ichiran/` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
+   - `codecept/pages/shimamura/screens/ichiran/` を画面名で grep。同じ画面のエントリが既にあれば `fill` の修正だけで済む
 
 4. **標準一覧画面か・特殊画面かを判定する**
    - **標準**: 検索ボタンが `input[name="search"]`、結果リンクが `a.listViewTdLinkS1` → 該当アイコンファイルの `standardScreens` にエントリを1つ足す（Step 3）
@@ -79,7 +79,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ### Step 2: `sideMenus.js` に定義を追加
 
-`pages/shimamura/_common/sideMenus.js` の該当グループ（受講生系 / クラス・コース系 / 講師 / 経理系 …）に追記する。
+`codecept/pages/shimamura/_common/sideMenus.js` の該当グループ（受講生系 / クラス・コース系 / 講師 / 経理系 …）に追記する。
 
 ```javascript
 {camelCaseName}: {
@@ -144,7 +144,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 
 ### Step 4: CSV の作成
 
-`data/shimamura/{prefix}_ichiran_search_data.csv` を作成する。
+`codecept/data/shimamura/{prefix}_ichiran_search_data.csv` を作成する。
 
 ```
 scenario,{検索フィールド名},expectedName
@@ -163,8 +163,8 @@ scenario,{検索フィールド名},expectedName
 
 ### Step 5: テストファイルの作成
 
-`tests/shimamura/page/{prefix}_ichiran_test.js` を作成する。
-**`tests/shimamura/page/transaction_ichiran_test.js` をコピーして改変する。**
+`codecept/tests/shimamura/page/{prefix}_ichiran_test.js` を作成する。
+**`codecept/tests/shimamura/page/transaction_ichiran_test.js` をコピーして改変する。**
 
 ```javascript
 /**
@@ -175,7 +175,7 @@ scenario,{検索フィールド名},expectedName
  * - {検索条件}で絞り込み → 結果に1件以上表示される
  *
  * **データソース**
- * - `data/shimamura/{prefix}_ichiran_search_data.csv`
+ * - `codecept/data/shimamura/{prefix}_ichiran_search_data.csv`
  */
 const { loadCsvWithProfile, withScenarioLabel } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
@@ -213,7 +213,7 @@ Data(csvData).Scenario('{画面名}で検索できる @dev', async ({ I, ichiran
 ### Step 6: テスト実行と確認
 
 ```bash
-npx codeceptjs run ./tests/shimamura/page/{prefix}_ichiran_test.js --profile shimamura.testgcp
+npx codeceptjs run ./codecept/tests/shimamura/page/{prefix}_ichiran_test.js --profile shimamura.testgcp
 ```
 
 **最低1件（空検索）は実際に結果が返ることを確認すること。**

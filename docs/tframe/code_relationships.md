@@ -1,6 +1,6 @@
 # Mermaid 構造図 - tframe Page Objects & Tests
 > 生成日: 2026-03-31
-> 対象: tests/tframe/ と pages/tframe/ の構成・依存関係
+> 対象: codecept/tests/tframe/ と codecept/pages/tframe/ の構成・依存関係
 
 ---
 
@@ -44,7 +44,7 @@ graph LR
 
 ```mermaid
 graph TD
-  subgraph Tests["tests/tframe/"]
+  subgraph Tests["codecept/tests/tframe/"]
     T1["login_test.js\n@admin / @student"]
     T2["mypage_login_test.js"]
     T3["keiryo_master_test.js\n@admin"]
@@ -64,7 +64,7 @@ graph TD
     T17["help_test.js (skeleton)"]
   end
 
-  subgraph Pages["pages/tframe/"]
+  subgraph Pages["codecept/pages/tframe/"]
     P1["LoginKannrisyaPage"]
     P2["LoginMyPage"]
     P3["ApiCommonLoginPage"]

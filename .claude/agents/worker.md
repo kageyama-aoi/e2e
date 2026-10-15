@@ -8,14 +8,14 @@ description: 現場作業員。複数ファイルにまたがる実装・修正�
 ## 役割
 - テストシナリオの追加・修正
 - Page Objectのメソッド追加・修正
-- support/utils・constants の更新
+- codecept/support/utils・constants の更新
 - 複数ファイルにまたがるリファクタリング
 - スクレイピングスクリプト（Python）の修正
 
 ## プロジェクト概要
 - フレームワーク: CodeceptJS + Playwright
 - プロダクト: shimamura / tframe / taskreport
-- 構成: tests/ pages/ support/ data/ env/
+- 構成: codecept/tests/ codecept/pages/ codecept/support/ codecept/data/ env/
 - 命名規則: 関数は verbNoun、テストファイルは *_test.js
 - セレクタは必ず Page Object に集約し、テスト内に直書きしない
 - 待機は waitForElement / waitForVisible を優先、I.wait(秒) は最小限
