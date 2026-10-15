@@ -12,6 +12,7 @@ const { ensureAccountTransferSchedules } = require('../../../support/shimamura/a
 const { navigateToKouhosei } = require('../_common/KouhoseiSteps');
 const { navigateToKeirisyoriView } = require('../_common/KeiriViewSteps');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
+const { firstOfMonth, formatDate, pad2 } = require('../../../support/dateFormat');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/gessya_ikkatu_session.json');
@@ -20,11 +21,10 @@ function resolveRelativeMonth(taikaiYear, taikaiMonth) {
   const OFFSETS = { '先月': -1, '今月': 0, '来月': 1 };
   const key = String(taikaiMonth).trim();
   if (key in OFFSETS) {
-    const now = new Date();
-    const d = new Date(now.getFullYear(), now.getMonth() + OFFSETS[key], 1);
-    return { year: String(d.getFullYear()), month: String(d.getMonth() + 1).padStart(2, '0') };
+    const d = firstOfMonth(OFFSETS[key]);
+    return { year: formatDate(d, 'YYYY'), month: formatDate(d, 'MM') };
   }
-  return { year: String(taikaiYear).trim(), month: String(taikaiMonth).trim().padStart(2, '0') };
+  return { year: String(taikaiYear).trim(), month: pad2(taikaiMonth) };
 }
 
 function saveToSession(SESSION_FILE, recordId, testName, row) {
@@ -101,7 +101,7 @@ async function runStudentPaymentSetup(I, classMemberPageShimamura, row) {
 // （expectedClassName は勝者を示すログ用途で、金額の一致自体が勝者の証明になる）。
 // 金額は税込表示のため、期待値（税抜の運営管理費マスタ値）は1.1倍して比較する。
 async function verifyKanrihiFee(I, recordId, { targetYear, targetMonth, expectedKanrihiBase, expectedClassName, expectedDiscount }) {
-  const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
+  const targetYearMonth = `${targetYear}/${pad2(targetMonth)}`;
   I.say(`【運営管理費確認】record=${recordId} / ${targetYearMonth} / 想定勝者クラス=${expectedClassName} / 期待値(税抜)=${expectedKanrihiBase}`);
   I.amOnPage(pageUrl({ module: 'Student', action: 'DWCarteKeiri_AN', record: recordId }));
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -161,7 +161,7 @@ async function grabKanrihiNetByClassName(I) {
 // バナーは当月以前の督促のみ表示するため、この検証は「セットアップ時（当月）」専用。
 // 勝者クラス = 期待額（税込）がそのまま正味金額として残る／敗者クラス = 未払分と預り金が相殺され正味0円
 async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetMonth, expectedWinnerClass, expectedLoserClass, expectedKanrihiBase }) {
-  const targetYearMonth = `${targetYear}/${String(targetMonth).padStart(2, '0')}`;
+  const targetYearMonth = `${targetYear}/${pad2(targetMonth)}`;
   I.say(`【運営管理費tie-break確認】record=${recordId} / ${targetYearMonth} / 勝者想定=${expectedWinnerClass} / 敗者想定=${expectedLoserClass}`);
   I.amOnPage(pageUrl({ module: 'Student', action: 'DWCarteKeiri_AN', record: recordId }));
   I.waitForElement(locate('body').withText('受講生詳細'), TIMEOUTS.SCREEN);
@@ -183,9 +183,7 @@ async function verifyKanrihiWinnerByClassName(I, recordId, { targetYear, targetM
 }
 
 async function runMonthlyFeeCreation(I) {
-  const now  = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const claimMonth = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
+  const claimMonth = formatDate(firstOfMonth(1), 'YYYY-MM');
   await ensureAccountTransferSchedules(I, {
     claimMonth,
     debitDate:   `${claimMonth}-11`,
@@ -210,9 +208,7 @@ async function runMonthlyFeeCreation(I) {
 
 async function verifyMonthlyFees(I, classMemberPageShimamura) {
   // 来月の YYYY/MM（例: 2026/07）
-  const now  = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const targetYearMonth = `${next.getFullYear()}/${String(next.getMonth() + 1).padStart(2, '0')}`;
+  const targetYearMonth = formatDate(firstOfMonth(1), 'YYYY/MM');
 
   // setupテストが書き出した受講生 record UUID リストを読み込む
   let session = [];

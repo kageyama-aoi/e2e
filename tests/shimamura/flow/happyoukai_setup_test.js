@@ -28,6 +28,7 @@ const {
   createRosterFromStudents,
   addRosterToClass,
 } = require('../../../pages/shimamura/flow/HappyoukaiFlowPage');
+const { formatDate } = require('../../../support/dateFormat');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('happyoukai_setup_data', 'shimamura'),
@@ -50,13 +51,7 @@ Scenario('発表会クラス・コースを新規作成する @setup @dev', asyn
     story:   'クラス・コース作成',
   });
 
-  const now = new Date();
-  const stamp = [
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0'),
-    String(now.getHours()).padStart(2, '0'),
-    String(now.getMinutes()).padStart(2, '0'),
-  ].join('');
+  const stamp = formatDate(new Date(), 'MMDDhhmm');
 
   // 発表会は「1スケジュール＝1クラス」が基本（スクール/サロンのような週次繰り返しではない）。
   // 参加登録締切（開催月の前月18日）を回避するため開催日を2ヶ月後の単発にし、

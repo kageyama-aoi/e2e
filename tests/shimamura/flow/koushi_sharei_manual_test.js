@@ -32,6 +32,7 @@ const {
   runKoushiShareiManualFlow,
   runKoushiShareiValidationFlow
 } = require('../../../pages/shimamura/flow/KoushiShareiFlowPage');
+const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_manual_data', 'shimamura'),
@@ -50,9 +51,7 @@ const validationErrorData = withScenarioLabel(
 function resolveShareiDates(I, keijoubi, fromDatetime) {
   const resolved = resolveDynamicDateIfPast(I, keijoubi, '計上日');
   if (resolved === keijoubi) return { keijoubi, from_datetime: fromDatetime };
-  const d = new Date(resolved);
-  const prev = new Date(d.getFullYear(), d.getMonth() - 1, 1);
-  const from_datetime = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`;
+  const from_datetime = formatDate(firstOfMonth(-1, new Date(resolved)), 'YYYY-MM');
   I.say(`⚠ 【動的日付補正】対象月: 計上日の前月にそろえる → "${from_datetime}"`);
   return { keijoubi: resolved, from_datetime };
 }

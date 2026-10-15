@@ -345,6 +345,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `TIMEOUTS` / `SELECTORS` / `URLS` | `support/shimamura/constants.js` | 待機秒数・共通セレクタ（`ERROR_CONTAINER`, `RESULT_LINK`）・固定 URL |
 | `prepareInput` / `buildExecutionPlan` | `support/shimamura/syokai_helpers.js` | 経理ビューB の実行計画（breakTarget によるステップ skip） |
 | `attachEvidenceScreenshot(I, fileBase, name)` | `support/utils.js` | スクショを読める名前（例: `①遷移直後`）で Allure に添付。設計書の無い画面で「遷移直後 → 入力後 → ボタン押下後」を残すときに使う |
+| `formatDate(date, 'YYYY-MM-DD')` / `pad2(n)` / `firstOfMonth(offset)` | `support/dateFormat.js` | 日付の整形（記号 YYYY MM DD hh mm ss）・2桁ゼロ埋め・来月/先月の1日。`padStart(2, '0')` や `new Date(y, m + 1, 1)` を手書きしない。月をずらすときは日付を1日にそろえる（月末ずれ防止 #301）。プロダクト共通 |
 | `expandTable` / `findCollapsedRule` | `support/decisionTable.js` | デシジョンテーブルの展開・N/A・縮約（社内「デシジョンテーブル記法ガイド」準拠）。プロダクト共通 |
 | `evaluateCase` / `formatTrace` | `support/shimamura/salesGroupTransferModel.js` | 料金明細 入金の仕様モデル。テストケースを DT-04→01→03→02 で評価し期待結果を決める（#287） |
 

@@ -28,6 +28,7 @@ const {
   grabMonthFeeSummary,
   assertNoDuplicateFees,
 } = require('../../../pages/shimamura/flow/GessyaIkkatuFlowPage');
+const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 Feature('月謝一括作成');
 
@@ -55,9 +56,7 @@ Scenario('月謝一括作成を2回実行しても来月分の料金が重複し
   if (students.length === 0) {
     throw new Error('【SKP】確認できる受講生がいません。gessya_ikkatu_setup_test.js を退会なしの行で先に実行してください');
   }
-  const now  = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  const targetYearMonth = `${next.getFullYear()}/${String(next.getMonth() + 1).padStart(2, '0')}`;
+  const targetYearMonth = formatDate(firstOfMonth(1), 'YYYY/MM');
 
   I.say('【SKP】1回目の月謝一括作成');
   await runMonthlyFeeCreation(I);

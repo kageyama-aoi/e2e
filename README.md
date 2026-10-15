@@ -245,7 +245,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-15 11:45:58
+Last updated: 2026-10-15 13:01:52
 
 ```text
 e2e/
@@ -756,6 +756,7 @@ e2e/
 │   │   ├── sortTestRunner.js
 │   │   ├── sortVerify.js
 │   │   └── utils.js
+│   ├── dateFormat.js
 │   ├── decisionTable.js
 │   ├── envLoader.js
 │   ├── repoRoot.js
@@ -957,6 +958,7 @@ e2e/
 │   │   └── util/ 
 │   │       └── sort_spec_probe.js
 │   └── unit/ 
+│       ├── dateFormat.test.js
 │       ├── decisionTable.test.js
 │       ├── runOutputPaths.test.js
 │       ├── salesGroupTransferCheck.test.js

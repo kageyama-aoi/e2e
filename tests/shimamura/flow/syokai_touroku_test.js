@@ -30,6 +30,7 @@ const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils')
 const { runRegistrationFlow } = require('../../../pages/shimamura/flow/SyokaiFlowPage');
 const { confirmKeirisyoriScreenE } = require('../../../pages/shimamura/_common/KeiriViewSteps');
 const { executeTaikai } = require('../../../pages/shimamura/_common/TaikaiSteps');
+const { pad2 } = require('../../../support/dateFormat');
 
 const csvData = withScenarioLabel(loadCsvWithProfile('syokai_touroku_data', 'shimamura'), (row) => {
   return row.className || row.class_name01 || row.lastName || row.last_name || 'データ行';
@@ -70,7 +71,7 @@ Data(csvData).Scenario('新規受講生登録 @dev @normal', async ({ I, classMe
   I.say('=== 退会処理 開始 ===');
   const resolvedTaikaiDate = resolveDynamicDateIfPast(
     I,
-    `${current.taikaiYear}-${String(current.taikaiMonth).padStart(2, '0')}-01`,
+    `${current.taikaiYear}-${pad2(current.taikaiMonth)}-01`,
     'taikaiYear/taikaiMonth',
     { graceMonths: 1 } // 退会処理は先月までは許容・先々月以前がNG
   );

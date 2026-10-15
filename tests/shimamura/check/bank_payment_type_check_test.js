@@ -22,6 +22,7 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { fillTextFieldsByName, clickAndWaitForReload, extractRecordId } = require('../../../support/shimamura/utils');
 const { submitDeleteForm } = require('../../../support/shimamura/editViewSubmit');
 const { TIMEOUTS, URLS, SELECTORS, BASE_URL } = require('../../../support/shimamura/constants');
+const { formatDate } = require('../../../support/dateFormat');
 
 const S = {
   fields: {
@@ -57,9 +58,7 @@ Data(csvData).Scenario('請求方法ごとの必須フィールドを確認す�
   I.amOnPage(BASE_URL + URLS.CONTACT_REGISTER);
   I.waitForElement(S.button.save, TIMEOUTS.SCREEN);
 
-  const now = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  const input = { ...BASE_INPUT, first_name: `${BASE_INPUT.first_name}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}` };
+  const input = { ...BASE_INPUT, first_name: `${BASE_INPUT.first_name}${formatDate(new Date(), 'hhmmss')}` };
   fillTextFieldsByName(I, input);
   I.selectOption(S.fields.bankPaymentType, current.bank_payment_type);
 

@@ -43,6 +43,7 @@ const {
   verifyImportMastersExist,
   verifyImportError,
 } = require('../../../pages/shimamura/flow/KoushiShareiFlowPage');
+const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 const csvData = withScenarioLabel(
   loadCsvWithProfile('koushi_sharei_tsuika_data', 'shimamura'),
@@ -57,10 +58,6 @@ const errorData = withScenarioLabel(
 // 取込CSVの列位置（0始まり）。SHIFT-JIS の全角文字にカンマ(0x2C)は現れないので、バイト列のまま分割してよい
 const IMPORT_COLUMNS = { keijoubi: 11, taishoTsuki: 12 };
 
-function formatYm(date) {
-  return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}`;
-}
-
 /**
  * サンプルの取込CSVを、計上日＝今日・対象月＝前月 に書き換えて output/ に保存する（#99）
  * @param {string} templatePath - codecept 実行ディレクトリからの相対パス
@@ -68,12 +65,12 @@ function formatYm(date) {
  */
 function buildDatedImportFile(templatePath) {
   const today = new Date();
-  const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  const keijoubi = `${formatYm(today)}${String(today.getDate()).padStart(2, '0')}`;
+  const lastMonth = firstOfMonth(-1, today);
+  const keijoubi = formatDate(today, 'YYYYMMDD');
   // latin1 は 1バイト＝1文字で往復できるため、SHIFT-JIS のバイト列を壊さずに列を差し替えられる
   const cols = fs.readFileSync(templatePath).toString('latin1').split(',');
   cols[IMPORT_COLUMNS.keijoubi] = keijoubi;
-  cols[IMPORT_COLUMNS.taishoTsuki] = formatYm(lastMonth);
+  cols[IMPORT_COLUMNS.taishoTsuki] = formatDate(lastMonth, 'YYYYMM');
   const outRelPath = path.join('output', 'koushi_sharei_import', `koushi_sharei_import_${keijoubi}.csv`);
   fs.mkdirSync(path.dirname(outRelPath), { recursive: true });
   fs.writeFileSync(outRelPath, Buffer.from(cols.join(','), 'latin1'));

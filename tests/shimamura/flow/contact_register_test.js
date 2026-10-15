@@ -32,6 +32,7 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, fillTextFieldsByName, extractRecordId } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS } = require('../../../support/shimamura/constants');
 const { submitDeleteForm } = require('../../../support/shimamura/editViewSubmit');
+const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 const S = {
   screen:  { name: '問合せ' },
@@ -121,10 +122,9 @@ function pickBankCandidate(I, codeSelector, code, nameSelector) {
  */
 function uniqueName(row) {
   const now = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
   return {
-    last_name:  `${row.last_name}${pad(now.getMonth() + 1)}${pad(now.getDate())}`,
-    first_name: `${row.first_name}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`,
+    last_name:  `${row.last_name}${formatDate(now, 'MMDD')}`,
+    first_name: `${row.first_name}${formatDate(now, 'hhmmss')}`,
   };
 }
 
@@ -134,10 +134,7 @@ function uniqueName(row) {
  */
 function toYearMonth(value) {
   if (String(value || '').trim() !== '来月') return value;
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + 1);
-  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}`;
+  return formatDate(firstOfMonth(1), 'YYYYMM');
 }
 
 /**

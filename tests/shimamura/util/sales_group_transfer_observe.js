@@ -39,6 +39,7 @@ const path = require('path');
 const repoRoot = require('../../../support/repoRoot');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { predictServerChecks } = require('../../../support/shimamura/salesGroupTransferCheck');
+const { formatDate } = require('../../../support/dateFormat');
 
 const TARGET = {
   salesno: process.env.SALESNO || '14000000482',
@@ -104,9 +105,7 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（O
 
   const outDir = path.join(repoRoot, 'output', 'sales_group_transfer_observe');
   fs.mkdirSync(outDir, { recursive: true });
-  const now = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const stamp = formatDate(new Date(), 'YYYYMMDD_hhmmss');
   const outFile = path.join(outDir, `${TARGET.salesno}_${stamp}.json`);
   fs.writeFileSync(outFile, JSON.stringify({
     target: TARGET, mode: MODE, topInput: TOP_INPUT, before, previewBefore, after, previewAfter, predictions, saveResult,

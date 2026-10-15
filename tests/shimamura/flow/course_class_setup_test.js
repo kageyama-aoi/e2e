@@ -14,6 +14,7 @@
 const { setBusinessLabels } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { setupLinkedCourseAndClass } = require('../../../pages/shimamura/flow/CourseClassSetupFlowPage');
+const { formatDate } = require('../../../support/dateFormat');
 
 Feature('コース・クラス作成（運営管理費テスト用Page Object）');
 
@@ -26,13 +27,7 @@ Scenario('コース・クラスを新規作成し紐づけ・スケジュール�
     story:   'setupLinkedCourseAndClassの動作確認',
   });
 
-  const now = new Date();
-  const stamp = [
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0'),
-    String(now.getHours()).padStart(2, '0'),
-    String(now.getMinutes()).padStart(2, '0'),
-  ].join('');
+  const stamp = formatDate(new Date(), 'MMDDhhmm');
 
   const { courseRecordId, classRecordId } = await setupLinkedCourseAndClass(I, {
     courseCd:        `DR${stamp}`,
