@@ -3,8 +3,10 @@ archive_allure_results.py
 
 allure-results/<profile>/<timestamp_rundir>/ 単位で古い実行結果をzipアーカイブし、
 N日以上古いものを削除します。プロファイルごとに最新 K 件は日数に関係なく残します。
+（npm run allure:archive 用の手動 CLI。判定は scripts/cleanup/run_dir_cleanup.py の
+cleanup_run_dirs() に任せている #321）
 
-ランチャー（run/run_gui.py）も起動時に cleanup_allure_results() を呼び、
+ランチャー（run/run_gui.py）とテスト後フックは run_dir_cleanup.cleanup_all() を直接呼び、
 10日より古いものを zip せずに削除している（最新3件は残す）。
 
 ディレクトリ構造（対象）:
@@ -39,22 +41,13 @@ OUT: allure-results/archive/<profile>/<timestamp_rundir>.zip（--no-archive 指�
 """
 
 import argparse
-import os
-import re
-import shutil
 import sys
-import zipfile
-from datetime import datetime, timedelta
 from pathlib import Path
 
-ALLURE_RESULTS_DIR = Path(__file__).parent.parent.parent / "allure-results"
-ARCHIVE_DIR = ALLURE_RESULTS_DIR / "archive"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "cleanup"))
+from run_dir_cleanup import DEFAULT_KEEP_LATEST, REPO_ROOT, cleanup_run_dirs  # noqa: E402
 
-# タイムスタンプ形式: YYYYMMDD_HHMMSS or YYYYMMDD_HHMMSS_testname
-TIMESTAMP_RE = re.compile(r"^(\d{8}_\d{6})")
-
-# プロファイルごとに残す最新件数の既定値（Open Allure が「結果なし」にならないように）
-DEFAULT_KEEP_LATEST = 3
+ALLURE_RESULTS_DIR = REPO_ROOT / "allure-results"
 
 
 def parse_args() -> argparse.Namespace:
@@ -86,116 +79,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_run_timestamp(dirname: str) -> datetime | None:
-    """ディレクトリ名からタイムスタンプを取得する。"""
-    match = TIMESTAMP_RE.match(dirname)
-    if not match:
-        return None
-    try:
-        return datetime.strptime(match.group(1), "%Y%m%d_%H%M%S")
-    except ValueError:
-        return None
-
-
-def zip_directory(src: Path, dest_zip: Path) -> None:
-    """src ディレクトリを dest_zip に圧縮する。"""
-    dest_zip.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(dest_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-        for file in src.rglob("*"):
-            if file.is_file():
-                zf.write(file, file.relative_to(src.parent))
-
-
-def collect_run_dirs(allure_results: Path) -> list[tuple[Path, str, datetime]]:
-    """
-    allure-results/<profile>/<timestamp_rundir>/ を収集して返す。
-
-    IN:  allure-results/ ディレクトリ
-    OUT: [(rundir_path, profile_name, run_datetime), ...]
-    """
-    entries = []
-    for profile_dir in sorted(allure_results.iterdir()):
-        # archive/ 自体はスキップ
-        if profile_dir.name == "archive":
-            continue
-        if not profile_dir.is_dir():
-            continue
-
-        for run_dir in sorted(profile_dir.iterdir()):
-            if not run_dir.is_dir():
-                continue
-            run_dt = parse_run_timestamp(run_dir.name)
-            if run_dt is None:
-                continue
-            entries.append((run_dir, profile_dir.name, run_dt))
-
-    return entries
-
-
-def select_targets(
-    run_dirs: list[tuple[Path, str, datetime]],
-    threshold: datetime,
-    keep_latest: int,
-) -> list[tuple[Path, str, datetime]]:
-    """
-    削除対象を選ぶ。threshold より古く、かつプロファイル内で新しい順に keep_latest 件目より後ろのもの。
-
-    IN:  collect_run_dirs() の結果
-    OUT: 削除対象 [(rundir_path, profile_name, run_datetime), ...]（古い順）
-    """
-    by_profile: dict[str, list[tuple[Path, str, datetime]]] = {}
-    for entry in run_dirs:
-        by_profile.setdefault(entry[1], []).append(entry)
-
-    targets = []
-    for entries in by_profile.values():
-        newest_first = sorted(entries, key=lambda e: e[2], reverse=True)
-        targets += [e for e in newest_first[max(keep_latest, 0):] if e[2] < threshold]
-    return sorted(targets, key=lambda e: (e[1], e[2]))
-
-
-def cleanup_allure_results(
-    days: int,
-    keep_latest: int = DEFAULT_KEEP_LATEST,
-    *,
-    archive: bool = True,
-    dry_run: bool = False,
-    allure_results: Path = ALLURE_RESULTS_DIR,
-) -> list[str]:
-    """
-    古い実行結果を（必要なら zip にしてから）削除し、結果の行を返す。print はしない。
-
-    IN:  allure-results/<profile>/<timestamp_rundir>/
-    OUT: archive=True のとき allure-results/archive/<profile>/<timestamp_rundir>.zip
-         戻り値: "  deleted: [profile] rundir (N日前)" 形式の行のリスト（対象なしなら空）
-    """
-    if not allure_results.is_dir():
-        return []
-    threshold = datetime.now() - timedelta(days=days)
-    targets = select_targets(collect_run_dirs(allure_results), threshold, keep_latest)
-
-    archive_dir = allure_results / "archive"
-    lines = []
-    for run_dir, profile, run_dt in targets:
-        age_days = (datetime.now() - run_dt).days
-        label = f"[{profile}] {run_dir.name} ({age_days}日前)"
-        if dry_run:
-            action = "archive + delete" if archive else "delete"
-            lines.append(f"  [dry-run] {action}: {label}")
-            continue
-        try:
-            if archive:
-                zip_directory(run_dir, archive_dir / profile / f"{run_dir.name}.zip")
-            shutil.rmtree(run_dir)
-            lines.append(f"  {'archived' if archive else 'deleted'}: {label}")
-        except Exception as exc:
-            lines.append(f"  error: {label} -> {exc}")
-    return lines
-
-
 def main() -> None:
     args = parse_args()
-    lines = cleanup_allure_results(
+    lines = cleanup_run_dirs(
+        ALLURE_RESULTS_DIR,
         args.days,
         args.keep_latest,
         archive=not args.no_archive,

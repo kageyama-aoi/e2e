@@ -151,7 +151,7 @@ python scripts/allure/archive_allure_results.py --dry-run
 python scripts/allure/archive_allure_results.py --keep-latest 5
 ```
 
-- ランチャー（`run/run_gui.py`）は起動時に同じ判定で **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）
+- ランチャー（`run/run_gui.py`）の起動時とテスト後フックは、`scripts/cleanup/run_dir_cleanup.py` で `allure-results/` と `output/` の実行フォルダを **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）。確認は `python scripts/cleanup/run_dir_cleanup.py --dry-run`
 
 - **IN**: `allure-results/<profile>/<timestamp_rundir>/`
 - **OUT**: `allure-results/archive/<profile>/<timestamp_rundir>.zip`
@@ -660,7 +660,8 @@ e2e/
 │   │   └── serve_latest.js
 │   ├── cleanup/ 
 │   │   ├── cleanup_gessya_fees.js
-│   │   └── cleanup_output_logs.py
+│   │   ├── cleanup_output_logs.py
+│   │   └── run_dir_cleanup.py
 │   ├── hooks/ 
 │   │   ├── archive_allure.py
 │   │   ├── check_placement.py
