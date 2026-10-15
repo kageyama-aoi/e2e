@@ -190,10 +190,12 @@ npm run allure:latest
 
 ---
 
-### 3-5. 自動アーカイブ（フック連携）
+### 3-5. 自動クリーンアップ（フック連携・ランチャー起動時）
 
 テストを実行するたびに古い結果が溜まっていくため、
-**Claude Code のフック** と **archive スクリプト** で自動整理しています。
+**Claude Code のフック** と **ランチャー起動時の処理** の2か所で、同じ規則
+（10日以上古い実行結果を zip せず削除・各プロファイル最新3件は残す）で自動整理しています。
+判定は `scripts/allure/archive_allure_results.py` の `cleanup_allure_results()` を共用。
 
 #### フロー
 
@@ -204,10 +206,14 @@ PostToolUse フックが起動 (scripts/hooks/archive_allure.py)
   ↓
 コマンド文字列に "codeceptjs run" が含まれているかチェック
   ↓
-含まれていれば npm run allure:archive を自動実行
+含まれていれば cleanup_allure_results() を直接呼ぶ（npm は経由しない）
   ↓
-30日以上古い allure-results を zip 圧縮して allure-results/archive/ へ移動
+10日以上古い allure-results を削除（各プロファイル最新3件は残す）
 ```
+
+> 以前は `npm run allure:archive` を subprocess で呼んでいたが、Windows では npm の実体が `npm.cmd` のため
+> `FileNotFoundError` で毎回落ちていた。設定側の `2>/dev/null || true` でエラーが捨てられ、
+> 2026-05 の導入以来一度も動いていなかった（#310）。
 
 #### フック本体 (`scripts/hooks/archive_allure.py`)
 
@@ -220,7 +226,7 @@ TEST_PATTERNS = [r'codeceptjs\s+run', r'npx\s+codeceptjs', ...]
 def is_test_command(command):
     return any(re.search(p, command) for p in TEST_PATTERNS)
 
-# → テストコマンドを検知したら npm run allure:archive を呼ぶ
+# → テストコマンドを検知したら cleanup_allure_results(10, 3, archive=False) を呼ぶ
 ```
 
 #### アーカイブ本体 (`scripts/allure/archive_allure_results.py`)
@@ -305,9 +311,8 @@ Open Allure ボタン（GUI）
 
 Claude Code フック（自動）★カスタム
   └── scripts/hooks/archive_allure.py
-        └── npm run allure:archive
-              └── scripts/allure/archive_allure_results.py
-                    └── 古い結果を allure-results/archive/ に zip 圧縮
+        └── scripts/allure/archive_allure_results.py の cleanup_allure_results()
+              └── 10日以上古い結果を削除（各プロファイル最新3件は残す）
 ```
 
 ---

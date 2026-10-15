@@ -277,7 +277,7 @@ Claude Code はスクリプトの **stdin に JSON を流す**。スクリプト
 イベント              matcher    スクリプト                    役割
 ─────────────────────────────────────────────────────────────────
 PostToolUse           Write      check_placement.py          ファイル配置バリデーション
-PostToolUse           Bash       archive_allure.py           テスト後に Allure 自動アーカイブ
+PostToolUse           Bash       archive_allure.py           テスト後に古い Allure 結果を削除
 PostToolUse           Bash       log_bash.py                 Bash コマンドを MD に記録
 Stop                  —          (インライン command)         ハンドオフ未作成の警告
 ```
@@ -305,9 +305,13 @@ Bash ツール実行
   ↓
 command に "codeceptjs run" / "npm test" 系が含まれるか判定
   ↓
-含まれる → npm run allure:archive を自動実行
+含まれる → cleanup_allure_results() を直接呼び、10日以上古い結果を削除（各プロファイル最新3件は残す）
 含まれない → 何もしない
 ```
+
+> フックの command は `2>/dev/null || true` でエラーを捨てているため、**フックが壊れていても気付けない**。
+> スクリプトを変えたら下の「手動テスト」で必ず一度動かすこと（npm を subprocess で呼んで
+> Windows で毎回落ちていたのに 2026-05 の導入から気付かなかった実例あり #310）。
 
 ### log_bash.py の動き
 
