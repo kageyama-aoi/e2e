@@ -79,6 +79,8 @@ npx codeceptjs run ./tests/shimamura/flow/syokai_touroku_test.js --profile shima
 npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 ```
 
+プロファイル名を間違えた（`env/.env.<profile>` が無い）ときや、`--profile` の後ろに名前を書き忘れたときは、ルート `.env` の接続先で走り出さずに `[envLoader] ERROR` と使えるプロファイル一覧を出して止まります（`support/envLoader.js`）。
+
 ### 3. npm コマンドでの実行
 
 **テスト実行**
@@ -251,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-15 14:17:32
+Last updated: 2026-10-15 14:32:31
 
 ```text
 e2e/
