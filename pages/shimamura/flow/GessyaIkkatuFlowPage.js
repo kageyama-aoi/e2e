@@ -208,7 +208,8 @@ async function runMonthlyFeeCreation(I) {
 
 async function verifyMonthlyFees(I, classMemberPageShimamura) {
   // 来月の YYYY/MM（例: 2026/07）
-  const targetYearMonth = formatDate(firstOfMonth(1), 'YYYY/MM');
+  const next = firstOfMonth(1);
+  const targetYearMonth = formatDate(next, 'YYYY/MM');
 
   // setupテストが書き出した受講生 record UUID リストを読み込む
   let session = [];
