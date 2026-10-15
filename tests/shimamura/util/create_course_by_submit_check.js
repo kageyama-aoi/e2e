@@ -22,6 +22,7 @@ const {
   createShimaCourse,
   createShimaCourseBySubmit,
 } = require('../../../pages/shimamura/flow/CourseClassSetupFlowPage');
+const { formatDate } = require('../../../support/dateFormat');
 
 Feature('shimamura コースのフォーム送信登録（動作確認）');
 
@@ -29,9 +30,7 @@ Before(beforeShimamura);
 
 Scenario('コースを UI 版とフォーム送信版で1件ずつ作り、所要時間と保存内容を比べる', async ({ I }) => {
   // コースコードは maxlength=10。月日時分秒で一意にし、UI 版とフォーム送信版は末尾で見分ける。
-  const now = new Date();
-  const stamp = [now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()]
-    .map((n) => String(n).padStart(2, '0')).join('').slice(2); // DDHHMMSS（8桁）
+  const stamp = formatDate(new Date(), 'DDhhmmss'); // 8桁
   const common = { courseCategory: 'スクール', kanrihi: 1200 };
 
   const uiStartedAt = Date.now();

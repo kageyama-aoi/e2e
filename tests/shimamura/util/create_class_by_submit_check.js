@@ -23,15 +23,14 @@ const {
   createClass,
   createClassBySubmit,
 } = require('../../../pages/shimamura/flow/CourseClassSetupFlowPage');
+const { formatDate } = require('../../../support/dateFormat');
 
 Feature('shimamura クラスのフォーム送信登録（動作確認）');
 
 Before(beforeShimamura);
 
 Scenario('クラスを UI 版とフォーム送信版で1件ずつ作り、所要時間と保存内容を比べる', async ({ I }) => {
-  const now = new Date();
-  const stamp = [now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()]
-    .map((n) => String(n).padStart(2, '0')).join('');
+  const stamp = formatDate(new Date(), 'MMDDhhmmss');
 
   // course_class_setup_test.js と同じ店舗・曜日・時間。エリア 00 は登録画面の既定（60）と違うので、
   // 店舗の選択肢が AJAX で作り直される経路を必ず通る。

@@ -32,6 +32,7 @@ const {
   confirmKeirisyoriScreenE,
   keiriViewUrl,
 } = require('../_common/KeiriViewSteps');
+const { formatDate } = require('../../../support/dateFormat');
 
 /** テスト受講生の姓（掃除のときに検索する頭の部分） */
 const TEST_LAST_NAME = '明細入金';
@@ -199,8 +200,7 @@ async function changeTransactionPaymentType({ transactionId, paymentType }) {
 const DEFAULT_CLASS = { className: 'ピアノ水曜日_02', courseCategory: 'スクール' };
 
 function todayYmd() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return formatDate(new Date(), 'YYYY-MM-DD');
 }
 
 /**

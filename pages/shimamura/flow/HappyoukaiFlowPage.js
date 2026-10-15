@@ -34,6 +34,7 @@ const { navigateToKouhosei } = require('../_common/KouhoseiSteps');
 const { setupLinkedCourseAndClass } = require('./CourseClassSetupFlowPage');
 const { ensureAccountTransferSchedules } = require('../../../support/shimamura/accountTransferSchedule');
 const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewSubmit');
+const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 // setupテストと本体テスト間でクラス・受講生の情報を受け渡すファイル
 const SESSION_FILE = path.resolve(__dirname, '../../../output/happyoukai_session.json');
@@ -219,9 +220,7 @@ async function addRosterToClass(I, { prospectListRecordId, className }) {
  * @param {{monthsFromNow: number}} params
  */
 async function ensureHappyoukaiAccountTransferSchedule(I, { monthsFromNow }) {
-  const target = new Date();
-  target.setMonth(target.getMonth() + monthsFromNow);
-  const claimMonth = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}`;
+  const claimMonth = formatDate(firstOfMonth(monthsFromNow), 'YYYY-MM');
   await ensureAccountTransferSchedules(I, {
     claimMonth,
     debitDate:   `${claimMonth}-11`,

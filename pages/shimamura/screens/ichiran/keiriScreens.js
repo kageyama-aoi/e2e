@@ -12,6 +12,7 @@ const { fillTextFieldsByName } = require('../../../../support/shimamura/utils');
 const { TIMEOUTS } = require('../../../../support/shimamura/constants');
 const menus = require('../../_common/sideMenus');
 const { selectIfSet } = require('./_helpers');
+const { formatDate } = require('../../../../support/dateFormat');
 
 // 結果がリンクではなく行だけの一覧（AFS会員番号検索・POSレスポンスエラー一覧）で結果として見るセル
 const RESULT_ROW_CELL = 'td.oddListRowS1, td.evenListRowS1';
@@ -120,8 +121,7 @@ const specialScreens = {
 
   async verifyTransactionTodayPreset() {
     I.say('【本日の入出金】日付範囲が今日で絞られていることを確認');
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const today = formatDate(new Date(), 'YYYY-MM-DD');
     I.seeInField('date_group1_rstart', today);
     I.seeInField('date_group1_rend', today);
   },

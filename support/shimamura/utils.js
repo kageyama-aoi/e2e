@@ -3,6 +3,7 @@
  */
 const { parseEnvBoolean } = require('../utils');
 const { TIMEOUTS, SELECTORS } = require('./constants');
+const { formatDate } = require('../dateFormat');
 
 /**
  * サイドメニューのトグルグループを開閉する
@@ -307,7 +308,7 @@ function resolveDynamicDateIfPast(I, dateStr, fieldLabel, { graceMonths = 0 } = 
   const nowYm = now.getFullYear() * 12 + now.getMonth();
   if (originalYm >= nowYm - graceMonths) return dateStr;
 
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const todayStr = formatDate(now, 'YYYY-MM-DD');
   I.say(`⚠ 【動的日付補正】${fieldLabel}: CSV記載値 "${dateStr}" は過去月のため本日日付に自動補正 → "${todayStr}"`);
   return todayStr;
 }
@@ -383,8 +384,8 @@ async function clickAndWaitForReload(I, locator, { timeout = TIMEOUTS.RESULT } =
  */
 function buildTestName(prefix, row) {
   const now  = new Date();
-  const mmdd = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-  const hhmm = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+  const mmdd = formatDate(now, 'MMDD');
+  const hhmm = formatDate(now, 'hhmm');
   return {
     lastName:    `${prefix}${mmdd}`,
     firstName:   `${row.testNo}${String(row.scenario || '').replace(/_/g, '')}`,

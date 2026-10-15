@@ -40,6 +40,7 @@ const {
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { verifyValidationErrors, clickAndWaitForReload } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
+const { formatDate } = require('../../../support/dateFormat');
 
 // ── セレクタ定数 ─────────────────────────────────────────────
 const S = {
@@ -76,10 +77,6 @@ const SMBC_DATE_OFFSETS = {
   dataRecordDate:    45, // データレコード: 日付（YYYYMMDD）。サンプルではデータ作成日の翌日
 };
 
-function formatYmd(date) {
-  return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
-}
-
 /**
  * サンプルの取込ファイルを、データ作成年月日＝今日・データレコードの日付＝明日 に書き換えて output/ に保存する。
  * @param {string} templatePath - codecept 実行ディレクトリからの相対パス
@@ -91,10 +88,10 @@ function buildDatedImportFile(templatePath) {
   const buf = fs.readFileSync(templatePath);
   for (let pos = 0; pos < buf.length; pos += SMBC_RECORD_BYTES) {
     const kind = String.fromCharCode(buf[pos]); // 先頭1バイト＝データ区分（1:ヘッダー 2:データ 8:トレーラー 9:エンド）
-    if (kind === '1') buf.write(formatYmd(today), pos + SMBC_DATE_OFFSETS.headerCreatedDate, 'ascii');
-    if (kind === '2') buf.write(formatYmd(tomorrow), pos + SMBC_DATE_OFFSETS.dataRecordDate, 'ascii');
+    if (kind === '1') buf.write(formatDate(today, 'YYYYMMDD'), pos + SMBC_DATE_OFFSETS.headerCreatedDate, 'ascii');
+    if (kind === '2') buf.write(formatDate(tomorrow, 'YYYYMMDD'), pos + SMBC_DATE_OFFSETS.dataRecordDate, 'ascii');
   }
-  const outRelPath = path.join('output', 'smbc_import', `smbc_state_import_${formatYmd(today)}.txt`);
+  const outRelPath = path.join('output', 'smbc_import', `smbc_state_import_${formatDate(today, 'YYYYMMDD')}.txt`);
   fs.mkdirSync(path.dirname(outRelPath), { recursive: true });
   fs.writeFileSync(outRelPath, buf);
   return outRelPath;
@@ -129,8 +126,7 @@ async function selectAndImportFile(I, filePath, expectedErrors) {
     I.say('【ファイル選択】ファイルなし（スキップ）');
   }
   const topRowBefore = await grabHistoryTopRow(I);
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const today = formatDate(new Date(), 'YYYY-MM-DD');
 
   // データ作成年月日が取込済み「以前」だと弾かれ、時刻も見ないため、正常な取込は1日1回しかできない（#265）
   if (!expectedErrors?.length && topRowBefore.startsWith(today)) {

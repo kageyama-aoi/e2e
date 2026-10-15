@@ -38,12 +38,13 @@ const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const def = require('../../../data/shimamura/sales_group_transfer_dt');
 const { expandAll, evaluateCase, formatTrace } = require('../../../support/shimamura/salesGroupTransferModel');
 const flow = require('../../../pages/shimamura/flow/SalesGroupTransferFlowPage');
+const { formatDate } = require('../../../support/dateFormat');
 
 const cache = expandAll(def);
 /** 初期状態ごとに作った明細（データを変えないケースで使い回す） */
 const sharedStatements = {};
 
-const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const ymd = (d) => formatDate(d, 'YYYY-MM-DD');
 const addDays = (s, n) => { const d = new Date(`${s}T00:00:00`); d.setDate(d.getDate() + n); return ymd(d); };
 
 /**

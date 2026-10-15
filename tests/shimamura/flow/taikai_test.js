@@ -25,6 +25,7 @@ const { loadCsvWithProfile } = require('../../../support/utils');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const { resolveDynamicDateIfPast } = require('../../../support/shimamura/utils');
 const { fillTaikaiFormAndSubmit } = require('../../../pages/shimamura/_common/TaikaiSteps');
+const { pad2 } = require('../../../support/dateFormat');
 
 Feature('退会処理 (@dev)');
 
@@ -54,7 +55,7 @@ async function runTaikaiFlow(I, classMemberPageShimamura, { idnumber, taikaiYear
   // 退会処理は「先月まで許容・先々月以前はNG」のため graceMonths: 1 で補正
   const resolvedTaikaiDate = resolveDynamicDateIfPast(
     I,
-    `${taikaiYear}-${String(taikaiMonth).padStart(2, '0')}-01`,
+    `${taikaiYear}-${pad2(taikaiMonth)}-01`,
     'taikaiYear/taikaiMonth',
     { graceMonths: 1 }
   );
