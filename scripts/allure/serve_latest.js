@@ -1,5 +1,5 @@
 /**
- * 最新の allure-results サブフォルダを自動検出して allure serve する
+ * 最新の output/allure-results サブフォルダを自動検出して allure serve する
  * Usage:
  *   node scripts/allure/serve_latest.js                  # 全プロファイル中の最新
  *   node scripts/allure/serve_latest.js tframe.culture_test  # プロファイル指定
@@ -9,7 +9,7 @@ const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const root = path.resolve(__dirname, '../../allure-results');
+const root = path.resolve(__dirname, '../../output/allure-results');  // #334 で output/ の下へ
 const profileArg = process.argv[2];
 
 function getLatestDir(baseDir) {
@@ -57,7 +57,7 @@ if (profileArg) {
 }
 
 if (!targetDir) {
-  console.error('allure-results に結果が見つかりません');
+  console.error('output/allure-results に結果が見つかりません');
   process.exit(1);
 }
 

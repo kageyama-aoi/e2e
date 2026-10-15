@@ -10,7 +10,7 @@
 - `data/` はプロダクト別のテストデータ（CSV/JS）。
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
-- `output/`, `allure-results/`, `allure-report/` は生成物。
+- `output/` は生成物（Allure の結果 `output/allure-results/`・レポート `output/allure-report/`・ランチャーのログ `output/logs/` もこの下。#334 で直下から移動）。
 - `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別、`digest/`=claude.ai の定期実行が毎日・毎月書き込む Qiita ダイジェスト。手で編集しない）。
 
 ## ビルド・テスト・開発コマンド
@@ -28,10 +28,10 @@
 ### Allure レポート
 - `run/run_gui.py` → `Open Allure` ボタン（推奨）。選択中プロファイルの最新結果を自動検出してブラウザ表示。
 - `npm run allure:latest` プロファイル指定で最新結果をサーブ（`node scripts/allure/serve_latest.js <profile>`）。
-- `npm run allure:serve` allure-results 全体をサーブ。
-- `npm run allure:report` レポート生成（allure-report/ に出力）。
+- `npm run allure:serve` output/allure-results 全体をサーブ。
+- `npm run allure:report` レポート生成（output/allure-report/ に出力）。
 - `npm run allure:open` 生成済みレポートを開く。
-- `npm run allure:clean` allure-results をクリア。
+- `npm run allure:clean` output/allure-results をクリア。
 - `npm run allure:archive` 古い実行結果を zip アーカイブ・削除。
 
 ### ドキュメント
@@ -194,7 +194,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   `@wip` は `npm test` 系の既定実行と GUI の通常一覧から除外する（実行したいときは `--grep @wip` で明示）。
   コメントに「ひな形」と書くだけでは GUI からは完成品と区別がつかない。
 - CSV の読み込みは共通ユーティリティに統一。
-- Allure 結果の構造: `allure-results/<profile>/<YYYYMMDD_HHMMSS_testname>/`。
+- Allure 結果の構造: `output/allure-results/<profile>/<YYYYMMDD_HHMMSS_testname>/`。
 
 ### tframe テストのフォルダ分類
 `tests/tframe/` 配下は性質別サブフォルダで管理する。新規テスト追加時は以下の基準で配置先を決めること。
@@ -441,7 +441,7 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 - テストを直接実行しない補助スクリプトを置く。
 - サブフォルダはカテゴリで分ける:
   - `allure/`   : Allure 結果の管理・アーカイブ
-  - `cleanup/`  : output/ と logs/ の古いファイル削除・アーカイブ
+  - `cleanup/`  : output/ と output/logs/ の古いファイル削除・アーカイブ
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
   - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録等）

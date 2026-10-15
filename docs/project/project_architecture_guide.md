@@ -20,7 +20,7 @@
 | `scripts/` | 開発補助ツール層 | テストを起動しない支援ツール群 |
 | `docs/` | ドキュメント層 | 設計書・JSDoc生成物・学習資料 |
 | `output/` | 生成物（テスト結果） | スクリーンショット・ログ |
-| `allure-results/` | 生成物（Allureデータ） | Allureレポートの元データ |
+| `output/allure-results/` | 生成物（Allureデータ） | Allureレポートの元データ（#334 で直下から `output/` の下へ） |
 
 ### tests/ の構成
 
@@ -145,7 +145,7 @@ data/
 1. **処理ロジック**: `pages/`, `tests/`
 2. **設定**: `env/`, `codecept.conf.js`
 3. **補助機能**: `scripts/`, `run/`
-4. **成果物**: `output/`, `allure-results/`, `docs/generated/`
+4. **成果物**: `output/`, `output/allure-results/`, `docs/generated/`
 
 `run/` と `scripts/` は役割で分離されています。
 

@@ -1,7 +1,7 @@
 """
 cleanup_output_logs.py
 
-output/<profile>/<timestamp_rundir>/ と logs/<name>_<timestamp>.log を
+output/<profile>/<timestamp_rundir>/ と output/logs/<name>_<timestamp>.log を
 N日以上古いものを zip アーカイブして削除します。
 output/ の実行フォルダの判定は scripts/cleanup/run_dir_cleanup.py の cleanup_run_dirs() に任せ、
 プロファイルごとに最新 K 件（既定3件）は日数に関係なく残す（#321）。
@@ -13,13 +13,13 @@ output/ の実行フォルダの判定は scripts/cleanup/run_dir_cleanup.py の
   │   └── 20260403_143600_login_test/    ← 各実行結果ディレクトリ
   ├── shimamura.testgcp/
   │   └── 20260417_150000_syokai_touroku_test/
-  logs/
-  ├── syokai_20260417_150025.log         ← GUIランナーのログ
-  └── syokai_20260417_163223.log
+  └── logs/                              ← #334 で直下の logs/ から移動（プロファイル扱いしない）
+      ├── syokai_20260417_150025.log     ← GUIランナーのログ
+      └── syokai_20260417_163223.log
 
-IN:  output/<profile>/<timestamp_rundir>/  と  logs/<name>_<timestamp>.log
+IN:  output/<profile>/<timestamp_rundir>/  と  output/logs/<name>_<timestamp>.log
 OUT: output/archive/<profile>/<rundir>.zip（N日より新しい場合はアーカイブ）
-     logs/archive/<filename>.zip
+     output/logs/archive/<filename>.zip
      削除: N日以上古いもの（元ファイル・元ディレクトリ）
 
 使い方:
@@ -38,7 +38,7 @@ OUT: output/archive/<profile>/<rundir>.zip（N日より新しい場合はアー�
   # output/ のみ対象
   python scripts/cleanup/cleanup_output_logs.py --target output
 
-  # logs/ のみ対象
+  # output/logs/ のみ対象
   python scripts/cleanup/cleanup_output_logs.py --target logs
 
   # output/ でプロファイルごとに残す最新件数を変える（0 なら日数だけで判定）
@@ -53,10 +53,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from run_dir_cleanup import DEFAULT_KEEP_LATEST, REPO_ROOT, cleanup_run_dirs  # noqa: E402
-
-OUTPUT_DIR   = REPO_ROOT / "output"
-LOGS_DIR     = REPO_ROOT / "logs"
+from run_dir_cleanup import DEFAULT_KEEP_LATEST, LOGS_DIR, OUTPUT_DIR, REPO_ROOT, cleanup_run_dirs  # noqa: E402
 
 # タイムスタンプ形式
 # logs ファイル: syokai_20260417_150025.log
@@ -65,7 +62,7 @@ TIMESTAMP_RE_LOG = re.compile(r"_(\d{8}_\d{6})\.log$")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="output/ と logs/ の古い実行結果をアーカイブ・削除します。"
+        description="output/ と output/logs/ の古い実行結果をアーカイブ・削除します。"
     )
     parser.add_argument(
         "--days", type=int, default=14,
@@ -108,7 +105,7 @@ def zip_file(src: Path, dest_zip: Path) -> None:
 
 def collect_log_targets(threshold: datetime) -> list[tuple[Path, datetime]]:
     """
-    IN:  logs/<name>_<YYYYMMDD_HHMMSS>.log をスキャン
+    IN:  output/logs/<name>_<YYYYMMDD_HHMMSS>.log をスキャン
     OUT: [(log_path, log_datetime), ...]  threshold より古いもの
     """
     targets = []
@@ -185,13 +182,13 @@ def main() -> None:
             total_archived += sum(1 for line in lines if line.lstrip().startswith("archived:"))
             total_deleted += sum(1 for line in lines if line.lstrip().startswith(("archived:", "deleted:")))
 
-    # IN: logs/<name>_<timestamp>.log をスキャン
+    # IN: output/logs/<name>_<timestamp>.log をスキャン
     if args.target in ("logs", "both"):
         log_targets = collect_log_targets(threshold)
         if not log_targets:
-            print(f"logs/: {args.days}日以上古いログはありません。")
+            print(f"output/logs/: {args.days}日以上古いログはありません。")
         else:
-            print(f"logs/: 対象 {len(log_targets)} 件（{args.days}日以上古いもの）")
+            print(f"output/logs/: 対象 {len(log_targets)} 件（{args.days}日以上古いもの）")
             a, d = process_log_targets(log_targets, args.dry_run, args.no_archive)
             total_archived += a
             total_deleted += d

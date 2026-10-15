@@ -42,7 +42,7 @@ _LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
 _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
 _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
-RUN_DIR_CLEANUP_DAYS = 10   # allure-results/ と output/ の実行フォルダは直前の実行を見る用途なので短めに消す
+RUN_DIR_CLEANUP_DAYS = 10   # output/ と output/allure-results/ の実行フォルダは直前の実行を見る用途なので短めに消す
 RUN_DIR_KEEP_LATEST  = 3    # プロファイルごとに残す最新件数（Open Allure や直近の失敗スクショが見られなくならないように）
 _RUN_DIR_CLEANUP_SCRIPT = os.path.join('scripts', 'cleanup', 'run_dir_cleanup.py')
 LOG_FONT = ('Courier New', 9)
@@ -416,7 +416,7 @@ def _cleanup_old_files(target_dir, pattern, date_fmt, days, *, archive=False):
 
 
 def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
-    """logs/ 配下の <name>_<YYYYMMDD_HHMMSS>.log を days 日以上古ければアーカイブして削除する。"""
+    """output/logs/ 配下の <name>_<YYYYMMDD_HHMMSS>.log を days 日以上古ければアーカイブして削除する。"""
     return _cleanup_old_files(
         logs_dir,
         pattern=re.compile(r'_(\d{8}_\d{6})\.log$'),
@@ -427,9 +427,9 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
 
 
 def _cleanup_old_run_dirs(days=RUN_DIR_CLEANUP_DAYS, keep_latest=RUN_DIR_KEEP_LATEST):
-    """allure-results/ と output/ の <profile>/<YYYYMMDD_HHMMSS_*>/ を days 日以上古ければ削除する（zip しない）。
+    """output/allure-results/ と output/ の <profile>/<YYYYMMDD_HHMMSS_*>/ を days 日以上古ければ削除する（zip しない）。
     判定は scripts/cleanup/run_dir_cleanup.py と共通（プロファイルごとの最新 keep_latest 件は残す #321）。
-    戻り値: {'allure-results': [行, ...], 'output': [行, ...]}"""
+    戻り値: {'output/allure-results': [行, ...], 'output': [行, ...]}"""
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         'run_dir_cleanup', os.path.join(REPO_ROOT, _RUN_DIR_CLEANUP_SCRIPT)
@@ -1011,7 +1011,7 @@ class RunnerApp(tk.Tk):
         self.repo_root = repo_root
         self.env_dir = os.path.join(repo_root, 'env')
         self.tests_dir = os.path.join(repo_root, 'tests')
-        self.logs_dir = os.path.join(repo_root, 'logs')
+        self.logs_dir = os.path.join(repo_root, 'output', 'logs')  # #334 で直下の logs/ から移動
 
         self.log_queue = queue.Queue()
         self.proc = None
@@ -1548,7 +1548,7 @@ class RunnerApp(tk.Tk):
 
     def _auto_cleanup_on_start(self):
         """起動時に LOG_CLEANUP_DAYS 日以上古いログを自動アーカイブ・削除し、
-        RUN_DIR_CLEANUP_DAYS 日以上古い実行フォルダ（allure-results/ と output/）を削除する。"""
+        RUN_DIR_CLEANUP_DAYS 日以上古い実行フォルダ（output/allure-results/ と output/）を削除する。"""
         def run():
             results = cleanup_old_logs(self.logs_dir)
             results += _cleanup_old_learning_logs(
@@ -1562,7 +1562,7 @@ class RunnerApp(tk.Tk):
             try:
                 run_dir_results = _cleanup_old_run_dirs()
             except Exception as exc:
-                run_dir_results = {'allure-results / output': [f'  error: {exc}']}
+                run_dir_results = {'output/allure-results / output': [f'  error: {exc}']}
             for dirname, lines in run_dir_results.items():
                 if not lines:
                     continue
@@ -1703,7 +1703,7 @@ class RunnerApp(tk.Tk):
         if not profile:
             messagebox.showerror('Profile required', 'プロファイルを選択してください。')
             return
-        allure_dir = os.path.join(self.repo_root, 'allure-results', profile)
+        allure_dir = os.path.join(self.repo_root, 'output', 'allure-results', profile)
         if not os.path.isdir(allure_dir):
             messagebox.showwarning('No Results', f'Allure 結果が見つかりません:\n{allure_dir}\n\n先にテストを実行してください。')
             return

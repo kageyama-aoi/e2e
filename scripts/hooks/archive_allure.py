@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-PostToolUse(Bash) Hook: 実行フォルダの自動クリーンアップ（allure-results/ と output/）
+PostToolUse(Bash) Hook: 実行フォルダの自動クリーンアップ（output/allure-results/ と output/）
 codeceptjs / npm test 系コマンドを検知し、成否問わず古い実行フォルダを削除する。
 （ファイル名は .claude/settings.local.json から参照されているため archive_allure.py のまま）
 

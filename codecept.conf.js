@@ -58,9 +58,9 @@ AllureResultsDir=${runtimeAllureResultsDir}
     // environment.properties ファイルとして書き出し
     try {
       fs.writeFileSync(path.join(allureResultsDir, 'environment.properties'), envData);
-      console.log('Creates allure-results/environment.properties');
+      console.log(`Creates ${runtimeAllureResultsDir}/environment.properties`);
     } catch (err) {
-      console.error('Failed to create allure-results/environment.properties', err);
+      console.error(`Failed to create ${runtimeAllureResultsDir}/environment.properties`, err);
     }
   },
 

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 実行ごとの出力フォルダ（output/ と allure-results/）のパスを決める。
+ * 実行ごとの出力フォルダ（output/ と output/allure-results/）のパスを決める（#334 で allure-results を output/ の下へ）。
  * codecept.conf.js から呼ばれ、フォルダ名は `<プロファイル>/<YYYYMMDD_HHMMSS>_<テストファイル名>` になる。
  * 計算（純粋関数）とフォルダ作成（副作用）を分けてあり、計算側は tests/unit/ で単体テストしている（#230）。
  */
@@ -70,7 +70,7 @@ function resolveRunOutputPaths({ env = process.env, argv = process.argv, now = n
     runProfile,
     runDirName,
     runtimeOutputDir: `./output/${runProfile}/${runDirName}`,
-    runtimeAllureResultsDir: `./allure-results/${runProfile}/${runDirName}`,
+    runtimeAllureResultsDir: `./output/allure-results/${runProfile}/${runDirName}`,
   };
 }
 

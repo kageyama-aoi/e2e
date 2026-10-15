@@ -1,17 +1,18 @@
 """
 run_dir_cleanup.py
 
-実行ごとの出力フォルダ（allure-results/ と output/）の古いものを削除する、掃除の判定の本体。
+実行ごとの出力フォルダ（output/allure-results/ と output/）の古いものを削除する、掃除の判定の本体。
 ランチャー（run/run_gui.py の起動時）と Claude Code のフック（scripts/hooks/archive_allure.py）が
 cleanup_all() を呼び、手動用の archive_allure_results.py / cleanup_output_logs.py も
 実行フォルダの判定はここの cleanup_run_dirs() を使う（#321）。
 
 ディレクトリ構造（対象）:
-  allure-results/ と output/
+  output/allure-results/ と output/
   ├── shimamura.testgcp/
   │   ├── 20261015_133933_student_saikenkai_test/   ← 実行フォルダ（日時で始まる名前だけが対象）
   │   └── ...
   ├── archive/                                     ← 対象外
+  ├── allure-results/ allure-report/ logs/         ← output/ の下にあるがプロファイルではないので対象外（#334）
   └── downloads/ や *.json                         ← 中が日時フォルダでなければ対象外
 
 規則:
@@ -23,7 +24,7 @@ OUT: archive=True のとき <base_dir>/archive/<profile>/<rundir>.zip
      戻り値: "  deleted: [profile] rundir (N日前)" 形式の行のリスト
 
 使い方:
-  # allure-results/ と output/ を既定の規則（10日・最新3件）で削除
+  # output/allure-results/ と output/ を既定の規則（10日・最新3件）で削除
   python scripts/cleanup/run_dir_cleanup.py
 
   # 確認だけ（何も消さない）
@@ -42,14 +43,25 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
+# 生成物の置き場所（#334 で allure-results・allure-report・logs を output/ の下にまとめた）。
+# 掃除系のスクリプト（cleanup_output_logs.py・archive_allure_results.py）もここから import する
+OUTPUT_DIR = REPO_ROOT / "output"
+ALLURE_RESULTS_DIR = OUTPUT_DIR / "allure-results"
+ALLURE_REPORT_DIR = OUTPUT_DIR / "allure-report"
+LOGS_DIR = OUTPUT_DIR / "logs"
+
+# <base_dir> 直下にあってもプロファイルではないフォルダ。実行フォルダを探すときに中へ入らない。
+# output/ の下に allure-results などを置いたので、プロファイルと取り違えないよう明示する
+NON_PROFILE_DIRS = {"archive", ALLURE_RESULTS_DIR.name, ALLURE_REPORT_DIR.name, LOGS_DIR.name}
+
 # 自動削除（ランチャー起動時・テスト後フック）の既定値
 DEFAULT_DAYS = 10
 DEFAULT_KEEP_LATEST = 3
 
 # 掃除する出力フォルダ（名前 → REPO_ROOT からの相対パス）
 TARGET_DIRS = {
-    "allure": "allure-results",
-    "output": "output",
+    "allure": ALLURE_RESULTS_DIR.relative_to(REPO_ROOT).as_posix(),
+    "output": OUTPUT_DIR.relative_to(REPO_ROOT).as_posix(),
 }
 
 # 実行フォルダ名: YYYYMMDD_HHMMSS または YYYYMMDD_HHMMSS_testname
@@ -78,7 +90,7 @@ def zip_directory(src: Path, dest_zip: Path) -> None:
 
 def collect_run_dirs(base_dir: Path) -> list[tuple[Path, str, datetime]]:
     """
-    <base_dir>/<profile>/<timestamp_rundir>/ を集める（archive/ と日時で始まらないものは除く）。
+    <base_dir>/<profile>/<timestamp_rundir>/ を集める（NON_PROFILE_DIRS と日時で始まらないものは除く）。
 
     OUT: [(rundir_path, profile_name, run_datetime), ...]
     """
@@ -86,7 +98,7 @@ def collect_run_dirs(base_dir: Path) -> list[tuple[Path, str, datetime]]:
     if not base_dir.is_dir():
         return entries
     for profile_dir in sorted(base_dir.iterdir()):
-        if profile_dir.name == "archive" or not profile_dir.is_dir():
+        if profile_dir.name in NON_PROFILE_DIRS or not profile_dir.is_dir():
             continue
         for run_dir in sorted(profile_dir.iterdir()):
             if not run_dir.is_dir():
@@ -161,7 +173,7 @@ def cleanup_all(
     """
     TARGET_DIRS の各フォルダを zip せずに掃除する（ランチャー・フック用）。
 
-    OUT: {"allure-results": [行, ...], "output": [行, ...]}（対象なしのフォルダも空リストで入る）
+    OUT: {"output/allure-results": [行, ...], "output": [行, ...]}（対象なしのフォルダも空リストで入る）
     """
     return {
         TARGET_DIRS[name]: cleanup_run_dirs(
@@ -173,7 +185,7 @@ def cleanup_all(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="allure-results/ と output/ の古い実行フォルダを削除します（zip しない）。"
+        description="output/allure-results/ と output/ の古い実行フォルダを削除します（zip しない）。"
     )
     parser.add_argument("--target", choices=[*TARGET_DIRS, "both"], default="both",
                         help="対象（既定: both）")

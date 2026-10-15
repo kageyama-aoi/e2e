@@ -56,7 +56,7 @@ npm install
 | デバッグモード | `--steps --debug` + `KEEP_BROWSER_OPEN=1` でブラウザを開いたまま詳細ログ出力 |
 | Open Allure ボタン | 選択プロファイルの最新結果をブラウザで表示 |
 | Open JSDoc ボタン | JSDoc を作り直してブラウザで開く（ファイル単位のナビ＋検索） |
-| ログ自動保存 | 実行完了時に `logs/` へ自動保存・色付き表示 |
+| ログ自動保存 | 実行完了時に `output/logs/` へ自動保存・色付き表示 |
 
 特殊な連続実行のみ個別バッチを使います：
 
@@ -99,8 +99,8 @@ npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 | :--- | :--- |
 | GUI の `Open Allure` ボタン | 選択プロファイルの最新結果をブラウザ表示（推奨） |
 | `npm run allure:latest <profile>` | プロファイル指定で最新結果をサーブ |
-| `npm run allure:serve` | allure-results 全体をサーブ |
-| `npm run allure:report` | 静的レポートを生成 (`allure-report/`) |
+| `npm run allure:serve` | output/allure-results 全体をサーブ |
+| `npm run allure:report` | 静的レポートを生成 (`output/allure-report/`) |
 | `npm run allure:open` | 生成済みレポートを開く |
 | `npm run allure:archive` | 古い結果をzipアーカイブ・削除（デフォルト30日以上） |
 | `npm run allure:clean` | 全テスト結果ディレクトリを削除 |
@@ -136,7 +136,7 @@ npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 ## 補助ツール
 
 ### Allure 結果アーカイブ
-`scripts/allure/archive_allure_results.py` は、`allure-results/<profile>/<実行ディレクトリ>/` 単位で
+`scripts/allure/archive_allure_results.py` は、`output/allure-results/<profile>/<実行ディレクトリ>/` 単位で
 古いテスト結果をzip圧縮してアーカイブし、N日以上古いものを削除します。
 
 ```bash
@@ -153,10 +153,10 @@ python scripts/allure/archive_allure_results.py --dry-run
 python scripts/allure/archive_allure_results.py --keep-latest 5
 ```
 
-- ランチャー（`run/run_gui.py`）の起動時とテスト後フックは、`scripts/cleanup/run_dir_cleanup.py` で `allure-results/` と `output/` の実行フォルダを **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）。確認は `python scripts/cleanup/run_dir_cleanup.py --dry-run`
+- ランチャー（`run/run_gui.py`）の起動時とテスト後フックは、`scripts/cleanup/run_dir_cleanup.py` で `output/allure-results/` と `output/` の実行フォルダを **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）。確認は `python scripts/cleanup/run_dir_cleanup.py --dry-run`
 
-- **IN**: `allure-results/<profile>/<timestamp_rundir>/`
-- **OUT**: `allure-results/archive/<profile>/<timestamp_rundir>.zip`
+- **IN**: `output/allure-results/<profile>/<timestamp_rundir>/`
+- **OUT**: `output/allure-results/archive/<profile>/<timestamp_rundir>.zip`
 
 ### サブメニュー抽出
 `scripts/html/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
@@ -253,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-15 17:38:09
+Last updated: 2026-10-15 17:46:20
 
 ```text
 e2e/
@@ -1001,7 +1001,7 @@ e2e/
 - **プロファイル設定**: `shimamura` や `tframe` などの環境ごとの設定（Base URL や対象テストファイル）を定義。
 - **プラグイン・ヘルパー**: Playwright ドライバーの設定や、Allure レポートの設定、`dotenv` による環境変数読み込み。
 - **共通設定**: スクリーンショットの保存先（`output/`）や、タイムアウト設定など。
-- **Bootstrap**: 実行時に `allure-results/environment.properties` を自動生成し、レポートに環境情報を表示します。
+- **Bootstrap**: 実行時に `output/allure-results/environment.properties` を自動生成し、レポートに環境情報を表示します。
 
 ### package.json
 **プロジェクト定義ファイル**
@@ -1021,7 +1021,7 @@ VS Code 等のエディタで、JavaScript のコード補完やインテリセ�
 テスト実行ごとに以下の形式で自動保存されます：
 
 ```
-allure-results/
+output/allure-results/
 ├── tframe.juku_test/
 │   ├── 20260417_103045_login_test/   ← 実行1回分
 │   └── 20260417_140000_course_test/
