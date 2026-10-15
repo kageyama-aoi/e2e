@@ -455,7 +455,7 @@ Data(csvData).Scenario('〇〇処理 @dev', async ({ I, current, targetPageShima
 > - 同姓同名は二重登録の確認画面で止まるので、姓名は実行ごとに一意にする（名＋時刻など）
 > - 実行のたびにレコードが増えるなら、確認後に `submitDeleteForm()`（`support/shimamura/editViewSubmit.js`）でその1件を消す
 > - 金融機関・支店コードは入力で候補ポップアップが出て、候補をクリックしたときだけ名称が埋まる。
->   `fillField` では出ないので `I.type` で入れ、`#overDiv div[onclick^="put_into_targets('コード'"]` をクリックする
+>   `support/shimamura/utils.js` の `pickBankCandidate(I, codeSelector, code, nameSelector)` を使う（受講生・講師どちらの画面も同じ仕組み #306）
 
 ---
 

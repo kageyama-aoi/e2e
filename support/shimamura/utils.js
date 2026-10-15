@@ -376,6 +376,27 @@ async function clickAndWaitForReload(I, locator, { timeout = TIMEOUTS.RESULT } =
 }
 
 /**
+ * 金融機関・支店コードを入れ、出てくる候補ポップアップからコードが一致する先頭の候補を選ぶ。
+ * 名称欄は読み取り専用で、候補をクリックしたときだけ埋まる（put_into_targets）。名称が空のまま
+ * 保存すると「銀行情報を入力してください」（問合せ登録 #232）・「口座情報に不備があります。」（講師の経理タブ #306）
+ * で保存されない。候補はキー入力（keyup）で出るので fillField ではなく type で入れる。
+ * 同じ支店コードの候補が複数出ることがある（001 等）。支店の候補は金融機関コードで絞られるので、金融機関 → 支店の順で呼ぶ。
+ * @param {CodeceptJS.I} I
+ * @param {string} codeSelector - コードの入力欄（例: '#bank_code'）
+ * @param {string} code - 入れるコード（例: '0001'）
+ * @param {string} nameSelector - 名称の欄（例: '#bank_name'）。埋まるまで待つ
+ */
+function pickBankCandidate(I, codeSelector, code, nameSelector) {
+  I.clearField(codeSelector);
+  I.click(codeSelector);
+  I.type(code);
+  const candidate = `#overDiv div[onclick^="put_into_targets('${code}'"]`;
+  I.waitForElement(candidate, TIMEOUTS.SCREEN);
+  I.click(candidate);
+  I.waitForFunction((sel) => document.querySelector(sel).value.trim() !== '', [nameSelector], TIMEOUTS.SCREEN);
+}
+
+/**
  * 画面の確認ダイアログ（`window.confirm`）を、これ以降すべて OK で返すようにする（#302）。
  * `I.acceptPopup()` は出ているダイアログにしか効かないため、押す前に画面側の関数を差し替える。
  * 画面を読み込み直すと元に戻るので、ダイアログを出すボタンを押す直前に呼ぶ。
@@ -439,6 +460,7 @@ module.exports = {
   waitForSaveResult,
   clickAndWaitForReload,
   acceptConfirmDialogs,
+  pickBankCandidate,
   buildTestName,
   sidebarLinkXPath,
 };

@@ -2,24 +2,8 @@
 
 const { I } = inject();
 const { URLS, TIMEOUTS, BASE_URL, SELECTORS } = require('../../../support/shimamura/constants');
-const { extractRecordId, fillTextFieldsByName } = require('../../../support/shimamura/utils');
+const { extractRecordId, fillTextFieldsByName, pickBankCandidate } = require('../../../support/shimamura/utils');
 const { submitEditViewForm } = require('../../../support/shimamura/editViewSubmit');
-
-/**
- * 金融機関・支店コードを入れ、出てくる候補ポップアップからコードが一致する先頭の候補を選ぶ。
- * 名称欄は読み取り専用で、候補をクリックしたときだけ埋まる（put_into_targets）。名称が空のまま
- * 保存すると「銀行情報を入力してください」で保存されない（#232）。候補はキー入力（keyup）で
- * 出るので fillField ではなく type で入れる。同じ支店コードの候補が複数出ることがある（001 等）。
- */
-function pickBankCandidate(codeSelector, code, nameSelector) {
-  I.clearField(codeSelector);
-  I.click(codeSelector);
-  I.type(code);
-  const candidate = `#overDiv div[onclick^="put_into_targets('${code}'"]`;
-  I.waitForElement(candidate, TIMEOUTS.SCREEN);
-  I.click(candidate);
-  I.waitForFunction((sel) => document.querySelector(sel).value.trim() !== '', [nameSelector], TIMEOUTS.SCREEN);
-}
 
 module.exports = {
 
@@ -72,8 +56,8 @@ module.exports = {
     if (data.bank_payment_type) I.selectOption(L.bankPaymentType, data.bank_payment_type);
     if (data.shima_storage_id)  I.selectOption(L.shimaStorageId,  data.shima_storage_id);
     // 支店の候補は金融機関コードで絞られるので必ずこの順
-    if (data.bank_code)        pickBankCandidate(L.bankCode,       data.bank_code,        L.bankName);
-    if (data.bank_branch_code) pickBankCandidate(L.bankBranchCode, data.bank_branch_code, L.bankBranchName);
+    if (data.bank_code)        pickBankCandidate(I, L.bankCode,       data.bank_code,        L.bankName);
+    if (data.bank_branch_code) pickBankCandidate(I, L.bankBranchCode, data.bank_branch_code, L.bankBranchName);
   },
 
   /**

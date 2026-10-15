@@ -336,6 +336,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `clickCheckboxByLabelOrName` / `verifyCheckboxCheckedByLabelOrName` | 同上 | 特殊 DOM のチェックボックス操作 |
 | `extractRecordId(url)` | 同上 | URL / href から `record=` の ID を取り出す（保存後の詳細画面 URL や一覧リンクから） |
 | `waitForSaveResult(I, {successSelector, successMode})` | 同上 | 保存後「エラー表示 or 成功状態」まで動的に待つ。`appears`（既定: `edit_button` 出現）/ `disappears`（`save_button` 消失）/ `hasText`（完了メッセージ） |
+| `pickBankCandidate(I, codeSelector, code, nameSelector)` | 同上 | 金融機関・支店コードを入れ、候補ポップアップをクリックして名称を埋める（名称欄は読み取り専用。候補を選ばないと保存できない #306） |
 | `acceptConfirmDialogs(I)` | 同上 | 画面の確認ダイアログ（`window.confirm`）をこれ以降 OK で返す。`I.acceptPopup()` は出ているダイアログにしか効かないので、押す前に呼ぶ（画面を読み込み直すと元に戻る #302） |
 | `clickAndWaitForReload(I, locator, {timeout})` | 同上 | クリックして画面が読み込み直されるまで待つ。押す前から画面にある要素（body・ファイル選択欄等）を待つと再描画前に即成立し、押す前の画面で判定してしまう（#243） |
 | `buildTestName(prefix, row)` | 同上 | セットアップ系で受講生名を「prefix+MMDD / testNo+scenario」に組み立てる |

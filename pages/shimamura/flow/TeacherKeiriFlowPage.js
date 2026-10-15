@@ -2,7 +2,7 @@
 
 const { logScreenUrl } = require('../../../support/utils');
 const {
-  assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult,
+  assertNoShimamuraError, fillTextFieldsByName, extractRecordId, waitForSaveResult, pickBankCandidate,
 } = require('../../../support/shimamura/utils');
 const { TIMEOUTS, SELECTORS, pageUrl } = require('../../../support/shimamura/constants');
 
@@ -80,29 +80,10 @@ async function setAccountingTab(I, recordId, input) {
   if (input.tax_class !== undefined && input.tax_class !== '')
     I.selectOption('select[name="tax_class"]', input.tax_class);
 
-  // 金融機関コード: value設定 + keyup発火でAJAX補完（bank_name を自動入力）
-  if (input.bank_code) {
-    await I.executeScript((code) => {
-      const el = document.querySelector('#bank_code');
-      if (el) {
-        el.value = code;
-        el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
-      }
-    }, input.bank_code);
-    I.wait(TIMEOUTS.AJAX_DEBOUNCE);
-  }
-
-  // 支店コード: 同様にkeyup発火でAJAX補完（bank_branch_name を自動入力）
-  if (input.bank_branch_code) {
-    await I.executeScript((code) => {
-      const el = document.querySelector('#bank_branch_code');
-      if (el) {
-        el.value = code;
-        el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
-      }
-    }, input.bank_branch_code);
-    I.wait(TIMEOUTS.AJAX_DEBOUNCE);
-  }
+  // 金融機関・支店コード: 入力で出る候補ポップアップをクリックしたときだけ名称が埋まる。
+  // keyup を発火させて待つだけでは名称が空のままで「口座情報に不備があります。」になる（#306）
+  if (input.bank_code)        pickBankCandidate(I, '#bank_code',        input.bank_code,        '#bank_name');
+  if (input.bank_branch_code) pickBankCandidate(I, '#bank_branch_code', input.bank_branch_code, '#bank_branch_name');
 
   // 口座番号・口座名義人: 既存値が残っている場合を考慮して clearField してから入力
   if (input.bank_account_no) {
