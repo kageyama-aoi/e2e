@@ -232,7 +232,14 @@ def is_test_command(command):
 python scripts/allure/archive_allure_results.py           # 30日以上古い
 python scripts/allure/archive_allure_results.py --days 7  # 7日以上古い
 python scripts/allure/archive_allure_results.py --dry-run # 確認だけ
+python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロファイル最新5件は残す（既定3）
 ```
+
+#### ランチャー起動時の自動削除
+
+`run/run_gui.py` は起動時に、同じ判定（`cleanup_allure_results()`）で **10日以上古い実行結果を zip せずに削除**する。
+各プロファイルの最新3件は日数に関係なく残すので、Open Allure で開くものが無くなることはない。
+日数・件数は `run_gui.py` の `ALLURE_CLEANUP_DAYS` / `ALLURE_KEEP_LATEST` で変える。
 
 ---
 
@@ -244,7 +251,7 @@ python scripts/allure/archive_allure_results.py --dry-run # 確認だけ
 | `npm run allure:serve` | `allure-results/` を全部まとめてサーブ（生データが混在する） |
 | `npm run allure:report` | `allure-report/` に静的HTMLを生成（ファイルとして保存） |
 | `npm run allure:open` | 生成済みの `allure-report/` をブラウザで開く |
-| `npm run allure:archive` | 30日以上古い結果を zip アーカイブして削除 |
+| `npm run allure:archive` | 30日以上古い結果を zip アーカイブして削除（各プロファイル最新3件は残す） |
 | `npm run allure:clean` | 実行結果を全消去（クリーンアップ） |
 
 ---

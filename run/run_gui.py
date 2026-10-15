@@ -41,6 +41,9 @@ _LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
 _DATE_COL_KEYWORDS = {'date', 'datetime', 'day', '日付', 'keijoubi', 'tsuki', 'tuki', 'ymd'}
 _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
+ALLURE_CLEANUP_DAYS = 10    # allure-results は直前の実行を見る用途なので短めに消す
+ALLURE_KEEP_LATEST  = 3     # プロファイルごとに残す最新件数（Open Allure が「結果なし」にならないように）
+_ALLURE_CLEANUP_SCRIPT = os.path.join('scripts', 'allure', 'archive_allure_results.py')
 LOG_FONT = ('Courier New', 9)
 MAX_FLUSH_LINES = 300  # _drain_log_queue が1回のafterサイクルで処理する上限行数
 
@@ -420,6 +423,18 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
         days=days,
         archive=True,
     )
+
+
+def _cleanup_old_allure_results(days=ALLURE_CLEANUP_DAYS, keep_latest=ALLURE_KEEP_LATEST):
+    """allure-results/<profile>/<YYYYMMDD_HHMMSS_*>/ を days 日以上古ければ削除する（zip しない）。
+    判定は scripts/allure/archive_allure_results.py と共通（プロファイルごとの最新 keep_latest 件は残す）。"""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'archive_allure_results', os.path.join(REPO_ROOT, _ALLURE_CLEANUP_SCRIPT)
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.cleanup_allure_results(days, keep_latest, archive=False)
 
 
 def _cleanup_old_learning_logs(learning_dir, days=LOG_CLEANUP_DAYS):
@@ -1526,7 +1541,8 @@ class RunnerApp(tk.Tk):
         self._drain_after_id = self.after(100, self._drain_log_queue)
 
     def _auto_cleanup_on_start(self):
-        """起動時に LOG_CLEANUP_DAYS 日以上古いログを自動アーカイブ・削除する。"""
+        """起動時に LOG_CLEANUP_DAYS 日以上古いログを自動アーカイブ・削除し、
+        ALLURE_CLEANUP_DAYS 日以上古い Allure 結果を削除する。"""
         def run():
             results = cleanup_old_logs(self.logs_dir)
             results += _cleanup_old_learning_logs(
@@ -1536,6 +1552,19 @@ class RunnerApp(tk.Tk):
                 self.log_queue.put(f'=== 自動クリーンアップ（{LOG_CLEANUP_DAYS}日以上古いログ）===\n')
                 for r in results:
                     self.log_queue.put(r + '\n')
+                self.log_queue.put('==========================================\n\n')
+            try:
+                allure_results = _cleanup_old_allure_results()
+            except Exception as exc:
+                allure_results = [f'  error: {exc}']
+            if allure_results:
+                self.log_queue.put(
+                    f'=== 自動クリーンアップ（Allure結果: {ALLURE_CLEANUP_DAYS}日以上古いもの・'
+                    f'各プロファイル最新{ALLURE_KEEP_LATEST}件は残す）===\n'
+                )
+                for r in allure_results:
+                    self.log_queue.put(r + '\n')
+                self.log_queue.put(f'  計 {len(allure_results)} 件\n')
                 self.log_queue.put('==========================================\n\n')
         threading.Thread(target=run, daemon=True).start()
 
