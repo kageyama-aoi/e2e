@@ -35,7 +35,7 @@
 - `npm run allure:archive` 古い実行結果を zip アーカイブ・削除。
 
 ### ドキュメント
-- `npm run docs:jsdoc` JSDoc 生成（tests/ pages/ support/ 全対象）。
+- `npm run docs:jsdoc` JSDoc 生成（tests/ pages/ support/ 全対象）。`docs/generated/html/index.html` をブラウザで開き、左ナビ（ファイル単位）か検索ボックスでたどる。トップページの原稿は `docs/project/jsdoc_home.md`。生成前に出力先を消し、`@module` はファイルパスから自動付与（`scripts/docs/jsdoc_auto_module.js`）。
 - `npm run docs:update-readme-map` README のディレクトリツリーを自動更新。
 - `npm run docs:tree:file` ツリーを docs/tree.md に出力。
 - `npm run docs:catalog` テストカタログ（`docs/project/test_catalog.md`）を再生成。`--check` でドリフト検出。

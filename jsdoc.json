@@ -1,11 +1,34 @@
 {
   "source": {
-    "include": ["tests", "pages", "support"],
+    "include": [
+      "tests",
+      "pages",
+      "support"
+    ],
     "includePattern": ".+\\.js$"
   },
+  "plugins": [
+    "scripts/docs/jsdoc_auto_module.js"
+  ],
   "opts": {
     "destination": "docs/generated/html",
     "recurse": true,
-    "template": "node_modules/docdash"
+    "template": "node_modules/docdash",
+    "readme": "docs/project/jsdoc_home.md"
+  },
+  "docdash": {
+    "search": true,
+    "collapse": true,
+    "sectionOrder": [
+      "Modules",
+      "Classes",
+      "Namespaces",
+      "Mixins",
+      "Interfaces",
+      "Events",
+      "Externals",
+      "Tutorials",
+      "Global"
+    ]
   }
 }
