@@ -3,6 +3,9 @@ cleanup_output_logs.py
 
 output/<profile>/<timestamp_rundir>/ と logs/<name>_<timestamp>.log を
 N日以上古いものを zip アーカイブして削除します。
+output/ の実行フォルダの判定は scripts/cleanup/run_dir_cleanup.py の cleanup_run_dirs() に任せ、
+プロファイルごとに最新 K 件（既定3件）は日数に関係なく残す（#321）。
+ランチャー起動時・テスト後フックは run_dir_cleanup.cleanup_all() で 10日超を zip せず削除している。
 
 ディレクトリ構造（対象）:
   output/
@@ -37,23 +40,25 @@ OUT: output/archive/<profile>/<rundir>.zip（N日より新しい場合はアー�
 
   # logs/ のみ対象
   python scripts/cleanup/cleanup_output_logs.py --target logs
+
+  # output/ でプロファイルごとに残す最新件数を変える（0 なら日数だけで判定）
+  python scripts/cleanup/cleanup_output_logs.py --target output --keep-latest 5
 """
 
 import argparse
 import re
-import shutil
 import sys
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
-REPO_ROOT    = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from run_dir_cleanup import DEFAULT_KEEP_LATEST, REPO_ROOT, cleanup_run_dirs  # noqa: E402
+
 OUTPUT_DIR   = REPO_ROOT / "output"
 LOGS_DIR     = REPO_ROOT / "logs"
 
 # タイムスタンプ形式
-# output ディレクトリ: 20260417_150000_testname
-TIMESTAMP_RE_DIR = re.compile(r"^(\d{8}_\d{6})")
 # logs ファイル: syokai_20260417_150025.log
 TIMESTAMP_RE_LOG = re.compile(r"_(\d{8}_\d{6})\.log$")
 
@@ -78,6 +83,10 @@ def parse_args() -> argparse.Namespace:
         "--target", choices=["output", "logs", "both"], default="both",
         help="対象を選択: output / logs / both（デフォルト: both）",
     )
+    parser.add_argument(
+        "--keep-latest", type=int, default=DEFAULT_KEEP_LATEST,
+        help=f"output/ でプロファイルごとに日数に関係なく残す最新件数（デフォルト: {DEFAULT_KEEP_LATEST}）",
+    )
     return parser.parse_args()
 
 
@@ -91,40 +100,10 @@ def parse_timestamp(value: str, pattern: re.Pattern) -> datetime | None:
         return None
 
 
-def zip_directory(src: Path, dest_zip: Path) -> None:
-    dest_zip.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(dest_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-        for file in src.rglob("*"):
-            if file.is_file():
-                zf.write(file, file.relative_to(src.parent))
-
-
 def zip_file(src: Path, dest_zip: Path) -> None:
     dest_zip.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(dest_zip, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.write(src, src.name)
-
-
-def collect_output_targets(threshold: datetime) -> list[tuple[Path, str, datetime]]:
-    """
-    IN:  output/<profile>/<timestamp_rundir>/ を再帰スキャン
-    OUT: [(rundir_path, profile_name, run_datetime), ...]  threshold より古いもの
-    """
-    targets = []
-    if not OUTPUT_DIR.exists():
-        return targets
-
-    for profile_dir in sorted(OUTPUT_DIR.iterdir()):
-        if profile_dir.name == "archive" or not profile_dir.is_dir():
-            continue
-        for run_dir in sorted(profile_dir.iterdir()):
-            if not run_dir.is_dir():
-                continue
-            dt = parse_timestamp(run_dir.name, TIMESTAMP_RE_DIR)
-            if dt and dt < threshold:
-                targets.append((run_dir, profile_dir.name, dt))
-
-    return targets
 
 
 def collect_log_targets(threshold: datetime) -> list[tuple[Path, datetime]]:
@@ -144,44 +123,6 @@ def collect_log_targets(threshold: datetime) -> list[tuple[Path, datetime]]:
             targets.append((log_file, dt))
 
     return targets
-
-
-def process_output_targets(
-    targets: list[tuple[Path, str, datetime]],
-    dry_run: bool,
-    no_archive: bool,
-) -> tuple[int, int]:
-    """
-    PROCESS: output の各 rundir を zip → 削除
-    OUT: (archived件数, deleted件数)
-    """
-    archived = deleted = 0
-
-    for run_dir, profile, run_dt in targets:
-        age_days = (datetime.now() - run_dt).days
-        label = f"  [output/{profile}] {run_dir.name}  ({age_days}日前)"
-
-        if dry_run:
-            action = "archive + delete" if not no_archive else "delete"
-            print(f"[dry-run] {action}: {label}")
-            continue
-
-        if not no_archive:
-            dest_zip = OUTPUT_DIR / "archive" / profile / f"{run_dir.name}.zip"
-            try:
-                zip_directory(run_dir, dest_zip)
-                print(f"[archived] {label}")
-                print(f"           -> {dest_zip.relative_to(REPO_ROOT)}")
-                archived += 1
-            except Exception as exc:
-                print(f"[error] アーカイブ失敗: {label}\n  {exc}", file=sys.stderr)
-                continue
-
-        shutil.rmtree(run_dir)
-        print(f"[deleted]  {label}")
-        deleted += 1
-
-    return archived, deleted
 
 
 def process_log_targets(
@@ -230,14 +171,19 @@ def main() -> None:
 
     # IN: output/<profile>/<rundir>/ をスキャン
     if args.target in ("output", "both"):
-        output_targets = collect_output_targets(threshold)
-        if not output_targets:
+        lines = cleanup_run_dirs(
+            OUTPUT_DIR, args.days, args.keep_latest,
+            archive=not args.no_archive, dry_run=args.dry_run,
+        )
+        if not lines:
             print(f"output/: {args.days}日以上古い実行結果はありません。")
         else:
-            print(f"output/: 対象 {len(output_targets)} 件（{args.days}日以上古いもの）")
-            a, d = process_output_targets(output_targets, args.dry_run, args.no_archive)
-            total_archived += a
-            total_deleted += d
+            print(f"output/: 対象 {len(lines)} 件"
+                  f"（{args.days}日以上古いもの・各プロファイル最新{args.keep_latest}件は除く）")
+            for line in lines:
+                print(line)
+            total_archived += sum(1 for line in lines if line.lstrip().startswith("archived:"))
+            total_deleted += sum(1 for line in lines if line.lstrip().startswith(("archived:", "deleted:")))
 
     # IN: logs/<name>_<timestamp>.log をスキャン
     if args.target in ("logs", "both"):
