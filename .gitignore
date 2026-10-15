@@ -6,9 +6,7 @@ allure-report/
 docs/generated/
 docs/common/learning/bash_*.md
 logs/
-scripts/__pycache__/
-scripts/hooks/__pycache__/
-run/__pycache__/
+__pycache__/
 scripts/html/shimamura/
 scripts/html/**/*.png
 scripts/html/**/*.json
