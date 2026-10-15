@@ -145,7 +145,12 @@ python scripts/allure/archive_allure_results.py --days 7
 
 # 削除せずに対象一覧だけ確認（dry-run）
 python scripts/allure/archive_allure_results.py --dry-run
+
+# プロファイルごとに残す最新件数を変える（既定 3。0 なら日数だけで判定）
+python scripts/allure/archive_allure_results.py --keep-latest 5
 ```
+
+- ランチャー（`run/run_gui.py`）は起動時に同じ判定で **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）
 
 - **IN**: `allure-results/<profile>/<timestamp_rundir>/`
 - **OUT**: `allure-results/archive/<profile>/<timestamp_rundir>.zip`

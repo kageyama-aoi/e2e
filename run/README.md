@@ -130,6 +130,8 @@ Run 終了（正常終了・Stop・エラー）後に `logs/<testname>_<YYYYMMDD
 
 また、`docs/common/learning/bash_YYYYMMDD.md` のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
 
+さらに、`allure-results/<profile>/<YYYYMMDD_HHMMSS_*>/` のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `scripts/allure/archive_allure_results.py` の `cleanup_allure_results()` を共用している。
+
 ---
 
 ## UI テーマについて（設計判断の記録）
@@ -216,6 +218,8 @@ CustomTkinter への全面移行は以下の理由で見送った：
 
 ```python
 LOG_CLEANUP_DAYS = 30
+ALLURE_CLEANUP_DAYS = 10    # Allure 結果の削除日数
+ALLURE_KEEP_LATEST  = 3     # プロファイルごとに残す最新件数
 ```
 
 ### ログのフォント・サイズを変更する
@@ -300,6 +304,7 @@ run/
 | `build_command()` | `npx codeceptjs run` コマンドを組み立て |
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
 | `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |
+| `_cleanup_old_allure_results()` | `allure-results/` の古い実行結果を削除（各プロファイル最新 N 件は残す） |
 | `_analyze_download_file()` | ダウンロードファイルの件数・エンコードを解析 |
 | `SplashScreen` | 起動中スプラッシュ（400×160px）。初期化完了後に自動クローズ |
 | `EnvSettingsWindow` | 選択プロファイルの `.env` を GUI 編集するサブウィンドウ |
