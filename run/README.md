@@ -74,7 +74,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 |---|---|
 | **Run Test** | 選択テストをサブスレッドで実行。ログをリアルタイム表示 |
 | **Stop** | 実行中プロセスを `terminate()` で停止。停止後にログを自動保存 |
-| **Open Allure** | `allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
+| **Open Allure** | `output/allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
 | **Open CSV** | テストファイルに対応する `data/<product>/*_data*.csv` をデフォルトアプリで開く |
 | **Settings (.env)** | 選択中プロファイルの `.env` ファイルをGUIで編集する（`EnvSettingsWindow`）。設定項目は HEADLESS / SCREENSHOT_ON_NAVIGATION / CHECKBOX_DEBUG / FORM_FILL_FAST / SHIMAMURA_NAV の5項目。Save で即時書き込み |
 | **Open JSDoc** | `npm run docs:jsdoc` で JSDoc を作り直し（約10秒・生成中はボタン無効）、`docs/generated/html/index.html` を既定ブラウザで開く。生成に失敗したらログに ERROR を出して開かない |
@@ -122,16 +122,16 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 
 ### テスト終了時の自動保存
 
-Run 終了（正常終了・Stop・エラー）後に `logs/<testname>_<YYYYMMDD_HHMMSS>.log` へ自動保存する。
+Run 終了（正常終了・Stop・エラー）後に `output/logs/<testname>_<YYYYMMDD_HHMMSS>.log` へ自動保存する。
 
 ### 起動時のログアーカイブ
 
 起動 0.3 秒後にバックグラウンドで実行。  
-`logs/` 内の `<name>_<YYYYMMDD_HHMMSS>.log` のうち **30 日以上** 古いものを `logs/archive/<name>.log.zip` に圧縮してから削除する。
+`output/logs/` 内の `<name>_<YYYYMMDD_HHMMSS>.log` のうち **30 日以上** 古いものを `output/logs/archive/<name>.log.zip` に圧縮してから削除する。
 
 また、`docs/common/learning/bash_YYYYMMDD.md` のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
 
-さらに、`allure-results/` と `output/` の `<profile>/<YYYYMMDD_HHMMSS_*>/`（実行フォルダ）のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用している（テスト後フックも同じ）。`output/` 直下のセッションファイル・`downloads/`・抽出結果フォルダは日時フォルダではないので対象外。
+さらに、`output/allure-results/` と `output/` の `<profile>/<YYYYMMDD_HHMMSS_*>/`（実行フォルダ）のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用している（テスト後フックも同じ）。`output/` 直下のセッションファイル・`downloads/`・抽出結果フォルダは日時フォルダではないので対象外。
 
 ---
 
@@ -219,7 +219,7 @@ CustomTkinter への全面移行は以下の理由で見送った：
 
 ```python
 LOG_CLEANUP_DAYS = 30
-RUN_DIR_CLEANUP_DAYS = 10   # allure-results/ と output/ の実行フォルダの削除日数
+RUN_DIR_CLEANUP_DAYS = 10   # output/allure-results/ と output/ の実行フォルダの削除日数
 RUN_DIR_KEEP_LATEST  = 3    # プロファイルごとに残す最新件数
 ```
 
@@ -271,7 +271,7 @@ self.minsize(860, 640)     # 最小サイズ
 
 ### Open Allure が動かない場合
 
-`allure-results/<profile>/` が存在しないときはボタンを押してもエラーダイアログが出る。  
+`output/allure-results/<profile>/` が存在しないときはボタンを押してもエラーダイアログが出る。  
 先にテストを 1 回実行してフォルダを生成すること。  
 Allure の実行スクリプトは `scripts/allure/serve_latest.js`。
 
@@ -305,7 +305,7 @@ run/
 | `build_command()` | `npx codeceptjs run` コマンドを組み立て |
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
 | `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |
-| `_cleanup_old_run_dirs()` | `allure-results/` と `output/` の古い実行フォルダを削除（各プロファイル最新 N 件は残す） |
+| `_cleanup_old_run_dirs()` | `output/allure-results/` と `output/` の古い実行フォルダを削除（各プロファイル最新 N 件は残す） |
 | `_analyze_download_file()` | ダウンロードファイルの件数・エンコードを解析 |
 | `SplashScreen` | 起動中スプラッシュ（400×160px）。初期化完了後に自動クローズ |
 | `EnvSettingsWindow` | 選択プロファイルの `.env` を GUI 編集するサブウィンドウ |

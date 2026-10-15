@@ -14,16 +14,16 @@ Allure は **テスト結果を HTML レポートとして可視化するフレ�
 ```
 テスト実行
   ↓
-allure-results/ に JSON + 添付ファイルが溜まる（生データ）
+output/allure-results/ に JSON + 添付ファイルが溜まる（生データ）
   ↓
 allure serve <dir> でブラウザレポートを生成・表示
 ```
 
 ---
 
-## 2. allure-results/ のデータはいつ生成されるか
+## 2. output/allure-results/ のデータはいつ生成されるか
 
-`allure-results/` 配下のファイルは **CodeceptJS でテストを実行したとき**に生成されます。
+`output/allure-results/` 配下のファイルは **CodeceptJS でテストを実行したとき**に生成されます。
 `allure-codeceptjs` プラグインが有効になっているため、実行中にリアルタイムで書き込まれます。
 
 ### ファイル種別ごとの生成タイミング
@@ -41,7 +41,7 @@ npx codeceptjs run ./tests/... --profile tframe.culture_beta
   ↓ 各テストステップが進むたびに JSON が追記される
   ↓ スクリーンショットが撮られるたびに PNG が保存される
   ↓ テスト終了
-allure-results/tframe.culture_beta/20260508_144900_login_test/ が完成
+output/allure-results/tframe.culture_beta/20260508_144900_login_test/ が完成
 ```
 
 ---
@@ -65,7 +65,7 @@ allure-results/
 **プロファイル × タイムスタンプ** の2階層に実行履歴が積み上がります。
 
 ```
-allure-results/
+output/allure-results/
 ├── tframe.culture_beta/
 │   ├── 20260508_144900_login_test/    ← 実行のたびに新しいフォルダが増える
 │   └── 20260507_165600_koshi_test/
@@ -89,7 +89,7 @@ const runTimestamp  = buildRunTimestamp();          // 20260508_144900
 const runTarget     = detectRunTargetFromArgs(...); // login_test
 const runDirName    = `${runTimestamp}_${runTarget}`;
 
-const runtimeAllureResultsDir = `./allure-results/${runProfile}/${runDirName}`;
+const runtimeAllureResultsDir = `./output/allure-results/${runProfile}/${runDirName}`;
 
 // プラグインにこのパスを渡す（毎回違うパスにするのがポイント）
 plugins: {
@@ -145,7 +145,7 @@ Viewport=${windowSize}
 `run/run_gui.py` の **「Open Allure」ボタン** を押すと：
 
 1. 選択中の Profile を取得（例: `tframe.culture_beta`）
-2. `allure-results/<profile>/` が存在するか確認
+2. `output/allure-results/<profile>/` が存在するか確認
 3. `node scripts/allure/serve_latest.js <profile>` を実行
 
 ```python
@@ -172,7 +172,7 @@ function getLatestDir(baseDir) {
     [0];
 }
 
-// 例: allure-results/tframe.culture_beta/ の中で一番新しいフォルダを選ぶ
+// 例: output/allure-results/tframe.culture_beta/ の中で一番新しいフォルダを選ぶ
 const latest = getLatestDir(path.join(root, profileArg));
 spawn('npx', ['allure', 'serve', latest], ...);
 ```
@@ -195,7 +195,7 @@ npm run allure:latest
 テストを実行するたびに古い結果が溜まっていくため、
 **Claude Code のフック** と **ランチャー起動時の処理** の2か所で、同じ規則
 （10日以上古い実行結果を zip せず削除・各プロファイル最新3件は残す）で自動整理しています。
-判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用し、`allure-results/` と `output/` の実行フォルダをまとめて片付ける（#321）。
+判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用し、`output/allure-results/` と `output/` の実行フォルダをまとめて片付ける（#321）。
 
 #### フロー
 
@@ -208,7 +208,7 @@ PostToolUse フックが起動 (scripts/hooks/archive_allure.py)
   ↓
 含まれていれば run_dir_cleanup.cleanup_all() を直接呼ぶ（npm は経由しない）
   ↓
-10日以上古い allure-results/ と output/ の実行フォルダを削除（各プロファイル最新3件は残す）
+10日以上古い output/allure-results/ と output/ の実行フォルダを削除（各プロファイル最新3件は残す）
 ```
 
 > 以前は `npm run allure:archive` を subprocess で呼んでいたが、Windows では npm の実体が `npm.cmd` のため
@@ -232,7 +232,7 @@ def is_test_command(command):
 #### アーカイブ本体 (`scripts/allure/archive_allure_results.py`)
 
 ```python
-# allure-results/<profile>/<timestamp_rundir>/ を走査
+# output/allure-results/<profile>/<timestamp_rundir>/ を走査
 # 30日以上古いものを zip → archive/ に保存 → 元ディレクトリを削除
 
 python scripts/allure/archive_allure_results.py           # 30日以上古い
@@ -243,7 +243,7 @@ python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロフ�
 
 #### ランチャー起動時の自動削除
 
-`run/run_gui.py` は起動時に、同じ判定（`run_dir_cleanup.cleanup_all()`）で `allure-results/` と `output/` の **10日以上古い実行フォルダを zip せずに削除**する。
+`run/run_gui.py` は起動時に、同じ判定（`run_dir_cleanup.cleanup_all()`）で `output/allure-results/` と `output/` の **10日以上古い実行フォルダを zip せずに削除**する。
 各プロファイルの最新3件は日数に関係なく残すので、Open Allure で開くものが無くなることはない。
 日数・件数は `run_gui.py` の `RUN_DIR_CLEANUP_DAYS` / `RUN_DIR_KEEP_LATEST`（フックは `run_dir_cleanup.py` の `DEFAULT_DAYS` / `DEFAULT_KEEP_LATEST`）で変える。
 手動で確認・実行するときは `python scripts/cleanup/run_dir_cleanup.py --dry-run`。
@@ -255,9 +255,9 @@ python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロフ�
 | コマンド | 動作 |
 |---|---|
 | `npm run allure:latest` | 最新の実行結果をブラウザで開く（serve_latest.js） |
-| `npm run allure:serve` | `allure-results/` を全部まとめてサーブ（生データが混在する） |
-| `npm run allure:report` | `allure-report/` に静的HTMLを生成（ファイルとして保存） |
-| `npm run allure:open` | 生成済みの `allure-report/` をブラウザで開く |
+| `npm run allure:serve` | `output/allure-results/` を全部まとめてサーブ（生データが混在する） |
+| `npm run allure:report` | `output/allure-report/` に静的HTMLを生成（ファイルとして保存） |
+| `npm run allure:open` | 生成済みの `output/allure-report/` をブラウザで開く |
 | `npm run allure:archive` | 30日以上古い結果を zip アーカイブして削除（各プロファイル最新3件は残す） |
 | `npm run allure:clean` | 実行結果を全消去（クリーンアップ） |
 
@@ -300,7 +300,7 @@ codecept.conf.js
   └── plugins.allure           → allure-codeceptjs プラグインを有効化
 
 テスト実行中（リアルタイムで書き込まれる）
-  └── allure-results/<profile>/<timestamp_target>/
+  └── output/allure-results/<profile>/<timestamp_target>/
         ├── environment.properties  ← bootstrap() で書き出し（テスト開始直前）
         ├── xxxxxxxx.json           ← 各テストケース完了時に1ファイル
         └── xxxxxxxx-attachment.png ← saveScreenshot が呼ばれた瞬間
@@ -312,7 +312,7 @@ Open Allure ボタン（GUI）
 
 Claude Code フック（自動）★カスタム
   └── scripts/hooks/archive_allure.py
-        └── scripts/cleanup/run_dir_cleanup.py の cleanup_all()（allure-results/ と output/）
+        └── scripts/cleanup/run_dir_cleanup.py の cleanup_all()（output/allure-results/ と output/）
               └── 10日以上古い結果を削除（各プロファイル最新3件は残す）
 ```
 

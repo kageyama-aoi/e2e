@@ -52,7 +52,7 @@ test('resolveRunOutputPaths: プロファイル/日時_テスト名 のパスを
     runProfile: 'shimamura.testgcp',
     runDirName: '20260930_180441_gessya_ikkatu_test',
     runtimeOutputDir: './output/shimamura.testgcp/20260930_180441_gessya_ikkatu_test',
-    runtimeAllureResultsDir: './allure-results/shimamura.testgcp/20260930_180441_gessya_ikkatu_test',
+    runtimeAllureResultsDir: './output/allure-results/shimamura.testgcp/20260930_180441_gessya_ikkatu_test',
   });
 });
 

@@ -1,7 +1,7 @@
 """
 archive_allure_results.py
 
-allure-results/<profile>/<timestamp_rundir>/ 単位で古い実行結果をzipアーカイブし、
+output/allure-results/<profile>/<timestamp_rundir>/ 単位で古い実行結果をzipアーカイブし、
 N日以上古いものを削除します。プロファイルごとに最新 K 件は日数に関係なく残します。
 （npm run allure:archive 用の手動 CLI。判定は scripts/cleanup/run_dir_cleanup.py の
 cleanup_run_dirs() に任せている #321）
@@ -10,7 +10,7 @@ cleanup_run_dirs() に任せている #321）
 10日より古いものを zip せずに削除している（最新3件は残す）。
 
 ディレクトリ構造（対象）:
-  allure-results/
+  output/allure-results/
   ├── tframe.juku_test/
   │   ├── 20260403_143600_course_test/   ← 各実行結果ディレクトリ
   │   └── 20260407_130307_lang_check_test/
@@ -19,8 +19,8 @@ cleanup_run_dirs() に任せている #321）
   └── default/
       └── ...
 
-IN:  allure-results/<profile>/<timestamp_rundir>/ の各ディレクトリ
-OUT: allure-results/archive/<profile>/<timestamp_rundir>.zip（--no-archive 指定時は作らない）
+IN:  output/allure-results/<profile>/<timestamp_rundir>/ の各ディレクトリ
+OUT: output/allure-results/archive/<profile>/<timestamp_rundir>.zip（--no-archive 指定時は作らない）
      削除: N日以上古いディレクトリ（デフォルト30日）。ただしプロファイルごとの最新 K 件（デフォルト3件）は残す
 
 使い方:
@@ -45,14 +45,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "cleanup"))
-from run_dir_cleanup import DEFAULT_KEEP_LATEST, REPO_ROOT, cleanup_run_dirs  # noqa: E402
-
-ALLURE_RESULTS_DIR = REPO_ROOT / "allure-results"
+from run_dir_cleanup import ALLURE_RESULTS_DIR, DEFAULT_KEEP_LATEST, cleanup_run_dirs  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="allure-results の古い実行結果をアーカイブ・削除します。"
+        description="output/allure-results の古い実行結果をアーカイブ・削除します。"
     )
     parser.add_argument(
         "--days",

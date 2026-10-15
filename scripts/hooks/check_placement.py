@@ -10,8 +10,9 @@ import re
 
 KNOWN_DIRS = {
     'tests', 'pages', 'support', 'data', 'scripts', 'run',
-    '.claude', '.agent', 'docs', 'env', 'logs', 'output',
-    'allure-results', 'allure-report', 'node_modules', '.git', '.spec',
+    '.claude', '.agent', 'docs', 'env', 'output',
+    'node_modules', '.git', '.spec',
+    # allure-results / allure-report / logs は #334 で output/ の下へ移した（直下に作られたら警告する）
 }
 
 ROOT_OK_NAMES = {

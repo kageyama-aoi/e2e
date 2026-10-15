@@ -39,7 +39,7 @@
       "Bash(mkdir -p docs/tools)",
       "Bash(mv docs/read_allure.html docs/tools/)",
       "Bash(mv docs/index_promt.html docs/tools/index_prompt.html)",
-      "Bash(find allure-results/ -maxdepth 1 -type f -delete)",
+      "Bash(find output/allure-results/ -maxdepth 1 -type f -delete)",
       "Bash(python *)",
       "Bash(cmd *)",
       "Bash(powershell *)",
