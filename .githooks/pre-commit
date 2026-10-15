@@ -32,7 +32,7 @@ fi
 if echo "$changed" | grep -qE '^(pages/|support/|tests/).*\.js$'; then
   if command -v npx >/dev/null 2>&1; then
     echo "[pre-commit] JSDoc構文チェック..."
-    jsdoc_out=$(npx jsdoc -c jsdoc.json 2>&1)
+    jsdoc_out=$(npm run --silent docs:jsdoc 2>&1)
     err_count=$(printf '%s\n' "$jsdoc_out" | grep -c '^ERROR:')
     if [ "$err_count" -gt 0 ]; then
       echo "[pre-commit] WARN: JSDoc型注釈のパースエラーが ${err_count} 件あります（CI の Generate JSDoc が失敗します）"

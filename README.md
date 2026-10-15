@@ -106,7 +106,7 @@ npx codeceptjs run "./tests/shimamura/**/*_test.js" --profile shimamura.testgcp
 
 | コマンド | 内容 |
 | :--- | :--- |
-| `npm run docs:jsdoc` | JSDoc HTML生成（`docs/generated/` に出力） |
+| `npm run docs:jsdoc` | JSDoc HTML生成（`docs/generated/html/index.html` を開く。ファイル単位のナビ＋検索） |
 | `npm run docs:update-readme-map` | READMEのディレクトリツリーを更新 |
 | `npm run docs:catalog` | テストカタログ（`docs/project/test_catalog.md`）を再生成 |
 | `npm run docs:all` | ディレクトリツリー＋テストカタログをまとめて更新 |
@@ -1046,3 +1046,5 @@ npm run allure:archive
 # ドキュメントの生成（設定は jsdoc.json を参照）
 npm run docs:jsdoc
 ```
+
+生成後に `docs/generated/html/index.html` をブラウザで開きます。左ナビはファイル単位（例 `pages/shimamura/flow/SyokaiFlowPage`）で、検索ボックスからメソッド名で絞り込めます。トップページの見方は `docs/project/jsdoc_home.md` に書いています。
