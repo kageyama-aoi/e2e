@@ -372,6 +372,35 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 詳細な手順は `/shimamura-ichiran-dev` / `/shimamura-registration-dev` / `/shimamura-download-verify` を参照。
 
+## 作業状況の置き場所（Issue が正）
+
+「何が残っているか・なぜ止まっているか・次の一手」は **GitHub Issue にだけ書く**。
+他の場所に同じことを書くと食い違う（2026-10 に、保留理由が AI のメモリにしか無い・HANDOFF の注意書きが古いまま、が実際に起きた。#324）。
+
+| 置き場所 | 書くもの | 書かないもの |
+|---|---|---|
+| GitHub Issue（本文・コメント） | やること、保留の理由と再開条件、ユーザーに聞きたいこと、次の一手 | — |
+| `.agent/handoff/HANDOFF.md` | このセッションで触った Issue 番号、セッション限りの一時メモ（作業中ブランチ・未コミットの理由など） | 残作業の一覧・保留理由（→ Issue へ） |
+| AI のメモリ | 作業の進め方の好み・ハマりどころなど、Issue にならない知見 | 進捗・残作業（Issue 番号を指すだけにする） |
+| `docs/**/*_plan.md` | 方針・設計の検討 | 進捗（親 Issue を冒頭にリンクする） |
+
+受け皿の Issue が無い残作業に気づいたら、その場で Issue を作る。
+
+### ラベル
+
+Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっているときは**状態**も付ける。
+
+| 区分 | ラベル | 意味 |
+|---|---|---|
+| 種別 | `bug` / `enhancement` / `documentation` | 不具合 / 追加・改善 / 文書のみ |
+| 対象 | `shimamura` / `tframe` / `launcher` / `tooling` | しまむら / T-Frame / GUIランチャー（`run/`）/ docs生成・フック・スキル・設定などの開発基盤 |
+| 状態 | `blocked` | 保留。**理由と再開条件をコメントに書く** |
+| 状態 | `waiting-user` | ユーザーの回答・データ待ち。**何を待っているかをコメントに書く** |
+| 状態 | `investigating` | 原因調査中。分かったことをコメントに積む |
+
+状態ラベルが無いオープン Issue は「着手できる」の意味。止まっているものの一覧は
+`gh issue list -l blocked` / `gh issue list -l waiting-user` で出す。
+
 ## コミット・PR ガイドライン
 - Conventional Commits 形式を使用: `<type>(<scope>): <summary> #<issue>`
   - type: `fix` / `feat` / `refactor` / `docs` / `test` / `chore`
