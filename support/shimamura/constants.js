@@ -36,7 +36,7 @@ const BASE_URL = (process.env.BASE_URL || '').replace(/\/?$/, '/');
  * sideMenus.js のメニュー定義や画面から読んだ href のように、すでに相対パスとして持っている値は
  * これまで通り `BASE_URL + path` でつなぐ。
  * 値は URLSearchParams で符号化し、引数に書いた順に並ぶ。
- * @param {{module: string, action: string} & Object<string, (string|number)>} params
+ * @param {Object<string, (string|number)>} params module・action は必須。ほかは画面ごとのパラメータ
  * @returns {string}
  * @example pageUrl({ module: 'Student', action: 'DetailView', record: id })
  */
