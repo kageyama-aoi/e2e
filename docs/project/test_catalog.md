@@ -1,7 +1,7 @@
 # テストカタログ
 > このファイルは自動生成です。直接編集しないでください。
 > 再生成: `npm run docs:catalog`（テスト追加・説明変更時は commit 時にも自動更新）
-> 最終更新: 2026-10-15 13:43 (JST)
+> 最終更新: 2026-10-15 14:17 (JST)
 
 **合計 169 テスト**（shimamura 54 / tframe 113 / taskreport 1 / smoke 1）
 
@@ -11,7 +11,7 @@
 
 | テストファイル | 機能No | 説明 |
 |---|---|---|
-| `shimamura_login_test.js` | — | しまむらシステムへのログイン動作を確認 |
+| `shimamura_login_test.js` | 0000 | しまむらシステムへのログイン動作を確認 |
 
 ### check/（2件）
 
@@ -33,11 +33,11 @@
 | `keiri_hennkin_syori_test.js` | 1600_17_1 | [WIP] 経理の返金処理フロー（ひな形・未実装。@wip で既定実行から除外） |
 | `koushi_sharei_manual_test.js` | 1600_19_1 | 講師謝礼の手動入力登録フローを確認 |
 | `koushi_sharei_tsuika_test.js` | 1600_19_1 | 講師謝礼のCSVファイル一括取込フローを確認 |
-| `sales_group_transfer_check_test.js` | — | 料金明細 編集画面（入金）の保存時チェック・正常保存（デシジョンテーブルの定義から TC を実行） |
+| `sales_group_transfer_check_test.js` | 0020_1_1 | 料金明細 編集画面（入金）の保存時チェック・正常保存（デシジョンテーブルの定義から TC を実行） |
 | `sales_group_transfer_setup_test.js` | 0020_1_1 | 料金明細の入金不具合 再現データ作成（同一明細番号・1行目だけ入金済み） |
 | `shimamura_class_member_registration_test.js` | 1100_15_1 | [WIP] クラスへのメンバー登録フロー（pause 待ちで未完成。@wip で既定実行から除外） |
 | `smbc_state_import_test.js` | 4000_3_1 | 債権買取状態読込（買取保留/解除ファイル読込）の正常系・異常系フローを確認 |
-| `student_saikenkai_test.js` | — | SMBC債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認 |
+| `student_saikenkai_test.js` | — | 債権買取顧客情報の入力・保存後、受講生の請求方法を債権買取へ変更するフローを確認 |
 | `syokai_touroku_test.js` | — | 受講生の新規登録および経理処理フローの正常系・バリデーションエラーを確認 |
 | `taikai_test.js` | 1000_2_2 | 退会処理フローを確認 |
 | `teacher_keiri_setup_test.js` | — | 講師謝礼テスト用の講師バリエーション登録・経理タブ設定を準備 |
@@ -62,11 +62,11 @@
 | `fee_common_list_ichiran_test.js` | — | 料金一覧(共通)の空検索・料金名絞り込みで結果が表示されることを確認（testgcp はテスト用共通料金を1件登録済み） |
 | `fee_list_ichiran_test.js` | — | 料金一覧の空検索（当月の日付範囲を解除）・コース名絞り込みで結果が表示されることを確認 |
 | `keiri_invoices_ichiran_test.js` | 1001_4_2 | 受注・売上（経理）の現在月・前月指定で表示が正常に完了することを確認 |
-| `kouho_ichiran_test.js` | — | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
+| `kouho_ichiran_test.js` | 1000_2_5 | 候補生検索の空検索・姓絞り込みで結果が表示されることを確認 |
 | `menu_patrol_test.js` | 0000 | 全メニュー（実機採取スナップショット）をサイドバーから開き、画面エラーが出ないことをアイコン単位で確認（--grep @patrol_Student 等で絞込） |
 | `mishukin_list_ichiran_test.js` | 1600_2_1 | 未収金一覧の今日基準・全期間検索で結果テーブルが表示されることを確認 |
 | `parent_list_ichiran_test.js` | — | 保護者一覧の空検索・姓絞り込みで結果が表示されることを確認 |
-| `pos_response_error_ichiran_test.js` | — | POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認 |
+| `pos_response_error_ichiran_test.js` | 4100_3_1 | POSレスポンスエラー一覧の空検索（当日の日付範囲を解除）・エラー発生店舗絞り込みで結果の行が表示されることを確認 |
 | `refund_list_ichiran_test.js` | — | 返金一覧の請求月（固定の2026-10）のみ検索・会員番号絞り込みで結果が表示されることを確認 |
 | `sales_group_list_ichiran_test.js` | — | 料金パッケージ一覧の空検索・パッケージ名絞り込みで結果が表示されることを確認 |
 | `school_list_ichiran_test.js` | — | 店舗一覧の空検索・店舗名絞り込みで結果が表示されることを確認 |
