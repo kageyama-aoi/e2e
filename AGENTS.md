@@ -136,7 +136,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | サブフォルダ | 置くもの | 例 |
 |---|---|---|
 | `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説） | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md`, `経理ビューの概念.md`, `退会機能の概念.md` |
-| `docs/shimamura/flow/` | E2Eテストの流れ解説（`/flow-explain` が出力する `<テスト名>_flow.md`） | `gessya_ikkatu_flow.md` |
+| `docs/shimamura/flow/` | E2Eテストの流れ解説（`/flow-explain` が出力する `<業務名>テストの流れ.md`。ファイル名だけで何の資料か分かるよう日本語の業務名にする） | `月謝一括作成テストの流れ.md` |
 
 ### 利用可能なスキル一覧
 
