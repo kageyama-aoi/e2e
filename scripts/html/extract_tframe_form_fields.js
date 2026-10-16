@@ -6,17 +6,17 @@
  * テストデータテンプレートと Page Object fillメソッドを自動生成する。
  *
  * 【使い方】
- *   node scripts/html/extract_tframe_form_fields.js            # scripts/html/tframe/input.html を読み込む（デフォルト）
+ *   node scripts/html/extract_tframe_form_fields.js            # scripts/html/inputs/tframe_form.html を読み込む（デフォルト）
  *   node scripts/html/extract_tframe_form_fields.js [file.html] # 任意のHTMLファイルを指定
  *
  * 【手順】
  *   1. ブラウザ DevTools で登録画面の #rootWidget を右クリック → 「outerHTMLをコピー」
- *   2. scripts/html/tframe/input.html に貼り付けて保存
+ *   2. scripts/html/inputs/tframe_form.html に貼り付けて保存
  *   3. node scripts/html/extract_tframe_form_fields.js を実行
  *   4. output/html/extract/extract_result_<日時>.js を開いてコピペ
  *
  * 【サンプル】
- *   scripts/html/tframe/sample_teacher_registration.html（講師登録画面の代表的なフィールド構成）
+ *   scripts/html/inputs/tframe_teacher_sample.html（講師登録画面の代表的なフィールド構成）
  *
  * 【出力の構成】
  *   ① テストデータテンプレート → codecept/data/tframe/xxxRegisterData.js に貼り付け
@@ -47,7 +47,7 @@ const path = require('path');
 //
 // 引数なしで実行した場合に読み込む HTML ファイル。
 // 毎回このファイルを上書きして使い回す運用を想定。
-const DEFAULT_INPUT = path.join(__dirname, 'tframe', 'input.html');
+const DEFAULT_INPUT = path.join(__dirname, 'inputs', 'tframe_form.html');
 
 // 出力先ディレクトリ。実行のたびにタイムスタンプ付きファイルを生成する。
 const OUTPUT_DIR = path.join(__dirname, '..', '..', 'output', 'html', 'extract');  // git に入らない生成物は output/ へ（#341）
@@ -362,7 +362,7 @@ function saveToFile(content) {
   } catch (e) {
     console.error('エラー: HTMLの読み込みに失敗しました。');
     console.error(`  デフォルト入力: ${DEFAULT_INPUT}`);
-    console.error('  ブラウザ DevTools で登録画面の #rootWidget をコピーして input/input.html に貼り付けてください。');
+    console.error('  ブラウザ DevTools で登録画面の #rootWidget をコピーして scripts/html/inputs/tframe_form.html に貼り付けてください。');
     process.exit(1);
   }
 

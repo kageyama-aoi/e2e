@@ -166,7 +166,7 @@ python run/allure/archive_allure_results.py --keep-latest 5
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 11:42:51
+Last updated: 2026-10-16 13:12:08
 
 ```text
 e2e/
@@ -758,76 +758,76 @@ e2e/
 │   ├── debug/ 
 │   │   └── debug_shimamura_syokai.js
 │   ├── html/ 
-│   │   ├── tframe/ 
-│   │   │   ├── account_list.html
-│   │   │   ├── accountInfoDataImport_touroku.html
-│   │   │   ├── announcement_touroku.html
-│   │   │   ├── attendance_list.html
-│   │   │   ├── attendanceBulkOutput_list.html
-│   │   │   ├── bankActionsHistory_list.html
-│   │   │   ├── bankTransferExport_touroku.html
-│   │   │   ├── bankTransferImport_touroku.html
-│   │   │   ├── batchPayment_list.html
-│   │   │   ├── branch_list.html
-│   │   │   ├── branch_touroku.html
-│   │   │   ├── chosekin_list.html
-│   │   │   ├── chosekin_person_popup.html
-│   │   │   ├── chosekin_touroku.html
-│   │   │   ├── companyMonthRewardStatement_list.html
-│   │   │   ├── companyRewardStatement_list.html
-│   │   │   ├── contact_list.html
-│   │   │   ├── course_list.html
-│   │   │   ├── course_touroku.html
-│   │   │   ├── courseBySt_list.html
-│   │   │   ├── emailTemplate_touroku.html
-│   │   │   ├── emailTemplateCategory_touroku.html
-│   │   │   ├── entranceLog_list.html
-│   │   │   ├── entranceLog_touroku.html
-│   │   │   ├── infoHistory_student_list.html
-│   │   │   ├── infoHistoryTemplate_student_list.html
-│   │   │   ├── infoHistoryTemplate_touroku.html
-│   │   │   ├── input.html
-│   │   │   ├── jukusei_touroku.html
-│   │   │   ├── kyoshitsu_list.html
-│   │   │   ├── kyoshitsu_touroku.html
-│   │   │   ├── monthRewardStatement_list.html
-│   │   │   ├── paymentStatement_list.html
-│   │   │   ├── proByCourse_list.html
-│   │   │   ├── prospectList_touroku.html
-│   │   │   ├── report_inquiryEnrollCancel_list.html
-│   │   │   ├── report_stDataCombined_list.html
-│   │   │   ├── report_stSchedule_list.html
-│   │   │   ├── report_teSchedule_list.html
-│   │   │   ├── ryokin_master_list.html
-│   │   │   ├── ryokin_master_touroku.html
-│   │   │   ├── ryokin_package_list.html
-│   │   │   ├── ryokin_package_touroku.html
-│   │   │   ├── sample_teacher_registration.html
-│   │   │   ├── shareiTotal_list.html
-│   │   │   ├── shohin_list.html
-│   │   │   ├── shohin_touroku.html
-│   │   │   ├── staff_list.html
-│   │   │   ├── stByCourse_list.html
-│   │   │   ├── stInquiryDataImport_touroku.html
-│   │   │   ├── student_list.html
-│   │   │   ├── teacher_list.html
-│   │   │   ├── teacherRewardStatement_list.html
-│   │   │   ├── teByStudent_list.html
-│   │   │   ├── teRewardCalc_list.html
-│   │   │   ├── teRewardTotalCalc_list.html
-│   │   │   └── tuitionFeeBulkCreate_touroku.html
+│   │   ├── inputs/ 
+│   │   │   ├── shimamura_page.html
+│   │   │   ├── tframe_form.html
+│   │   │   ├── tframe_side_menu.html
+│   │   │   └── tframe_teacher_sample.html
+│   │   ├── snapshots/ 
+│   │   │   └── tframe/ 
+│   │   │       ├── account_list.html
+│   │   │       ├── accountInfoDataImport_touroku.html
+│   │   │       ├── announcement_touroku.html
+│   │   │       ├── attendance_list.html
+│   │   │       ├── attendanceBulkOutput_list.html
+│   │   │       ├── bankActionsHistory_list.html
+│   │   │       ├── bankTransferExport_touroku.html
+│   │   │       ├── bankTransferImport_touroku.html
+│   │   │       ├── batchPayment_list.html
+│   │   │       ├── branch_list.html
+│   │   │       ├── branch_touroku.html
+│   │   │       ├── chosekin_list.html
+│   │   │       ├── chosekin_person_popup.html
+│   │   │       ├── chosekin_touroku.html
+│   │   │       ├── companyMonthRewardStatement_list.html
+│   │   │       ├── companyRewardStatement_list.html
+│   │   │       ├── contact_list.html
+│   │   │       ├── course_list.html
+│   │   │       ├── course_touroku.html
+│   │   │       ├── courseBySt_list.html
+│   │   │       ├── emailTemplate_touroku.html
+│   │   │       ├── emailTemplateCategory_touroku.html
+│   │   │       ├── entranceLog_list.html
+│   │   │       ├── entranceLog_touroku.html
+│   │   │       ├── infoHistory_student_list.html
+│   │   │       ├── infoHistoryTemplate_student_list.html
+│   │   │       ├── infoHistoryTemplate_touroku.html
+│   │   │       ├── jukusei_touroku.html
+│   │   │       ├── kyoshitsu_list.html
+│   │   │       ├── kyoshitsu_touroku.html
+│   │   │       ├── monthRewardStatement_list.html
+│   │   │       ├── paymentStatement_list.html
+│   │   │       ├── proByCourse_list.html
+│   │   │       ├── prospectList_touroku.html
+│   │   │       ├── report_inquiryEnrollCancel_list.html
+│   │   │       ├── report_stDataCombined_list.html
+│   │   │       ├── report_stSchedule_list.html
+│   │   │       ├── report_teSchedule_list.html
+│   │   │       ├── ryokin_package_touroku.html
+│   │   │       ├── shohin_list.html
+│   │   │       ├── shohin_touroku.html
+│   │   │       ├── staff_list.html
+│   │   │       ├── stByCourse_list.html
+│   │   │       ├── stInquiryDataImport_touroku.html
+│   │   │       ├── student_list.html
+│   │   │       ├── teacher_list.html
+│   │   │       ├── teacherRewardStatement_list.html
+│   │   │       ├── teByStudent_list.html
+│   │   │       ├── teRewardCalc_list.html
+│   │   │       ├── teRewardTotalCalc_list.html
+│   │   │       └── tuitionFeeBulkCreate_touroku.html
 │   │   ├── extract_shimamura_body_only_fields.py
-│   │   ├── extract_shimamura_side_menu_groups.py
 │   │   ├── extract_shimamura_submenus.py
 │   │   ├── extract_tframe_form_fields.js
+│   │   ├── extract_tframe_side_menu_groups.py
 │   │   ├── fetch_shimamura_menus.js
 │   │   ├── fetch_shimamura_nav.js
 │   │   ├── fetch_shimamura_screens.js
 │   │   ├── fetch_shimamura_teacher_edit.js
 │   │   ├── fetch_tframe_chosekin_person_id.js
 │   │   ├── fetch_tframe_forms.js
-│   │   ├── shimamura_route.js
-│   │   └── side_menu_source.html
+│   │   ├── README.md
+│   │   └── shimamura_route.js
 │   ├── setup/ 
 │   │   └── install_git_hooks.js
 │   ├── testdata/ 

@@ -38,6 +38,10 @@
 
 ### html/ — 画面 HTML の取得と抜き出し（スキルの下調べ用）
 
+置き場（snapshots/・inputs/）と画面の探し方は [html/README.md](./html/README.md)。
+
+使い捨ての調査スクリプトは `scripts/` に置かず、git に入らない `output/probe/_tmp_<名前>/` に作る（出力も同じフォルダへ）。
+
 | ツール | やること | 動かし方 |
 |---|---|---|
 | `fetch_shimamura_screens.js` | shimamura の画面 HTML をまとめて取る（対象は中の TARGETS） | `node scripts/html/fetch_shimamura_screens.js shimamura.testgcp` |
@@ -48,14 +52,14 @@
 | `fetch_tframe_chosekin_person_id.js` | chosekin 登録の personId ポップアップから講師 ID を取る | `node scripts/html/fetch_tframe_chosekin_person_id.js <profile>` |
 | `extract_tframe_form_fields.js` | 登録画面の HTML からテストデータの雛形と PO の fill メソッドを作る | `node scripts/html/extract_tframe_form_fields.js [file.html]` |
 | `extract_shimamura_submenus.py` | `<tr id="submenu__...">` を抜き出す | 下の「抜き出しツールの詳細」 |
-| `extract_shimamura_side_menu_groups.py` | サイドメニューのグループと子項目を抜き出す | 同上 |
+| `extract_tframe_side_menu_groups.py` | サイドメニューのグループと子項目を抜き出す | 同上 |
 | `extract_shimamura_body_only_fields.py` | `<td id="body_only_td">` のフォーム要素を抜き出す | 同上 |
 | `shimamura_route.js` | URL を「画面を区別する route 文字列」にする部品 | `fetch_shimamura_menus.js` と `gen_shimamura_menu_coverage.js` が読み込む |
 
 置き場:
-- 取ってきた shimamura の HTML・抜き出し結果は `output/html/`・`output/probe/` に書く（git に入らない）
-- tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。`html/tframe/input.html` は手で貼る入力
-- `html/side_menu_source.html` は `extract_shimamura_side_menu_groups.py` に手で貼る入力
+- `html/snapshots/tframe/`：取ってきた tframe の画面 HTML（参考資料・git 管理）
+- `html/inputs/`：人が手で貼る入力（`tframe_form.html`・`tframe_side_menu.html` など）
+- git に入らないもの（shimamura の取ってきた HTML・スクリーンショット・抜き出し結果）は `output/html/`・`output/probe/`
 
 ### その他
 
@@ -79,18 +83,18 @@ python scripts/html/extract_shimamura_submenus.py page.html  # 入力を指定
 ```
 
 - 出力形式: `1` JSON / `2` CSV / `3` CSV（フラット）
-- 入力（既定）: 実行したフォルダの 1 つ上の `source.txt`（直下で実行すると `Tools/testcode/source.txt`）
+- 入力（既定）: `scripts/html/inputs/shimamura_page.html`（画面の HTML を貼る）
 - 出力: `output/probe/submenu_extract/`（`submenu_extract.json` / `.csv` / `_flat.csv`）
 
-### サイドメニューグループ抽出 — `extract_shimamura_side_menu_groups.py`
+### サイドメニューグループ抽出 — `extract_tframe_side_menu_groups.py`
 
 サイドメニューの HTML から「グループ名」と「配下のメニュー項目」を JSON / CSV で出します。
 ファイル名は、抜き出した先頭の日本語とタイムスタンプから自動で付きます。
 
 ```bash
-python scripts/html/extract_shimamura_side_menu_groups.py                                  # 入力は html/side_menu_source.html
-python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only  # 日本語だけの軽い JSON
-python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
+python scripts/html/extract_tframe_side_menu_groups.py                                  # 入力は html/inputs/tframe_side_menu.html
+python scripts/html/extract_tframe_side_menu_groups.py "./scripts/html/inputs/tframe_side_menu.html" --jp-only  # 日本語だけの軽い JSON
+python scripts/html/extract_tframe_side_menu_groups.py "./scripts/html/inputs/tframe_side_menu.html" --format csv
 ```
 
 - JSON: `group_count`（グループ数）、`groups[].name`（グループ名。例 `Eメール`）、`groups[].items[]`（子メニュー）
@@ -106,5 +110,5 @@ python scripts/html/extract_shimamura_body_only_fields.py            # 対話式
 ```
 
 - 出力形式: `1` JSON / `2` CSV / `3` CSV（フラット）
-- 入力（既定）: 実行したフォルダの 1 つ上の `source.txt`
+- 入力（既定）: `scripts/html/inputs/shimamura_page.html`（サブメニュー抽出と共用）
 - 出力: `output/probe/body_only_extract/`（`body_only_fields.json` / `.csv` / `_flat.csv`）
