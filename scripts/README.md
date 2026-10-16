@@ -38,6 +38,8 @@
 
 ### html/ — 画面 HTML の取得と抜き出し（スキルの下調べ用）
 
+置き場（snapshots/・inputs/）と画面の探し方は [html/README.md](./html/README.md)。
+
 | ツール | やること | 動かし方 |
 |---|---|---|
 | `fetch_shimamura_screens.js` | shimamura の画面 HTML をまとめて取る（対象は中の TARGETS） | `node scripts/html/fetch_shimamura_screens.js shimamura.testgcp` |
@@ -53,9 +55,9 @@
 | `shimamura_route.js` | URL を「画面を区別する route 文字列」にする部品 | `fetch_shimamura_menus.js` と `gen_shimamura_menu_coverage.js` が読み込む |
 
 置き場:
-- 取ってきた shimamura の HTML・抜き出し結果は `output/html/`・`output/probe/` に書く（git に入らない）
-- tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。`html/tframe/input.html` は手で貼る入力
-- `html/side_menu_source.html` は `extract_shimamura_side_menu_groups.py` に手で貼る入力
+- `html/snapshots/tframe/`：取ってきた tframe の画面 HTML（参考資料・git 管理）
+- `html/inputs/`：人が手で貼る入力（`tframe_form.html`・`shimamura_side_menu.html` など）
+- git に入らないもの（shimamura の取ってきた HTML・スクリーンショット・抜き出し結果）は `output/html/`・`output/probe/`
 
 ### その他
 
@@ -88,9 +90,9 @@ python scripts/html/extract_shimamura_submenus.py page.html  # 入力を指定
 ファイル名は、抜き出した先頭の日本語とタイムスタンプから自動で付きます。
 
 ```bash
-python scripts/html/extract_shimamura_side_menu_groups.py                                  # 入力は html/side_menu_source.html
-python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only  # 日本語だけの軽い JSON
-python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
+python scripts/html/extract_shimamura_side_menu_groups.py                                  # 入力は html/inputs/shimamura_side_menu.html
+python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/inputs/shimamura_side_menu.html" --jp-only  # 日本語だけの軽い JSON
+python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/inputs/shimamura_side_menu.html" --format csv
 ```
 
 - JSON: `group_count`（グループ数）、`groups[].name`（グループ名。例 `Eメール`）、`groups[].items[]`（子メニュー）

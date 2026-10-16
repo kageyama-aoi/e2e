@@ -20,7 +20,7 @@ README
 
 入力:
 - HTMLファイル1件
-- 既定入力ファイル: `scripts/html/side_menu_source.html`
+- 既定入力ファイル: `scripts/html/inputs/shimamura_side_menu.html`
 - 文字コードは `utf-8` を優先し、失敗時は `cp932` を試行
 
 既定の出力先:
@@ -31,15 +31,15 @@ README
 
 使い方:
   python scripts/html/extract_shimamura_side_menu_groups.py
-  # 既定入力: scripts/html/side_menu_source.html
+  # 既定入力: scripts/html/inputs/shimamura_side_menu.html
 
-  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html"
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/inputs/shimamura_side_menu.html"
 
 日本語だけの軽量JSON:
-  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/inputs/shimamura_side_menu.html" --jp-only
 
 CSV出力:
-  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/inputs/shimamura_side_menu.html" --format csv
 
 通常JSONの構造:
 {
@@ -85,7 +85,7 @@ CSV出力:
 - HTML構造が大きく変わると抽出条件の見直しが必要
 - 「日本語のみJSON」は表示名だけを残すため、リンクやIDは保持しない
 - 既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成する
-- 入力HTMLを手で貼り付ける運用を想定しているため、`scripts/html/side_menu_source.html` を編集すればそのまま実行できる
+- 入力HTMLを手で貼り付ける運用を想定しているため、`scripts/html/inputs/shimamura_side_menu.html` を編集すればそのまま実行できる
 """
 
 import argparse
@@ -99,7 +99,7 @@ from datetime import datetime
 from html.parser import HTMLParser
 from typing import Any, Dict, List, Optional
 
-DEFAULT_INPUT = os.path.join(".", "scripts", "html", "side_menu_source.html")
+DEFAULT_INPUT = os.path.join(".", "scripts", "html", "inputs", "shimamura_side_menu.html")
 DEFAULT_OUTPUT_DIR = os.path.join(".", "output", "probe", "side_menu_extract")  # git に入らない生成物は output/ へ（#341）
 CSV_HEADERS = [
     "group_id",
@@ -432,7 +432,7 @@ def build_default_output_paths(groups: List[Dict[str, Any]]) -> Dict[str, str]:
 
 def main() -> None:
     """エントリーポイント。"""
-    # IN:  scripts/html/side_menu_source.html（既定）または引数で指定したHTMLファイル
+    # IN:  scripts/html/inputs/shimamura_side_menu.html（既定）または引数で指定したHTMLファイル
     args = parse_args()
     if args.input is None:
         args.input = DEFAULT_INPUT
