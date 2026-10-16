@@ -16,7 +16,7 @@ scripts/html/
 └── inputs/                ← 人が手で貼る入力（git 管理）
 ```
 
-ここに置かないもの（git に入らない生成物は `output/` へ）:
+ここに置かないもの（git に入らない生成物は `output/` へ。使い捨ての調査スクリプトも `output/probe/_tmp_<名前>/` に作る）:
 
 | もの | 置き場 |
 |---|---|
@@ -28,12 +28,13 @@ scripts/html/
 
 | 製品 | 場所 | git | ファイル名 |
 |---|---|---|---|
-| tframe | `snapshots/tframe/` | 管理 | `<画面>_list.html`＝一覧（35 件）、`<画面>_touroku.html`＝登録（19 件）、`chosekin_person_popup.html` |
+| tframe | `snapshots/tframe/` | 管理 | `<画面>_list.html`＝一覧、`<画面>_touroku.html`＝登録、`chosekin_person_popup.html` |
 | shimamura | `output/html/shimamura/` | 対象外（手元にだけある） | `<名前>.html`（名前は `fetch_shimamura_screens.js` の TARGETS） |
 
 - `<画面>` は tframe の URL の `r=` の値（例 `index.php?r=staff%2Flist` → `staff_list.html`）
 - **snapshot は「取った時点」の写しです。** 画面が変わっていることがあるので、いつ取ったかを `git log -1 --format=%ad -- scripts/html/snapshots/tframe/<ファイル>` で確かめてから使う。古い・項目が見つからないときは取り直す
 - shimamura は git に入れていない（ログイン中の CSRF トークン入り・サイズが大きい）。ほかの PC や消えた後は `fetch_shimamura_screens.js` で取り直す
+- **取得に失敗したページ（「An internal server error occurred.」だけの数百バイトの HTML）は残さない。** `ryokin_master_list`・`ryokin_master_touroku`・`ryokin_package_list`・`shareiTotal_list` はこの理由で消してある（#355）。必要になったら取り直す
 
 ### 項目を調べる例
 
@@ -64,6 +65,7 @@ grep -l 'name="school_branch_id"' scripts/html/snapshots/tframe/*.html
 |---|---|---|
 | `tframe_form.html` | `extract_tframe_form_fields.js`（既定の入力） | ブラウザの DevTools でコピーした登録画面の `#rootWidget`。実行するとテストデータの雛形と PO の fill メソッドが `output/html/extract/` に出る |
 | `tframe_teacher_sample.html` | 同上（試すとき） | 講師登録画面のサンプル |
-| `shimamura_side_menu.html` | `extract_shimamura_side_menu_groups.py`（既定の入力） | サイドメニューの HTML |
+| `tframe_side_menu.html` | `extract_tframe_side_menu_groups.py`（既定の入力） | tframe のサイドメニューの HTML（`li.dropdown`・`index.php?r=...` の形） |
+| `shimamura_page.html` | `extract_shimamura_submenus.py`・`extract_shimamura_body_only_fields.py`（既定の入力） | shimamura の画面の HTML（`tr#submenu__...`・`td#body_only_td` を含むもの） |
 
 道具ごとの詳しい使い方は [scripts/README.md](../README.md) にあります。
