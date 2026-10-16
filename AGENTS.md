@@ -156,7 +156,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 | `/local-safe-move` | ファイル移動時のプロトコル（参照修正・パス見直し・doc-sync）を一括実施（e2e 専用） |
 | `/doc-sync` | 開発作業後のドキュメント連動更新チェックリストを実施 |
 | `/handoff` | セッション終了時のハンドオフ文書作成 |
-| `/newplan` | 新しい開発サイクルの開始（`.spec/` のアーカイブ＆新規作成） |
+| `/newplan` | 新しい開発サイクルの開始（聞き取り → 親 Issue を作る。#340 で `.spec/` はやめた） |
 | `/tframe-html-fetch` | tframe 画面の HTML 取得 + フォームフィールド ID の抽出・整理 |
 | `/shimamura-html-fetch` | shimamura 画面の HTML 取得 + フォームフィールド（name/id 属性）の抽出・整理 |
 | `/shimamura-ichiran-dev` | shimamura 一覧検索テストの新規作成・修正手順 |

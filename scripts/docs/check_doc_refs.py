@@ -19,6 +19,7 @@
 - `{placeholder}` `〇〇` `○○` `<...>` `*` を含むもの、Xxx / Some / foo 等の例示名（スキルのテンプレート）
 - コード上の慣用オブジェクト（I / page / document / process 等）のメソッド
 - `docs/**/learning/`（Bash 学習ログ。一時ファイルへの言及が多い）
+- `docs/**/archive/`（終わった作業の記録。当時のパスのまま残す #340）
 - `scripts/docs/check_doc_refs.ignore` に書いた参照（意図的に実在しないもの。1行1参照）
 
 【使い方】
@@ -58,7 +59,7 @@ DOC_GLOBS = [
 ]
 
 # チェックから外す Markdown（自動記録される学習ログは一時ファイルへの言及が多い）
-DOC_EXCLUDE_PARTS = ("learning",)
+DOC_EXCLUDE_PARTS = ("learning", "archive")  # archive/ は当時のまま残す記録（#340）
 
 # 意図的に実在しない参照を書いている行を黙らせる除外リスト（1行1参照、# はコメント）
 IGNORE_FILE = ROOT / "scripts" / "docs" / "check_doc_refs.ignore"
