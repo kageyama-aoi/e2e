@@ -1290,9 +1290,10 @@ class RunnerApp(tk.Tk):
         self._dl_tree.column('size', width=70, anchor='e')
         self._dl_tree.column('rows', width=70, anchor='e')
         self._dl_tree.column('enc', width=80, anchor='center')
-        self._dl_tree.pack(fill=tk.X, padx=4, pady=(4, 2))
+        # ボタンを先に下へ置いてから一覧に残りを埋めさせる（逆だと高さが足りないときにボタンが消える #364）
         dl_btn = ttk.Frame(self._dl_frame)
-        dl_btn.pack(fill=tk.X, padx=4, pady=(0, 4))
+        dl_btn.pack(side=tk.BOTTOM, fill=tk.X, padx=4, pady=(0, 4))
+        self._dl_tree.pack(fill=tk.BOTH, expand=True, padx=4, pady=(4, 2))
         ttk.Button(dl_btn, text='フォルダを開く', style=BTN_SECONDARY, command=self._open_downloads_folder).pack(side=tk.LEFT, padx=(0, 4))
         ttk.Button(dl_btn, text='Excelで開く', style=BTN_SECONDARY, command=self._open_selected_dl_file).pack(side=tk.LEFT)
 
@@ -1794,7 +1795,10 @@ class RunnerApp(tk.Tk):
                 os.path.basename(fpath), size_str, f'{count:,} {unit}', enc,
             ))
         self._dl_frame.configure(text=f'ダウンロードファイル（{len(new_files)} 件）')
-        self._dl_frame.pack(fill=tk.X, pady=(4, 0))
+        # ログ欄の下に置くと、下ペインの高さ（起動直後は約 130px）が足りず、ログ欄（expand=True）の後に
+        # pack したこちらが削られて見出しだけになっていた（#364）。下に先取りさせるとログ欄が消える。
+        # 横幅には余裕があるので、ログ欄の右に置き、before= でログ欄より先に幅を取る
+        self._dl_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(4, 0), before=self.log_text)
 
     def _open_downloads_folder(self):
         dl_dir = os.path.join(self.repo_root, _DOWNLOADS_DIR)

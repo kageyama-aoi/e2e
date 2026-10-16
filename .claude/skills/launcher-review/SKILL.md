@@ -197,7 +197,8 @@ RunnerApp._build_ui()
         └── bottom = Frame(pack, weight=2)   ← 全幅・下段
             ├── Command 表示
             ├── Log エリア（ScrolledText）
-            └── ダウンロードパネル（動的表示、ボタンは BTN_SECONDARY）
+            └── ダウンロードパネル（動的表示・Log の右に side=RIGHT, before=log_text で先に幅を取る。
+                下に置くと bottom の高さ ~130px に収まらず一覧が消える #364。ボタンは BTN_SECONDARY）
 ```
 
 （ステータスバーは `_outer_pane` の外、`RunnerApp` 直下に `pack(fill=X)` で別途配置）
