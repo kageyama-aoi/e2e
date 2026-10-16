@@ -438,21 +438,27 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 - 命名: `{product}_run_{機能}.bat`（例: `tframe_run_nav_all.bat`）
 - 汎用ツール（特定プロダクトに依存しないもの）は product prefix なし。
 
-### scripts/（テスト支援ツール）
+### scripts/（開発・保守の道具）
 > **⚠️ `codecept/support/` との混同注意**
 > `codecept/support/` はテスト実行中に CodeceptJS が `require()` する JS ファイル（runtime）。
 > `scripts/` はテストとは独立して単体で起動する補助ツール（Python・Node スクリプト）。
 > 「JS でテスト中に使うものは `codecept/support/`、単体で動かすツールは `scripts/`」と覚えること。
 
-- テストを直接実行しない補助スクリプトを置く。
-- サブフォルダはカテゴリで分ける:
-  - `cleanup/`  : テスト環境のデータを手で掃除するツール（`cleanup_gessya_fees.js`）。output/ の掃除は `run/cleanup/`
-  - `html/`     : HTML解析・ページ構造の抽出
-  - `docs/`     : ドキュメント生成・README 更新
-  - `hooks/`    : git フックのインストール（`install_git_hooks.js`）。Claude Code のフック（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録）は Claude 専用なので `.claude/hooks/` に置く（#341）
-  - `input/`, `output/` : 抽出スクリプトの入出力作業ディレクトリ（用途ごとにサブフォルダで区切る）
-- カテゴリに収まらない単発スクリプトのみ直下に置く。
-- テストを直接起動するものは run/ に置く（scripts/ には入れない）。
+**置き場所は「誰がいつ呼ぶか」で決める（#341）**:
+
+| 呼ぶのは | 置き場所 |
+|---|---|
+| ランチャー・npm scripts（テスト実行に付いてくる道具） | `run/`（`run/allure/` `run/cleanup/` `run/checks/`） |
+| Claude Code のフック | `.claude/hooks/` |
+| pre-commit・CI・人やスキルが開発・保守のときに手で動かすもの | `scripts/`（ここ） |
+
+- サブフォルダは用途で分ける:
+  - `docs/`     : ドキュメント生成・参照チェック・README のツリー更新（pre-commit・CI が呼ぶ）
+  - `hooks/`    : git フックのインストール（`install_git_hooks.js`）
+  - `html/`     : 画面 HTML の取得・解析（スキルの下調べ用）。tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。手で貼る入力は道具の隣（`html/side_menu_source.html` など）
+  - `testdata/` : テスト環境のデータを手で掃除するツール（`cleanup_gessya_fees.js`）
+- **git に入らない生成物（取得した HTML・抜き出し結果）は `scripts/` に書かず、`output/` の下に書く**（`output/html/shimamura/`・`output/html/extract/`・`output/side_menu_extract/` など）
+- その場限りの調査スクリプトはコミットしない（必要なら Issue にコードを貼る）
 
 ## パス解決のルール（JS テストファイル）
 - `codecept/tests/` 配下のファイルでリポジトリルート基準のパスを扱う場合は `codecept/support/repoRoot.js` を使うこと。

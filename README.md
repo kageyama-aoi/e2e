@@ -186,16 +186,16 @@ python scripts/html/extract_submenus.py
 ### サイドメニューグループ抽出
 `scripts/html/extract_side_menu_groups.py` は、サイドメニューHTMLから
 「グループ名」と「配下のメニュー項目」を構造化して JSON/CSV で出力します。
-成果物はスクリプトの近くの `scripts/output/side_menu_extract/` 配下にまとめて出力します。
+成果物は git に入らない生成物の置き場 `output/side_menu_extract/` 配下にまとめて出力します。
 既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成します。
 
 **使い方**
 ```bash
-python scripts/html/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html"
+python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html"
 ```
 
 **既定入力ファイル**
-- `[scripts/input/side_menu_extract/source.html](./scripts/input/side_menu_extract/source.html)`
+- `[scripts/html/side_menu_source.html](./scripts/html/side_menu_source.html)`
 - このファイルにサイドメニューHTMLを貼り付けたうえで、引数なしで実行できます
 
 ```bash
@@ -210,7 +210,7 @@ python scripts/html/extract_side_menu_groups.py
 
 **日本語だけのJSON**
 ```bash
-python scripts/html/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --jp-only
+python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
 ```
 
 - `groups[].name`: グループ名のみ
@@ -218,7 +218,7 @@ python scripts/html/extract_side_menu_groups.py "./scripts/input/side_menu_extra
 - ID や href を省いた軽量形式です
 
 **既定出力**
-- 出力先ディレクトリ: `scripts/output/side_menu_extract/<先頭の日本語>/`
+- 出力先ディレクトリ: `output/side_menu_extract/<先頭の日本語>/`
 - JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
 - JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
@@ -253,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 09:36:46
+Last updated: 2026-10-16 09:52:16
 
 ```text
 e2e/
@@ -897,12 +897,10 @@ e2e/
 │   ├── test_descriptions.json
 │   └── tframe_run_nav_all.bat
 ├── scripts/ 
-│   ├── cleanup/ 
-│   │   └── cleanup_gessya_fees.js
 │   ├── hooks/ 
 │   │   └── install_git_hooks.js
 │   ├── html/ 
-│   │   ├── input/ 
+│   │   ├── tframe/ 
 │   │   │   ├── account_list.html
 │   │   │   ├── accountInfoDataImport_touroku.html
 │   │   │   ├── announcement_touroku.html
@@ -970,10 +968,10 @@ e2e/
 │   │   ├── fetch_teacher_edit.js
 │   │   ├── fetch_tframe_forms.js
 │   │   ├── shimamura_route.js
+│   │   ├── side_menu_source.html
 │   │   └── tframe_extract_form_fields.js
-│   └── input/ 
-│       └── side_menu_extract/ 
-│           └── source.html
+│   └── testdata/ 
+│       └── cleanup_gessya_fees.js
 ├── .gitattributes
 ├── .gitignore
 ├── AGENTS.md

@@ -42,7 +42,7 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 
 #### パターン A — ユーザーが HTML を貼り付ける場合
 
-`scripts/html/input/input.html` に HTML が貼り付けてある。次の Step 1b へ進む。
+`scripts/html/tframe/input.html` に HTML が貼り付けてある。次の Step 1b へ進む。
 
 #### パターン B — 「自分でログインして取得して」と依頼された場合（推奨）
 
@@ -51,7 +51,7 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 ```bash
 # TARGETS 配列に対象画面を追加してから実行
 node scripts/html/fetch_tframe_forms.js tframe.culture_beta
-# → scripts/html/input/{name}.html に保存される
+# → scripts/html/tframe/{name}.html に保存される
 ```
 
 スクリプトの TARGETS 配列に取得したい画面を追加する：
@@ -64,7 +64,7 @@ const TARGETS = [
 #### フィールド抽出
 
 ```bash
-node scripts/html/tframe_extract_form_fields.js scripts/html/input/{name}_touroku.html
+node scripts/html/tframe_extract_form_fields.js scripts/html/tframe/{name}_touroku.html
 ```
 
 抽出すべき情報：
@@ -285,7 +285,7 @@ npx codeceptjs run ./codecept/tests/tframe/page/{module}_touroku_test.js --profi
 
 ユーザーが「{画面名}のテストを作りたい」と言ったとき：
 
-1. `scripts/html/input/input.html` に HTML が貼り付けてあるか確認する
+1. `scripts/html/tframe/input.html` に HTML が貼り付けてあるか確認する
 2. なければ「自動取得しますか？ `fetch_tframe_forms.js` で culture_beta からログインして取得できます」と提案する
 3. 自動取得を承認されたら `fetch_tframe_forms.js` の TARGETS を更新してスクリプトを実行する
 4. 取得した HTML の `data-actionid` から module 名と URL パターンを特定する

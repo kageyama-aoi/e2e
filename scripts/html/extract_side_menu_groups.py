@@ -22,26 +22,26 @@ README
 
 入力:
 - HTMLファイル1件
-- 既定入力ファイル: `scripts/input/side_menu_extract/source.html`
+- 既定入力ファイル: `scripts/html/side_menu_source.html`
 - 文字コードは `utf-8` を優先し、失敗時は `cp932` を試行
 
 既定の出力先:
-- 出力先ディレクトリ: `scripts/output/side_menu_extract/<先頭の日本語>/`
+- 出力先ディレクトリ: `output/side_menu_extract/<先頭の日本語>/`
 - JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
 - JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
 
 使い方:
-  python scripts/extract_side_menu_groups.py
-  # 既定入力: scripts/input/side_menu_extract/source.html
+  python scripts/html/extract_side_menu_groups.py
+  # 既定入力: scripts/html/side_menu_source.html
 
-  python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html"
+  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html"
 
 日本語だけの軽量JSON:
-  python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --jp-only
+  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
 
 CSV出力:
-  python scripts/extract_side_menu_groups.py "./scripts/input/side_menu_extract/source.html" --format csv
+  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
 
 通常JSONの構造:
 {
@@ -87,7 +87,7 @@ CSV出力:
 - HTML構造が大きく変わると抽出条件の見直しが必要
 - 「日本語のみJSON」は表示名だけを残すため、リンクやIDは保持しない
 - 既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成する
-- 入力HTMLを手で貼り付ける運用を想定しているため、`scripts/input/side_menu_extract/source.html` を編集すればそのまま実行できる
+- 入力HTMLを手で貼り付ける運用を想定しているため、`scripts/html/side_menu_source.html` を編集すればそのまま実行できる
 """
 
 import argparse
@@ -101,8 +101,8 @@ from datetime import datetime
 from html.parser import HTMLParser
 from typing import Any, Dict, List, Optional
 
-DEFAULT_INPUT = os.path.join(".", "scripts", "input", "side_menu_extract", "source.html")
-DEFAULT_OUTPUT_DIR = os.path.join(".", "scripts", "output", "side_menu_extract")
+DEFAULT_INPUT = os.path.join(".", "scripts", "html", "side_menu_source.html")
+DEFAULT_OUTPUT_DIR = os.path.join(".", "output", "side_menu_extract")  # git に入らない生成物は output/ へ（#341）
 CSV_HEADERS = [
     "group_id",
     "group_name",
@@ -434,7 +434,7 @@ def build_default_output_paths(groups: List[Dict[str, Any]]) -> Dict[str, str]:
 
 def main() -> None:
     """エントリーポイント。"""
-    # IN:  scripts/input/side_menu_extract/source.html（既定）または引数で指定したHTMLファイル
+    # IN:  scripts/html/side_menu_source.html（既定）または引数で指定したHTMLファイル
     args = parse_args()
     if args.input is None:
         args.input = DEFAULT_INPUT
@@ -447,9 +447,9 @@ def main() -> None:
     # groups = [{id, name, toggle_target, items:[{id, name, title, href, selected}]}, ...]
 
     # OUT先: 先頭の日本語ラベル + タイムスタンプ でディレクトリ・ファイル名を自動生成
-    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.json
-    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups_ja.json  (--jp-only 時)
-    #   scripts/output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.csv      (--format csv 時)
+    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.json
+    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups_ja.json  (--jp-only 時)
+    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.csv      (--format csv 時)
     default_paths = build_default_output_paths(groups)
 
     if args.output is None:

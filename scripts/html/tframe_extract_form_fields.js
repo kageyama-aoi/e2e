@@ -11,7 +11,7 @@
  *
  * 【手順】
  *   1. ブラウザ DevTools で登録画面の #rootWidget を右クリック → 「outerHTMLをコピー」
- *   2. scripts/html/input/input.html に貼り付けて保存
+ *   2. scripts/html/tframe/input.html に貼り付けて保存
  *   3. node scripts/html/tframe_extract_form_fields.js を実行
  *   4. output/extract_result.js を開いてコピペ（実行のたびに上書き）
  *
@@ -47,10 +47,10 @@ const path = require('path');
 //
 // 引数なしで実行した場合に読み込む HTML ファイル。
 // 毎回このファイルを上書きして使い回す運用を想定。
-const DEFAULT_INPUT = path.join(__dirname, 'input', 'input.html');
+const DEFAULT_INPUT = path.join(__dirname, 'tframe', 'input.html');
 
 // 出力先ディレクトリ。実行のたびにタイムスタンプ付きファイルを生成する。
-const OUTPUT_DIR = path.join(__dirname, 'output');
+const OUTPUT_DIR = path.join(__dirname, '..', '..', 'output', 'html', 'extract');  // git に入らない生成物は output/ へ（#341）
 
 // ── 入力読み込み ──────────────────────────────────────────────
 

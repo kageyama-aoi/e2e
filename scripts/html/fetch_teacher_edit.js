@@ -27,7 +27,7 @@ if (!BASE_URL || !USER || !PASSWORD || !TANTOUSYA) {
   process.exit(1);
 }
 
-const OUTPUT_DIR = path.join(__dirname, 'shimamura');
+const OUTPUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'shimamura');  // git に入らない生成物は output/ へ（#341）
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 async function login(page) {
@@ -53,7 +53,7 @@ async function getContentHtml(page) {
 async function saveHtml(html, name) {
   const outFile = path.join(OUTPUT_DIR, `${name}.html`);
   fs.writeFileSync(outFile, html, 'utf8');
-  console.log(`  ✓ 保存: scripts/html/shimamura/${name}.html (${Math.round(html.length / 1024)} KB)`);
+  console.log(`  ✓ 保存: output/html/shimamura/${name}.html (${Math.round(html.length / 1024)} KB)`);
 }
 
 (async () => {
@@ -133,7 +133,7 @@ async function saveHtml(html, name) {
     await page.waitForTimeout(1000);
     const keiriDwHtml = await page.$eval('body', el => el.innerHTML);
     fs.writeFileSync(path.join(OUTPUT_DIR, 'teacher_detail_keiri.html'), keiriDwHtml, 'utf8');
-    console.log(`  ✓ 保存: scripts/html/shimamura/teacher_detail_keiri.html (${Math.round(keiriDwHtml.length / 1024)} KB)`);
+    console.log(`  ✓ 保存: output/html/shimamura/teacher_detail_keiri.html (${Math.round(keiriDwHtml.length / 1024)} KB)`);
 
     // ── Step 4b: 経理タブ編集画面（EW_AccountingTab_AN）──────────────
     console.log('\n▶ 経理タブ編集画面（EW_AccountingTab_AN）を取得中...');
@@ -208,7 +208,7 @@ async function saveHtml(html, name) {
       JSON.stringify(fields, null, 2),
       'utf8'
     );
-    console.log(`  フィールド: ${fields.length} 件 → scripts/html/shimamura/teacher_edit_keiri_fields.json`);
+    console.log(`  フィールド: ${fields.length} 件 → output/html/shimamura/teacher_edit_keiri_fields.json`);
 
   } catch (err) {
     console.error('\nERROR:', err.message);

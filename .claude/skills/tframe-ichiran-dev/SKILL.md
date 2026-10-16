@@ -56,7 +56,7 @@ tframe の一覧（SearchView）画面に対する E2E テスト（Page Object �
    既存 Page Object の `navigateToRegisterPage()` 内の URL から `ew` → `sw` に変換すれば確認できる。
 
 3. **検索フォームのフィールド ID を確認する**  
-   - `scripts/html/input/` に `{module}_list.html` があれば流用する
+   - `scripts/html/tframe/` に `{module}_list.html` があれば流用する
    - なければ以下で取得する:
      ```bash
      node scripts/html/fetch_tframe_forms.js tframe.culture_beta

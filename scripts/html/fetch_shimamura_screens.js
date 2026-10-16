@@ -34,7 +34,7 @@ if (!BASE_URL || !USER || !PASSWORD || !TANTOUSYA) {
   process.exit(1);
 }
 
-const OUTPUT_DIR = path.join(__dirname, 'shimamura');
+const OUTPUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'shimamura');  // git に入らない生成物は output/ へ（#341）
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 // ── 取得対象 ──────────────────────────────────────────────────
@@ -248,7 +248,7 @@ async function dumpAllLinks(page) {
 
     // ログイン直後のスクリーンショット＋全リンク保存（URL 調査用）
     await page.screenshot({ path: path.join(OUTPUT_DIR, 'after_login.png'), fullPage: false });
-    console.log('  スクリーンショット保存: scripts/html/shimamura/after_login.png');
+    console.log('  スクリーンショット保存: output/html/shimamura/after_login.png');
 
     const linksAfterLogin = await dumpAllLinks(page);
     fs.writeFileSync(
@@ -256,7 +256,7 @@ async function dumpAllLinks(page) {
       JSON.stringify(linksAfterLogin, null, 2),
       'utf8'
     );
-    console.log(`  メインメニューのリンク: ${linksAfterLogin.length} 件 → scripts/html/shimamura/main_menu_links.json`);
+    console.log(`  メインメニューのリンク: ${linksAfterLogin.length} 件 → output/html/shimamura/main_menu_links.json`);
 
     // ターゲット画面の HTML 取得
     for (const target of TARGETS) {
@@ -266,7 +266,7 @@ async function dumpAllLinks(page) {
         const html = await getScreenHtml(page, target.directUrl);
         const outFile = path.join(OUTPUT_DIR, `${target.name}.html`);
         fs.writeFileSync(outFile, html, 'utf8');
-        console.log(`  ✓ 保存: scripts/html/shimamura/${target.name}.html (${Math.round(html.length / 1024)} KB)`);
+        console.log(`  ✓ 保存: output/html/shimamura/${target.name}.html (${Math.round(html.length / 1024)} KB)`);
 
         // 各画面のリンクも保存（URL 調査の補助）
         const links = await dumpAllLinks(page);
@@ -275,7 +275,7 @@ async function dumpAllLinks(page) {
           JSON.stringify(links, null, 2),
           'utf8'
         );
-        console.log(`  リンク: ${links.length} 件 → scripts/html/shimamura/${target.name}_links.json`);
+        console.log(`  リンク: ${links.length} 件 → output/html/shimamura/${target.name}_links.json`);
 
       } catch (err) {
         console.warn(`  ⚠ ${target.hint} の取得に失敗: ${err.message}`);

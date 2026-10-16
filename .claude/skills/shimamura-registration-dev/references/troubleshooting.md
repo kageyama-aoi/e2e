@@ -5,7 +5,7 @@
 
 | エラー | 原因 | 対処 |
 |---|---|---|
-| 画面が表示されない | URL の module / action が違う | `scripts/html/shimamura/` の links.json で確認、または実機で URL を取得 |
+| 画面が表示されない | URL の module / action が違う | `output/html/shimamura/` の links.json で確認、または実機で URL を取得 |
 | `#top_err_info_msg_div` が見つからない | エラーが出ていない / 違うコンテナ | 実際のエラー表示先を実機で確認する |
 | 別タブが開かない | クリック対象が wrong / タイムアウト | `I.wait(TIMEOUTS.TAB_SWITCH)` を増やす・セレクタを確認する |
 | `switchToNextTab()` 後に要素が見つからない | タブ数がずれている | タブが何番目かを確認（`I.grabCurrentUrl()` でログ取得） |

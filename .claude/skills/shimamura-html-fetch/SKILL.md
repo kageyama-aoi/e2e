@@ -100,8 +100,8 @@ node scripts/html/fetch_shimamura_screens.js {profile}
 
 出力例:
 ```
-✓ 保存: scripts/html/shimamura/{name}.html (21 KB)
-リンク: 58 件 → scripts/html/shimamura/{name}_links.json
+✓ 保存: output/html/shimamura/{name}.html (21 KB)
+リンク: 58 件 → output/html/shimamura/{name}_links.json
 ```
 
 **失敗した場合のチェックポイント:**
@@ -121,12 +121,12 @@ shimamura は tframe と異なり `name=` 属性が主体（`id=` も混在）�
 
 ```bash
 # name 属性（フォームフィールドの主体）
-grep -oE 'name="[^"]+"' scripts/html/shimamura/{name}.html \
+grep -oE 'name="[^"]+"' output/html/shimamura/{name}.html \
   | grep -v 'name="body_only_AN\|is_popup_AN\|is_ajax_AN\|subpanel_\|action\|module\|return_\|from_\|csrf\|_AN"' \
   | sort -u
 
 # id 属性（ラベルやコンテナの参照に使う）
-grep -oE 'id="[^"]+"' scripts/html/shimamura/{name}.html \
+grep -oE 'id="[^"]+"' output/html/shimamura/{name}.html \
   | grep -v 'id="body_only_\|id="top_message\|id="top_err\|id="calendar\|id="fixed_\|id="fullscreen\|id="HideHandle\|id="HideMenu\|id="usersMenu\|id="adminMenu\|id="subpanel_\|id="submenu__' \
   | sort -u
 ```
@@ -163,7 +163,7 @@ HTML 内に `onchange` + Ajax 呼び出しがあれば連動している。
 ```
 ## {hint} のフォームフィールド
 
-保存先: scripts/html/shimamura/{name}.html
+保存先: output/html/shimamura/{name}.html
 
 ### テキスト入力（name 属性）
 - `name="course_name"` — クラス名
