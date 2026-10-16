@@ -121,7 +121,7 @@ npx codeceptjs run "./codecept/tests/shimamura/**/*_test.js" --profile shimamura
 - [CodeceptJS 設計パターン・用語集](./docs/common/codeceptjs_design_patterns.md): 設計思想（データ駆動・エラー注入・単一フロー設計）と技術用語を解説しています。
 - [プロジェクト設計・アーキテクチャガイド](./docs/project/project_architecture_guide.md): ディレクトリ構成・責務分離・設計ルールの詳細を説明しています。
 - [モジュール依存関係図](./docs/common/mermaid_code_relationships.md): テスト・Page Object・データファイルの依存関係を Mermaid 図で可視化しています。
-- [技術概要 (Technical Overview)](./docs/project/project_architecture_guide.md#6-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
+- [技術概要 (Technical Overview)](./docs/project/project_architecture_guide.md#7-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
 ### プロダクト別
 - [しまむらテスト コーディング規約](./docs/shimamura/coding_guidelines.md): しまむら系テストの構成・命名・共通化のルールをまとめたガイドです。
@@ -166,13 +166,12 @@ python run/allure/archive_allure_results.py --keep-latest 5
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 11:13:41
+Last updated: 2026-10-16 11:42:51
 
 ```text
 e2e/
 ├── .agent/ 
 │   ├── memory/ 
-│   │   ├── docs_reorganization_plan.md
 │   │   ├── MEMORY.md
 │   │   └── tframe_refactor_resume_2026-04-03.md
 │   ├── skills/ 

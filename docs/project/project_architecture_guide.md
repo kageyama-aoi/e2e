@@ -1,7 +1,7 @@
 # プロジェクト設計・アーキテクチャガイド
 
 本リポジトリは、テスト自動化プロジェクトにおける「関心の分離」と「運用効率」を追求した構成です。  
-最終更新: 2026-07-06
+最終更新: 2026-10-16（#357）
 
 ---
 
@@ -16,27 +16,34 @@
 | `codecept/support/` | 共通基盤層 | ユーティリティ・カスタムSteps・ENV読み込み |
 | `codecept/data/` | テストデータ層 | CSV・JSによるデータ定義 |
 | `env/` | 環境定義層 | プロファイル別 `.env.*` ファイル |
-| `run/` | 実行ランチャー層 | 主役は `run_gui.py`（GUI）、特殊フローは `.bat` / `.ps1` |
-| `scripts/` | 開発補助ツール層 | テストを起動しない支援ツール群 |
-| `docs/` | ドキュメント層 | 設計書・JSDoc生成物・学習資料 |
+| `run/` | 実行ランチャー層 | 主役は `run_gui.py`（GUI）。ランチャー・npm scripts が呼ぶ道具（`allure/` `cleanup/` `checks/`）もここ |
+| `scripts/` | 開発補助ツール層 | pre-commit・CI・人が開発・保守で動かす道具（使い方は `scripts/README.md`） |
+| `docs/` | ドキュメント層 | 設計書・学習資料（`common/` `project/` `shimamura/` `tframe/`）。JSDoc 生成物 `docs/generated/` は git 管理外 |
 | `output/` | 生成物（テスト結果） | スクリーンショット・ログ |
 | `output/allure-results/` | 生成物（Allureデータ） | Allureレポートの元データ（#334 で直下から `output/` の下へ） |
 
 ### codecept/tests/ の構成
 
-プロダクトごとにサブディレクトリを分割し、tframe はさらに性質別に分類しています。
+プロダクトごとにサブディレクトリを分割し、shimamura と tframe はさらに性質別に分類しています（分類の基準は AGENTS.md「tframe / shimamura テストのフォルダ分類」）。
 
 ```
 codecept/tests/
-├── shimamura/        # しまむら系テスト
+├── shimamura/
+│   ├── auth/         # ログイン・認証系
+│   ├── page/         # 一覧・検索画面の操作／表示確認、ファイル出力検証
+│   ├── flow/         # 登録・処理フロー（複数画面・バッチ処理をまたぐ）
+│   ├── check/        # 表示・設定の確認系
+│   └── util/         # GUIランチャー専用の手動起動スクリプト（*_test.js 非末尾）
 ├── tframe/
 │   ├── auth/         # ログイン・認証系
 │   ├── page/         # 画面単体の操作・登録確認
 │   ├── flow/         # 複数画面をまたぐ遷移シナリオ
 │   ├── check/        # 表示・設定の確認系
-│   └── api/          # API系
+│   ├── api/          # API系
+│   └── util/         # 手動起動の開発補助スクリプト（*_test.js 非末尾）
 ├── taskreport/
-└── smoke/
+├── smoke/
+└── unit/             # 支援コードの単体テスト（*.test.js・npm run test:unit。ブラウザ不要）
 ```
 
 ### codecept/pages/ の構成
@@ -49,13 +56,16 @@ codecept/pages/
 │   ├── flow/                   # 複数画面をまたぐ処理フロー
 │   │   ├── CourseClassSetupFlowPage.js
 │   │   ├── GessyaIkkatuFlowPage.js
+│   │   ├── HappyoukaiFlowPage.js
 │   │   ├── KoushiShareiFlowPage.js
+│   │   ├── SalesGroupTransferFlowPage.js
 │   │   ├── StudentSaikenkaiFlowPage.js
 │   │   ├── SyokaiFlowPage.js
 │   │   └── TeacherKeiriFlowPage.js
 │   ├── screens/                # 画面操作 Page Object
 │   │   ├── ContactRegisterPage.js
 │   │   ├── SmbcStateImportPage.js  # 債権買取状態読込（inject: smbcStateImportPageShimamura）
+│   │   ├── SalesGroupTransferPage.js  # 料金明細 編集画面（入金）
 │   │   ├── IchiranPage.js      # 一覧画面の共通処理＋ichiran/ の画面定義を結合（inject: ichiranPageShimamura）
 │   │   └── ichiran/            # 一覧画面の定義（アイコン別: student / course / teacher / contacts / keiri）
 │   └── _common/                # 共通ユーティリティ・複数画面で共有する Page Object
@@ -150,7 +160,7 @@ codecept/data/
 `run/` と `scripts/` は役割で分離されています。
 
 - **`run/`**: 開発者が直接起動するファイル。主役は **`run_gui.py`**（Product → Test → Profile の GUI ランチャー。`--grep` フィルタ・Allure表示内蔵）。バッチ連続実行など特殊フローのみ `.bat` + `run/ps/*.ps1` で追加。
-- **`scripts/`**: テストを直接起動しない補助ツール（`allure/`, `cleanup/`, `html/`, `docs/` でカテゴリ分け）
+- **`scripts/`**: 開発・保守の道具（`docs/`, `html/`, `setup/`, `testdata/`, `debug/` でカテゴリ分け）。テスト実行に付いてくる道具（Allure 表示・掃除・事前チェック）は `run/` 側に置く（#341）。置き場所の決め方は AGENTS.md「run/ と scripts/ の配置ルール」
 
 ---
 
@@ -171,7 +181,7 @@ Feature('講師登録');
 Data(csvData).Scenario(
   '管理者ログイン後に講師を新規登録できる',
   { tag: '@admin' },
-  withScenarioLabel(({ I, koshiPage, loginKannrisyaPage, current }) => {
+  withScenarioLabel(async ({ I, koshiPage, loginKannrisyaPage, current }) => {
     loginKannrisyaPage.login();
     koshiPage.navigateToRegisterPage();
     koshiPage.fillRegistrationForm(current);
@@ -184,61 +194,12 @@ CSV列名がそのまま `current.{列名}` でアクセスできます。
 
 ---
 
-## 5. tframe 登録テストの共通パターン
+## 5. プロダクト別の共通パターン
 
-### Page Object の標準構成
+雛形にするファイル・共通ユーティリティ・特殊フィールドの操作は、**AGENTS.md を正**としてそちらにだけ書いています（二重に書くと片方が古くなるため。#357）。
 
-```javascript
-const { I } = inject();
-const { fillTextFields, submitTframeFormAndVerify, isEnglish } = require('../../support/utils');
-
-module.exports = {
-  navigateToRegisterPage() { /* USE_MENU_NAV 対応 */ },
-  fillRegistrationForm(data) { /* セクション別メソッドを呼び出す */ },
-  fillPersonalInfo(data) { /* fillTextFields + selectOption */ },
-  fillAddressInfo(data) { /* zipCodeBtn + fillTextFields */ },
-  async submitAndVerifyRegistration(expectedName) {
-    await submitTframeFormAndVerify(I, expectedName);
-  },
-};
-```
-
-### 特殊フィールドの操作パターン
-
-```javascript
-// 郵便番号ボタン（都道府県・市区町村を自動入力）
-I.fillField('#primaryAddressPostalcode', data.primaryAddressPostalcode);
-I.click('#zipCodeBtn');
-I.wait(1);
-// 番地・カナは自動入力されないため手動
-fillTextFields(I, { primaryAddressStreet: data.primaryAddressStreet });
-
-// AJAX連動ドロップダウン（エリア→校舎）
-I.selectOption('#branchId_area_id', data.branchId_area_id);
-I.wait(1); // AJAX完了を待つ
-I.selectOption('#branchId_branch_id', data.branchId_branch_id);
-
-// 銀行コード（AJAX補完で銀行名が自動入力）
-I.fillField('#bankCode', data.bankCode);
-I.wait(1);
-// bankName はCSV不要（自動補完のため）
-
-// メニュー経由遷移（USE_MENU_NAV対応）
-if (process.env.USE_MENU_NAV === 'true') {
-  I.click(`a:has-text("${isEnglish() ? 'Master' : 'マスター'}")`);
-  I.waitForElement('a[href*="account%2Few"]', 10);
-  I.click('a[href*="account%2Few"]');
-} else {
-  I.amOnPage(process.env.BASE_URL + 'index.php?r=account%2Few%2F_default');
-}
-```
-
-### 保存後バリデーションエラーの検出
-
-```javascript
-// #tf-message-summary にエラーが表示されていれば throw
-await submitTframeFormAndVerify(I, expectedName);
-```
+- tframe: AGENTS.md「tframe 登録テストの共通パターン」「tframe 業務フロー（複数画面をまたぐシナリオ）のFlowPageパターン」
+- shimamura: AGENTS.md「shimamura テストの共通パターン」
 
 ---
 
