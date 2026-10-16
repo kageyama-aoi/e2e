@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """
-PostToolUse(Bash) Hook: Bash コマンド実行ログを docs/common/learning/ に自動記録する。
+PostToolUse(Bash) Hook: Bash コマンド実行ログを output/logs/bash/ に自動記録する。
 
 各実行を bash_YYYYMMDD.md に追記することで、セッション中のコマンド学習記録を蓄積する。
+生成物なので docs/ ではなく output/ の下に書く（#359 で docs/common/learning/ から移動）。
 """
 import sys
 import json
@@ -10,7 +11,7 @@ import os
 from datetime import datetime
 
 MAX_OUTPUT_LINES = 50
-LEARNING_DIR = 'docs/common/learning'
+LOG_DIR = os.path.join('output', 'logs', 'bash')
 
 
 def main():
@@ -39,7 +40,7 @@ def main():
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-    log_dir = os.path.join(repo_root, LEARNING_DIR)
+    log_dir = os.path.join(repo_root, LOG_DIR)
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, f'bash_{today}.md')
 

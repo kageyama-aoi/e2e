@@ -12,7 +12,7 @@
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
 - `output/` は git に入らない生成物の置き場。直下は種類ごとに分ける（#339）:
-  - 実行結果: `<profile>/<日時_テスト名>/`（スクショ等）・`allure-results/`・`allure-report/`・`logs/`（#334 で直下から移動。古いものはランチャー起動時に自動削除）
+  - 実行結果: `<profile>/<日時_テスト名>/`（スクショ等）・`allure-results/`・`allure-report/`・`logs/`（#334 で直下から移動。古いものはランチャー起動時に自動削除。Claude Code のフックが書く Bash ログは `logs/bash/`。#359 で `docs/common/learning/` から移動）
   - `session/`: テスト間の受け渡しファイル（`gessya_ikkatu_session.json` など。消すと後続テストが動かない）
   - `probe/<名前>/`: 調査・抽出の記録（`sort_probe/`・`sales_group_transfer_setup/`・`side_menu_extract/` など）
   - `work/`: テストが作る一時ファイルとダウンロード（`downloads/`・取込用の日付書き換えファイル）

@@ -445,10 +445,10 @@ def _cleanup_old_run_dirs(days=RUN_DIR_CLEANUP_DAYS, keep_latest=RUN_DIR_KEEP_LA
     return module.cleanup_all(days, keep_latest)
 
 
-def _cleanup_old_learning_logs(learning_dir, days=LOG_CLEANUP_DAYS):
-    """docs/common/learning/ 配下の bash_YYYYMMDD.md を days 日以上古ければ削除する。"""
+def _cleanup_old_bash_logs(bash_log_dir, days=LOG_CLEANUP_DAYS):
+    """output/logs/bash/ 配下の bash_YYYYMMDD.md（Claude Code のフックが書く）を days 日以上古ければ削除する。"""
     return _cleanup_old_files(
-        learning_dir,
+        bash_log_dir,
         pattern=re.compile(r'^bash_(\d{8})\.md$'),
         date_fmt='%Y%m%d',
         days=days,
@@ -1557,8 +1557,8 @@ class RunnerApp(tk.Tk):
         RUN_DIR_CLEANUP_DAYS 日以上古い実行フォルダ（output/allure-results/ と output/）を削除する。"""
         def run():
             results = cleanup_old_logs(self.logs_dir)
-            results += _cleanup_old_learning_logs(
-                os.path.join(REPO_ROOT, 'docs', 'common', 'learning'), LOG_CLEANUP_DAYS
+            results += _cleanup_old_bash_logs(
+                os.path.join(self.logs_dir, 'bash'), LOG_CLEANUP_DAYS  # #359 で docs/common/learning/ から移動
             )
             if results:
                 self.log_queue.put(f'=== 自動クリーンアップ（{LOG_CLEANUP_DAYS}日以上古いログ）===\n')
