@@ -3,7 +3,7 @@ archive_allure_results.py
 
 output/allure-results/<profile>/<timestamp_rundir>/ 単位で古い実行結果をzipアーカイブし、
 N日以上古いものを削除します。プロファイルごとに最新 K 件は日数に関係なく残します。
-（npm run allure:archive 用の手動 CLI。判定は scripts/cleanup/run_dir_cleanup.py の
+（npm run allure:archive 用の手動 CLI。判定は run/cleanup/run_dir_cleanup.py の
 cleanup_run_dirs() に任せている #321）
 
 ランチャー（run/run_gui.py）とテスト後フックは run_dir_cleanup.cleanup_all() を直接呼び、
@@ -25,19 +25,19 @@ OUT: output/allure-results/archive/<profile>/<timestamp_rundir>.zip（--no-archi
 
 使い方:
   # 30日より古い実行結果をアーカイブ＋削除（既定）
-  python scripts/allure/archive_allure_results.py
+  python run/allure/archive_allure_results.py
 
   # 7日より古いものを対象にする
-  python scripts/allure/archive_allure_results.py --days 7
+  python run/allure/archive_allure_results.py --days 7
 
   # 確認だけ（実際には何もしない）
-  python scripts/allure/archive_allure_results.py --dry-run
+  python run/allure/archive_allure_results.py --dry-run
 
   # アーカイブせず削除のみ
-  python scripts/allure/archive_allure_results.py --no-archive
+  python run/allure/archive_allure_results.py --no-archive
 
   # プロファイルごとに最新5件は残す（0 で全件を日数だけで判定）
-  python scripts/allure/archive_allure_results.py --keep-latest 5
+  python run/allure/archive_allure_results.py --keep-latest 5
 """
 
 import argparse

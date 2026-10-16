@@ -45,7 +45,7 @@
       "Bash(powershell *)",
       "Bash(grep *)",
       "Bash(npx allure *)",
-      "Bash(node scripts/allure/serve_latest.js tframe.culture_test)",
+      "Bash(node run/allure/serve_latest.js tframe.culture_test)",
       "Bash(sed -i 's|./tests/tframe/dropdown_check_test.js|./tests/tframe/check/dropdown_check_test.js|g' C:/Users/kageyama/Tools/testcode/e2e/run/ps/tframe_run_dropdown_check.ps1)",
       "Bash(sed -i 's|./tests/tframe/lang_check_test.js|./tests/tframe/check/lang_check_test.js|g' C:/Users/kageyama/Tools/testcode/e2e/run/ps/tframe_run_lang_check.ps1)",
       "Read(//c/Users/kageyama/Tools/.github/**)",

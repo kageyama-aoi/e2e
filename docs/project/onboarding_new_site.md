@@ -95,7 +95,7 @@ Page Object は `const { I } = inject();` で `I` を取得し、メソッドは
   ```json
   "test_newsite": "npx codeceptjs run ./codecept/tests/newsite/**/*_test.js --profile newsite.<環境名>"
   ```
-- `pretest_s`（`scripts/check_pause.js` で `codecept/tests/shimamura/` 配下の残存 `pause()` を検出）のような
+- `pretest_s`（`run/checks/check_pause.js` で `codecept/tests/shimamura/` 配下の残存 `pause()` を検出）のような
   pre-test ガードスクリプトも、必要なら同様の仕組みを追加する（必須ではない）。
 
 ### 2-4. `AGENTS.md`

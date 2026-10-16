@@ -35,7 +35,7 @@ from datetime import datetime, timedelta
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 _DOWNLOADS_DIR   = os.path.join('output', 'downloads')
-_ALLURE_SCRIPT   = os.path.join('scripts', 'allure', 'serve_latest.js')
+_ALLURE_SCRIPT   = os.path.join('run', 'allure', 'serve_latest.js')
 _JSDOC_INDEX     = os.path.join('docs', 'generated', 'html', 'index.html')
 # テスト一式の置き場所（#337 で tests/・data/ を codecept/ の下へ移した）
 _TESTS_REL       = 'codecept/tests'
@@ -47,7 +47,7 @@ _DATE_VALUE_RE = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
 LOG_CLEANUP_DAYS = 30
 RUN_DIR_CLEANUP_DAYS = 10   # output/ と output/allure-results/ の実行フォルダは直前の実行を見る用途なので短めに消す
 RUN_DIR_KEEP_LATEST  = 3    # プロファイルごとに残す最新件数（Open Allure や直近の失敗スクショが見られなくならないように）
-_RUN_DIR_CLEANUP_SCRIPT = os.path.join('scripts', 'cleanup', 'run_dir_cleanup.py')
+_RUN_DIR_CLEANUP_SCRIPT = os.path.join('run', 'cleanup', 'run_dir_cleanup.py')
 LOG_FONT = ('Courier New', 9)
 MAX_FLUSH_LINES = 300  # _drain_log_queue が1回のafterサイクルで処理する上限行数
 
@@ -434,7 +434,7 @@ def cleanup_old_logs(logs_dir, days=LOG_CLEANUP_DAYS):
 
 def _cleanup_old_run_dirs(days=RUN_DIR_CLEANUP_DAYS, keep_latest=RUN_DIR_KEEP_LATEST):
     """output/allure-results/ と output/ の <profile>/<YYYYMMDD_HHMMSS_*>/ を days 日以上古ければ削除する（zip しない）。
-    判定は scripts/cleanup/run_dir_cleanup.py と共通（プロファイルごとの最新 keep_latest 件は残す #321）。
+    判定は run/cleanup/run_dir_cleanup.py と共通（プロファイルごとの最新 keep_latest 件は残す #321）。
     戻り値: {'output/allure-results': [行, ...], 'output': [行, ...]}"""
     import importlib.util
     spec = importlib.util.spec_from_file_location(

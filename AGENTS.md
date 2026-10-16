@@ -28,7 +28,7 @@
 
 ### Allure レポート
 - `run/run_gui.py` → `Open Allure` ボタン（推奨）。選択中プロファイルの最新結果を自動検出してブラウザ表示。
-- `npm run allure:latest` プロファイル指定で最新結果をサーブ（`node scripts/allure/serve_latest.js <profile>`）。
+- `npm run allure:latest` プロファイル指定で最新結果をサーブ（`node run/allure/serve_latest.js <profile>`）。
 - `npm run allure:serve` output/allure-results 全体をサーブ。
 - `npm run allure:report` レポート生成（output/allure-report/ に出力）。
 - `npm run allure:open` 生成済みレポートを開く。
@@ -416,8 +416,13 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 
 ## run/ と scripts/ の配置ルール
 
-### run/（テスト実行ランチャー）
+### run/（テスト実行ランチャーと、テスト実行に付いてくる道具）
 - ユーザーが直接起動するファイル（.bat / .py GUI）を置く。
+- ランチャー・npm scripts から呼ばれる道具もここに置く（#341。「テストツール一式は `run/` と `codecept/` を見ればそろう」状態にする）:
+  - `allure/`  : Allure 結果の表示（`serve_latest.js` = Open Allure・`npm run allure:latest`）・アーカイブ（`archive_allure_results.py` = `npm run allure:archive`）
+  - `cleanup/` : 古い実行フォルダ・ログの削除（`run_dir_cleanup.py` = ランチャー起動時と Claude Code のテスト後フックが共用、`cleanup_output_logs.py` = `npm run cleanup`）
+  - `checks/`  : テスト前のチェック（`check_pause.js` = `npm run pretest_s`）
+  - サブフォルダの中は .js も可。`run/` 直下は .bat / .py が原則
 - **主要ランチャーは `run/run_gui.py`（GUI）**。Product → Test → Profile の3段階選択でテストを実行できる。
   - `--grep` フィルタ（タグ絞り込み）、`Open Allure`（レポート表示）も内蔵。
   - 起動: `run/run_gui.bat` をダブルクリック。
@@ -441,13 +446,12 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 
 - テストを直接実行しない補助スクリプトを置く。
 - サブフォルダはカテゴリで分ける:
-  - `allure/`   : Allure 結果の管理・アーカイブ
-  - `cleanup/`  : output/ と output/logs/ の古いファイル削除・アーカイブ
+  - `cleanup/`  : テスト環境のデータを手で掃除するツール（`cleanup_gessya_fees.js`）。output/ の掃除は `run/cleanup/`
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
   - `hooks/`    : git フックのインストール（`install_git_hooks.js`）。Claude Code のフック（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録）は Claude 専用なので `.claude/hooks/` に置く（#341）
   - `input/`, `output/` : 抽出スクリプトの入出力作業ディレクトリ（用途ごとにサブフォルダで区切る）
-- カテゴリに収まらない単発スクリプトのみ直下に置く（例: `check_pause.js` = `npm run pretest_s` フック）。
+- カテゴリに収まらない単発スクリプトのみ直下に置く。
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。
 
 ## パス解決のルール（JS テストファイル）
