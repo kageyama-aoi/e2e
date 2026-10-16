@@ -2,7 +2,7 @@
 run_dir_cleanup.py
 
 実行ごとの出力フォルダ（output/allure-results/ と output/）の古いものを削除する、掃除の判定の本体。
-ランチャー（run/run_gui.py の起動時）と Claude Code のフック（scripts/hooks/archive_allure.py）が
+ランチャー（run/run_gui.py の起動時）と Claude Code のフック（.claude/hooks/archive_allure.py）が
 cleanup_all() を呼び、手動用の archive_allure_results.py / cleanup_output_logs.py も
 実行フォルダの判定はここの cleanup_run_dirs() を使う（#321）。
 

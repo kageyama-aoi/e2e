@@ -18,7 +18,7 @@ import re
 import sys
 from pathlib import Path
 
-_CLEANUP_SCRIPT = Path(__file__).resolve().parent.parent / 'cleanup' / 'run_dir_cleanup.py'
+_CLEANUP_SCRIPT = Path(__file__).resolve().parents[2] / 'scripts' / 'cleanup' / 'run_dir_cleanup.py'  # .claude/hooks/ → リポジトリ直下（#341）
 
 TEST_PATTERNS = [
     r'codeceptjs\s+run',
