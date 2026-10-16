@@ -1,6 +1,4 @@
 """
-extract_body_only_fields.py
-
 HTMLソースの <td id="body_only_td"> 内にあるフォーム要素を抽出し、
 JSON / CSV（UTF-8）で出力します。
 
@@ -9,7 +7,7 @@ JSON / CSV（UTF-8）で出力します。
   - select の option は select に内包して出力
 
 実行例（PowerShell）:
-  python extract_body_only_fields.py
+  python scripts/html/extract_shimamura_body_only_fields.py
   # 形式選択後に既定パスへ出力:
   #   .\\output\\probe\\body_only_extract\\body_only_fields.json
   #   .\\output\\probe\\body_only_extract\\body_only_fields.csv

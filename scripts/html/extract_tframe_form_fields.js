@@ -6,17 +6,17 @@
  * テストデータテンプレートと Page Object fillメソッドを自動生成する。
  *
  * 【使い方】
- *   node scripts/html/tframe_extract_form_fields.js            # input/input.html を読み込む（デフォルト）
- *   node scripts/html/tframe_extract_form_fields.js [file.html] # 任意のHTMLファイルを指定
+ *   node scripts/html/extract_tframe_form_fields.js            # scripts/html/tframe/input.html を読み込む（デフォルト）
+ *   node scripts/html/extract_tframe_form_fields.js [file.html] # 任意のHTMLファイルを指定
  *
  * 【手順】
  *   1. ブラウザ DevTools で登録画面の #rootWidget を右クリック → 「outerHTMLをコピー」
  *   2. scripts/html/tframe/input.html に貼り付けて保存
- *   3. node scripts/html/tframe_extract_form_fields.js を実行
- *   4. output/extract_result.js を開いてコピペ（実行のたびに上書き）
+ *   3. node scripts/html/extract_tframe_form_fields.js を実行
+ *   4. output/html/extract/extract_result_<日時>.js を開いてコピペ
  *
  * 【サンプル】
- *   input/sample_teacher_registration.html（講師登録画面の代表的なフィールド構成）
+ *   scripts/html/tframe/sample_teacher_registration.html（講師登録画面の代表的なフィールド構成）
  *
  * 【出力の構成】
  *   ① テストデータテンプレート → codecept/data/tframe/xxxRegisterData.js に貼り付け

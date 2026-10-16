@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * chosekin 登録フォームの personId ポップアップから講師IDを取得するスクリプト。
- * 使い方: node scripts/html/fetch_chosekin_person_id.js <profile>
- *   例: node scripts/html/fetch_chosekin_person_id.js tframe.culture_beta
+ * tframe の chosekin 登録フォームの personId ポップアップから講師IDを取得するスクリプト。
+ * 出力: scripts/html/tframe/chosekin_person_popup.html（＋スクリーンショット）
+ * 使い方: node scripts/html/fetch_tframe_chosekin_person_id.js <profile>
+ *   例: node scripts/html/fetch_tframe_chosekin_person_id.js tframe.culture_beta
  */
 'use strict';
 

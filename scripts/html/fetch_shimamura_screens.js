@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * shimamura 画面の HTML を Playwright で取得して shimamura/ に保存するスクリプト。
+ * shimamura 画面の HTML を Playwright で取得して output/html/shimamura/ に保存するスクリプト。
  * 使い方: node scripts/html/fetch_shimamura_screens.js <profile>
  *   例: node scripts/html/fetch_shimamura_screens.js shimamura.testgcp
  *

@@ -5,7 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug: syokai_helpers 単体",
-      "program": "${workspaceFolder}/scripts/debug/debug_syokai.js",
+      "program": "${workspaceFolder}/scripts/debug/debug_shimamura_syokai.js",
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]

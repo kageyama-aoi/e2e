@@ -77,7 +77,7 @@ fi
 echo "$changed" | grep -qE '^(codecept/tests/|run/test_descriptions\.json$)' || exit 0
 
 echo "[pre-commit] docs 再生成（tree + test catalog）..."
-python scripts/docs/tree_generator.py -u --exclude-untracked || { echo "[pre-commit] tree_generator.py 失敗"; exit 1; }
+python scripts/docs/gen_readme_tree.py -u --exclude-untracked || { echo "[pre-commit] gen_readme_tree.py 失敗"; exit 1; }
 python scripts/docs/gen_test_catalog.py --exclude-untracked || { echo "[pre-commit] gen_test_catalog.py 失敗"; exit 1; }
 
 git add README.md docs/project/test_catalog.md
