@@ -15,7 +15,7 @@
 | ドキュメント | 切り口 | 見るもの |
 |---|---|---|
 | **本ファイル `menu_coverage.md`** | **左サイドメニュー起点**。「メニューに実在する画面」を culture / juku で洗い出し、Page Object 有無とテスト有無を**別列**で突き合わせる | 「この製品のこのメニュー項目、操作できる？テストある？」 |
-| `screen_coverage.md` | テストシナリオ起点のカバレッジ分析（系統別の優先度メモ） | 「次に何をテストすべきか」の優先度判断 |
+| `archive/screen_coverage.md`（廃止・2026-05 時点） | テストシナリオ起点のカバレッジ分析（系統別の優先度メモ） | 当時の優先度判断の経緯 |
 | `codecept/pages/tframe/_common/sideMenus.js` | テストの**メニューナビ検証**用のメニュー定義（環境非依存の単一定義） | メニューナビテストが辿る導線 |
 
 `sideMenus.js` は環境非依存の単一定義で「culture にしかない / juku にしかない」を表現できていない。
@@ -236,7 +236,7 @@
 
 ## 未カバー画面（テスト開発の発注リスト）
 
-Page Object もテストも無い画面。優先度は `screen_coverage.md` の系統別優先度も参照。
+Page Object もテストも無い画面。2026-05 時点の系統別の優先度メモは `archive/screen_coverage.md`（廃止）にある。
 
 **両製品（culture / juku 共通）**
 
@@ -413,7 +413,7 @@ PO無し画面を1画面ずつ開き、フォーム構成（検索フォーム /
 2. 採取スクリプト `scripts/html/fetch_tframe_menus.js`（既存 `scripts/html/extract_shimamura_side_menu_groups.py` の後継 / プロファイル指定でログイン→`#sideBar` 走査→JSON 出力）
 3. 生成スクリプト `scripts/docs/gen_tframe_menu_coverage.js`（メニューカタログ × Page Object の `r=` 参照 × `test_catalog` を join して本ファイルの表を自動生成、`--check` でドリフト検出、`.githooks/pre-commit` に組込み）
 4. Page Object 命名のアプリ語彙への統一（`JukuseiPage`→`StudentPage`、`KeiryoMasterPage`→`AccountingMenuPage` 等・11件）
-   — 計画は [`page_object_naming_plan_2026-09-15.md`](page_object_naming_plan_2026-09-15.md)（状態: 計画中・#221/#222 参照）。テスト名は改名しない
+   — 計画は [`page_object_naming_plan_2026-09.md`](page_object_naming_plan_2026-09.md)（状態: 計画中・#221/#222 参照）。テスト名は改名しない
 
 ---
 

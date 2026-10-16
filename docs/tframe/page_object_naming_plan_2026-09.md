@@ -181,7 +181,7 @@
 | メモリ（`project_tframe_progress.md`） | 旧名での記述が多数。フェーズ完了時に「旧名→新名」の対応を1行追記して読み替え可能にする |
 
 触らないもの: `docs/generated/`（gitignore）, `.agent/handoff/*` `.agent/memory/*` `docs/common/learning/*`（時点記録）,
-`docs/tframe/architecture.md` `refactoring_*.md` `code_relationships.md`（既に #203 でドリフト追跡中の旧資料）。
+`docs/tframe/architecture.md` `archive/refactoring_*.md` `archive/code_relationships.md`（既に #203 でドリフト追跡中の旧資料）。
 
 ---
 
