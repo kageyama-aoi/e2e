@@ -1,5 +1,9 @@
 # CodeceptJS JS関係図 (Mermaid)
 
+状態: 廃止（2026-10）— 2026-03 頃の図で、もう無い Page Object（`LoginMyPage` 等）が出てくる。今のつながりは JSDoc（`npm run docs:jsdoc`）で追う。
+
+> 2026-10 に archive/ へ移した（#359）。歴史資料として残しており、今のコードとはずれている所がある。
+
 ## クラス図（主要なJSモジュールと依存関係）
 ```mermaid
 classDiagram

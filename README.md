@@ -120,7 +120,6 @@ npx codeceptjs run "./codecept/tests/shimamura/**/*_test.js" --profile shimamura
 - [CodeceptJS APIリファレンス](./docs/common/codeceptjs_api_reference.md): このプロジェクトで使われているCodeceptJSの主要な関数と、その具体的な使用例をまとめています。テストコードの読解や新規作成にご活用ください。
 - [CodeceptJS 設計パターン・用語集](./docs/common/codeceptjs_design_patterns.md): 設計思想（データ駆動・エラー注入・単一フロー設計）と技術用語を解説しています。
 - [プロジェクト設計・アーキテクチャガイド](./docs/project/project_architecture_guide.md): ディレクトリ構成・責務分離・設計ルールの詳細を説明しています。
-- [モジュール依存関係図](./docs/common/mermaid_code_relationships.md): テスト・Page Object・データファイルの依存関係を Mermaid 図で可視化しています。
 - [技術概要 (Technical Overview)](./docs/project/project_architecture_guide.md#7-技術スタック--利用ツール一覧): このテスト基盤が利用している技術スタック、ツール、共通モジュールについてまとめています。
 
 ### プロダクト別

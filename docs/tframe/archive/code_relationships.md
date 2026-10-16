@@ -1,4 +1,8 @@
 # Mermaid 構造図 - tframe Page Objects & Tests
+
+状態: 廃止（2026-10）— 2026-03 時点の図。今のファイル同士のつながりは JSDoc（`npm run docs:jsdoc`）と [`docs/tframe/architecture.md`](../architecture.md) で追う。
+
+> 2026-10 に archive/ へ移した（#359）。歴史資料として残しており、今のコードとはずれている所がある。
 > 生成日: 2026-03-31
 > 対象: codecept/tests/tframe/ と codecept/pages/tframe/ の構成・依存関係
 

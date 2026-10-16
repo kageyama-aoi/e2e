@@ -18,7 +18,7 @@
   - `work/`: テストが作る一時ファイルとダウンロード（`downloads/`・取込用の日付書き換えファイル）
   - `html/`: 取得した画面 HTML（`html/shimamura/`）と抜き出し結果（`html/extract/`）
   - 手で書いたスクリプトは置かない（`scripts/` へ）
-- `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別、`digest/`=claude.ai の定期実行が毎日・毎月書き込む Qiita ダイジェスト。手で編集しない）。
+- `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別、`digest/`=claude.ai の定期実行が毎日・毎月書き込む Qiita ダイジェスト。手で編集しない）。終わった資料は各フォルダの `archive/` に置く。中身の案内とファイル名の決まりは `docs/README.md`（#359）。
 
 ## ビルド・テスト・開発コマンド
 
@@ -134,7 +134,21 @@
 状態: 進行中（YYYY-MM 開始） / 完了（YYYY-MM） / 廃止（理由）
 ```
 
-完了した計画は削除せず、`状態: 完了` を付けて歴史資料として残してよい。
+完了した計画は削除せず、`状態: 完了` を付けて歴史資料として残してよい。置き場は同じフォルダの `archive/`（下記）。
+
+### docs/ のファイル名と archive/（#359）
+
+| 種類 | ファイル名 | 例 |
+|---|---|---|
+| ガイド・解説・リファレンス | 英語の snake_case。何の資料か分かる名詞で終える（`_guide` / `_reference` / `glossary` 等） | `allure_guide.md`, `codeceptjs_api_reference.md` |
+| 計画 | `<話題>_plan_YYYY-MM.md`（日付は開始の年月まで）。冒頭に「状態:」を書く（上記） | `screen_expansion_plan_2026-09.md` |
+| 自動生成 | 生成スクリプトが決めた名前のまま。手で編集しない | `test_catalog.md`, `menu_coverage.md`（AUTOGEN 区間） |
+| shimamura の業務・テストの流れ | 日本語の業務名（下記「docs/shimamura/ のサブフォルダ規約」） | `月謝一括作成の概念.md`, `料金明細入金チェックの仕様.md` |
+
+- ファイル名に状態（`（作成済み）` 等）・空白・日だけの日付（`0129_`）を入れない。状態はファイルの中の「状態:」の行に書く
+- 終わった計画・役目を終えた資料は、同じフォルダの `archive/` に移し、冒頭に「状態: 完了 / 廃止（理由・後継の資料）」を書く。消してよいもの（中身がほかに残っている・空・誰も読まない）は消す（git の履歴に残る）
+- `archive/` は当時のまま残す記録なので、中のパスは直さない（`npm run docs:check-refs` も対象外）
+- 生成物（ログ・実行結果）は docs/ に置かず `output/` へ（例外は JSDoc の出力 `docs/generated/`。git 管理外）
 
 ### docs/shimamura/ のサブフォルダ規約
 
@@ -142,7 +156,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
 
 | サブフォルダ | 置くもの | 例 |
 |---|---|---|
-| `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説） | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md`, `経理ビューの概念.md`, `退会機能の概念.md` |
+| `docs/shimamura/concepts/` | 業務仕様・ドメイン概念（DBテーブルに基づく処理ロジックの解説）。ファイル名は `<業務名>の概念.md`、デシジョンテーブルから表を生成する仕様書は `<業務名>の仕様.md` | `運営管理費の概念.md`, `月謝一括作成の概念.md`, `発表会の概念.md`, `経理ビューの概念.md`, `退会機能の概念.md` |
 | `docs/shimamura/flow/` | E2Eテストの流れ解説（`/flow-explain` が出力する `<業務名>テストの流れ.md`。ファイル名だけで何の資料か分かるよう日本語の業務名にする） | `月謝一括作成テストの流れ.md` |
 
 ### 利用可能なスキル一覧
@@ -368,7 +382,7 @@ shimamura の docs は「業務としてどう動くか」と「テストがど�
   経理ビューを URL 直指定で開く（`SHIMAMURA_NAV=sidebar` でも URL。約8秒/行短縮 #244）。サイドバー経路の確認は recordId を渡さない初回登録テストに残す。
   データ準備で経理ビュー B〜E（クラス適用 → コース料金設定 → 売上計上 → 確認完了）を通すだけなら、`_common/KeiriViewSteps.js` の
   `enrollClassBySubmit(I, { recordId, className, courseCategory, keiyakuDate, kaishiDate })` で画面操作なしに同じ通信を出せる（約22秒→約8秒 #280）。
-- URL 直遷移は `index.php?module=X&action=Y` 形式で可能（skill_plan.md Phase 0 で確認済み）。URL は手書きせず
+- URL 直遷移は `index.php?module=X&action=Y` 形式で可能（`docs/shimamura/archive/skill_plan_2026-07.md` Phase 0 で確認済み）。URL は手書きせず
   `codecept/support/shimamura/constants.js` の `pageUrl({ module, action, record, ... })` で組み立てる（経理ビュー A は `KeiriViewSteps.keiriViewUrl(recordId)`。#300）。
 
 デシジョンテーブル駆動のテスト（#287）：
