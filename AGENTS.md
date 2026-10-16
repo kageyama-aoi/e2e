@@ -473,7 +473,7 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 
 - サブフォルダは用途で分ける:
   - `docs/`     : ドキュメント生成・参照チェック・README のツリー更新（pre-commit・CI が呼ぶ）
-  - `html/`     : 画面 HTML の取得・解析（スキルの下調べ用）。tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。手で貼る入力は道具の隣（`html/side_menu_source.html` など）
+  - `html/`     : 画面 HTML の取得・解析（スキルの下調べ用）。直下は道具だけ。取ってきた tframe の画面 HTML は `html/snapshots/tframe/`（git 管理）、手で貼る入力は `html/inputs/`。画面を調べるときの案内は `scripts/html/README.md`（#355）
   - `setup/`    : 環境の準備（`install_git_hooks.js` = git フックの置き場を `.githooks/` に向ける。npm install 時に自動）
   - `testdata/` : テスト環境のデータを手で掃除するツール（`cleanup_shimamura_gessya_fees.js`）
   - `debug/`    : VS Code のデバッガで中を追うための練習台（`debug_shimamura_syokai.js`）

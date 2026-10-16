@@ -80,7 +80,7 @@ node scripts/html/fetch_tframe_forms.js {profile}
 
 出力例:
 ```
-✓ 保存: scripts/html/tframe/{name}.html (12 KB)
+✓ 保存: scripts/html/snapshots/tframe/{name}.html (12 KB)
 ```
 
 失敗した場合（ログインエラー・404 等）はエラーメッセージを確認して対処する。
@@ -92,7 +92,7 @@ node scripts/html/fetch_tframe_forms.js {profile}
 保存された HTML から input / select の id を抽出する。
 
 ```bash
-grep -oP 'id="[^"]*"' scripts/html/tframe/{name}.html \
+grep -oP 'id="[^"]*"' scripts/html/snapshots/tframe/{name}.html \
   | grep -v 'wrapper_\|popup_\|_start\|_clear\|_display\|_csrf\|dummy\|rootWidget\|searchBlock\|searchButtonsMainGroup\|buttonsGroup\|otherButtons\|basicFields\|searchFields\|searchResult\|ewButtonsGroup\|ewButtonsMainGroup\|ewFormWrapper\|ewCancelButton\|ewSaveButton\|swSearchButton\|swClearButton\|tf-message' \
   | sort -u
 ```
@@ -123,7 +123,7 @@ HTML 内に `onchange="tf.ajax.tcnAjax(` があれば連動している。
 ```
 ## {hint} のフォームフィールド
 
-保存先: scripts/html/tframe/{name}.html
+保存先: scripts/html/snapshots/tframe/{name}.html
 
 ### テキスト入力
 - `#name` — コース名
