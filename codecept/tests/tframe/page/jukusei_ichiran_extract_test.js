@@ -4,7 +4,7 @@
  * **テスト内容**
  * - 検索条件（任意）とソートキー（任意）を指定して受講生一覧を検索
  * - 検索結果テーブル（1ページ目のみ・ページ送りなし）を抽出
- * - `output/tframe/jukusei_ichiran_<scenario>_<timestamp>.csv` に保存
+ * - `output/probe/jukusei_ichiran/jukusei_ichiran_<scenario>_<timestamp>.csv` に保存
  * - 1件以上抽出できたことだけ検証
  *
  * **データソース**
@@ -65,7 +65,7 @@ Data(csvData).Scenario('受講生一覧の検索結果を抽出してCSV保存�
 
   const safeScenario = String(current.scenario).replace(/[\\/:*?"<>|\s]/g, '_');
   const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '');
-  const outPath = path.join(repoRoot, 'output', 'tframe', `jukusei_ichiran_${safeScenario}_${stamp}.csv`);
+  const outPath = path.join(repoRoot, 'output', 'probe', 'jukusei_ichiran', `jukusei_ichiran_${safeScenario}_${stamp}.csv`);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, BOM + toCsv(rows), 'utf-8');
   I.say(`保存 → ${outPath}`);

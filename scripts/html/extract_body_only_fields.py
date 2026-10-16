@@ -11,9 +11,9 @@ JSON / CSV（UTF-8）で出力します。
 実行例（PowerShell）:
   python extract_body_only_fields.py
   # 形式選択後に既定パスへ出力:
-  #   .\\output\\body_only_extract\\body_only_fields.json
-  #   .\\output\\body_only_extract\\body_only_fields.csv
-  #   .\\output\\body_only_extract\\body_only_fields_flat.csv
+  #   .\\output\\probe\\body_only_extract\\body_only_fields.json
+  #   .\\output\\probe\\body_only_extract\\body_only_fields.csv
+  #   .\\output\\probe\\body_only_extract\\body_only_fields_flat.csv
 """
 
 import argparse
@@ -376,8 +376,8 @@ def main() -> None:
     """エントリーポイント。"""
     # IN:  ../source.txt（既定）または引数で指定したHTMLファイル
     default_input = os.path.join("..", "source.txt")
-    # OUT: ./output/body_only_extract/ 配下に json / csv / csv(flat) のいずれか
-    default_output_dir = os.path.join(".", "output", "body_only_extract")
+    # OUT: ./output/probe/body_only_extract/ 配下に json / csv / csv(flat) のいずれか
+    default_output_dir = os.path.join(".", "output", "probe", "body_only_extract")
     default_output_json = os.path.join(default_output_dir, "body_only_fields.json")
     default_output_csv = os.path.join(default_output_dir, "body_only_fields.csv")
     default_output_csv_flat = os.path.join(default_output_dir, "body_only_fields_flat.csv")

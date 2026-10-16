@@ -7,9 +7,9 @@ HTMLソースから <tr id="submenu__..."> ブロックを抽出し、
 実行例（PowerShell）:
   python extract_submenus.py
   # 形式選択後に既定パスへ出力:
-  #   .\\output\\submenu_extract\\submenu_extract.json
-  #   .\\output\\submenu_extract\\submenu_extract.csv
-  #   .\\output\\submenu_extract\\submenu_extract_flat.csv
+  #   .\\output\\probe\\submenu_extract\\submenu_extract.json
+  #   .\\output\\probe\\submenu_extract\\submenu_extract.csv
+  #   .\\output\\probe\\submenu_extract\\submenu_extract_flat.csv
 """
 
 import argparse
@@ -200,8 +200,8 @@ def main() -> None:
     """エントリーポイント。"""
     # IN:  ../source.txt（既定）または引数で指定したHTMLファイル
     default_input = os.path.join("..", "source.txt")
-    # OUT: ./output/submenu_extract/ 配下に json / csv / csv(flat) のいずれか
-    default_output_dir = os.path.join(".", "output", "submenu_extract")
+    # OUT: ./output/probe/submenu_extract/ 配下に json / csv / csv(flat) のいずれか
+    default_output_dir = os.path.join(".", "output", "probe", "submenu_extract")
     default_output_json = os.path.join(default_output_dir, "submenu_extract.json")
     default_output_csv = os.path.join(default_output_dir, "submenu_extract.csv")
     default_output_csv_flat = os.path.join(default_output_dir, "submenu_extract_flat.csv")

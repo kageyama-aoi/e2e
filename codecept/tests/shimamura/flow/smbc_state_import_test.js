@@ -76,7 +76,7 @@ function buildDatedImportFile(templatePath) {
     if (kind === '1') buf.write(formatDate(today, 'YYYYMMDD'), pos + SMBC_DATE_OFFSETS.headerCreatedDate, 'ascii');
     if (kind === '2') buf.write(formatDate(tomorrow, 'YYYYMMDD'), pos + SMBC_DATE_OFFSETS.dataRecordDate, 'ascii');
   }
-  const outRelPath = path.join('output', 'smbc_import', `smbc_state_import_${formatDate(today, 'YYYYMMDD')}.txt`);
+  const outRelPath = path.join('output', 'work', 'smbc_import', `smbc_state_import_${formatDate(today, 'YYYYMMDD')}.txt`);
   fs.mkdirSync(path.dirname(outRelPath), { recursive: true });
   fs.writeFileSync(outRelPath, buf);
   return outRelPath;

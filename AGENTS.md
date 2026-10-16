@@ -11,7 +11,13 @@
 - `codecept/data/` はプロダクト別のテストデータ（CSV/JS）。
 - `env/` はプロファイル別 `.env.*`、ルート `.env` は既定値。
 - `run/` はテスト実行ランチャー、`scripts/` はテスト支援ツール（詳細は後述）。
-- `output/` は生成物（Allure の結果 `output/allure-results/`・レポート `output/allure-report/`・ランチャーのログ `output/logs/` もこの下。#334 で直下から移動）。
+- `output/` は git に入らない生成物の置き場。直下は種類ごとに分ける（#339）:
+  - 実行結果: `<profile>/<日時_テスト名>/`（スクショ等）・`allure-results/`・`allure-report/`・`logs/`（#334 で直下から移動。古いものはランチャー起動時に自動削除）
+  - `session/`: テスト間の受け渡しファイル（`gessya_ikkatu_session.json` など。消すと後続テストが動かない）
+  - `probe/<名前>/`: 調査・抽出の記録（`sort_probe/`・`sales_group_transfer_setup/`・`side_menu_extract/` など）
+  - `work/`: テストが作る一時ファイルとダウンロード（`downloads/`・取込用の日付書き換えファイル）
+  - `html/`: 取得した画面 HTML（`html/shimamura/`）と抜き出し結果（`html/extract/`）
+  - 手で書いたスクリプトは置かない（`scripts/` へ）
 - `docs/` に学習資料・設計メモ（`common/`=横断ガイド、`project/`=設計・アーキテクチャ、`shimamura/` `tframe/`=プロダクト別、`digest/`=claude.ai の定期実行が毎日・毎月書き込む Qiita ダイジェスト。手で編集しない）。
 
 ## ビルド・テスト・開発コマンド
@@ -457,7 +463,7 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
   - `hooks/`    : git フックのインストール（`install_git_hooks.js`）
   - `html/`     : 画面 HTML の取得・解析（スキルの下調べ用）。tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。手で貼る入力は道具の隣（`html/side_menu_source.html` など）
   - `testdata/` : テスト環境のデータを手で掃除するツール（`cleanup_gessya_fees.js`）
-- **git に入らない生成物（取得した HTML・抜き出し結果）は `scripts/` に書かず、`output/` の下に書く**（`output/html/shimamura/`・`output/html/extract/`・`output/side_menu_extract/` など）
+- **git に入らない生成物（取得した HTML・抜き出し結果）は `scripts/` に書かず、`output/` の下に書く**（`output/html/shimamura/`・`output/html/extract/`・`output/probe/side_menu_extract/` など）
 - その場限りの調査スクリプトはコミットしない（必要なら Issue にコードを貼る）
 
 ## パス解決のルール（JS テストファイル）

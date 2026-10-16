@@ -15,7 +15,7 @@ const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewS
 const { firstOfMonth, formatDate, pad2 } = require('../../../support/dateFormat');
 
 // setupテストと月謝テスト間で受講生 record UUID を受け渡すファイル
-const SESSION_FILE = path.join(require('../../../support/repoRoot'), 'output', 'gessya_ikkatu_session.json');
+const SESSION_FILE = path.join(require('../../../support/repoRoot'), 'output', 'session', 'gessya_ikkatu_session.json');
 
 function resolveRelativeMonth(taikaiYear, taikaiMonth) {
   const OFFSETS = { '先月': -1, '今月': 0, '来月': 1 };

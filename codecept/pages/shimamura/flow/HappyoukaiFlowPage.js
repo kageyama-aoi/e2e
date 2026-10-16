@@ -37,7 +37,7 @@ const { editOpenRecordBySubmit } = require('../../../support/shimamura/editViewS
 const { firstOfMonth, formatDate } = require('../../../support/dateFormat');
 
 // setupテストと本体テスト間でクラス・受講生の情報を受け渡すファイル
-const SESSION_FILE = path.join(require('../../../support/repoRoot'), 'output', 'happyoukai_session.json');
+const SESSION_FILE = path.join(require('../../../support/repoRoot'), 'output', 'session', 'happyoukai_session.json');
 
 const RESULT_LINK = `a${SELECTORS.RESULT_LINK}`;
 
