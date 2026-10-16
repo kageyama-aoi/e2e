@@ -37,6 +37,7 @@
 - テスト追加・修正の手順はプロダクト別スキル：
   - shimamura: `/shimamura-ichiran-dev`（一覧）, `/shimamura-registration-dev`（登録・処理）, `/shimamura-download-verify`（DL検証）
   - tframe: `/tframe-ichiran-dev`（一覧）, `/tframe-registration-dev`（登録・編集）, `/tframe-flow-dev`（業務フロー）
+- shimamura / tframe / taskreport 以外の新しいサイトを足すときは [新サイト追加手順書](./onboarding_new_site.md)。
 - 途中で止めるときは、決まったこと・止まった理由・次の一手をその Issue のコメントに書いておくと、次に戻ったとき楽になる。
 
 ---

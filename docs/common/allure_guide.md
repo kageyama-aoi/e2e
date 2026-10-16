@@ -289,6 +289,19 @@ npm run allure:archive        # 30日以上古いものを zip 化して削除
 npm run allure:clean          # 全削除（スッキリさせたいとき）
 ```
 
+### `npx allure generate` が「Unknown Syntax Error: Command not found」になる
+
+PowerShell で `npx allure generate <dir> --clean -o <out>` を直接打ったとき、このエラーになった記録がある（2026-01）。
+Allure は起動できていて、npx 経由で渡した引数の解釈に失敗している状態。テスト結果や Allure 自体は壊れていない。
+
+- まずは手打ちせず `npm run allure:report` / `npm run allure:latest` を使う
+- 手で打つなら `npx allure -- generate <dir> --clean -o <out>`（`--` で引数を区切る）
+- それでも不安定なら `npm install -g allure-commandline` で入れて、npx を付けずに `allure generate ...` と打つ
+
+結果が出ないときは、まず `output/allure-results/<profile>/` の下に `.json` があるかを見る（無ければテストが結果を書いていない）。
+
+> 2026-10 に、docs/project にあった HTML のメモ（Allure × npx エラーの整理）から移した（#357）。
+
 ---
 
 ## 6. 仕組みの全体図
