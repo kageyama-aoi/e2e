@@ -28,7 +28,7 @@
 | `gh issue list --state open` | 残作業の全体（**作業状況の正は Issue**。AGENTS.md「作業状況の置き場所」） |
 | `gh issue list -l blocked` / `gh issue list -l waiting-user` | 止まっているもの。理由・再開条件は各 Issue のコメント |
 | `gh issue list -l shimamura`（`tframe` / `launcher` / `tooling`） | 対象ごとの残作業 |
-| [.agent/handoff/HANDOFF.md](../../.agent/handoff/HANDOFF.md) | 直近セッションで触った Issue 番号と一時メモ |
+| `git status` / `git branch` | 作業中のブランチ・コミットしていない変更 |
 | `git log --oneline -20` | 最近のコミット |
 
 ## 4. 手を動かす前に
@@ -37,7 +37,7 @@
 - テスト追加・修正の手順はプロダクト別スキル：
   - shimamura: `/shimamura-ichiran-dev`（一覧）, `/shimamura-registration-dev`（登録・処理）, `/shimamura-download-verify`（DL検証）
   - tframe: `/tframe-ichiran-dev`（一覧）, `/tframe-registration-dev`（登録・編集）, `/tframe-flow-dev`（業務フロー）
-- セッションの終わりに `/handoff` でこのページの「3.」を更新しておくと、次に戻ったとき楽になる。
+- 途中で止めるときは、決まったこと・止まった理由・次の一手をその Issue のコメントに書いておくと、次に戻ったとき楽になる。
 
 ---
 

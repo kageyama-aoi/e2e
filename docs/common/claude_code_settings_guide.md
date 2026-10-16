@@ -279,7 +279,6 @@ Claude Code はスクリプトの **stdin に JSON を流す**。スクリプト
 PostToolUse           Write      check_placement.py          ファイル配置バリデーション
 PostToolUse           Bash       archive_allure.py           テスト後に古い Allure 結果を削除
 PostToolUse           Bash       log_bash.py                 Bash コマンドを MD に記録
-Stop                  —          (インライン command)         ハンドオフ未作成の警告
 ```
 
 ### check_placement.py の動き
@@ -321,17 +320,6 @@ Bash ツール実行
 command と tool_response.output を取得（出力は最大 50 行）
   ↓
 docs/common/learning/bash_YYYYMMDD.md に追記
-```
-
-### Stop hook（インライン）の動き
-
-```
-Claude が回答を終える
-  ↓
-今日の日付のハンドオフファイルが .agent/handoff/ にあるか確認
-  ↓
-ない → "[HANDOFF未作成] /handoff を実行してください" と警告
-ある → 何もしない
 ```
 
 ---

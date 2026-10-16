@@ -62,8 +62,6 @@
       "Bash(xargs -I{} ls \"C:/Users/kageyama/Tools/testcode/e2e/output/tframe.culture_beta/{}\")",
       "Bash(git rm *)",
       "Skill(update-config)",
-      "Bash(bash -c 'TODAY=$\\(date +%Y-%m-%d\\); ls \".agent/handoff/${TODAY}-\"*.md 2>/dev/null | grep -q . || echo \"{\\\\\"systemMessage\\\\\": \\\\\"[HANDOFF未作成] 今日分のハンドオフがありません → /handoff を実行してください\\\\\"}\"')",
-      "PowerShell($json = Get-Content \"C:\\\\Users\\\\kageyama\\\\Tools\\\\testcode\\\\e2e\\\\.claude\\\\settings.local.json\" -Raw | ConvertFrom-Json; $json.hooks.Stop[0].hooks[0].command)",
       "PowerShell(Get-Item *)",
       "PowerShell(Rename-Item *)",
       "PowerShell(python -c \"import json; data=json.load\\(open\\('C:/Users/kageyama/Tools/testcode/e2e/run/test_descriptions.json', encoding='utf-8'\\)\\); print\\('OK, tframe entries:', len\\(data['tframe']\\)\\)\")",
@@ -73,7 +71,6 @@
       "PowerShell(Join-Path *)",
       "Bash(Select-String -Pattern \"URL調査|URL:|grabCurrentUrl\")",
       "Bash(dir run *)",
-      "PowerShell(if \\(Test-Path \".agent/handoff/HANDOFF.md\"\\) { \\(Get-Item \".agent/handoff/HANDOFF.md\"\\).LastWriteTime.ToString\\(\"yyyy-MM-dd-HHmm\"\\) } else { \"NOT_FOUND\" })",
       "Skill(github-issue-dev)",
       "Bash(Select-Object Name)",
       "Bash(Select-String -Pattern \"course_ichiran|ERROR|✓\")",
@@ -81,17 +78,6 @@
     ]
   },
   "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "TODAY=$(date +%Y-%m-%d); ls \".agent/handoff/${TODAY}-\"*.md 2>/dev/null | grep -q . || echo \"{\\\"systemMessage\\\": \\\"[HANDOFF未作成] 今日分のハンドオフがありません → /handoff を実行してください\\\"}\"",
-            "statusMessage": "ハンドオフ確認中..."
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Write",
