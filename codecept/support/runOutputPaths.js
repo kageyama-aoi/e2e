@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -16,12 +17,29 @@ function sanitizePathSegment(value) {
   return (value || 'default').replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_');
 }
 
+// フォルダ名に使うテスト名の最大長。中のファイル（UUID の添付など約 50 文字）まで含めて
+// Windows のパス上限 260 文字に収まるようにする（#343: ブレース展開の指定で約 280 文字になり、掃除で消せなくなった）
+const MAX_RUN_TARGET_LENGTH = 40;
+
+/**
+ * フォルダ名に使うテスト名を短くする。`{a,b}` のブレース展開は `a+b` にし、
+ * それでも長ければ先頭を残して短いハッシュを付ける（同じ指定なら同じ名前になる）
+ * @param {string} target
+ * @returns {string}
+ */
+function shortenRunTarget(target) {
+  const flattened = String(target).replace(/[{}]/g, '').replace(/,/g, '+');
+  if (flattened.length <= MAX_RUN_TARGET_LENGTH) return flattened;
+  const hash = crypto.createHash('sha1').update(String(target)).digest('hex').slice(0, 8);
+  return `${flattened.slice(0, MAX_RUN_TARGET_LENGTH - hash.length - 1)}_${hash}`;
+}
+
 // パス文字列から拡張子を除いたファイル名を取り出す（空なら 'all'）
 function baseNameWithoutExt(filePath) {
   const normalized = String(filePath).replace(/\\/g, '/');
   const fileName = normalized.split('/').pop() || normalized;
   const withoutExt = fileName.replace(/\.[^/.]+$/, '');
-  return sanitizePathSegment(withoutExt || 'all');
+  return shortenRunTarget(sanitizePathSegment(withoutExt || 'all'));
 }
 
 /**
@@ -85,7 +103,9 @@ function ensureRunOutputDirs(paths, rootDir) {
 }
 
 module.exports = {
+  MAX_RUN_TARGET_LENGTH,
   sanitizePathSegment,
+  shortenRunTarget,
   detectRunTargetFromArgs,
   buildRunTimestamp,
   resolveRunOutputPaths,
