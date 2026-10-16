@@ -956,10 +956,6 @@ e2e/
 │   │   │   ├── teRewardCalc_list.html
 │   │   │   ├── teRewardTotalCalc_list.html
 │   │   │   └── tuitionFeeBulkCreate_touroku.html
-│   │   ├── _fetch_juku_lists.js
-│   │   ├── check_confirm_btn.js
-│   │   ├── check_schedule.js
-│   │   ├── compare_nav.js
 │   │   ├── extract_body_only_fields.py
 │   │   ├── extract_side_menu_groups.py
 │   │   ├── extract_submenus.py
@@ -969,12 +965,8 @@ e2e/
 │   │   ├── fetch_shimamura_screens.js
 │   │   ├── fetch_teacher_edit.js
 │   │   ├── fetch_tframe_forms.js
-│   │   ├── register_schedule.js
-│   │   ├── register_schedule2.js
-│   │   ├── register_schedule3.js
 │   │   ├── shimamura_route.js
-│   │   ├── tframe_extract_form_fields.js
-│   │   └── verify_schedule.js
+│   │   └── tframe_extract_form_fields.js
 │   ├── input/ 
 │   │   └── side_menu_extract/ 
 │   │       └── source.html
