@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * tframe の chosekin 登録フォームの personId ポップアップから講師IDを取得するスクリプト。
- * 出力: scripts/html/tframe/chosekin_person_popup.html（＋スクリーンショット）
+ * 出力: scripts/html/snapshots/tframe/chosekin_person_popup.html（スクリーンショットは output/html/snapshots/tframe/）
  * 使い方: node scripts/html/fetch_tframe_chosekin_person_id.js <profile>
  *   例: node scripts/html/fetch_tframe_chosekin_person_id.js tframe.culture_beta
  */
@@ -27,8 +27,11 @@ if (!BASE_URL || !USER || !PASSWORD) {
   process.exit(1);
 }
 
-const INPUT_DIR = path.join(__dirname, 'tframe');
-fs.mkdirSync(INPUT_DIR, { recursive: true });
+// 取ってきた HTML は snapshots/tframe/（git 管理）、スクリーンショット・JSON は output/html/snapshots/tframe/（git 対象外）に書く（#355）
+const SNAPSHOT_DIR = path.join(__dirname, 'snapshots', 'tframe');
+const OUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'tframe');
+fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
+fs.mkdirSync(OUT_DIR, { recursive: true });
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -69,14 +72,14 @@ fs.mkdirSync(INPUT_DIR, { recursive: true });
     });
 
     if (popupHtml) {
-      const popupFile = path.join(INPUT_DIR, 'chosekin_person_popup.html');
+      const popupFile = path.join(SNAPSHOT_DIR, 'chosekin_person_popup.html');
       fs.writeFileSync(popupFile, popupHtml, 'utf8');
       console.log(`✓ ポップアップHTML保存: ${popupFile}`);
     }
 
     // スクリーンショット
-    await page.screenshot({ path: path.join(INPUT_DIR, 'chosekin_popup.png'), fullPage: true });
-    console.log('✓ スクリーンショット保存: scripts/html/tframe/chosekin_popup.png');
+    await page.screenshot({ path: path.join(OUT_DIR, 'chosekin_popup.png'), fullPage: true });
+    console.log('✓ スクリーンショット保存: output/html/snapshots/tframe/chosekin_popup.png');
 
     // onclick 属性から personId 値を抽出（ポップアップ内のリンク）
     const teacherLinks = await page.evaluate(() => {
@@ -142,7 +145,7 @@ fs.mkdirSync(INPUT_DIR, { recursive: true });
 
   } catch (err) {
     console.error('\nERROR:', err.message);
-    await page.screenshot({ path: path.join(INPUT_DIR, 'error_person_id.png') });
+    await page.screenshot({ path: path.join(OUT_DIR, 'error_person_id.png') });
   } finally {
     await browser.close();
   }

@@ -387,6 +387,6 @@ URL パターンは `index.php?module=<Module>&action=<Action>` 形式で統一�
 
 ## 調査上の補足
 
-- 当時は shimamura 用の HTML 置き場が存在しなかった。shimamura 用の HTML サンプルはどこにも保存されていない（tframe は当時の `input/` フォルダに多数の HTML が存在）。※ #341 で shimamura の取得 HTML は `output/html/shimamura/`、tframe は `scripts/html/tframe/` に整理
-- tframe の貼り付け先 `input.html`（現 `scripts/html/tframe/input.html`）は tframe 専用の一時貼り付け先として使われており、shimamura には流用できない。
+- 当時は shimamura 用の HTML 置き場が存在しなかった。shimamura 用の HTML サンプルはどこにも保存されていない（tframe は当時の `input/` フォルダに多数の HTML が存在）。※ #341 で shimamura の取得 HTML は `output/html/shimamura/`、tframe は `scripts/html/snapshots/tframe/` に整理
+- tframe の貼り付け先 `input.html`（現 `scripts/html/inputs/tframe_form.html`）は tframe 専用の一時貼り付け先として使われており、shimamura には流用できない。
 - `SyokaiFlowPage.js` は `codecept/pages/shimamura/flow/` に置かれているが、実態はフロー関数の集合（Page Object ではない）。tframe でいう `codecept/support/shimamura/syokai_helpers.js` に近い性質を持つが、`inject()` を使わず I を引数で受け取っているため `codecept/pages/shimamura/flow/` 配置は妥当。同様に `KoushiShareiFlowPage.js` / `StudentSaikenkaiFlowPage.js` も `flow/` に配置。

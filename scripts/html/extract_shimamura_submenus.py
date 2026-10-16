@@ -196,8 +196,8 @@ def write_output_csv(submenus: List[Dict[str, Any]], output: Optional[str], flat
 
 def main() -> None:
     """エントリーポイント。"""
-    # IN:  ../source.txt（既定）または引数で指定したHTMLファイル
-    default_input = os.path.join("..", "source.txt")
+    # IN:  scripts/html/inputs/shimamura_page.html（既定・リポジトリ直下から実行）または引数で指定したHTMLファイル
+    default_input = os.path.join(".", "scripts", "html", "inputs", "shimamura_page.html")  # 旧 ../source.txt はリポジトリの外を指していた（#355）
     # OUT: ./output/probe/submenu_extract/ 配下に json / csv / csv(flat) のいずれか
     default_output_dir = os.path.join(".", "output", "probe", "submenu_extract")
     default_output_json = os.path.join(default_output_dir, "submenu_extract.json")

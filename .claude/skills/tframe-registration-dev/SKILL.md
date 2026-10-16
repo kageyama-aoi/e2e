@@ -5,7 +5,7 @@ description: |
   以下のような依頼があったら使用すること：
   - tframe の特定画面（登録・編集）のテストを新規作成したい
   - 既存の登録・編集系の Page Object / CSV / テストファイルを修正・追加したい
-  - input.html に HTML が貼り付けてあるのでテストを作ってほしい
+  - tframe_form.html（旧 input.html）に HTML が貼り付けてあるのでテストを作ってほしい
   - 「自分でログインしてフィールドを取得して」という依頼
 
   ワークフロー: HTML取得 → フィールド解析 → Page Object → CSV → テストファイル → 実行確認
@@ -42,7 +42,7 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 
 #### パターン A — ユーザーが HTML を貼り付ける場合
 
-`scripts/html/tframe/input.html` に HTML が貼り付けてある。次の Step 1b へ進む。
+`scripts/html/inputs/tframe_form.html` に HTML が貼り付けてある。次の Step 1b へ進む。
 
 #### パターン B — 「自分でログインして取得して」と依頼された場合（推奨）
 
@@ -51,7 +51,7 @@ tframe の画面に対する E2E テスト（Page Object / CSV / テストファ
 ```bash
 # TARGETS 配列に対象画面を追加してから実行
 node scripts/html/fetch_tframe_forms.js tframe.culture_beta
-# → scripts/html/tframe/{name}.html に保存される
+# → scripts/html/snapshots/tframe/{name}.html に保存される
 ```
 
 スクリプトの TARGETS 配列に取得したい画面を追加する：
@@ -64,7 +64,7 @@ const TARGETS = [
 #### フィールド抽出
 
 ```bash
-node scripts/html/extract_tframe_form_fields.js scripts/html/tframe/{name}_touroku.html
+node scripts/html/extract_tframe_form_fields.js scripts/html/snapshots/tframe/{name}_touroku.html
 ```
 
 抽出すべき情報：
@@ -272,7 +272,7 @@ npx codeceptjs run ./codecept/tests/tframe/page/{module}_touroku_test.js --profi
 | エラー | 原因 | 対処 |
 |---|---|---|
 | `0 passed`（エラーなし） | CSV の列数がヘッダと不一致 | ヘッダ列数とデータ行列数を揃える |
-| `Field not found` | `id` が HTML と一致しない | input.html / 取得した HTML を再確認 |
+| `Field not found` | `id` が HTML と一致しない | scripts/html/inputs/tframe_form.html / 取得した HTML を再確認 |
 | `バリデーションエラー` | `#tf-message-summary` にエラー | テストデータを修正（必須項目・select value を確認） |
 | `Text "xxx" not found` | 検証テキストが実際の表示と異なる | スクリーンショットで実際の表示を確認し検証テキストを修正 |
 | `element is not visible` | popup picker の radio input を直接クリックしている | `span.tf-radio.tf-radio-primary` をクリックする |
@@ -285,7 +285,7 @@ npx codeceptjs run ./codecept/tests/tframe/page/{module}_touroku_test.js --profi
 
 ユーザーが「{画面名}のテストを作りたい」と言ったとき：
 
-1. `scripts/html/tframe/input.html` に HTML が貼り付けてあるか確認する
+1. `scripts/html/inputs/tframe_form.html` に HTML が貼り付けてあるか確認する
 2. なければ「自動取得しますか？ `fetch_tframe_forms.js` で culture_beta からログインして取得できます」と提案する
 3. 自動取得を承認されたら `fetch_tframe_forms.js` の TARGETS を更新してスクリプトを実行する
 4. 取得した HTML の `data-actionid` から module 名と URL パターンを特定する
