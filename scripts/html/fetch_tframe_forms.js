@@ -10,6 +10,7 @@ const fs   = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const dotenv = require('dotenv');
+const { isTframeErrorPage } = require('./tframe_error_page');
 
 // ── 環境変数ロード ────────────────────────────────────────────
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -27,7 +28,7 @@ if (!BASE_URL || !USER || !PASSWORD) {
   process.exit(1);
 }
 
-// 取ってきた HTML は snapshots/tframe/（git 管理）、スクリーンショット・JSON は output/html/snapshots/tframe/（git 対象外）に書く（#355）
+// 取ってきた HTML は snapshots/tframe/（git 管理）、スクリーンショット・JSON は output/html/tframe/（git 対象外）に書く（#355）
 const SNAPSHOT_DIR = path.join(__dirname, 'snapshots', 'tframe');
 const OUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'tframe');
 fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
@@ -164,7 +165,7 @@ async function getFormHtml(page, url) {
 
     // スクリーンショット保存
     await page.screenshot({ path: path.join(OUT_DIR, 'after_login.png'), fullPage: false });
-    console.log('  スクリーンショット保存: output/html/snapshots/tframe/after_login.png');
+    console.log('  スクリーンショット保存: output/html/tframe/after_login.png');
 
     // 経理セクションへ移動してサイドメニューを展開
     const keiriLink = `${BASE_URL}index.php?r=smsFee%2Fsw%2F_default&isTopMenu=1`;
@@ -174,7 +175,7 @@ async function getFormHtml(page, url) {
 
     // スクリーンショット（経理ページ）
     await page.screenshot({ path: path.join(OUT_DIR, 'keiri_page.png'), fullPage: true });
-    console.log('  スクリーンショット保存: output/html/snapshots/tframe/keiri_page.png');
+    console.log('  スクリーンショット保存: output/html/tframe/keiri_page.png');
 
     const links = await dumpAllLinks(page);
 
@@ -208,6 +209,11 @@ async function getFormHtml(page, url) {
       }
       console.log(`  URL: ${targetUrl}`);
       const html = await getFormHtml(page, targetUrl);
+      // 環境に無い画面はエラーページが返る。写しとして git に入れない（#368）
+      if (isTframeErrorPage(html)) {
+        console.warn(`  ⚠ エラーページが返ったので保存しません（この環境に無い画面の可能性）: ${target.name}`);
+        continue;
+      }
       const outFile = path.join(SNAPSHOT_DIR, `${target.name}.html`);
       fs.writeFileSync(outFile, html, 'utf8');
       console.log(`  ✓ 保存: ${outFile} (${Math.round(html.length / 1024)} KB)`);

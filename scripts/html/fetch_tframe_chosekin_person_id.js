@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * tframe の chosekin 登録フォームの personId ポップアップから講師IDを取得するスクリプト。
- * 出力: scripts/html/snapshots/tframe/chosekin_person_popup.html（スクリーンショットは output/html/snapshots/tframe/）
+ * 出力: scripts/html/snapshots/tframe/chosekin_person_popup.html（スクリーンショットは output/html/tframe/）
  * 使い方: node scripts/html/fetch_tframe_chosekin_person_id.js <profile>
  *   例: node scripts/html/fetch_tframe_chosekin_person_id.js tframe.culture_beta
  */
@@ -11,6 +11,7 @@ const fs   = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const dotenv = require('dotenv');
+const { isTframeErrorPage } = require('./tframe_error_page');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const profile   = process.argv[2] || 'tframe.culture_beta';
@@ -27,7 +28,7 @@ if (!BASE_URL || !USER || !PASSWORD) {
   process.exit(1);
 }
 
-// 取ってきた HTML は snapshots/tframe/（git 管理）、スクリーンショット・JSON は output/html/snapshots/tframe/（git 対象外）に書く（#355）
+// 取ってきた HTML は snapshots/tframe/（git 管理）、スクリーンショット・JSON は output/html/tframe/（git 対象外）に書く（#355）
 const SNAPSHOT_DIR = path.join(__dirname, 'snapshots', 'tframe');
 const OUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'tframe');
 fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
@@ -71,7 +72,10 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
       return Array.from(popupDivs).map(d => d.outerHTML).join('\n');
     });
 
-    if (popupHtml) {
+    // エラーページは写しとして git に入れない（#368）
+    if (popupHtml && isTframeErrorPage(popupHtml)) {
+      console.warn('⚠ エラーページが返ったので保存しません');
+    } else if (popupHtml) {
       const popupFile = path.join(SNAPSHOT_DIR, 'chosekin_person_popup.html');
       fs.writeFileSync(popupFile, popupHtml, 'utf8');
       console.log(`✓ ポップアップHTML保存: ${popupFile}`);
@@ -79,7 +83,7 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 
     // スクリーンショット
     await page.screenshot({ path: path.join(OUT_DIR, 'chosekin_popup.png'), fullPage: true });
-    console.log('✓ スクリーンショット保存: output/html/snapshots/tframe/chosekin_popup.png');
+    console.log('✓ スクリーンショット保存: output/html/tframe/chosekin_popup.png');
 
     // onclick 属性から personId 値を抽出（ポップアップ内のリンク）
     const teacherLinks = await page.evaluate(() => {

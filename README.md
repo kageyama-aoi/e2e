@@ -165,7 +165,7 @@ python run/allure/archive_allure_results.py --keep-latest 5
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 15:49:59
+Last updated: 2026-10-16 18:08:04
 
 ```text
 e2e/
@@ -723,7 +723,8 @@ e2e/
 │           ├── decisionTable.test.js
 │           ├── runOutputPaths.test.js
 │           ├── salesGroupTransferCheck.test.js
-│           └── shimamuraPageUrl.test.js
+│           ├── shimamuraPageUrl.test.js
+│           └── tframeErrorPage.test.js
 ├── env/ 
 │   ├── .env.shimamura.template
 │   └── .env.tframe.template
@@ -817,7 +818,8 @@ e2e/
 │   │   ├── fetch_tframe_chosekin_person_id.js
 │   │   ├── fetch_tframe_forms.js
 │   │   ├── README.md
-│   │   └── shimamura_route.js
+│   │   ├── shimamura_route.js
+│   │   └── tframe_error_page.js
 │   ├── setup/ 
 │   │   └── install_git_hooks.js
 │   ├── testdata/ 

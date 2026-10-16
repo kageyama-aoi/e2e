@@ -19,7 +19,7 @@
 | `debug` | デバッガで中を追うための練習台 | `debug_shimamura_syokai.js` |
 | `install` | 環境の準備をする | `install_git_hooks.js` |
 
-動詞が付いていないものは、ほかの道具から読み込まれる部品（`html/shimamura_route.js`）か、決まった形の設定・プラグイン（`docs/jsdoc_*.js`）です。
+動詞が付いていないものは、ほかの道具から読み込まれる部品（`html/shimamura_route.js`・`html/tframe_error_page.js`）か、決まった形の設定・プラグイン（`docs/jsdoc_*.js`）です。
 
 ## ツール一覧
 
@@ -55,6 +55,7 @@
 | `extract_tframe_side_menu_groups.py` | サイドメニューのグループと子項目を抜き出す | 同上 |
 | `extract_shimamura_body_only_fields.py` | `<td id="body_only_td">` のフォーム要素を抜き出す | 同上 |
 | `shimamura_route.js` | URL を「画面を区別する route 文字列」にする部品 | `fetch_shimamura_menus.js` と `gen_shimamura_menu_coverage.js` が読み込む |
+| `tframe_error_page.js` | 取った HTML が tframe のエラーページか見分ける部品（エラーページは写しに保存しない #368） | `fetch_tframe_forms.js` と `fetch_tframe_chosekin_person_id.js` が読み込む |
 
 置き場:
 - `html/snapshots/tframe/`：取ってきた tframe の画面 HTML（参考資料・git 管理）
