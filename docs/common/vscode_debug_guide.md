@@ -25,7 +25,7 @@ CSVもブラウザも使わない**純粋な関数**は、requireして直接呼
 
 ### 用意されているファイル
 
-- `output/debug_syokai.js` — `syokai_helpers.js` を直接requireして、実データ
+- `output/debug_shimamura_syokai.js` — `syokai_helpers.js` を直接requireして、実データ
   （`codecept/data/shimamura/syokai_touroku_validation_errors.csv` の2行目・3行目相当）で呼び出す
   使い捨てスクリプト。`output/` は`.gitignore`済みなのでコミットされない。
 - `.vscode/launch.json` — 下記の手順で使うVS Codeのデバッグ設定。
@@ -47,12 +47,12 @@ CSVもブラウザも使わない**純粋な関数**は、requireして直接呼
 
 ### 動作確認済みの例
 
-`output/debug_syokai.js` を素のNodeで実行すると、以下のように「実行しないステップは配列に
+`output/debug_shimamura_syokai.js` を素のNodeで実行すると、以下のように「実行しないステップは配列に
 存在しない」ことが実際に確認できる（`docs/common/codeceptjs_design_patterns.md` の図3で
 説明している内容と一致）。
 
 ```
-$ node output/debug_syokai.js
+$ node output/debug_shimamura_syokai.js
 
 --- buildExecutionPlan(rowCourseSetSkip) ---
 {
@@ -115,7 +115,7 @@ npx codeceptjs run ./codecept/tests/shimamura/flow/syokai_touroku_test.js --prof
       "type": "node",
       "request": "launch",
       "name": "Debug: syokai_helpers 単体",
-      "program": "${workspaceFolder}/output/debug_syokai.js",
+      "program": "${workspaceFolder}/output/debug_shimamura_syokai.js",
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]

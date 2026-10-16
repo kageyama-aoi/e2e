@@ -1,11 +1,9 @@
 """
-extract_submenus.py
-
 HTMLソースから <tr id="submenu__..."> ブロックを抽出し、
 テキストとリンクを JSON / CSV（UTF-8）で出力します。
 
 実行例（PowerShell）:
-  python extract_submenus.py
+  python scripts/html/extract_shimamura_submenus.py
   # 形式選択後に既定パスへ出力:
   #   .\\output\\probe\\submenu_extract\\submenu_extract.json
   #   .\\output\\probe\\submenu_extract\\submenu_extract.csv

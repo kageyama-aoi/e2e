@@ -1,6 +1,4 @@
 """
-extract_side_menu_groups.py
-
 HTMLソースからサイドメニューのグループと子項目を抽出し、
 JSON / CSV（UTF-8）で出力します。
 
@@ -32,16 +30,16 @@ README
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
 
 使い方:
-  python scripts/html/extract_side_menu_groups.py
+  python scripts/html/extract_shimamura_side_menu_groups.py
   # 既定入力: scripts/html/side_menu_source.html
 
-  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html"
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html"
 
 日本語だけの軽量JSON:
-  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
 
 CSV出力:
-  python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
+  python scripts/html/extract_shimamura_side_menu_groups.py "./scripts/html/side_menu_source.html" --format csv
 
 通常JSONの構造:
 {

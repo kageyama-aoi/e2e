@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * tframe 登録画面の HTML を Playwright で取得して input/ に保存するスクリプト。
+ * tframe 登録画面の HTML を Playwright で取得して scripts/html/tframe/ に保存するスクリプト。
  * 使い方: node scripts/html/fetch_tframe_forms.js <profile>
  *   例: node scripts/html/fetch_tframe_forms.js tframe.culture_beta
  */

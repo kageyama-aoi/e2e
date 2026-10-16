@@ -459,9 +459,12 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
 
 - サブフォルダは用途で分ける:
   - `docs/`     : ドキュメント生成・参照チェック・README のツリー更新（pre-commit・CI が呼ぶ）
-  - `hooks/`    : git フックのインストール（`install_git_hooks.js`）
   - `html/`     : 画面 HTML の取得・解析（スキルの下調べ用）。tframe の画面 HTML は参考資料として `html/tframe/` に git 管理で置く。手で貼る入力は道具の隣（`html/side_menu_source.html` など）
-  - `testdata/` : テスト環境のデータを手で掃除するツール（`cleanup_gessya_fees.js`）
+  - `setup/`    : 環境の準備（`install_git_hooks.js` = git フックの置き場を `.githooks/` に向ける。npm install 時に自動）
+  - `testdata/` : テスト環境のデータを手で掃除するツール（`cleanup_shimamura_gessya_fees.js`）
+  - `debug/`    : VS Code のデバッガで中を追うための練習台（`debug_shimamura_syokai.js`）
+- **ファイル名は `<動詞>_<製品>_<対象>`**（製品に関係ないものは `<動詞>_<対象>`。#353）。動詞は `fetch`（実機から取る）・`extract`（手元の HTML から抜き出す）・`gen`（作り直す）・`check`（点検）・`cleanup`・`debug`・`install`。ほかの道具から読み込まれる部品（`shimamura_route.js`）と JSDoc プラグイン（`jsdoc_*.js`）は例外
+- ツールの一覧と使い方は `scripts/README.md`。道具を足したら一覧にも 1 行足す
 - **git に入らない生成物（取得した HTML・抜き出し結果）は `scripts/` に書かず、`output/` の下に書く**（`output/html/shimamura/`・`output/html/extract/`・`output/probe/side_menu_extract/` など）
 - その場限りの調査スクリプトはコミットしない（必要なら Issue にコードを貼る）
 

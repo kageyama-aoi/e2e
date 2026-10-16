@@ -158,102 +158,15 @@ python run/allure/archive_allure_results.py --keep-latest 5
 - **IN**: `output/allure-results/<profile>/<timestamp_rundir>/`
 - **OUT**: `output/allure-results/archive/<profile>/<timestamp_rundir>.zip`
 
-### サブメニュー抽出
-`scripts/html/extract_submenus.py` は、HTMLソースから `tr id="submenu__..."` のブロックを抽出し、
-JSON/CSV で出力するための補助ツールです。スクレーピングや画面構造の把握に使えます。
-
-**使い方 (対話式)**
-```bash
-python scripts/html/extract_submenus.py
-```
-
-**出力形式の選択**
-- `1`: JSON
-- `2`: CSV
-- `3`: CSV(フラット)
-
-**入出力**
-- 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
-- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\probe\submenu_extract\`
-  - JSON: `submenu_extract.json`
-  - CSV: `submenu_extract.csv`
-  - CSV(フラット): `submenu_extract_flat.csv`
-
-**補足**
-- 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
-- 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
-
-### サイドメニューグループ抽出
-`scripts/html/extract_side_menu_groups.py` は、サイドメニューHTMLから
-「グループ名」と「配下のメニュー項目」を構造化して JSON/CSV で出力します。
-成果物は git に入らない生成物の置き場 `output/probe/side_menu_extract/` 配下にまとめて出力します。
-既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成します。
-
-**使い方**
-```bash
-python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html"
-```
-
-**既定入力ファイル**
-- `[scripts/html/side_menu_source.html](./scripts/html/side_menu_source.html)`
-- このファイルにサイドメニューHTMLを貼り付けたうえで、引数なしで実行できます
-
-```bash
-python scripts/html/extract_side_menu_groups.py
-```
-
-**JSON出力例**
-- `group_count`: グループ数
-- `groups[]`: グループ一覧
-- `groups[].name`: グループ名（例: `Eメール`, `名簿リスト`）
-- `groups[].items[]`: 子メニュー一覧
-
-**日本語だけのJSON**
-```bash
-python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source.html" --jp-only
-```
-
-- `groups[].name`: グループ名のみ
-- `groups[].items[]`: 子メニュー名のみ
-- ID や href を省いた軽量形式です
-
-**既定出力**
-- 出力先ディレクトリ: `output/probe/side_menu_extract/<先頭の日本語>/`
-- JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
-- JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
-- CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
-
-### 画面フォーム要素抽出
-`scripts/html/extract_body_only_fields.py` は、HTMLソースの `<td id="body_only_td">` 内から
-フォーム要素（`input` / `select` / `textarea` / `button`）を抽出し、JSON/CSV で出力します。
-
-**使い方 (対話式)**
-```bash
-python scripts/html/extract_body_only_fields.py
-```
-
-**出力形式の選択**
-- `1`: JSON
-- `2`: CSV
-- `3`: CSV(フラット)
-
-**入出力**
-- 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
-- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\probe\body_only_extract\`
-  - JSON: `body_only_fields.json`
-  - CSV: `body_only_fields.csv`
-  - CSV(フラット): `body_only_fields_flat.csv`
-
-**補足**
-- 文字コードは `utf-8` を優先して自動判定し、失敗した場合は `cp932` を試します。
-- 入力が UTF-8 でない場合は標準エラーに注意メッセージを出します。
+### 開発・保守の補助ツール（scripts/）
+画面 HTML の取得・抜き出し、ドキュメントの生成・点検などの道具は [scripts/README.md](./scripts/README.md) に一覧と使い方をまとめています。
 
 ## ディレクトリ構成
 
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 11:03:06
+Last updated: 2026-10-16 11:13:41
 
 ```text
 e2e/
@@ -844,9 +757,7 @@ e2e/
 │   └── tframe_run_nav_all.bat
 ├── scripts/ 
 │   ├── debug/ 
-│   │   └── debug_syokai.js
-│   ├── hooks/ 
-│   │   └── install_git_hooks.js
+│   │   └── debug_shimamura_syokai.js
 │   ├── html/ 
 │   │   ├── tframe/ 
 │   │   │   ├── account_list.html
@@ -906,20 +817,23 @@ e2e/
 │   │   │   ├── teRewardCalc_list.html
 │   │   │   ├── teRewardTotalCalc_list.html
 │   │   │   └── tuitionFeeBulkCreate_touroku.html
-│   │   ├── extract_body_only_fields.py
-│   │   ├── extract_side_menu_groups.py
-│   │   ├── extract_submenus.py
-│   │   ├── fetch_chosekin_person_id.js
+│   │   ├── extract_shimamura_body_only_fields.py
+│   │   ├── extract_shimamura_side_menu_groups.py
+│   │   ├── extract_shimamura_submenus.py
+│   │   ├── extract_tframe_form_fields.js
 │   │   ├── fetch_shimamura_menus.js
 │   │   ├── fetch_shimamura_nav.js
 │   │   ├── fetch_shimamura_screens.js
-│   │   ├── fetch_teacher_edit.js
+│   │   ├── fetch_shimamura_teacher_edit.js
+│   │   ├── fetch_tframe_chosekin_person_id.js
 │   │   ├── fetch_tframe_forms.js
 │   │   ├── shimamura_route.js
-│   │   ├── side_menu_source.html
-│   │   └── tframe_extract_form_fields.js
-│   └── testdata/ 
-│       └── cleanup_gessya_fees.js
+│   │   └── side_menu_source.html
+│   ├── setup/ 
+│   │   └── install_git_hooks.js
+│   ├── testdata/ 
+│   │   └── cleanup_shimamura_gessya_fees.js
+│   └── README.md
 ├── .gitattributes
 ├── .gitignore
 ├── AGENTS.md

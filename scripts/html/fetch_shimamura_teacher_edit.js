@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * 講師編集画面（各タブ）の HTML を取得するスクリプト。
- * 使い方: node scripts/html/fetch_teacher_edit.js <profile>
- *   例: node scripts/html/fetch_teacher_edit.js shimamura.testgcp
+ * shimamura の講師編集画面（各タブ）の HTML を取得して output/html/shimamura/ に保存するスクリプト。
+ * 使い方: node scripts/html/fetch_shimamura_teacher_edit.js <profile>
+ *   例: node scripts/html/fetch_shimamura_teacher_edit.js shimamura.testgcp
  */
 'use strict';
 

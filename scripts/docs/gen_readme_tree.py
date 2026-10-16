@@ -20,13 +20,13 @@ Python標準ライブラリのみで動作するため、`pip install` は不要
 
 【使い方】
     # README.md を自動更新する場合
-    python tree_generator.py -u
+    python gen_readme_tree.py -u
 
     # 新規に tree.md を作成する場合
-    python tree_generator.py -o tree.md
+    python gen_readme_tree.py -o tree.md
 
     # ヘルプを表示
-    python tree_generator.py --help
+    python gen_readme_tree.py --help
 
 作成日: 2026-01-17
 """
@@ -158,7 +158,7 @@ def list_untracked(root: Path) -> set[Path]:
                 cwd=root, capture_output=True, check=True,
             ).stdout.decode("utf-8")
         except (OSError, subprocess.CalledProcessError):
-            print("[tree_generator] git ls-files に失敗したため git 管理外ファイルの除外をスキップします")
+            print("[gen_readme_tree] git ls-files に失敗したため git 管理外ファイルの除外をスキップします")
             return set()
         entries.extend(e for e in out.split("\0") if e)
     return {(root / e.rstrip("/")).resolve() for e in entries}

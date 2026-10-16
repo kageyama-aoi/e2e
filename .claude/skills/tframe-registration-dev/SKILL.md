@@ -64,7 +64,7 @@ const TARGETS = [
 #### フィールド抽出
 
 ```bash
-node scripts/html/tframe_extract_form_fields.js scripts/html/tframe/{name}_touroku.html
+node scripts/html/extract_tframe_form_fields.js scripts/html/tframe/{name}_touroku.html
 ```
 
 抽出すべき情報：
@@ -289,5 +289,5 @@ npx codeceptjs run ./codecept/tests/tframe/page/{module}_touroku_test.js --profi
 2. なければ「自動取得しますか？ `fetch_tframe_forms.js` で culture_beta からログインして取得できます」と提案する
 3. 自動取得を承認されたら `fetch_tframe_forms.js` の TARGETS を更新してスクリプトを実行する
 4. 取得した HTML の `data-actionid` から module 名と URL パターンを特定する
-5. `tframe_extract_form_fields.js` でフィールド一覧を抽出する
+5. `extract_tframe_form_fields.js` でフィールド一覧を抽出する
 6. popup picker の有無を確認する（`class="popup-picker-button"` を含む button 要素）

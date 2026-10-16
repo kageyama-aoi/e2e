@@ -112,7 +112,7 @@ codecept/support/shimamura/
 
 | スキル | 役割 | 主なワークフロー |
 |---|---|---|
-| `/tframe-html-fetch` | HTML 取得 + フォームフィールド ID 抽出 | TARGETS 追記 → fetch_tframe_forms.js 実行 → tframe_extract_form_fields.js で ID 整理 |
+| `/tframe-html-fetch` | HTML 取得 + フォームフィールド ID 抽出 | TARGETS 追記 → fetch_tframe_forms.js 実行 → extract_tframe_form_fields.js で ID 整理 |
 | `/tframe-registration-dev` | 登録・編集テスト新規作成 | HTML 取得 → フィールド解析 → Page Object → CSV → テストファイル → 実行確認 |
 | `/tframe-ichiran-dev` | 一覧検索テスト新規作成・追記 | 検索フォーム確認 → Page Object にメソッド追記 → CSV → テストファイル → 実行確認 |
 
@@ -124,7 +124,7 @@ codecept/support/shimamura/
 4. **エラー表示**: `#tf-message-summary` が共通
 5. **フォーム構造**: `<form id="editForm">` / `<form id="searchForm">` が共通
 6. **codecept/support/utils.js の共通関数**: `fillTextFields` / `loadCsvWithProfile`（tframe 固有の `submitTframeFormAndVerify` / `isEnglish` は `codecept/support/tframe/utils.js` に分離済み）
-7. **HTMLフェッチスクリプト**: `scripts/html/fetch_tframe_forms.js` + `scripts/html/tframe_extract_form_fields.js` がログイン済み HTML を自動取得
+7. **HTMLフェッチスクリプト**: `scripts/html/fetch_tframe_forms.js` + `scripts/html/extract_tframe_form_fields.js` がログイン済み HTML を自動取得
 
 ---
 
@@ -224,7 +224,7 @@ shimamura は tframe の `#swSearchButton` に相当する共通検索 ID がな
 |---|---|
 | `fetch_tframe_forms.js` に TARGETS 追記して実行 | shimamura 用の fetch スクリプトが存在しない。`fetch_shimamura_screens.js` を新規作成する必要がある |
 | tframe のログイン（`loginKannrisyaPage`）を自動使用 | shimamura のログイン（`LoginPage.login()` + 担当者番号入力）は 2 ステップあり、スクリプト化が複雑 |
-| `tframe_extract_form_fields.js` で ID を抽出 | 抽出スクリプトは HTML パーサーであり再利用可能 |
+| `extract_tframe_form_fields.js` で ID を抽出 | 抽出スクリプトは HTML パーサーであり再利用可能 |
 
 ギャップ評価: 中程度。fetch スクリプトの新規作成が必要だが、抽出スクリプトは流用可能。
 
@@ -291,7 +291,7 @@ shimamura 画面の HTML を取得するスクリプトを作成する。
 内容:
 - `fetch_shimamura_screens.js` の TARGETS に追記して実行するワークフロー
 - shimamura 固有の「ログイン 2 ステップ（username/password + 担当者番号）」の注意点
-- `tframe_extract_form_fields.js` の再利用（フィールド ID 抽出は共通）
+- `extract_tframe_form_fields.js` の再利用（フィールド ID 抽出は共通）
 - アコーディオン・多重タブを含む画面の識別方法
 
 ### Phase 3: shimamura-ichiran-dev スキル（優先度: 中）

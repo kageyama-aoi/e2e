@@ -9,8 +9,8 @@
  *       経理ビューB内「料金」「入出金」の全削除リンク
  *
  * 使い方:
- *   node scripts/testdata/cleanup_gessya_fees.js
- *   node scripts/testdata/cleanup_gessya_fees.js 月謝テスト0630   # 名前を絞り込み
+ *   node scripts/testdata/cleanup_shimamura_gessya_fees.js
+ *   node scripts/testdata/cleanup_shimamura_gessya_fees.js 月謝テスト0630   # 名前を絞り込み
  *
  * 注意:
  *   - 入金済みレコードは削除できない（削除ボタンが表示されない）
