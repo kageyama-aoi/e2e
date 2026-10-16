@@ -27,6 +27,7 @@ description: |
 | **D** 新スキルの追加 | `AGENTS.md` のスキル一覧 |
 | **E** `codecept/tests/` 配下に新テストファイルを追加（tframe / shimamura / taskreport / smoke 問わず） | `run/test_descriptions.json` |
 | **F** Page Object / utils の**共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`、`docs/<product>/` の学習ガイド、`AGENTS.md` の共通ユーティリティ一覧 |
+| **G** `scripts/` の道具を追加・移動・リネーム・削除（`scripts/html/` の snapshots・inputs の置き場の変更も） | `scripts/README.md` のツール一覧、`scripts/html/README.md`（html/ の場合）、移動・リネームなら `package.json`・`.github/workflows/` |
 
 > **カテゴリ F を見落とすと何が起きるか**：コードだけ整理してスキルを放置すると、次に「〇〇テストを作って」と
 > 頼まれた瞬間に古いパターンのコードが量産され、せっかく消した重複が復活する（2026-09 shimamura 診断で実際に発生）。
@@ -45,7 +46,7 @@ git diff --stat HEAD
 git status
 ```
 
-作業内容から変更カテゴリ（A〜F）を特定する。複数該当することもある。
+作業内容から変更カテゴリ（A〜G）を特定する。複数該当することもある。
 
 カテゴリ F の判定は `git diff` に以下が含まれるかで行う：
 - `codecept/pages/` `codecept/support/` で **export されている関数名の変更・削除・追加**
@@ -191,6 +192,15 @@ npm run docs:check-refs
 
 存在しないパス・関数名がドキュメントに残っていれば一覧が出る。ゼロになるまで直す。
 
+#### カテゴリ G: scripts/ の道具の追加・移動・リネーム・削除
+
+**scripts/README.md のツール一覧（手動更新）**
+
+- 該当するフォルダの表（docs/ ・ html/ ・その他）に「ツール｜やること｜動かし方」の 1 行を足す・直す・消す
+- 名前は `<動詞>_<製品>_<対象>`（README 冒頭の動詞の表）。製品名は中身で確かめる
+- `scripts/html/` の道具や、`snapshots/` `inputs/` の置き場を変えたら `scripts/html/README.md` も直す（探し方の grep 例は実際に動かしてから書く）
+- 移動・リネームなら `package.json` の npm script と `.github/workflows/` もパスを確かめる（`grep -rn "旧パス" .github/ package.json`）
+
 ---
 
 ### Step 4: 完了チェックリスト
@@ -203,6 +213,7 @@ npm run docs:check-refs
 □ README.md の自動更新（npm run docs:update-readme-map）を実行したか（カテゴリAの場合）
 □ project_architecture_guide.md の最終更新日を変えたか（カテゴリAの場合）
 □ npm run docs:check-refs がゼロ件か（カテゴリFの場合）
+□ scripts/README.md（と scripts/html/README.md）の一覧が実物と合っているか（カテゴリGの場合）
 □ 更新したドキュメントをコミットに含めたか
 ```
 
@@ -219,7 +230,9 @@ npm run docs:check-refs
 | `/shimamura-registration-dev` でテスト追加 | E |
 | `/shimamura-ichiran-dev` でテスト追加 | E |
 | `/shimamura-download-verify` でテスト追加 | E |
-| `/local-safe-move` でファイル移動 | A（変更量による） |
+| `/local-safe-move` でファイル移動 | A（変更量による）、`scripts/` 配下なら G |
+| `scripts/` に道具を足した・名前を変えた・消した | G |
+| `/tframe-html-fetch`・`/shimamura-html-fetch` で取得対象（TARGETS）を足した | G（`scripts/html/README.md` の件数・例が変わるとき） |
 | 新しいスキルを作成した | D |
 | `codecept/pages/` や `codecept/tests/` に新ディレクトリを追加した | A, C |
 | `codecept/data/tframe/` のファイルを整理した | B |
