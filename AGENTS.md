@@ -118,7 +118,7 @@
 | tframe の画面 PO / 一覧・登録テストの追加、tframe メニューの改定 | `docs/tframe/menu_coverage.md` のアイコン別表は commit 時に自動再生成（`gen_tframe_menu_coverage.js`）。メニュー改定時は `codecept/pages/tframe/_common/menuSnapshot/*.json` を実機採取し直す。**逆引き（route → PO/テスト/CSV）はこの自動生成表を見る** |
 | shimamura の PO / テストの追加、shimamura メニューの改定 | `docs/shimamura/menu_coverage.md` のサマリ・アイコン別表は commit 時に自動再生成（`gen_shimamura_menu_coverage.js`）。メニュー改定時は `scripts/html/fetch_shimamura_menus.js` で `codecept/pages/shimamura/_common/menuSnapshot/testgcp.json` を採取し直す。**未着手画面・逆引きはこの自動生成表を見る** |
 | **Page Object / utils の共通パターン変更**（関数名の変更・共通ユーティリティの新設・Mixin 化・雛形ファイルの差し替え） | 該当プロダクトの `.claude/skills/<product>-*/SKILL.md`（雛形・参照ファイル・テンプレ）、`docs/<product>/` の学習ガイド、本ファイルの「共通ユーティリティ」一覧。**コードだけ直してスキルを放置すると、次のテストが古いパターンで量産される** |
-| `scripts/` 配下のスクリプトを移動・リネーム | `package.json` の該当 npm script、`.github/workflows/*.yaml`（CI がこれらを直接パス指定で呼んでいないか）。**CI 設定は push して実行されるまでローカルで気付けない**ため、移動時は必ず `grep -rn "旧パス" .github/ package.json` まで確認する（`/local-safe-move` Step 1 の対象拡張済み） |
+| `scripts/` 配下のスクリプトを追加・移動・リネーム・削除 | `scripts/README.md` のツール一覧（`scripts/html/` の道具・置き場なら `scripts/html/README.md` も）。移動・リネームでは `package.json` の該当 npm script、`.github/workflows/*.yaml`（CI がこれらを直接パス指定で呼んでいないか）。**CI 設定は push して実行されるまでローカルで気付けない**ため、移動時は必ず `grep -rn "旧パス" .github/ package.json` まで確認する（`/local-safe-move` Step 1 の対象拡張済み） |
 
 > 参照パス・関数名のドリフトは `npm run docs:check-refs`（`scripts/docs/check_doc_refs.py`）で機械的に検出できる。
 > `docs/` `.claude/skills/` `codecept/pages/` `codecept/support/` `.github/workflows/` を含むコミットでは pre-commit が警告モードで自動実行する

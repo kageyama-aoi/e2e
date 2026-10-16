@@ -36,6 +36,14 @@ tframe の画面 HTML を Playwright で取得し、検索・登録フォーム�
 
 ## ワークフロー
 
+### Step 0: 取り直す前に、手元の写しを確かめる
+
+`scripts/html/README.md`（置き場・ファイル名の決まり・探し方）を読み、対象の画面がすでに
+`scripts/html/snapshots/tframe/` にあるかを見る。あれば `git log -1 --format=%ad --date=short -- <ファイル>` で
+いつ取ったかを確かめ、古くなければ Step 4 に進む（ログインしなくてよい）。
+
+---
+
 ### Step 1: 引数を確認する
 
 ARGUMENTS から以下を特定する。
@@ -84,6 +92,18 @@ node scripts/html/fetch_tframe_forms.js {profile}
 ```
 
 失敗した場合（ログインエラー・404 等）はエラーメッセージを確認して対処する。
+
+**取ったあと、エラーページが混ざっていないか確かめる。** `fetch_tframe_forms.js` はサーバーエラーの画面でも
+そのまま保存する（2026-10 に「An internal server error occurred.」だけの 456 バイトの写しが 4 件 git に入っていた。#355）。
+
+```bash
+# 1KB 未満の写しと、エラー文言を含む写しを探す
+find scripts/html/snapshots/tframe -name '*.html' -size -1k
+grep -l 'internal server error' scripts/html/snapshots/tframe/*.html
+```
+
+見つかったら、その写しはコミットせず（`git checkout -- <ファイル>` で戻すか削除）、URL・権限・環境を見直して取り直す。
+スクリーンショットとリンク JSON は `output/html/tframe/`（git 対象外）に出る。
 
 ---
 

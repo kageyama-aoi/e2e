@@ -57,6 +57,14 @@ Phase 0/1 で確認済みの主要 URL パターン:
 
 ## ワークフロー
 
+### Step 0: 取り直す前に、手元の HTML を確かめる
+
+`scripts/html/README.md`（置き場・探し方）を読み、対象の画面が `output/html/shimamura/` にあるかを見る。
+shimamura の取得 HTML は **git に入れていない**（ログイン中の CSRF トークン入り・サイズが大きい）ので、
+別の PC や消えた後には無い。無ければ Step 1 から取り直す。
+
+---
+
 ### Step 1: 引数を確認する
 
 ARGUMENTS から以下を特定する。
@@ -106,6 +114,7 @@ node scripts/html/fetch_shimamura_screens.js {profile}
 
 **失敗した場合のチェックポイント:**
 - HTML が 0 KB → URL が間違っている（BASE_URL の末尾スラッシュは自動補完済み）
+- HTML が数百バイト・エラー文言だけ → サーバーエラーや権限エラーの画面がそのまま保存されている。中身を開いて確かめ、その HTML を調査に使わない（`find output/html/shimamura -name '*.html' -size -1k` で探せる）
 - ログインエラー → `SHIMAMURA_USER` / `SHIMAMURA_PASSWORD` / `SHIMAMURA_TANTOUSYA` を確認
 - 担当者番号入力でタイムアウト → `SHIMAMURA_TANTOUSYA` が正しいか確認
 
