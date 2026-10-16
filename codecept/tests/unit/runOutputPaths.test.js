@@ -5,7 +5,9 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const {
+  MAX_RUN_TARGET_LENGTH,
   sanitizePathSegment,
+  shortenRunTarget,
   detectRunTargetFromArgs,
   buildRunTimestamp,
   resolveRunOutputPaths,
@@ -35,6 +37,25 @@ test('detectRunTargetFromArgs: 対象が無い・run の直後がオプション
   assert.strictEqual(detectRunTargetFromArgs(['node', 'codeceptjs', 'run', '--grep', '@wip']), 'all');
   assert.strictEqual(detectRunTargetFromArgs([]), 'all');
   assert.strictEqual(detectRunTargetFromArgs(undefined), 'all');
+});
+
+test('shortenRunTarget: 短い名前はそのまま、{a,b} は a+b にする', () => {
+  assert.strictEqual(shortenRunTarget('gessya_ikkatu_test'), 'gessya_ikkatu_test');
+  assert.strictEqual(shortenRunTarget('{fee,contract}_ichiran_test'), 'fee+contract_ichiran_test');
+});
+
+test('shortenRunTarget: 長い名前は上限に切り詰めてハッシュを付ける（#343）', () => {
+  const long = '{fee,contract,payment,unpaid_amount,transaction,email,email_template,email_template_category,prospect_list,announcement,poll}_ichiran_test';
+  const short = shortenRunTarget(long);
+  assert.strictEqual(short.length, MAX_RUN_TARGET_LENGTH);
+  assert.match(short, /^fee\+contract\+payment\+.*_[0-9a-f]{8}$/);
+  assert.strictEqual(shortenRunTarget(long), short, '同じ指定なら同じ名前');
+  assert.notStrictEqual(shortenRunTarget(long.replace('poll', 'polls')), short, '指定が違えば別の名前');
+});
+
+test('detectRunTargetFromArgs: ブレース展開で複数ファイルを指定しても上限を超えない（#343）', () => {
+  const argv = ['node', 'codeceptjs', 'run', './codecept/tests/tframe/page/{fee,contract,payment,unpaid_amount,transaction,email,email_template,email_template_category,prospect_list,announcement,poll}_ichiran_test.js'];
+  assert.ok(detectRunTargetFromArgs(argv).length <= MAX_RUN_TARGET_LENGTH);
 });
 
 test('buildRunTimestamp: YYYYMMDD_HHMMSS（ゼロ埋め）', () => {

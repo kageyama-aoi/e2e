@@ -35,6 +35,7 @@ OUT: archive=True のとき <base_dir>/archive/<profile>/<rundir>.zip
 """
 
 import argparse
+import os
 import re
 import shutil
 import zipfile
@@ -131,6 +132,14 @@ def select_targets(
     return sorted(targets, key=lambda e: (e[1], e[2]))
 
 
+def _long_path(path: Path) -> str:
+    r"""Windows では \\?\ を付けて、260 文字を超えるパスも消せるようにする（#343）。"""
+    resolved = str(path.resolve())
+    if os.name == "nt" and not resolved.startswith("\\\\?\\"):
+        return "\\\\?\\" + resolved
+    return resolved
+
+
 def cleanup_run_dirs(
     base_dir: Path,
     days: int = DEFAULT_DAYS,
@@ -156,7 +165,7 @@ def cleanup_run_dirs(
         try:
             if archive:
                 zip_directory(run_dir, base_dir / "archive" / profile / f"{run_dir.name}.zip")
-            shutil.rmtree(run_dir)
+            shutil.rmtree(_long_path(run_dir))
             lines.append(f"  {'archived' if archive else 'deleted'}: {label}")
         except Exception as exc:
             lines.append(f"  error: {label} -> {exc}")
