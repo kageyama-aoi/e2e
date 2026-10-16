@@ -399,7 +399,7 @@ dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
 dl_dir = os.path.join(self.repo_root, 'output', 'downloads')
 
 # _on_open_allure（1137行目）
-cmd = ['node', 'scripts/allure/serve_latest.js', profile]
+cmd = ['node', 'run/allure/serve_latest.js', profile]
 
 # _on_login_and_hold（1111行目）
 test_file = './tests/shimamura/util/login_and_hold.js'
@@ -418,7 +418,7 @@ test_file = './tests/shimamura/util/login_and_hold.js'
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 _DOWNLOADS_DIR   = os.path.join('output', 'downloads')
-_ALLURE_SCRIPT   = os.path.join('scripts', 'allure', 'serve_latest.js')
+_ALLURE_SCRIPT   = os.path.join('run', 'allure', 'serve_latest.js')
 _LOGIN_HOLD_TEST = './tests/shimamura/util/login_and_hold.js'
 ```
 

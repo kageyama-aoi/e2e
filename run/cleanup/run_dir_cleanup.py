@@ -25,13 +25,13 @@ OUT: archive=True のとき <base_dir>/archive/<profile>/<rundir>.zip
 
 使い方:
   # output/allure-results/ と output/ を既定の規則（10日・最新3件）で削除
-  python scripts/cleanup/run_dir_cleanup.py
+  python run/cleanup/run_dir_cleanup.py
 
   # 確認だけ（何も消さない）
-  python scripts/cleanup/run_dir_cleanup.py --dry-run
+  python run/cleanup/run_dir_cleanup.py --dry-run
 
   # output/ だけ、5日より古いもの
-  python scripts/cleanup/run_dir_cleanup.py --target output --days 5
+  python run/cleanup/run_dir_cleanup.py --target output --days 5
 """
 
 import argparse

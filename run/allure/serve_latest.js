@@ -1,8 +1,8 @@
 /**
  * 最新の output/allure-results サブフォルダを自動検出して allure serve する
  * Usage:
- *   node scripts/allure/serve_latest.js                  # 全プロファイル中の最新
- *   node scripts/allure/serve_latest.js tframe.culture_test  # プロファイル指定
+ *   node run/allure/serve_latest.js                  # 全プロファイル中の最新
+ *   node run/allure/serve_latest.js tframe.culture_test  # プロファイル指定
  */
 
 const { execSync, spawn } = require('child_process');

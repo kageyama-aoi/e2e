@@ -146,11 +146,11 @@ Viewport=${windowSize}
 
 1. 選択中の Profile を取得（例: `tframe.culture_beta`）
 2. `output/allure-results/<profile>/` が存在するか確認
-3. `node scripts/allure/serve_latest.js <profile>` を実行
+3. `node run/allure/serve_latest.js <profile>` を実行
 
 ```python
 # run/run_gui.py: _on_open_allure
-cmd = ['node', 'scripts/allure/serve_latest.js', profile]
+cmd = ['node', 'run/allure/serve_latest.js', profile]
 threading.Thread(target=self._run_allure_process, args=(cmd,)).start()
 ```
 
@@ -158,7 +158,7 @@ threading.Thread(target=self._run_allure_process, args=(cmd,)).start()
 
 ### 3-4. serve_latest.js（最新結果の自動選択）
 
-`scripts/allure/serve_latest.js` は **「最後に変更されたフォルダ」を自動で探して**
+`run/allure/serve_latest.js` は **「最後に変更されたフォルダ」を自動で探して**
 `npx allure serve <dir>` を実行するスクリプトです。
 
 標準の `allure serve` はフルパスを指定する必要がありますが、
@@ -180,10 +180,10 @@ spawn('npx', ['allure', 'serve', latest], ...);
 手動でも使えます：
 ```bash
 # プロファイル指定
-node scripts/allure/serve_latest.js tframe.culture_beta
+node run/allure/serve_latest.js tframe.culture_beta
 
 # 全プロファイル中の最新を自動選択
-node scripts/allure/serve_latest.js
+node run/allure/serve_latest.js
 # または
 npm run allure:latest
 ```
@@ -195,7 +195,7 @@ npm run allure:latest
 テストを実行するたびに古い結果が溜まっていくため、
 **Claude Code のフック** と **ランチャー起動時の処理** の2か所で、同じ規則
 （10日以上古い実行結果を zip せず削除・各プロファイル最新3件は残す）で自動整理しています。
-判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用し、`output/allure-results/` と `output/` の実行フォルダをまとめて片付ける（#321）。
+判定は `run/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用し、`output/allure-results/` と `output/` の実行フォルダをまとめて片付ける（#321）。
 
 #### フロー
 
@@ -229,16 +229,16 @@ def is_test_command(command):
 # → テストコマンドを検知したら run_dir_cleanup.cleanup_all()（10日・最新3件・zip しない）を呼ぶ
 ```
 
-#### アーカイブ本体 (`scripts/allure/archive_allure_results.py`)
+#### アーカイブ本体 (`run/allure/archive_allure_results.py`)
 
 ```python
 # output/allure-results/<profile>/<timestamp_rundir>/ を走査
 # 30日以上古いものを zip → archive/ に保存 → 元ディレクトリを削除
 
-python scripts/allure/archive_allure_results.py           # 30日以上古い
-python scripts/allure/archive_allure_results.py --days 7  # 7日以上古い
-python scripts/allure/archive_allure_results.py --dry-run # 確認だけ
-python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロファイル最新5件は残す（既定3）
+python run/allure/archive_allure_results.py           # 30日以上古い
+python run/allure/archive_allure_results.py --days 7  # 7日以上古い
+python run/allure/archive_allure_results.py --dry-run # 確認だけ
+python run/allure/archive_allure_results.py --keep-latest 5 # 各プロファイル最新5件は残す（既定3）
 ```
 
 #### ランチャー起動時の自動削除
@@ -246,7 +246,7 @@ python scripts/allure/archive_allure_results.py --keep-latest 5 # 各プロフ�
 `run/run_gui.py` は起動時に、同じ判定（`run_dir_cleanup.cleanup_all()`）で `output/allure-results/` と `output/` の **10日以上古い実行フォルダを zip せずに削除**する。
 各プロファイルの最新3件は日数に関係なく残すので、Open Allure で開くものが無くなることはない。
 日数・件数は `run_gui.py` の `RUN_DIR_CLEANUP_DAYS` / `RUN_DIR_KEEP_LATEST`（フックは `run_dir_cleanup.py` の `DEFAULT_DAYS` / `DEFAULT_KEEP_LATEST`）で変える。
-手動で確認・実行するときは `python scripts/cleanup/run_dir_cleanup.py --dry-run`。
+手動で確認・実行するときは `python run/cleanup/run_dir_cleanup.py --dry-run`。
 
 ---
 
@@ -279,7 +279,7 @@ npm run allure:latest
 ### 特定プロファイルの最新結果を見たい
 
 ```bash
-node scripts/allure/serve_latest.js tframe.culture_beta
+node run/allure/serve_latest.js tframe.culture_beta
 ```
 
 ### 古い結果を手動で片付けたい
@@ -306,13 +306,13 @@ codecept.conf.js
         └── xxxxxxxx-attachment.png ← saveScreenshot が呼ばれた瞬間
 
 Open Allure ボタン（GUI）
-  └── scripts/allure/serve_latest.js <profile>  ★カスタム
+  └── run/allure/serve_latest.js <profile>  ★カスタム
         └── npx allure serve <最新ディレクトリ>
               └── ブラウザで HTML レポートを表示
 
 Claude Code フック（自動）★カスタム
   └── .claude/hooks/archive_allure.py
-        └── scripts/cleanup/run_dir_cleanup.py の cleanup_all()（output/allure-results/ と output/）
+        └── run/cleanup/run_dir_cleanup.py の cleanup_all()（output/allure-results/ と output/）
               └── 10日以上古い結果を削除（各プロファイル最新3件は残す）
 ```
 

@@ -68,9 +68,9 @@ def main():
         warn(rel, 'codecept/tests/ には *_test.js のみ配置可。Page Object は codecept/pages/、データは codecept/data/ へ。')
         return
 
-    # run/ 配下サブルール: .bat / .py のみ許可
-    if top == 'run' and rel.endswith('.js'):
-        warn(rel, 'run/ に .js ファイルを置くのは原則NG。ランチャーは .bat / .py が原則。')
+    # run/ 直下サブルール: .bat / .py のみ許可（サブフォルダ allure/ cleanup/ checks/ は .js も可 #341）
+    if top == 'run' and len(parts) == 2 and rel.endswith('.js'):
+        warn(rel, 'run/ 直下に .js ファイルを置くのは原則NG。ランチャーは .bat / .py が原則（道具は run/allure/ 等のサブフォルダへ）。')
         return
 
 

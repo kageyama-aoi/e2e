@@ -3,7 +3,7 @@ cleanup_output_logs.py
 
 output/<profile>/<timestamp_rundir>/ と output/logs/<name>_<timestamp>.log を
 N日以上古いものを zip アーカイブして削除します。
-output/ の実行フォルダの判定は scripts/cleanup/run_dir_cleanup.py の cleanup_run_dirs() に任せ、
+output/ の実行フォルダの判定は run/cleanup/run_dir_cleanup.py の cleanup_run_dirs() に任せ、
 プロファイルごとに最新 K 件（既定3件）は日数に関係なく残す（#321）。
 ランチャー起動時・テスト後フックは run_dir_cleanup.cleanup_all() で 10日超を zip せず削除している。
 
@@ -24,25 +24,25 @@ OUT: output/archive/<profile>/<rundir>.zip（N日より新しい場合はアー�
 
 使い方:
   # 14日より古いものをアーカイブ＋削除（既定）
-  python scripts/cleanup/cleanup_output_logs.py
+  python run/cleanup/cleanup_output_logs.py
 
   # 7日より古いものを対象にする
-  python scripts/cleanup/cleanup_output_logs.py --days 7
+  python run/cleanup/cleanup_output_logs.py --days 7
 
   # 確認のみ（実際には何もしない）
-  python scripts/cleanup/cleanup_output_logs.py --dry-run
+  python run/cleanup/cleanup_output_logs.py --dry-run
 
   # アーカイブせず削除のみ
-  python scripts/cleanup/cleanup_output_logs.py --no-archive
+  python run/cleanup/cleanup_output_logs.py --no-archive
 
   # output/ のみ対象
-  python scripts/cleanup/cleanup_output_logs.py --target output
+  python run/cleanup/cleanup_output_logs.py --target output
 
   # output/logs/ のみ対象
-  python scripts/cleanup/cleanup_output_logs.py --target logs
+  python run/cleanup/cleanup_output_logs.py --target logs
 
   # output/ でプロファイルごとに残す最新件数を変える（0 なら日数だけで判定）
-  python scripts/cleanup/cleanup_output_logs.py --target output --keep-latest 5
+  python run/cleanup/cleanup_output_logs.py --target output --keep-latest 5
 """
 
 import argparse

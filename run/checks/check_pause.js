@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const TARGET_DIR = path.join(__dirname, '..', 'codecept', 'tests', 'shimamura');
+const TARGET_DIR = path.join(__dirname, '..', '..', 'codecept', 'tests', 'shimamura');  // run/checks/ → リポジトリ直下（#341）
 const PAUSE_PATTERN = /\bpause\s*\(\s*\)/;
 
 const found = [];

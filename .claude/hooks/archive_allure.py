@@ -6,7 +6,7 @@ codeceptjs / npm test 系コマンドを検知し、成否問わず古い実行�
 
 規則はランチャー（run/run_gui.py の起動時クリーンアップ）と同じ：
 DEFAULT_DAYS（10）日以上古い実行フォルダを zip せずに削除し、各プロファイル最新 DEFAULT_KEEP_LATEST（3）件は残す。
-判定は scripts/cleanup/run_dir_cleanup.py の cleanup_all()（#321 で output/ も対象に追加）。
+判定は run/cleanup/run_dir_cleanup.py の cleanup_all()（#321 で output/ も対象に追加）。
 
 以前は `npm run allure:archive` を subprocess で呼んでいたが、Windows では npm の実体が
 npm.cmd のため FileNotFoundError で毎回落ちていた（設定側で stderr を捨てていて気付けなかった #310）。
@@ -18,7 +18,7 @@ import re
 import sys
 from pathlib import Path
 
-_CLEANUP_SCRIPT = Path(__file__).resolve().parents[2] / 'scripts' / 'cleanup' / 'run_dir_cleanup.py'  # .claude/hooks/ → リポジトリ直下（#341）
+_CLEANUP_SCRIPT = Path(__file__).resolve().parents[2] / 'run' / 'cleanup' / 'run_dir_cleanup.py'  # .claude/hooks/ → リポジトリ直下（#341）
 
 TEST_PATTERNS = [
     r'codeceptjs\s+run',

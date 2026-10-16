@@ -136,7 +136,7 @@ npx codeceptjs run "./codecept/tests/shimamura/**/*_test.js" --profile shimamura
 ## 補助ツール
 
 ### Allure 結果アーカイブ
-`scripts/allure/archive_allure_results.py` は、`output/allure-results/<profile>/<実行ディレクトリ>/` 単位で
+`run/allure/archive_allure_results.py` は、`output/allure-results/<profile>/<実行ディレクトリ>/` 単位で
 古いテスト結果をzip圧縮してアーカイブし、N日以上古いものを削除します。
 
 ```bash
@@ -144,16 +144,16 @@ npx codeceptjs run "./codecept/tests/shimamura/**/*_test.js" --profile shimamura
 npm run allure:archive
 
 # 7日以上古いものを対象にする
-python scripts/allure/archive_allure_results.py --days 7
+python run/allure/archive_allure_results.py --days 7
 
 # 削除せずに対象一覧だけ確認（dry-run）
-python scripts/allure/archive_allure_results.py --dry-run
+python run/allure/archive_allure_results.py --dry-run
 
 # プロファイルごとに残す最新件数を変える（既定 3。0 なら日数だけで判定）
-python scripts/allure/archive_allure_results.py --keep-latest 5
+python run/allure/archive_allure_results.py --keep-latest 5
 ```
 
-- ランチャー（`run/run_gui.py`）の起動時とテスト後フックは、`scripts/cleanup/run_dir_cleanup.py` で `output/allure-results/` と `output/` の実行フォルダを **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）。確認は `python scripts/cleanup/run_dir_cleanup.py --dry-run`
+- ランチャー（`run/run_gui.py`）の起動時とテスト後フックは、`run/cleanup/run_dir_cleanup.py` で `output/allure-results/` と `output/` の実行フォルダを **10日以上古いものを zip せず削除**する（各プロファイル最新3件は残す）。確認は `python run/cleanup/run_dir_cleanup.py --dry-run`
 
 - **IN**: `output/allure-results/<profile>/<timestamp_rundir>/`
 - **OUT**: `output/allure-results/archive/<profile>/<timestamp_rundir>.zip`
@@ -253,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-15 18:08:53
+Last updated: 2026-10-16 09:36:46
 
 ```text
 e2e/
@@ -880,6 +880,14 @@ e2e/
 │   ├── .env.shimamura.template
 │   └── .env.tframe.template
 ├── run/ 
+│   ├── allure/ 
+│   │   ├── archive_allure_results.py
+│   │   └── serve_latest.js
+│   ├── checks/ 
+│   │   └── check_pause.js
+│   ├── cleanup/ 
+│   │   ├── cleanup_output_logs.py
+│   │   └── run_dir_cleanup.py
 │   ├── ps/ 
 │   │   ├── _run_batch_core.ps1
 │   │   └── tframe_run_nav_all.ps1
@@ -889,13 +897,8 @@ e2e/
 │   ├── test_descriptions.json
 │   └── tframe_run_nav_all.bat
 ├── scripts/ 
-│   ├── allure/ 
-│   │   ├── archive_allure_results.py
-│   │   └── serve_latest.js
 │   ├── cleanup/ 
-│   │   ├── cleanup_gessya_fees.js
-│   │   ├── cleanup_output_logs.py
-│   │   └── run_dir_cleanup.py
+│   │   └── cleanup_gessya_fees.js
 │   ├── hooks/ 
 │   │   └── install_git_hooks.js
 │   ├── html/ 
@@ -968,10 +971,9 @@ e2e/
 │   │   ├── fetch_tframe_forms.js
 │   │   ├── shimamura_route.js
 │   │   └── tframe_extract_form_fields.js
-│   ├── input/ 
-│   │   └── side_menu_extract/ 
-│   │       └── source.html
-│   └── check_pause.js
+│   └── input/ 
+│       └── side_menu_extract/ 
+│           └── source.html
 ├── .gitattributes
 ├── .gitignore
 ├── AGENTS.md

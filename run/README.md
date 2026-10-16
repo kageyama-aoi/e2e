@@ -74,7 +74,7 @@ Primary（Run Test・アクセント色）/ Secondary（Stop 等）の2段階ス
 |---|---|
 | **Run Test** | 選択テストをサブスレッドで実行。ログをリアルタイム表示 |
 | **Stop** | 実行中プロセスを `terminate()` で停止。停止後にログを自動保存 |
-| **Open Allure** | `output/allure-results/<profile>/` を確認し `node scripts/allure/serve_latest.js <profile>` を呼び出す |
+| **Open Allure** | `output/allure-results/<profile>/` を確認し `node run/allure/serve_latest.js <profile>` を呼び出す |
 | **Open CSV** | テストファイルに対応する `codecept/data/<product>/*_data*.csv` をデフォルトアプリで開く |
 | **Settings (.env)** | 選択中プロファイルの `.env` ファイルをGUIで編集する（`EnvSettingsWindow`）。設定項目は HEADLESS / SCREENSHOT_ON_NAVIGATION / CHECKBOX_DEBUG / FORM_FILL_FAST / SHIMAMURA_NAV の5項目。Save で即時書き込み |
 | **Open JSDoc** | `npm run docs:jsdoc` で JSDoc を作り直し（約10秒・生成中はボタン無効）、`docs/generated/html/index.html` を既定ブラウザで開く。生成に失敗したらログに ERROR を出して開かない |
@@ -131,7 +131,7 @@ Run 終了（正常終了・Stop・エラー）後に `output/logs/<testname>_<Y
 
 また、`docs/common/learning/bash_YYYYMMDD.md` のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
 
-さらに、`output/allure-results/` と `output/` の `<profile>/<YYYYMMDD_HHMMSS_*>/`（実行フォルダ）のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `scripts/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用している（テスト後フックも同じ）。`output/` 直下のセッションファイル・`downloads/`・抽出結果フォルダは日時フォルダではないので対象外。
+さらに、`output/allure-results/` と `output/` の `<profile>/<YYYYMMDD_HHMMSS_*>/`（実行フォルダ）のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `run/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用している（テスト後フックも同じ）。`output/` 直下のセッションファイル・`downloads/`・抽出結果フォルダは日時フォルダではないので対象外。
 
 ---
 
@@ -273,7 +273,7 @@ self.minsize(860, 640)     # 最小サイズ
 
 `output/allure-results/<profile>/` が存在しないときはボタンを押してもエラーダイアログが出る。  
 先にテストを 1 回実行してフォルダを生成すること。  
-Allure の実行スクリプトは `scripts/allure/serve_latest.js`。
+Allure の実行スクリプトは `run/allure/serve_latest.js`。
 
 ---
 
@@ -285,6 +285,14 @@ run/
 ├── run_gui.bat              # ダブルクリック起動用ランチャー
 ├── test_descriptions.json   # テストファイルの日本語説明マップ
 ├── tframe_run_nav_all.bat   # tframe 全ページテスト連続実行バッチ
+├── allure/
+│   ├── serve_latest.js          # Open Allure：最新の結果を探して allure serve（npm run allure:latest）
+│   └── archive_allure_results.py # 古い Allure 結果の zip アーカイブ（npm run allure:archive）
+├── cleanup/
+│   ├── run_dir_cleanup.py       # 起動時の古い実行フォルダ削除（Claude Code のテスト後フックも共用）
+│   └── cleanup_output_logs.py   # output/ と logs/ の手動掃除（npm run cleanup）
+├── checks/
+│   └── check_pause.js           # pause() の消し忘れチェック（npm run pretest_s）
 └── ps/
     ├── _run_batch_core.ps1      # バッチ連続実行の汎用ループ・集計ロジック
     └── tframe_run_nav_all.ps1   # tframe 向けテストリスト定義（コアへのラッパー）
