@@ -26,7 +26,7 @@ README
 - 文字コードは `utf-8` を優先し、失敗時は `cp932` を試行
 
 既定の出力先:
-- 出力先ディレクトリ: `output/side_menu_extract/<先頭の日本語>/`
+- 出力先ディレクトリ: `output/probe/side_menu_extract/<先頭の日本語>/`
 - JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
 - JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
@@ -102,7 +102,7 @@ from html.parser import HTMLParser
 from typing import Any, Dict, List, Optional
 
 DEFAULT_INPUT = os.path.join(".", "scripts", "html", "side_menu_source.html")
-DEFAULT_OUTPUT_DIR = os.path.join(".", "output", "side_menu_extract")  # git に入らない生成物は output/ へ（#341）
+DEFAULT_OUTPUT_DIR = os.path.join(".", "output", "probe", "side_menu_extract")  # git に入らない生成物は output/ へ（#341）
 CSV_HEADERS = [
     "group_id",
     "group_name",
@@ -447,9 +447,9 @@ def main() -> None:
     # groups = [{id, name, toggle_target, items:[{id, name, title, href, selected}]}, ...]
 
     # OUT先: 先頭の日本語ラベル + タイムスタンプ でディレクトリ・ファイル名を自動生成
-    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.json
-    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups_ja.json  (--jp-only 時)
-    #   output/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.csv      (--format csv 時)
+    #   output/probe/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.json
+    #   output/probe/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups_ja.json  (--jp-only 時)
+    #   output/probe/side_menu_extract/<label>/<label>_<timestamp>_side_menu_groups.csv      (--format csv 時)
     default_paths = build_default_output_paths(groups)
 
     if args.output is None:

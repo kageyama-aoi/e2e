@@ -34,7 +34,7 @@ from datetime import datetime, timedelta
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-_DOWNLOADS_DIR   = os.path.join('output', 'downloads')
+_DOWNLOADS_DIR   = os.path.join('output', 'work', 'downloads')
 _ALLURE_SCRIPT   = os.path.join('run', 'allure', 'serve_latest.js')
 _JSDOC_INDEX     = os.path.join('docs', 'generated', 'html', 'index.html')
 # テスト一式の置き場所（#337 で tests/・data/ を codecept/ の下へ移した）
@@ -1769,7 +1769,7 @@ class RunnerApp(tk.Tk):
         self._dl_frame.pack_forget()
 
     def _show_downloads_panel(self):
-        """output/downloads/ から実行開始後に作成されたファイルを探して表示する。"""
+        """output/work/downloads/ から実行開始後に作成されたファイルを探して表示する。"""
         dl_dir = os.path.join(self.repo_root, _DOWNLOADS_DIR)
         if not os.path.isdir(dl_dir):
             return

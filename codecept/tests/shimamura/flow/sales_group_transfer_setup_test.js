@@ -14,7 +14,7 @@
  * 4. 入出金の編集画面で1行目の支払方法を変える（既定 card。`SGT_FIRST_ROW_PAYMENT=cash` なら変えない）
  * 5. 同じ明細を開き直し、残りを「バランスを入力」→「入金分配」して送信内容を観察（保存しない）
  *
- * 結果は output/sales_group_transfer_setup/ に JSON で残る（明細番号・受講生番号・予測）。
+ * 結果は output/probe/sales_group_transfer_setup/ に JSON で残る（明細番号・受講生番号・予測）。
  * 作った明細は観察ランナー（tests/shimamura/util/sales_group_transfer_observe.js）で何度でも見直せる。
  *
  * 実行例:
@@ -64,7 +64,7 @@ Scenario('同一明細番号で1行目だけ入金済みの明細を作り、入
   predictions.forEach((p) => I.say(`【予測】${p.fee_name}: ${p.predicted.join(' / ') || 'チェックに当たらない'}`
     + `（差分 ${p.diffs.map((d) => `${d.field}:${d.db}→${d.sent}`).join(', ') || 'なし'}）`));
 
-  const outDir = path.join(repoRoot, 'output', 'sales_group_transfer_setup');
+  const outDir = path.join(repoRoot, 'output', 'probe', 'sales_group_transfer_setup');
   fs.mkdirSync(outDir, { recursive: true });
   const outFile = path.join(outDir, `${salesno}.json`);
   fs.writeFileSync(outFile, JSON.stringify({

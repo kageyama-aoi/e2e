@@ -13,7 +13,7 @@ cleanup_all() を呼び、手動用の archive_allure_results.py / cleanup_outpu
   │   └── ...
   ├── archive/                                     ← 対象外
   ├── allure-results/ allure-report/ logs/         ← output/ の下にあるがプロファイルではないので対象外（#334）
-  └── downloads/ や *.json                         ← 中が日時フォルダでなければ対象外
+  └── session/ probe/ work/ html/                 ← 種類別の置き場（#339）なので対象外
 
 規則:
   days 日以上古い実行フォルダを削除する。ただしプロファイルごとに最新 keep_latest 件は日数に関係なく残す
@@ -52,7 +52,8 @@ LOGS_DIR = OUTPUT_DIR / "logs"
 
 # <base_dir> 直下にあってもプロファイルではないフォルダ。実行フォルダを探すときに中へ入らない。
 # output/ の下に allure-results などを置いたので、プロファイルと取り違えないよう明示する
-NON_PROFILE_DIRS = {"archive", ALLURE_RESULTS_DIR.name, ALLURE_REPORT_DIR.name, LOGS_DIR.name}
+# session/ probe/ work/ html/ は #339 で分けた種類別の置き場（中は日時フォルダではないが、念のため明示する）
+NON_PROFILE_DIRS = {"archive", ALLURE_RESULTS_DIR.name, ALLURE_REPORT_DIR.name, LOGS_DIR.name, "session", "probe", "work", "html"}
 
 # 自動削除（ランチャー起動時・テスト後フック）の既定値
 DEFAULT_DAYS = 10

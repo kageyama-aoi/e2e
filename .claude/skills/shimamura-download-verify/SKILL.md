@@ -225,7 +225,7 @@ Feature('{画面名}');
 Before(beforeShimamura);
 
 Data(csvData).Scenario('{画面名}をCSV出力できる @dev', async ({ I, ichiranPageShimamura, current }) => {
-  const savePath = path.join(repoRoot, 'output', 'downloads', `{prefix}_${Date.now()}.csv`);
+  const savePath = path.join(repoRoot, 'output', 'work', 'downloads', `{prefix}_${Date.now()}.csv`);
 
   await ichiranPageShimamura.navigateTo{ScreenName}Page();
   I.saveScreenshotWithTimestamp('{prefix}_before.png');
@@ -262,7 +262,7 @@ Feature('{画面名}');
 Before(beforeShimamura);
 
 Data(csvData).Scenario('{画面名}をファイル出力できる @dev', async ({ I, ichiranPageShimamura, current }) => {
-  const savePath = path.join(repoRoot, 'output', 'downloads', `{prefix}_${Date.now()}.csv`);
+  const savePath = path.join(repoRoot, 'output', 'work', 'downloads', `{prefix}_${Date.now()}.csv`);
 
   await ichiranPageShimamura.navigateTo{ScreenName}Page();
   I.saveScreenshotWithTimestamp('{prefix}_before.png');
@@ -343,7 +343,7 @@ scenario
 npx codeceptjs run ./codecept/tests/shimamura/page/{prefix}_test.js --profile shimamura.testgcp
 ```
 
-実行後に `output/downloads/` にファイルが保存されること、
+実行後に `output/work/downloads/` にファイルが保存されること、
 GUI ランチャーのダウンロードパネルに件数と形式が表示されることを確認する。
 
 ---

@@ -9,7 +9,7 @@
  *   - 保存したら送られるはずの JSON（hidden sales_details。prepareForm を呼んで読むだけ）
  *   - DB の元の値との差分と、サーバーのチェック（Check2/3/5）に当たりそうか（予測）
  *   - 出た alert の文言
- * をログと JSON ファイル（output/sales_group_transfer_observe/）に残す。既定では保存ボタンは押さない
+ * をログと JSON ファイル（output/probe/sales_group_transfer_observe/）に残す。既定では保存ボタンは押さない
  * （`OBS_SAVE=1` のときだけ、最後に保存して本物の結果を記録する。**データが変わる**）。
  *
  * 実行例（引数は環境変数。値は ASCII だけなので文字化けしない）:
@@ -103,7 +103,7 @@ Scenario('入金分配の前後で画面の値と送信 JSON を記録する（O
     saveResult = await page.clickSaveAndGrabResult();
   }
 
-  const outDir = path.join(repoRoot, 'output', 'sales_group_transfer_observe');
+  const outDir = path.join(repoRoot, 'output', 'probe', 'sales_group_transfer_observe');
   fs.mkdirSync(outDir, { recursive: true });
   const stamp = formatDate(new Date(), 'YYYYMMDD_hhmmss');
   const outFile = path.join(outDir, `${TARGET.salesno}_${stamp}.json`);

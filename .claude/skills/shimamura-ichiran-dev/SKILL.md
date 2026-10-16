@@ -45,7 +45,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 | **Page Object の雛形**（標準一覧画面の1エントリ） | `codecept/pages/shimamura/screens/ichiran/keiriScreens.js` の `standardScreens`（入出金一覧のエントリ） |
 | メニュー定義（directUrl / moduleUrl / shortcut / collapseToggle） | `codecept/pages/shimamura/_common/sideMenus.js` |
 | 結果セレクタが特殊な画面の例 | `ichiran/*Screens.js` の `specialScreens`（未収金一覧・受注売上＝keiri、出席表検索＝course、有効性データ出力＝student） |
-| 標準一覧かどうかの事前判定 | `menu_patrol_test.js` 実行後の `output/shimamura_menu_patrol/<module>.json` の `standardList`（`input[name="search"]` の有無） |
+| 標準一覧かどうかの事前判定 | `menu_patrol_test.js` 実行後の `output/probe/shimamura_menu_patrol/<module>.json` の `standardList`（`input[name="search"]` の有無） |
 | ログイン処理 | `codecept/support/shimamura/hooks.js`（`beforeShimamura`） |
 | 共通ユーティリティ・定数 | `codecept/support/shimamura/utils.js`（`fillTextFieldsByName`）、`codecept/support/shimamura/constants.js`（`TIMEOUTS` / `SELECTORS`） |
 | CSV の形式 | `codecept/data/shimamura/transaction_ichiran_search_data.csv` |

@@ -26,7 +26,7 @@ Feature('受講生 有効性データ出力');
 Before(beforeShimamura);
 
 Data(csvData).Scenario('有効性データをCSV出力できる @dev', async ({ I, ichiranPageShimamura, current }) => {
-  const savePath = path.join(repoRoot, 'output', 'downloads', `validity_data_${Date.now()}.csv`);
+  const savePath = path.join(repoRoot, 'output', 'work', 'downloads', `validity_data_${Date.now()}.csv`);
 
   await ichiranPageShimamura.navigateToValidityDataOutputPage();
   I.saveScreenshotWithTimestamp('validity_data_output_before.png');

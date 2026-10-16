@@ -20,7 +20,7 @@
  * - SORT_PROBE_FIELDS: 検索前に入れる値（任意。`id=値` をカンマ区切り。日付必須の画面用
  *                      例: `rangeFromDate=2000-01-01,rangeToDate=2030-12-31`。セレクトの値も入れられる）
  *
- * **出力**: コンソールに推定結果、`output/sort_probe/<route>_<日時>.json` に採取した全行と推定結果
+ * **出力**: コンソールに推定結果、`output/probe/sort_probe/<route>_<日時>.json` に採取した全行と推定結果
  */
 const fs = require('fs');
 const path = require('path');
@@ -87,7 +87,7 @@ Scenario('ソート可能列を全方向で採取して sortSpec を推定する
       I.say(`第2キー候補: ${c.key} ${c.dir}（型 ${c.type} / 同値ペア ${c.pairs} / 裏付け ${c.strictPairs}）`));
   }
 
-  const outDir = path.join(repoRoot, 'output', 'sort_probe');
+  const outDir = path.join(repoRoot, 'output', 'probe', 'sort_probe');
   fs.mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().slice(0, 19).replace(/[:T-]/g, '');
   const outPath = path.join(outDir, `${ROUTE.replace(/[^\w]+/g, '_')}${TAB ? TAB.replace('#', '_') : ''}_${stamp}.json`);

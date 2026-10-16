@@ -71,7 +71,7 @@ function buildDatedImportFile(templatePath) {
   const cols = fs.readFileSync(templatePath).toString('latin1').split(',');
   cols[IMPORT_COLUMNS.keijoubi] = keijoubi;
   cols[IMPORT_COLUMNS.taishoTsuki] = formatDate(lastMonth, 'YYYYMM');
-  const outRelPath = path.join('output', 'koushi_sharei_import', `koushi_sharei_import_${keijoubi}.csv`);
+  const outRelPath = path.join('output', 'work', 'koushi_sharei_import', `koushi_sharei_import_${keijoubi}.csv`);
   fs.mkdirSync(path.dirname(outRelPath), { recursive: true });
   fs.writeFileSync(outRelPath, Buffer.from(cols.join(','), 'latin1'));
   return outRelPath;

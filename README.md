@@ -174,7 +174,7 @@ python scripts/html/extract_submenus.py
 
 **入出力**
 - 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
-- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\submenu_extract\`
+- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\probe\submenu_extract\`
   - JSON: `submenu_extract.json`
   - CSV: `submenu_extract.csv`
   - CSV(フラット): `submenu_extract_flat.csv`
@@ -186,7 +186,7 @@ python scripts/html/extract_submenus.py
 ### サイドメニューグループ抽出
 `scripts/html/extract_side_menu_groups.py` は、サイドメニューHTMLから
 「グループ名」と「配下のメニュー項目」を構造化して JSON/CSV で出力します。
-成果物は git に入らない生成物の置き場 `output/side_menu_extract/` 配下にまとめて出力します。
+成果物は git に入らない生成物の置き場 `output/probe/side_menu_extract/` 配下にまとめて出力します。
 既定ファイル名は、抽出結果の先頭に出た日本語とタイムスタンプから自動生成します。
 
 **使い方**
@@ -218,7 +218,7 @@ python scripts/html/extract_side_menu_groups.py "./scripts/html/side_menu_source
 - ID や href を省いた軽量形式です
 
 **既定出力**
-- 出力先ディレクトリ: `output/side_menu_extract/<先頭の日本語>/`
+- 出力先ディレクトリ: `output/probe/side_menu_extract/<先頭の日本語>/`
 - JSON: `<先頭の日本語>_<timestamp>_side_menu_groups.json`
 - JSON(日本語のみ): `<先頭の日本語>_<timestamp>_side_menu_groups_ja.json`
 - CSV: `<先頭の日本語>_<timestamp>_side_menu_groups.csv`
@@ -239,7 +239,7 @@ python scripts/html/extract_body_only_fields.py
 
 **入出力**
 - 入力（固定）: `C:\Users\kageyama\Tools\testcode\source.txt`
-- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\body_only_extract\`
+- 出力（固定）: `C:\Users\kageyama\Tools\testcode\e2e\output\probe\body_only_extract\`
   - JSON: `body_only_fields.json`
   - CSV: `body_only_fields.csv`
   - CSV(フラット): `body_only_fields_flat.csv`
@@ -253,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 09:52:16
+Last updated: 2026-10-16 10:03:16
 
 ```text
 e2e/
@@ -897,6 +897,8 @@ e2e/
 │   ├── test_descriptions.json
 │   └── tframe_run_nav_all.bat
 ├── scripts/ 
+│   ├── debug/ 
+│   │   └── debug_syokai.js
 │   ├── hooks/ 
 │   │   └── install_git_hooks.js
 │   ├── html/ 

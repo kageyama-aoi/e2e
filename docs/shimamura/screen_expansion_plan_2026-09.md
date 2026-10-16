@@ -67,7 +67,7 @@ tframe は「全メニューの実機採取 → カバレッジ表の自動生�
 1. ✅ **メニュー巡回テスト**（`codecept/tests/shimamura/page/menu_patrol_test.js` ＋ `codecept/pages/shimamura/_common/MenuPatrolPage.js`）
    — スナップショットの全項目をサイドバーから開き、画面エラー・PHP エラーが無いことを確認。
    2026-09-28 testgcp で **全10アイコン・150項目すべて開けた**（約10分。`--grep @patrol_<module>` でアイコン単位実行可）。
-   各画面が標準一覧形式（`input[name="search"]` あり）かを `output/shimamura_menu_patrol/<module>.json` に記録
+   各画面が標準一覧形式（`input[name="search"]` あり）かを `output/probe/shimamura_menu_patrol/<module>.json` に記録
 2. **標準一覧かどうかの判定結果**（バケットA 37画面）
    - 標準形式 **21**: 債権買取顧客情報一覧・受講生別クラス一覧・候補生検索・資料請求一覧・メモ一覧・講師別受講生一覧・法人/団体一覧・スタッフ一覧・保護者一覧・部屋一覧・店舗一覧・売掛金・AFS会員番号検索・POSレスポンスエラー一覧・料金一覧・料金一覧(共通)・料金パッケージ一覧・本日の入出金・口座振替請求データ履歴・返金一覧・債権買取状態一覧
      → `screens/ichiran/<icon>Screens.js` の `standardScreens` に1エントリ足す形で量産できる見込み（結果リンク `a.listViewTdLinkS1` の有無は着手時に確認）

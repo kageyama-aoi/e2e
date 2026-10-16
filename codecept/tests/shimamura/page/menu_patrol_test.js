@@ -6,7 +6,7 @@
  *   「アイコン画面 → （折りたたみ展開）→ サイドバーのリンク押下」で開き、
  *   画面エラー・PHP エラーが出ないことを確認してスクリーンショットを残す
  * - 1画面の失敗で止めず、アイコン内の全項目を回ってから失敗をまとめて報告する
- * - 各画面が「標準一覧」形式（input[name="search"] あり）かを `output/shimamura_menu_patrol/<icon>.json` に記録する
+ * - 各画面が「標準一覧」形式（input[name="search"] あり）かを `output/probe/shimamura_menu_patrol/<icon>.json` に記録する
  *
  * **実行例**（日本語 --grep は化けるため英字タグで絞る）
  * - 全アイコン: `npx codeceptjs run tests/shimamura/page/menu_patrol_test.js --profile shimamura.testgcp`
@@ -20,7 +20,7 @@ const path = require('path');
 const { beforeShimamura } = require('../../../support/shimamura/hooks');
 const menuPatrolPage = require('../../../pages/shimamura/_common/MenuPatrolPage');
 
-const OUT_DIR = path.join(require('../../../support/repoRoot'), 'output', 'shimamura_menu_patrol');
+const OUT_DIR = path.join(require('../../../support/repoRoot'), 'output', 'probe', 'shimamura_menu_patrol');
 
 Feature('メニュー巡回');
 
