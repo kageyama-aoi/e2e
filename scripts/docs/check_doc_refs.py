@@ -18,7 +18,7 @@
 【除外】
 - `{placeholder}` `〇〇` `○○` `<...>` `*` を含むもの、Xxx / Some / foo 等の例示名（スキルのテンプレート）
 - コード上の慣用オブジェクト（I / page / document / process 等）のメソッド
-- `docs/**/learning/`（Bash 学習ログ。一時ファイルへの言及が多い）
+- `docs/**/learning/`（旧 Bash 学習ログの置き場。#359 で output/logs/bash/ へ移したが、手元に古いログが残っていても誤検知しないよう除外を残す）
 - `docs/**/archive/`（終わった作業の記録。当時のパスのまま残す #340）
 - `scripts/docs/check_doc_refs.ignore` に書いた参照（意図的に実在しないもの。1行1参照）
 

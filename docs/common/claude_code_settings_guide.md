@@ -319,7 +319,7 @@ Bash ツール実行
   ↓
 command と tool_response.output を取得（出力は最大 50 行）
   ↓
-docs/common/learning/bash_YYYYMMDD.md に追記
+output/logs/bash/bash_YYYYMMDD.md に追記（#359 で docs の learning フォルダから移動）
 ```
 
 ---

@@ -1,7 +1,7 @@
 node_modules/
 output/
 .output/
-# 旧置き場（#334 で output/ の下へ移動）。古いブランチ・worktree が直下に書いても誤ってコミットしないよう残す
+# 旧置き場（#334 で output/ の下へ移動。docs/common/learning/ は #359 で output/logs/bash/ へ）。古いブランチ・worktree が直下に書いても誤ってコミットしないよう残す
 allure-results/
 allure-report/
 docs/generated/

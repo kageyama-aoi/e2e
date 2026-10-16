@@ -129,7 +129,7 @@ Run 終了（正常終了・Stop・エラー）後に `output/logs/<testname>_<Y
 起動 0.3 秒後にバックグラウンドで実行。  
 `output/logs/` 内の `<name>_<YYYYMMDD_HHMMSS>.log` のうち **30 日以上** 古いものを `output/logs/archive/<name>.log.zip` に圧縮してから削除する。
 
-また、`docs/common/learning/bash_YYYYMMDD.md` のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
+また、`output/logs/bash/bash_YYYYMMDD.md`（Claude Code のフックが書く Bash ログ。#359 で `docs/common/learning/` から移動）のうち **30 日以上** 古いものも同時に削除する（アーカイブなし）。
 
 さらに、`output/allure-results/` と `output/` の `<profile>/<YYYYMMDD_HHMMSS_*>/`（実行フォルダ）のうち **10 日以上** 古いものを削除する（zip しない。中身の大半はスクリーンショットで、zip にしても容量がほぼ減らないため）。ただし**プロファイルごとに最新 3 件は日数に関係なく残す**（しばらく使っていない環境で Open Allure が「結果なし」にならないように）。判定は `run/cleanup/run_dir_cleanup.py` の `cleanup_all()` を共用している（テスト後フックも同じ）。`output/` 直下のセッションファイル・`downloads/`・抽出結果フォルダは日時フォルダではないので対象外。
 
@@ -312,7 +312,7 @@ run/
 | `find_csvs_for_test()` | `codecept/data/<product>/<stem>_data*.csv` を検索 |
 | `build_command()` | `npx codeceptjs run` コマンドを組み立て |
 | `cleanup_old_logs()` | 古いログを zip アーカイブして削除 |
-| `_cleanup_old_learning_logs()` | `docs/common/learning/bash_*.md` の古いファイルを削除 |
+| `_cleanup_old_bash_logs()` | `output/logs/bash/bash_*.md` の古いファイルを削除 |
 | `_cleanup_old_run_dirs()` | `output/allure-results/` と `output/` の古い実行フォルダを削除（各プロファイル最新 N 件は残す） |
 | `_analyze_download_file()` | ダウンロードファイルの件数・エンコードを解析 |
 | `SplashScreen` | 起動中スプラッシュ（400×160px）。初期化完了後に自動クローズ |
