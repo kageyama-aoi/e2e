@@ -320,6 +320,10 @@ e2e/
 │   │   ├── handoff.md
 │   │   ├── newplan.md
 │   │   └── placement-gate.md
+│   ├── hooks/ 
+│   │   ├── archive_allure.py
+│   │   ├── check_placement.py
+│   │   └── log_bash.py
 │   ├── skills/ 
 │   │   ├── doc-sync/ 
 │   │   │   └── SKILL.md
@@ -893,10 +897,7 @@ e2e/
 │   │   ├── cleanup_output_logs.py
 │   │   └── run_dir_cleanup.py
 │   ├── hooks/ 
-│   │   ├── archive_allure.py
-│   │   ├── check_placement.py
-│   │   ├── install_git_hooks.js
-│   │   └── log_bash.py
+│   │   └── install_git_hooks.js
 │   ├── html/ 
 │   │   ├── input/ 
 │   │   │   ├── account_list.html

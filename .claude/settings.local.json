@@ -98,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/hooks/check_placement.py 2>/dev/null || true",
+            "command": "python .claude/hooks/check_placement.py 2>/dev/null || true",
             "statusMessage": "配置ルール確認中..."
           }
         ]
@@ -108,12 +108,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/hooks/archive_allure.py 2>/dev/null || true",
+            "command": "python .claude/hooks/archive_allure.py 2>/dev/null || true",
             "statusMessage": "Allure アーカイブ中..."
           },
           {
             "type": "command",
-            "command": "python scripts/hooks/log_bash.py 2>/dev/null || true",
+            "command": "python .claude/hooks/log_bash.py 2>/dev/null || true",
             "statusMessage": "コマンドログ記録中..."
           }
         ]

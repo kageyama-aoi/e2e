@@ -202,7 +202,7 @@ npm run allure:latest
 ```
 Claude Code が Bash ツールで codeceptjs run を実行
   ↓
-PostToolUse フックが起動 (scripts/hooks/archive_allure.py)
+PostToolUse フックが起動 (.claude/hooks/archive_allure.py)
   ↓
 コマンド文字列に "codeceptjs run" が含まれているかチェック
   ↓
@@ -215,7 +215,7 @@ PostToolUse フックが起動 (scripts/hooks/archive_allure.py)
 > `FileNotFoundError` で毎回落ちていた。設定側の `2>/dev/null || true` でエラーが捨てられ、
 > 2026-05 の導入以来一度も動いていなかった（#310）。
 
-#### フック本体 (`scripts/hooks/archive_allure.py`)
+#### フック本体 (`.claude/hooks/archive_allure.py`)
 
 ```python
 # Claude Code の PostToolUse(Bash) イベントで自動実行
@@ -311,7 +311,7 @@ Open Allure ボタン（GUI）
               └── ブラウザで HTML レポートを表示
 
 Claude Code フック（自動）★カスタム
-  └── scripts/hooks/archive_allure.py
+  └── .claude/hooks/archive_allure.py
         └── scripts/cleanup/run_dir_cleanup.py の cleanup_all()（output/allure-results/ と output/）
               └── 10日以上古い結果を削除（各プロファイル最新3件は残す）
 ```

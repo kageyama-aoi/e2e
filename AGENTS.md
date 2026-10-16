@@ -445,7 +445,7 @@ Issue には **種別 1つ＋対象 1つ**を必ず付け、止まっている�
   - `cleanup/`  : output/ と output/logs/ の古いファイル削除・アーカイブ
   - `html/`     : HTML解析・ページ構造の抽出
   - `docs/`     : ドキュメント生成・README 更新
-  - `hooks/`    : Claude Code フック用スクリプト（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録等）
+  - `hooks/`    : git フックのインストール（`install_git_hooks.js`）。Claude Code のフック（配置バリデーション・Allure 自動アーカイブ・Bash ログ記録）は Claude 専用なので `.claude/hooks/` に置く（#341）
   - `input/`, `output/` : 抽出スクリプトの入出力作業ディレクトリ（用途ごとにサブフォルダで区切る）
 - カテゴリに収まらない単発スクリプトのみ直下に置く（例: `check_pause.js` = `npm run pretest_s` フック）。
 - テストを直接起動するものは run/ に置く（scripts/ には入れない）。

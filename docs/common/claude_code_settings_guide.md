@@ -163,7 +163,7 @@ Claude Code のイベントに合わせて、外部スクリプトを自動実�
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/hooks/check_placement.py 2>/dev/null || true",
+            "command": "python .claude/hooks/check_placement.py 2>/dev/null || true",
             "statusMessage": "配置ルール確認中..."
           }
         ]
@@ -192,7 +192,7 @@ Claude Code のイベントに合わせて、外部スクリプトを自動実�
 ### エラーを無視するおまじない
 
 ```bash
-python scripts/hooks/check_placement.py 2>/dev/null || true
+python .claude/hooks/check_placement.py 2>/dev/null || true
 ```
 
 - `2>/dev/null` — stderr を捨てる
@@ -343,13 +343,13 @@ hooks スクリプトは `echo` で stdin を与えれば単独で動作確認�
 ```bash
 # check_placement.py のテスト
 echo '{"tool_input": {"file_path": "/path/to/e2e/tests/bad_file.txt"}}' \
-  | python scripts/hooks/check_placement.py
+  | python .claude/hooks/check_placement.py
 
 # archive_allure.py のテスト（テストコマンドを渡す）
 echo '{"tool_input": {"command": "npx codeceptjs run codecept/tests/smoke/smoke_test.js"}}' \
-  | python scripts/hooks/archive_allure.py
+  | python .claude/hooks/archive_allure.py
 
 # log_bash.py のテスト
 echo '{"tool_input": {"command": "ls -la"}, "tool_response": {"output": "total 0"}}' \
-  | python scripts/hooks/log_bash.py
+  | python .claude/hooks/log_bash.py
 ```
