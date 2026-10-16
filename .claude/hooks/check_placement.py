@@ -11,7 +11,7 @@ import re
 KNOWN_DIRS = {
     'codecept', 'scripts', 'run',  # tests・pages・support・data は #337 で codecept/ の下へ
     '.claude', '.agent', 'docs', 'env', 'output',
-    'node_modules', '.git', '.spec',
+    'node_modules', '.git',  # .spec/ は #340 でやめた（docs/project/archive/ へ）
     # allure-results / allure-report / logs は #334 で output/ の下へ移した（直下に作られたら警告する）
 }
 

@@ -253,7 +253,7 @@ python scripts/html/extract_body_only_fields.py
 💡 **プロジェクトの設計思想や責務分離の詳細については、[プロジェクト設計・アーキテクチャガイド](docs/project/project_architecture_guide.md) を参照してください。**
 
 <!-- TREE_START -->
-Last updated: 2026-10-16 10:03:16
+Last updated: 2026-10-16 10:06:22
 
 ```text
 e2e/
@@ -365,15 +365,6 @@ e2e/
 │   │   └── investigation.md
 │   └── workflows/ 
 │       └── documentation_update.yaml
-├── .spec/ 
-│   ├── KNOWLEDGE-2026-09-10.md
-│   ├── KNOWLEDGE.md
-│   ├── PLAN-2026-09-10.md
-│   ├── PLAN.md
-│   ├── SPEC-2026-09-10.md
-│   ├── SPEC.md
-│   ├── TODO-2026-09-10.md
-│   └── TODO.md
 ├── codecept/ 
 │   ├── data/ 
 │   │   ├── shimamura/ 
