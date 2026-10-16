@@ -11,6 +11,7 @@ scripts/html/
 ├── fetch_*.js             ← 実機にログインして HTML を取ってくる道具
 ├── extract_*.{py,js}      ← 手元の HTML から必要な部分を抜き出す道具
 ├── shimamura_route.js     ← URL を「画面を区別する route 文字列」にする部品
+├── tframe_error_page.js   ← 取った HTML が tframe のエラーページか見分ける部品
 ├── snapshots/             ← 取ってきた画面 HTML（ある時点の写し）
 │   └── tframe/            ← tframe の画面（git 管理）
 └── inputs/                ← 人が手で貼る入力（git 管理）
@@ -35,6 +36,7 @@ scripts/html/
 - **snapshot は「取った時点」の写しです。** 画面が変わっていることがあるので、いつ取ったかを `git log -1 --format=%ad -- scripts/html/snapshots/tframe/<ファイル>` で確かめてから使う。古い・項目が見つからないときは取り直す
 - shimamura は git に入れていない（ログイン中の CSRF トークン入り・サイズが大きい）。ほかの PC や消えた後は `fetch_shimamura_screens.js` で取り直す
 - **取得に失敗したページ（「An internal server error occurred.」だけの数百バイトの HTML）は残さない。** `ryokin_master_list`・`ryokin_master_touroku`・`ryokin_package_list`・`shareiTotal_list` はこの理由で消してある（#355）。必要になったら取り直す
+  - tframe の取得スクリプトは、エラーページなら保存せず「⚠ エラーページが返ったので保存しません」と出す（`tframe_error_page.js`。#368）。料金マスタ系の 3 画面は culture_beta に無いのでこうなる（取るなら juku_test で）。`shareiTotal_list` は 2026-10-16 の culture_beta では正常に開けた
 
 ### 項目を調べる例
 
