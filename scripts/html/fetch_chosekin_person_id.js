@@ -26,7 +26,7 @@ if (!BASE_URL || !USER || !PASSWORD) {
   process.exit(1);
 }
 
-const INPUT_DIR = path.join(__dirname, 'input');
+const INPUT_DIR = path.join(__dirname, 'tframe');
 fs.mkdirSync(INPUT_DIR, { recursive: true });
 
 (async () => {
@@ -75,7 +75,7 @@ fs.mkdirSync(INPUT_DIR, { recursive: true });
 
     // スクリーンショット
     await page.screenshot({ path: path.join(INPUT_DIR, 'chosekin_popup.png'), fullPage: true });
-    console.log('✓ スクリーンショット保存: scripts/html/input/chosekin_popup.png');
+    console.log('✓ スクリーンショット保存: scripts/html/tframe/chosekin_popup.png');
 
     // onclick 属性から personId 値を抽出（ポップアップ内のリンク）
     const teacherLinks = await page.evaluate(() => {

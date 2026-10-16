@@ -22,7 +22,7 @@ const USER      = process.env.SHIMAMURA_USER;
 const PASSWORD  = process.env.SHIMAMURA_PASSWORD;
 const TANTOUSYA = process.env.SHIMAMURA_TANTOUSYA;
 
-const OUTPUT_DIR = path.join(__dirname, 'shimamura');
+const OUTPUT_DIR = path.join(REPO_ROOT, 'output', 'html', 'shimamura');  // git に入らない生成物は output/ へ（#341）
 
 async function login(page) {
   await page.goto(BASE_URL);

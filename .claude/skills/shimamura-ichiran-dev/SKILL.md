@@ -59,7 +59,7 @@ shimamura の一覧（ListView）画面に対する E2E テスト（Page Object 
 ### Step 1: 対象画面の確認
 
 1. **検索フォームの HTML を確認する**
-   - `scripts/html/shimamura/{name}.html` が既にあれば流用する
+   - `output/html/shimamura/{name}.html` が既にあれば流用する
    - なければ `/shimamura-html-fetch` スキルで取得する
    - 拾うもの: テキスト入力の `name=`、セレクトの `name=`、検索ボタンのセレクタ、結果テーブルのリンククラス、日付範囲フィールドの有無
 

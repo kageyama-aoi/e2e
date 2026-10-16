@@ -27,7 +27,7 @@ if (!BASE_URL || !USER || !PASSWORD) {
   process.exit(1);
 }
 
-const INPUT_DIR = path.join(__dirname, 'input');
+const INPUT_DIR = path.join(__dirname, 'tframe');
 fs.mkdirSync(INPUT_DIR, { recursive: true });
 
 // ── 取得対象 ──────────────────────────────────────────────────
@@ -161,7 +161,7 @@ async function getFormHtml(page, url) {
 
     // スクリーンショット保存
     await page.screenshot({ path: path.join(INPUT_DIR, 'after_login.png'), fullPage: false });
-    console.log('  スクリーンショット保存: scripts/html/input/after_login.png');
+    console.log('  スクリーンショット保存: scripts/html/tframe/after_login.png');
 
     // 経理セクションへ移動してサイドメニューを展開
     const keiriLink = `${BASE_URL}index.php?r=smsFee%2Fsw%2F_default&isTopMenu=1`;
@@ -171,7 +171,7 @@ async function getFormHtml(page, url) {
 
     // スクリーンショット（経理ページ）
     await page.screenshot({ path: path.join(INPUT_DIR, 'keiri_page.png'), fullPage: true });
-    console.log('  スクリーンショット保存: scripts/html/input/keiri_page.png');
+    console.log('  スクリーンショット保存: scripts/html/tframe/keiri_page.png');
 
     const links = await dumpAllLinks(page);
 

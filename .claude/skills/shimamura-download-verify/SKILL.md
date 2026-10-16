@@ -65,7 +65,7 @@ const [download] = await Promise.all([
 | ダウンロードカスタムステップ | `codecept/support/steps_file.js`（`downloadAndReadCsv`） |
 | sideMenus.js の定義パターン | `codecept/pages/shimamura/_common/sideMenus.js` |
 | ナビゲーション実装 | `codecept/pages/shimamura/screens/IchiranPage.js`（`_navigateViaMenu`） |
-| サイドバー HTML | `scripts/html/shimamura/nav__leftcol.html` |
+| サイドバー HTML | `output/html/shimamura/nav__leftcol.html` |
 | 既存のダウンロードテスト雛形 | `codecept/tests/shimamura/page/validity_data_output_test.js` |
 | GUIダウンロードパネル（ファイル種別判定） | `run/run_gui.py`（`_analyze_download_file`） |
 
@@ -75,7 +75,7 @@ const [download] = await Promise.all([
 
 ### Step 0: 対象画面の URL とボタンセレクタを確認する
 
-1. **URL を確認する**（`scripts/html/shimamura/` のリンク JSON or 実機で確認）
+1. **URL を確認する**（`output/html/shimamura/` のリンク JSON or 実機で確認）
 2. **ボタンのセレクタを確認する**（`/shimamura-html-fetch` スキルで HTML を取得）
 
    ボタンは `input[type="submit"]` や `input[type="button"]` が多いが、
@@ -151,7 +151,7 @@ screenName: {
 
 #### `icon_id` の探し方
 
-`scripts/html/shimamura/nav__leftcol.html` を開いて、対象グループの TR 要素の `id` を確認する。
+`output/html/shimamura/nav__leftcol.html` を開いて、対象グループの TR 要素の `id` を確認する。
 
 ```html
 <!-- nav__leftcol.html の例 -->

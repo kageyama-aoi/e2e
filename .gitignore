@@ -8,7 +8,6 @@ docs/generated/
 docs/common/learning/bash_*.md
 logs/
 __pycache__/
-scripts/html/shimamura/
 scripts/html/**/*.png
 scripts/html/**/*.json
 
